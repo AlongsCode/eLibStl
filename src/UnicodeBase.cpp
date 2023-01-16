@@ -27,11 +27,13 @@ EXTERN_C void Fn_L(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 		pRetData->m_pBin = 0;
 		return;
 	}
+	//返回没释放内存，啥比了
 	wchar_t* resultstring = new wchar_t[widesize];
 	int convresult = MultiByteToWideChar(CP_ACP, 0, pArgInf->m_pText, -1, resultstring, widesize);
 	if (convresult != widesize)
 	{
 		pRetData->m_pBin = 0;
+		delete[] resultstring;
 		return;
 	}
 	LPBYTE ret = elibstl::clone_textw(resultstring);
