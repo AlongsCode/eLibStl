@@ -41,7 +41,7 @@ static ARG_INFO Args[] =
 	},
 	{
 		/*name*/    "留存时间",
-		/*explain*/ ("指定时长后自动关闭，默认为不自动关闭"),
+		/*explain*/ ("指定时长后自动关闭，默认为不自动关闭,单位:毫秒"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,

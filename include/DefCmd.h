@@ -121,7 +121,8 @@ editboxw,/*编辑框W*/\
 severex,/*服务器Ex*/\
 clinetex,/*客户端Ex*/\
 hCoprocessD,/*协程句柄*/\
-media_play_ex/*媒体播放*/\
+media_play_ex,/*媒体播放*/\
+TaskDialog_Button_Type/*高级信息框按钮*/\
 
 #pragma endregion
 
