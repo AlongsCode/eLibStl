@@ -19,24 +19,22 @@ EXTERN_C void Fn_L(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 	int widesize = MultiByteToWideChar(CP_ACP, 0, pArgInf->m_pText, -1, NULL, 0);
 	if (GetLastError() == ERROR_NO_UNICODE_TRANSLATION)
 	{
-		pRetData->m_pBin = 0;
+		pRetData->m_pBin = nullptr;
 		return;
 	}
 	if (widesize == 0)
 	{
-		pRetData->m_pBin = 0;
+		pRetData->m_pBin = nullptr;
 		return;
 	}
 	//返回没释放内存，啥比了
 	wchar_t* resultstring = new wchar_t[widesize];
 	int convresult = MultiByteToWideChar(CP_ACP, 0, pArgInf->m_pText, -1, resultstring, widesize);
-	if (convresult != widesize)
+	LPBYTE ret = nullptr;
+	if (convresult == widesize)
 	{
-		pRetData->m_pBin = 0;
-		delete[] resultstring;
-		return;
+		ret = elibstl::clone_textw(resultstring);
 	}
-	LPBYTE ret = elibstl::clone_textw(resultstring);
 	delete[] resultstring;
 	pRetData->m_pBin = ret;
 }
