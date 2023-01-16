@@ -91,6 +91,7 @@
     <ClCompile Include="src\writefile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\DefCmd.h" />
     <ClInclude Include="include\EcontrolHelp.h" />
     <ClInclude Include="include\EKrnln.h" />
     <ClInclude Include="include\ElibHelp.h" />

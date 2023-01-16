@@ -672,19 +672,25 @@ static UNIT_PROPERTY s_member[] =
 	/*005*/ {"字体", "Font", "用作在运行时提供浏览器的当前标题文本", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
 	/*000*/ {"标题W", "PIC", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 };
-LIB_DATA_TYPE_INFO buttonw = {
-	"按钮W",//中文名称
-	"ButtonW",//英文名称
-	"unicode按钮",//说明
-	0,//命令数量
-	0,//在全局函数中对应的索引
-	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	103,//资源ID
-	sizeof(s_event) / sizeof(s_event[0]),
-	s_event,
-	sizeof(s_member) / sizeof(s_member[0]),//属性数
-	s_member,//属性指针
-	libkrnln_GetInterface_ButtonW,//组件交互子程序
-	NULL,//成员数量
-	NULL//成员数据数组
-};
+
+
+namespace libkrnln {
+
+
+	LIB_DATA_TYPE_INFO buttonw = {
+		"按钮W",//中文名称
+		"ButtonW",//英文名称
+		"unicode按钮",//说明
+		0,//命令数量
+		0,//在全局函数中对应的索引
+		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
+		103,//资源ID
+		sizeof(s_event) / sizeof(s_event[0]),
+		s_event,
+		sizeof(s_member) / sizeof(s_member[0]),//属性数
+		s_member,//属性指针
+		libkrnln_GetInterface_ButtonW,//组件交互子程序
+		NULL,//成员数量
+		NULL//成员数据数组
+	};
+}

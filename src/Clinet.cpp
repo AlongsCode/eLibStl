@@ -180,22 +180,25 @@ static UNIT_PROPERTY s_clinet_member[] =
 	/*006*/ {"禁止", "disable", NULL, UD_BOOL, _PROP_OS(OS_ALL), NULL},
 	/*007*/ {"鼠标指针", "MousePointer", NULL, UD_CURSOR, _PROP_OS(OS_ALL), NULL},
 };
-LIB_DATA_TYPE_INFO clinetex = {
-	/*m_szName*/			"客户端Ex",
-	/*m_szEgName*/			"clinetex",
-	/*m_szExplain*/			"基于ETCP的连接网络数据交换的客户方组件，用作向另一方的服务器端组件发送数据。基于连接的数据交换是一种可靠的、允许大数据量的网络数据交互方式。",
-	/*m_nCmdCount*/			sizeof(s_clinet_cmd) / sizeof(s_clinet_cmd[0]),
-	/*m_pnCmdsIndex*/		s_clinet_cmd,
-	/*m_dwState*/			_DT_OS(__OS_WIN) | LDT_WIN_UNIT | LDT_IS_FUNCTION_PROVIDER ,
-	/*m_dwUnitBmpID*/		IDB_CLINET_EX,
-	/*m_nEventCount*/		3,
-	/*m_pEventBegin*/		s_clinet_event,
-	/*m_nPropertyCount*/	sizeof(s_clinet_member) / sizeof(s_clinet_member[0]),
-	/*m_pPropertyBegin*/	s_clinet_member,
-	/*m_pfnGetInterface*/	 libkrnln_GetInterface_clinetex,
-	/*m_nElementCount*/		0,
-	/*m_pElementBegin*/		NULL,
-};
+
+namespace libkrnln {
+	LIB_DATA_TYPE_INFO clinetex = {
+		/*m_szName*/			"客户端Ex",
+		/*m_szEgName*/			"clinetex",
+		/*m_szExplain*/			"基于ETCP的连接网络数据交换的客户方组件，用作向另一方的服务器端组件发送数据。基于连接的数据交换是一种可靠的、允许大数据量的网络数据交互方式。",
+		/*m_nCmdCount*/			sizeof(s_clinet_cmd) / sizeof(s_clinet_cmd[0]),
+		/*m_pnCmdsIndex*/		s_clinet_cmd,
+		/*m_dwState*/			_DT_OS(__OS_WIN) | LDT_WIN_UNIT | LDT_IS_FUNCTION_PROVIDER ,
+		/*m_dwUnitBmpID*/		IDB_CLINET_EX,
+		/*m_nEventCount*/		3,
+		/*m_pEventBegin*/		s_clinet_event,
+		/*m_nPropertyCount*/	sizeof(s_clinet_member) / sizeof(s_clinet_member[0]),
+		/*m_pPropertyBegin*/	s_clinet_member,
+		/*m_pfnGetInterface*/	 libkrnln_GetInterface_clinetex,
+		/*m_nElementCount*/		0,
+		/*m_pElementBegin*/		NULL,
+	};
+}
 
 
 

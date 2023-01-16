@@ -230,23 +230,25 @@ static UNIT_PROPERTY s_server_member[] =
 	/*000*/ {"端口号", "port", "可以是大于 0 小于 32767 的任何自定数值", UD_INT, _PROP_OS(__OS_WIN), NULL},
 	/*000*/ {"默认ip", "ip", "默认为本机ip", UD_TEXT, UW_ONLY_READ | _PROP_OS(__OS_WIN), NULL},
 };
-LIB_DATA_TYPE_INFO severex = {
-	/*m_szName*/			"服务器Ex",
-	/*m_szEgName*/			"serverex",
-	/*m_szExplain*/			"基于ETCP的连接的网络数据交换的服务方组件，用作在指定端口监视来自客户方的数据。",
-	/*m_nCmdCount*/			sizeof(s_server_cmd) / sizeof(s_server_cmd[0]),
-	/*m_pnCmdsIndex*/		s_server_cmd,
-	/*m_dwState*/			_DT_OS(__OS_WIN) | LDT_WIN_UNIT | LDT_IS_FUNCTION_PROVIDER ,
-	/*m_dwUnitBmpID*/		IDB_SERVER_EX,
-	/*m_nEventCount*/		3,
-	/*m_pEventBegin*/		s_sever_event,
-	/*m_nPropertyCount*/	sizeof(s_server_member) / sizeof(s_server_member[0]),
-	/*m_pPropertyBegin*/	s_server_member,
-	/*m_pfnGetInterface*/	 libkrnln_GetInterface_serverex,
-	/*m_nElementCount*/		0,
-	/*m_pElementBegin*/		NULL,
-};
 
+namespace libkrnln {
+	LIB_DATA_TYPE_INFO severex = {
+		/*m_szName*/			"服务器Ex",
+		/*m_szEgName*/			"serverex",
+		/*m_szExplain*/			"基于ETCP的连接的网络数据交换的服务方组件，用作在指定端口监视来自客户方的数据。",
+		/*m_nCmdCount*/			sizeof(s_server_cmd) / sizeof(s_server_cmd[0]),
+		/*m_pnCmdsIndex*/		s_server_cmd,
+		/*m_dwState*/			_DT_OS(__OS_WIN) | LDT_WIN_UNIT | LDT_IS_FUNCTION_PROVIDER ,
+		/*m_dwUnitBmpID*/		IDB_SERVER_EX,
+		/*m_nEventCount*/		3,
+		/*m_pEventBegin*/		s_sever_event,
+		/*m_nPropertyCount*/	sizeof(s_server_member) / sizeof(s_server_member[0]),
+		/*m_pPropertyBegin*/	s_server_member,
+		/*m_pfnGetInterface*/	 libkrnln_GetInterface_serverex,
+		/*m_nElementCount*/		0,
+		/*m_pElementBegin*/		NULL,
+	};
+}
 
 
 

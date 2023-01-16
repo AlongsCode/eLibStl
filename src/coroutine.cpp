@@ -1,9 +1,10 @@
 #include"ElibHelp.h"
 static LIB_DATA_TYPE_ELEMENT* m_hCoprocess;
-
-LIB_DATA_TYPE_INFO hCoprocessD = {
-	  "协程句柄", "hCoprocess", "协程映射的对象，可用协程句柄是否有效来判断", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,m_hCoprocess ,
-};
+namespace libkrnln {
+	LIB_DATA_TYPE_INFO hCoprocessD = {
+		  "协程句柄", "hCoprocess", "协程映射的对象，可用协程句柄是否有效来判断", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,m_hCoprocess ,
+	};
+}
 #define DTP_HCOPROCESS   MAKELONG (5, 0) 
 namespace elibcoroutine {
 	static void* create_coroutine(PFIBER_START_ROUTINE func, void* arg) {

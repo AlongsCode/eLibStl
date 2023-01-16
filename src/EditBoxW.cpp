@@ -733,24 +733,25 @@ static UNIT_PROPERTY s_member[] =
 	/*008*/  {"编辑框背景颜色", "", "设置编辑框的背景颜色", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
 
 };
+namespace libkrnln {
 
-
-LIB_DATA_TYPE_INFO editboxw = {
-	"编辑框W",//中文名称
-	"EditBoxW",//英文名称
-	"unicode编辑框",//说明
-	sizeof(s_editbox_cmd) / sizeof(s_editbox_cmd[0]),//命令数量
-	s_editbox_cmd,//在全局函数中对应的索引
-	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	104,//资源ID
-	sizeof(s_event) / sizeof(s_event[0]),
-	s_event,
-	sizeof(s_member) / sizeof(s_member[0]),//属性数
-	s_member,//属性指针
-	libkrnln_GetInterface_EditBoxW,//组件交互子程序
-	NULL,//成员数量
-	NULL//成员数据数组
-};
+	LIB_DATA_TYPE_INFO editboxw = {
+		"编辑框W",//中文名称
+		"EditBoxW",//英文名称
+		"unicode编辑框",//说明
+		sizeof(s_editbox_cmd) / sizeof(s_editbox_cmd[0]),//命令数量
+		s_editbox_cmd,//在全局函数中对应的索引
+		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
+		104,//资源ID
+		sizeof(s_event) / sizeof(s_event[0]),
+		s_event,
+		sizeof(s_member) / sizeof(s_member[0]),//属性数
+		s_member,//属性指针
+		libkrnln_GetInterface_EditBoxW,//组件交互子程序
+		NULL,//成员数量
+		NULL//成员数据数组
+	};
+}
 
 
 
@@ -784,6 +785,7 @@ EXTERN_C void Fn_EditBoxW_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 
 	}
 }
+
 
 FucInfo EditBoxW_AddText = { {
 		/*ccname*/  ("加入文本"),

@@ -406,23 +406,7 @@ static LIB_DATA_TYPE_ELEMENT s_dt_const_media_play[] =
 	/*003*/ {SDT_INT, 0, "均衡", "AUDIO_CHANNEL_AVERAGE", NULL, LES_HAS_DEFAULT_VALUE, (INT)4},
 };
 
-LIB_DATA_TYPE_INFO media_play_ex =
-{
-	"媒体播放Ex",
-	"MediaPlayEx",
-	"本对象提供对媒体播放的支持，注意：本对象是架构在Windows MCI基础之上的，本对象提供了\"取别名\"方法，您可以通过该方法所得的文本，通过Windows API mciSendString等命令和本对象一起控制MCI播放。如果有媒体文件不能播放，请安装相应解码器。",
-	sizeof(s_dtCmdIndexcommobj_media_play) / sizeof(s_dtCmdIndexcommobj_media_play[0]),
-	s_dtCmdIndexcommobj_media_play,
-	_DT_OS(__OS_WIN),
-	0,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	sizeof(s_dt_const_media_play) / sizeof(s_dt_const_media_play[0]),
-	s_dt_const_media_play
-};
+
 
 
 //构造
@@ -817,3 +801,27 @@ FucInfo Media_SetFrame = { {
 		"跳到指定帧", "SetFrame", "跳到指定帧", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2,g_argumentInfo_emmedia_global_var + 11},
 		Fn_media_SetFrame,
 		"Fn_media_SetFrame" };
+
+
+
+namespace libkrnln {
+
+
+	LIB_DATA_TYPE_INFO media_play_ex =
+	{
+		"媒体播放Ex",
+		"MediaPlayEx",
+		"本对象提供对媒体播放的支持，注意：本对象是架构在Windows MCI基础之上的，本对象提供了\"取别名\"方法，您可以通过该方法所得的文本，通过Windows API mciSendString等命令和本对象一起控制MCI播放。如果有媒体文件不能播放，请安装相应解码器。",
+		sizeof(s_dtCmdIndexcommobj_media_play) / sizeof(s_dtCmdIndexcommobj_media_play[0]),
+		s_dtCmdIndexcommobj_media_play,
+		_DT_OS(__OS_WIN),
+		0,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		sizeof(s_dt_const_media_play) / sizeof(s_dt_const_media_play[0]),
+		s_dt_const_media_play
+	};
+}
