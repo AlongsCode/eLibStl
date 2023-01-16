@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_tofullW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		s = elibkrnln::args_to_wsdata(pArgInf, 0);
+		s = elibstl::args_to_wsdata(pArgInf, 0);
 	std::wstring result;
 	if (!s.empty()) {
 		result.reserve(s.size());//宽字符win下2，linux3为固定，可以提前申请，防止每次拼接时申请内存,string不可以是因为汉字为两字符
@@ -36,7 +36,7 @@ EXTERN_C void Fn_tofullW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 			}
 		}
 	}
-	pRetData->m_pBin = elibkrnln::clone_textw(result);
+	pRetData->m_pBin = elibstl::clone_textw(result);
 }
 FucInfo   to_full_w = { {
 		/*ccname*/  ("到全角W"),

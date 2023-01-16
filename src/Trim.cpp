@@ -16,14 +16,14 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_LTrimW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0));
+		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
 	if (text.empty())
 	{
-		pRetData->m_pBin = elibkrnln::clone_textw(text);
+		pRetData->m_pBin = elibstl::clone_textw(text);
 		return;
 	}
 	text.erase(0, text.find_first_not_of(L" "));
-	pRetData->m_pBin = elibkrnln::clone_textw(text);
+	pRetData->m_pBin = elibstl::clone_textw(text);
 }
 FucInfo ltrim_w = { {
 		/*ccname*/  ("删首空W"),
@@ -45,14 +45,14 @@ FucInfo ltrim_w = { {
 EXTERN_C void Fn_RTrimW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0));
+		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
 	if (text.empty())
 	{
-		pRetData->m_pBin = elibkrnln::clone_textw(text);
+		pRetData->m_pBin = elibstl::clone_textw(text);
 		return;
 	}
 	text.erase(text.find_last_not_of(L" ") + 1);
-	pRetData->m_pBin = elibkrnln::clone_textw(text);
+	pRetData->m_pBin = elibstl::clone_textw(text);
 }
 FucInfo rtrim_w = { {
 		/*ccname*/  ("删尾空W"),
@@ -72,15 +72,15 @@ FucInfo rtrim_w = { {
 EXTERN_C void Fn_trimW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0));
+		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
 	if (text.empty())
 	{
-		pRetData->m_pBin = elibkrnln::clone_textw(text);
+		pRetData->m_pBin = elibstl::clone_textw(text);
 		return;
 	}
 	text.erase(0, text.find_first_not_of(L" "));
 	text.erase(text.find_last_not_of(L" ") + 1);
-	pRetData->m_pBin = elibkrnln::clone_textw(text);
+	pRetData->m_pBin = elibstl::clone_textw(text);
 }
 FucInfo trim_w = { {
 		/*ccname*/  ("删首尾空W"),
@@ -100,7 +100,7 @@ FucInfo trim_w = { {
 EXTERN_C void Fn_TrimAllW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0));
+		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
 	std::wstring mark = L" ";
 	size_t nSize = mark.size();
 	if (text.empty() || text == L"") {
@@ -111,7 +111,7 @@ EXTERN_C void Fn_TrimAllW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 		size_t pos = text.find(mark);    //  尤其是这里
 		if (pos == std::wstring::npos)
 		{
-			pRetData->m_pBin = elibkrnln::clone_textw(text);
+			pRetData->m_pBin = elibstl::clone_textw(text);
 			return;
 		}
 		text.erase(pos, nSize);

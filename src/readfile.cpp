@@ -17,7 +17,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_readfileA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::string_view& filename = elibkrnln::args_to_sdata(pArgInf, 0);
+	const std::string_view& filename = elibstl::args_to_sdata(pArgInf, 0);
 	std::ifstream file(std::string(filename), std::ios::binary);
 	LPBYTE data;
 	// 如果文件打开成功
@@ -31,7 +31,7 @@ EXTERN_C void Fn_readfileA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgIn
 		file.read(reinterpret_cast<char*>(data), length);
 		if (data && length > 0)
 		{
-			pRetData->m_pBin = elibkrnln::clone_bin(data, length);
+			pRetData->m_pBin = elibstl::clone_bin(data, length);
 			delete[]data;
 		}
 
@@ -82,7 +82,7 @@ static ARG_INFO WArgs[] =
 
 EXTERN_C void Fn_readfileW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::wstring_view& filename = elibkrnln::args_to_wsdata(pArgInf, 0);
+	const std::wstring_view& filename = elibstl::args_to_wsdata(pArgInf, 0);
 	std::ifstream file(std::wstring(filename), std::ios::binary);
 	LPBYTE data;
 
@@ -98,7 +98,7 @@ EXTERN_C void Fn_readfileW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgIn
 		file.read(reinterpret_cast<char*>(data), length);
 		if (data && length > 0)
 		{
-			pRetData->m_pBin = elibkrnln::clone_bin(data, length);
+			pRetData->m_pBin = elibstl::clone_bin(data, length);
 			delete[]data;
 		}
 

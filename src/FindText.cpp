@@ -69,10 +69,10 @@ static intptr_t find_text(const std::string_view& text, const std::string_view& 
 EXTERN_C void Fn_InStrA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::string_view
-		text = elibkrnln::args_to_sdata(pArgInf, 0),
-		search = elibkrnln::args_to_sdata(pArgInf, 1);
-	std::optional<INT> pos = elibkrnln::args_to_data<INT>(pArgInf, 2);
-	std::optional<BOOL> ignore_case = elibkrnln::args_to_data<BOOL>(pArgInf, 3);
+		text = elibstl::args_to_sdata(pArgInf, 0),
+		search = elibstl::args_to_sdata(pArgInf, 1);
+	std::optional<INT> pos = elibstl::args_to_data<INT>(pArgInf, 2);
+	std::optional<BOOL> ignore_case = elibstl::args_to_data<BOOL>(pArgInf, 3);
 	pRetData->m_bool = find_text(text, search, pos.has_value() && pos.value() > 0 ? pos.value() : 1, ignore_case.has_value() ? ignore_case.value() : FALSE);
 }
 
@@ -163,10 +163,10 @@ static intptr_t find_text(const std::wstring& text, const std::wstring& search, 
 EXTERN_C void Fn_InStrW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0),
-		search = elibkrnln::args_to_wsdata(pArgInf, 1);
-	std::optional<INT> pos = elibkrnln::args_to_data<INT>(pArgInf, 2);
-	std::optional<BOOL> ignore_case = elibkrnln::args_to_data<BOOL>(pArgInf, 3);
+		text = elibstl::args_to_wsdata(pArgInf, 0),
+		search = elibstl::args_to_wsdata(pArgInf, 1);
+	std::optional<INT> pos = elibstl::args_to_data<INT>(pArgInf, 2);
+	std::optional<BOOL> ignore_case = elibstl::args_to_data<BOOL>(pArgInf, 3);
 	//因为字节集传递宽字符并不是按照win2字节linux3字节固定，而是任意字节数，所以此位置再次使用wstring拷贝格式化一下,但是肯定会影响效率，不过微乎其微.
 	pRetData->m_bool = find_text(std::wstring(text), std::wstring(search), pos.has_value() && pos.value() > 0 ? pos.value() : 1, ignore_case.has_value() ? ignore_case.value() : FALSE);
 }

@@ -16,10 +16,10 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_tolowerW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0);
+		text = elibstl::args_to_wsdata(pArgInf, 0);
 	std::wstring ret(text);
 	std::transform(text.begin(), text.end(), ret.begin(), tolower);
-	pRetData->m_pBin = elibkrnln::clone_textw(ret);
+	pRetData->m_pBin = elibstl::clone_textw(ret);
 }
 FucInfo  to_lower_w = { {
 		/*ccname*/  ("µ½Ð¡Ð´W"),

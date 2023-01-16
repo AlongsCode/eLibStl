@@ -24,7 +24,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_coutW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto direction = elibkrnln::args_to_data<INT>(pArgInf, 0);
+	auto direction = elibstl::args_to_data<INT>(pArgInf, 0);
 	int directionin = 1;
 	if (direction.has_value() && direction.value() == 2)
 	{
@@ -34,7 +34,7 @@ EXTERN_C void Fn_coutW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 	// 输出内容是宽字符，使用 std::wcout 输出
 	for (size_t i = 1; i < nArgCount; i++)
 	{
-		std::wstring_view text = elibkrnln::args_to_wsdata(pArgInf, i);
+		std::wstring_view text = elibstl::args_to_wsdata(pArgInf, i);
 		if (directionin == 2) {
 			std::wcerr << std::wstring(text);
 		}

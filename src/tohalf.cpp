@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_tohalfW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0);
+		text = elibstl::args_to_wsdata(pArgInf, 0);
 	if (text.empty())
 		return;
 
@@ -40,7 +40,7 @@ EXTERN_C void Fn_tohalfW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 			result += *it;
 		}
 	}
-	pRetData->m_pBin = elibkrnln::clone_textw(result);
+	pRetData->m_pBin = elibstl::clone_textw(result);
 }
 FucInfo   to_half_w = { {
 		/*ccname*/  ("µ½°ë½ÇW"),

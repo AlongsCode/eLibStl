@@ -20,7 +20,7 @@ EXTERN_C void Fn_GetCharacterW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pA
 	wchar_t code = *reinterpret_cast<wchar_t*>(&pArgInf->m_short);
 	if (code == 0)
 		return;
-	pRetData->m_pBin = elibkrnln::clone_textw(std::wstring(1, code));
+	pRetData->m_pBin = elibstl::clone_textw(std::wstring(1, code));
 }
 
 FucInfo get_character_w = { {
@@ -64,8 +64,8 @@ static ARG_INFO WArgs2[] =
 
 EXTERN_C void Fn_GetCharCodeW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	std::wstring_view text = elibkrnln::args_to_wsdata(pArgInf, 0);
-	auto idx_ = elibkrnln::args_to_data<INT>(pArgInf, 1);
+	std::wstring_view text = elibstl::args_to_wsdata(pArgInf, 0);
+	auto idx_ = elibstl::args_to_data<INT>(pArgInf, 1);
 	int idx = idx_.has_value() ? idx_.value() : 1;
 	if (text.empty()) {
 		pRetData->m_short = 0;

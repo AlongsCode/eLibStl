@@ -34,7 +34,7 @@ EXTERN_C void Fn_L(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 		pRetData->m_pBin = 0;
 		return;
 	}
-	LPBYTE ret = elibkrnln::clone_textw(resultstring);
+	LPBYTE ret = elibstl::clone_textw(resultstring);
 	delete[] resultstring;
 	pRetData->m_pBin = ret;
 }

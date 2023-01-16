@@ -27,8 +27,8 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_readconsoleW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::string_view
-		category = elibkrnln::args_to_sdata(pArgInf, 1);
-	auto echo = elibkrnln::args_to_data<BOOL>(pArgInf, 0);
+		category = elibstl::args_to_sdata(pArgInf, 1);
+	auto echo = elibstl::args_to_data<BOOL>(pArgInf, 0);
 	std::wcin.imbue(std::locale(category.empty() ? std::wcin.getloc().name() : std::string(category)));
 	std::wstring result;
 	if ((!echo.has_value()) || (echo.has_value() && echo.value())) {
@@ -41,7 +41,7 @@ EXTERN_C void Fn_readconsoleW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 			result.push_back(c);
 		}
 	}
-	pRetData->m_pBin = elibkrnln::clone_textw(result);
+	pRetData->m_pBin = elibstl::clone_textw(result);
 }
 
 FucInfo read_console_w = { {

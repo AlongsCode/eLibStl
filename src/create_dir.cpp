@@ -119,8 +119,8 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_create_dir_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto filename = elibkrnln::args_to_wsdata(pArgInf, 0);
-	auto force = elibkrnln::args_to_data<BOOL>(pArgInf, 1);
+	auto filename = elibstl::args_to_wsdata(pArgInf, 0);
+	auto force = elibstl::args_to_data<BOOL>(pArgInf, 1);
 	pRetData->m_bool = create_dir(std::wstring(filename), force.has_value() ? force.value() : FALSE);
 }
 

@@ -11,17 +11,26 @@ using namespace std;
 //我的媒体播放类
 class eMideaPlay
 {
-	HWND  m_winHwnd = NULL;
-	bool m_isVideo = false;
+	HWND  m_winHwnd;
+	bool m_isVideo;
 	wstring m_MediaAlias;
 public:
-	eMideaPlay() {
-		m_MediaAlias = L"Media" + to_wstring(GetTickCount());
+	eMideaPlay() :
+		m_winHwnd(NULL),
+		m_isVideo(false),
+		m_MediaAlias({})
+	{
+
 	};
 	~eMideaPlay() {
 		Close();
 	}
 	bool Open(const wstring& fileName, HWND hWnd = 0) {
+		if (!m_MediaAlias.empty())
+		{
+			return true;
+		}
+		m_MediaAlias = L"Media" + to_wstring(GetTickCount());
 		int dotIndex = fileName.rfind(L'.') + 1;
 		wstring ileExtension = fileName.substr(dotIndex, 3);
 		for (wchar_t& c : ileExtension) {
@@ -64,6 +73,10 @@ public:
 
 	bool Play(int position = -1)
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		bool error = true;
 		wstring command;
 		wstring internalCommand;
@@ -89,6 +102,10 @@ public:
 	};
 	HWND GetHwnd()
 	{
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		std::wstring lpstrCommand;
 		wchar_t strReturnString[MCI_RETURN_STRING_SIZE] = {};
 		lpstrCommand = L"status " + m_MediaAlias + L" window handle";
@@ -99,6 +116,10 @@ public:
 
 	bool SetHwnd(HWND handle)
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		if (IsWindow(handle))
 		{
 			m_winHwnd = handle;
@@ -111,6 +132,10 @@ public:
 	//获取当前的播放状态，为以下常量值之一：0、#未知状态；1、#播放状态；2、#停止状态；3、#暂停状态。本命令为初级对象成员命令。* | **| *
 	int GetMode()
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		wchar_t strReturnString[MCI_RETURN_STRING_SIZE] = {};
 		mciSendStringW((L"status " + m_MediaAlias + L" mode").c_str(), strReturnString, MCI_RETURN_STRING_SIZE, 0);
 		if (wcscmp(strReturnString, L"playing") == 0) {
@@ -128,6 +153,10 @@ public:
 	};
 	//单位毫秒
 	size_t GetLength() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		wstring Command;
 		wchar_t strReturnString[MCI_RETURN_STRING_SIZE] = {};
 		size_t Ret = 0;
@@ -150,6 +179,10 @@ public:
 		return  Ret;
 	};
 	long long GetPosition() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		std::wstring command;
 		wchar_t strReturnString[MCI_RETURN_STRING_SIZE] = {};
 		long long Ret = 0;
@@ -165,6 +198,10 @@ public:
 		return  Ret;
 	};
 	size_t GetFrameRate() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		std::wstring command;
 		wchar_t strReturnString[MCI_RETURN_STRING_SIZE] = {};
 		size_t Ret = 0;
@@ -178,6 +215,10 @@ public:
 		return Ret;
 	};
 	size_t GetFrames() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		std::wstring command = L"set " + m_MediaAlias + L" time format frames";
 		mciSendStringW(command.c_str(), nullptr, 0, nullptr);
 		command = L"status " + m_MediaAlias + L" length";
@@ -193,15 +234,26 @@ public:
 		}
 	};
 	bool Pause() {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		std::wstring command = L"pause " + m_MediaAlias;
 		return mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
 	};
 	bool Continue() {
-
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		std::wstring command = L"resume " + m_MediaAlias;
 		return mciSendStringW(command.c_str(), nullptr, 0, nullptr) == 0;
 	};
 	bool Stop() {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		std::wstring command = L"stop " + m_MediaAlias;
 		if (mciSendStringW(command.c_str(), nullptr, 0, nullptr) != 0) {
 			return false;
@@ -213,9 +265,17 @@ public:
 		return m_MediaAlias;
 	};
 	size_t GetTotalSec() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		return GetLength() / 1000;
 	};
 	bool Close() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		std::wstring command = L"close " + m_MediaAlias;
 		if (mciSendStringW(command.c_str(), 0, 0, 0))
 		{
@@ -228,6 +288,10 @@ public:
 	};
 	//音量为0-100
 	bool SetVolume(short leftChannelVolume = -1, short rightChannelVolume = -1) {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		MCIERROR leftChannelError = 0;
 		MCIERROR rightChannelError = 0;
 		bool result = false;
@@ -248,6 +312,10 @@ public:
 	};
 	//音量为0-100
 	bool GetVolume(short* leftChannelVolume, short* rightChannelVolume) {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		wchar_t strReturnString[33] = {};
 		std::wstring command;
 		bool leftChannelSuccess = false;
@@ -277,6 +345,10 @@ public:
 	};
 	//返回常量中以"声道_"开头的常量值。失败返回0
 	int GetChannel() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		int result = 0;
 		WCHAR channelName[MCI_RETURN_STRING_SIZE] = {};
 		std::wstring channelNameLower;
@@ -305,6 +377,10 @@ public:
 		return  Ret;
 	}
 	bool SetChannel(int type) {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		wstring AUDIO;
 		if (type == AUDIO_CHANNEL_LEFT) {
 			AUDIO = L"left";
@@ -325,6 +401,10 @@ public:
 
 	bool SetFrame(size_t framePos, bool playImmediately = false)
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		MCIERROR result = 0;
 		wstring command = L"set " + m_MediaAlias + L" time format frames";
 		result = mciSendStringW(command.c_str(), nullptr, 0, nullptr);
@@ -347,6 +427,10 @@ public:
 	//播放位置必须小于媒体长度，否则可能会造成命令失败。单位：毫秒
 	bool SetPos(size_t playPosition, bool playImmediately = false)
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		MCIERROR result = 0;
 		result = mciSendStringW((L"set " + m_MediaAlias + L" time format milliseconds").c_str(), nullptr, 0, nullptr);
 		if (result != 0)
@@ -361,6 +445,10 @@ public:
 	//并非所有媒体都支持速度调整,1到2000之间的整数。原始速度为1000。2000为原始速度的2倍，500为原始速度的一半。警告:过慢的速度将导致媒体看起来已经停止了
 	bool SetPlaySpeed(int speed)
 	{
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		if (speed < 1 || speed>2000) {
 			return false;
 		}
@@ -368,12 +456,20 @@ public:
 	}
 
 	int GetPlaySpeed() {
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		wchar_t speedStr[MCI_RETURN_STRING_SIZE] = {};
 		mciSendStringW((L"status " + m_MediaAlias + L" speed").c_str(), speedStr, MCI_RETURN_STRING_SIZE, 0);
 		return _wtoi(speedStr);
 	};
 	//执行成功返回0，否则返回非零的整数。说明：执行后的实际音量可能最多±2的误差，这里设置的是系统的音量值
 	bool SetMediaVolume(int  mediaVolume) {
+		if (m_MediaAlias.empty())
+		{
+			return false;
+		}
 		if (mediaVolume < 0 || mediaVolume>100) {
 			return false;
 		}
@@ -382,7 +478,10 @@ public:
 	};
 
 	int GetMediaVolume() {
-
+		if (m_MediaAlias.empty())
+		{
+			return 0;
+		}
 		wchar_t volume[MCI_RETURN_STRING_SIZE];
 		bool result = mciSendStringW((L"status " + m_MediaAlias + L" volume").c_str(), volume, MCI_RETURN_STRING_SIZE, 0);
 		if (result == 0) {
@@ -412,7 +511,7 @@ static LIB_DATA_TYPE_ELEMENT s_dt_const_media_play[] =
 //构造
 EXTERN_C void Fn_media_structure(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	self = new eMideaPlay;
 }
 //构造
@@ -434,7 +533,7 @@ FucInfo Media_structure = { {
 //复制
 EXTERN_C void fn_media_copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	const auto rht = static_cast<eMideaPlay*>(*pArgInf[1].m_ppCompoundData);
 	*self = *rht;
 }
@@ -456,7 +555,7 @@ FucInfo Media_copy = { {
 //析构
 EXTERN_C void fn_media_destruct(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	if (self)
 	{
 		self->~eMideaPlay();
@@ -514,9 +613,9 @@ static ARG_INFO g_argumentInfo_emmedia_global_var[] =
 };
 EXTERN_C void Fn_media_open(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto hWnd = elibkrnln::args_to_data<INT>(pArgInf, 2);
-	pRetData->m_bool = self->Open(wstring(elibkrnln::args_to_wsdata(pArgInf, 1)), hWnd.has_value() ? IsWindow(reinterpret_cast<HWND>(hWnd.value())) ? reinterpret_cast<HWND>(hWnd.value()) : GetActiveWindow() : GetActiveWindow());
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto hWnd = elibstl::args_to_data<INT>(pArgInf, 2);
+	pRetData->m_bool = self->Open(wstring(elibstl::args_to_wsdata(pArgInf, 1)), hWnd.has_value() ? IsWindow(reinterpret_cast<HWND>(hWnd.value())) ? reinterpret_cast<HWND>(hWnd.value()) : GetActiveWindow() : GetActiveWindow());
 }
 
 FucInfo Media_open = { {
@@ -536,7 +635,7 @@ FucInfo Media_open = { {
 
 EXTERN_C void Fn_media_IsVideo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->IsVideo();
 }
 FucInfo Media_IsVideo = { {
@@ -546,7 +645,7 @@ FucInfo Media_IsVideo = { {
 
 EXTERN_C void Fn_media_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = reinterpret_cast<int>(self->GetHwnd());
 }
 FucInfo Media_GetHwnd = { {
@@ -556,7 +655,7 @@ FucInfo Media_GetHwnd = { {
 
 EXTERN_C void Fn_media_SetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->SetHwnd(reinterpret_cast<HWND>(pArgInf[1].m_int));
 }
 FucInfo Media_SetHwnd = { {
@@ -565,7 +664,7 @@ FucInfo Media_SetHwnd = { {
 		"Fn_media_SetHwnd" };
 EXTERN_C void Fn_media_GetMode(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetMode();
 }
 FucInfo Media_GetMode = { {
@@ -575,7 +674,7 @@ FucInfo Media_GetMode = { {
 
 EXTERN_C void Fn_media_GetLength(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetLength();
 }
 FucInfo Media_GetLength = { {
@@ -585,7 +684,7 @@ FucInfo Media_GetLength = { {
 
 EXTERN_C void Fn_media_GetPosition(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int64 = self->GetPosition();
 }
 FucInfo Media_GetPosition = { {
@@ -595,7 +694,7 @@ FucInfo Media_GetPosition = { {
 
 EXTERN_C void Fn_media_GetTotalSec(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetTotalSec();
 }
 FucInfo Media_GetTotalSec = { {
@@ -605,7 +704,7 @@ FucInfo Media_GetTotalSec = { {
 
 EXTERN_C void Fn_media_GetFrameRate(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetFrameRate();
 }
 FucInfo Media_GetFrameRate = { {
@@ -615,8 +714,8 @@ FucInfo Media_GetFrameRate = { {
 
 EXTERN_C void Fn_media_Play(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto pos = elibkrnln::args_to_data<INT>(pArgInf, 1);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto pos = elibstl::args_to_data<INT>(pArgInf, 1);
 	pRetData->m_int = self->Play(pos.has_value() ? pos.value() : -1);
 }
 FucInfo Media_Play = { {
@@ -627,7 +726,7 @@ FucInfo Media_Play = { {
 
 EXTERN_C void Fn_media_Pause(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->Pause();
 }
 FucInfo Media_Pause = { {
@@ -638,7 +737,7 @@ FucInfo Media_Pause = { {
 
 EXTERN_C void Fn_media_Stop(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->Stop();
 }
 FucInfo Media_Stop = { {
@@ -648,8 +747,8 @@ FucInfo Media_Stop = { {
 
 EXTERN_C void Fn_media_GetMCIAlias(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	pRetData->m_pBin = elibkrnln::clone_textw(self->GetMCIAlias());
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	pRetData->m_pBin = elibstl::clone_textw(self->GetMCIAlias());
 }
 FucInfo Media_GetMCIAlias = { {
 		"取别名", "GetMCIAlias", "获取当前对象使用的MCI别名", -1, _CMD_OS(__OS_WIN), SDT_BIN, 0, LVL_SIMPLE, 0, 0, 0, 0},
@@ -659,7 +758,7 @@ FucInfo Media_GetMCIAlias = { {
 
 EXTERN_C void Fn_media_Close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->Close();
 }
 FucInfo Media_Close = { {
@@ -670,9 +769,9 @@ FucInfo Media_Close = { {
 
 EXTERN_C void Fn_media_SetVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto left = elibkrnln::args_to_data<SHORT>(pArgInf, 1);
-	auto right = elibkrnln::args_to_data<SHORT>(pArgInf, 2);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto left = elibstl::args_to_data<SHORT>(pArgInf, 1);
+	auto right = elibstl::args_to_data<SHORT>(pArgInf, 2);
 	pRetData->m_bool = self->SetVolume(left.has_value() ? left.value() : -1, right.has_value() ? right.value() : -1);
 }
 FucInfo Media_SetVolume = { {
@@ -683,9 +782,9 @@ FucInfo Media_SetVolume = { {
 
 EXTERN_C void Fn_media_GetVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto left = elibkrnln::args_to_data<SHORT*>(pArgInf, 1);
-	auto right = elibkrnln::args_to_data<SHORT*>(pArgInf, 2);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto left = elibstl::args_to_data<SHORT*>(pArgInf, 1);
+	auto right = elibstl::args_to_data<SHORT*>(pArgInf, 2);
 	pRetData->m_bool = self->GetVolume(left.has_value() ? left.value() : 0, right.has_value() ? right.value() : 0);
 }
 FucInfo Media_GetVolume = { {
@@ -696,7 +795,7 @@ FucInfo Media_GetVolume = { {
 
 EXTERN_C void Fn_media_continue(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->Continue();
 }
 FucInfo Media_continue = { {
@@ -707,7 +806,7 @@ FucInfo Media_continue = { {
 
 EXTERN_C void Fn_media_GetChannel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->GetChannel();
 }
 FucInfo Media_GetChannel = { {
@@ -718,7 +817,7 @@ FucInfo Media_GetChannel = { {
 
 EXTERN_C void Fn_media_SetChannel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->SetChannel(pArgInf[1].m_int);
 }
 FucInfo Media_SetChannel = { {
@@ -729,7 +828,7 @@ FucInfo Media_SetChannel = { {
 
 EXTERN_C void Fn_media_GetFrames(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetFrames();
 }
 FucInfo Media_GetFrames = { {
@@ -740,7 +839,7 @@ FucInfo Media_GetFrames = { {
 
 EXTERN_C void Fn_media_GetMediaVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetMediaVolume();
 }
 FucInfo Media_GetMediaVolume = { {
@@ -751,7 +850,7 @@ FucInfo Media_GetMediaVolume = { {
 
 EXTERN_C void Fn_media_SetMediaVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->SetMediaVolume(pArgInf[1].m_int);
 }
 FucInfo Media_SetMediaVolume = { {
@@ -761,7 +860,7 @@ FucInfo Media_SetMediaVolume = { {
 
 EXTERN_C void Fn_media_SetPlaySpeed(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_bool = self->SetPlaySpeed(pArgInf[1].m_int);
 }
 FucInfo Media_SetPlaySpeed = { {
@@ -772,7 +871,7 @@ FucInfo Media_SetPlaySpeed = { {
 
 EXTERN_C void Fn_media_GetPlaySpeed(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
 	pRetData->m_int = self->GetPlaySpeed();
 }
 FucInfo Media_GetPlaySpeed = { {
@@ -782,8 +881,8 @@ FucInfo Media_GetPlaySpeed = { {
 
 EXTERN_C void Fn_media_SetPos(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto is_now = elibkrnln::args_to_data<SHORT*>(pArgInf, 2);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto is_now = elibstl::args_to_data<SHORT*>(pArgInf, 2);
 	pRetData->m_bool = self->SetPos(pArgInf[1].m_int, is_now.has_value() ? is_now.value() : false);
 }
 FucInfo Media_SetPos = { {
@@ -793,8 +892,8 @@ FucInfo Media_SetPos = { {
 
 EXTERN_C void Fn_media_SetFrame(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibkrnln::args_to_obj<eMideaPlay>(pArgInf);
-	auto is_now = elibkrnln::args_to_data<SHORT*>(pArgInf, 2);
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	auto is_now = elibstl::args_to_data<SHORT*>(pArgInf, 2);
 	pRetData->m_bool = self->SetFrame(pArgInf[1].m_int, is_now.has_value() ? is_now.value() : false);
 }
 FucInfo Media_SetFrame = { {
@@ -804,7 +903,7 @@ FucInfo Media_SetFrame = { {
 
 
 
-namespace libkrnln {
+namespace elibstl {
 
 
 	LIB_DATA_TYPE_INFO media_play_ex =

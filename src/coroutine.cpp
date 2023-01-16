@@ -1,6 +1,6 @@
 #include"ElibHelp.h"
 static LIB_DATA_TYPE_ELEMENT* m_hCoprocess;
-namespace libkrnln {
+namespace elibstl {
 	LIB_DATA_TYPE_INFO hCoprocessD = {
 		  "协程句柄", "hCoprocess", "协程映射的对象，可用协程句柄是否有效来判断", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,m_hCoprocess ,
 	};
@@ -60,7 +60,7 @@ static ARG_INFO createArgs[] =
 EXTERN_C void Fn_create_coroutine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	PFIBER_START_ROUTINE    Fun = reinterpret_cast<PFIBER_START_ROUTINE>(pArgInf[0].m_dwSubCodeAdr);
-	auto arg = elibkrnln::args_to_data<INT>(pArgInf, 1);
+	auto arg = elibstl::args_to_data<INT>(pArgInf, 1);
 	void* hCoprocess = elibcoroutine::create_coroutine(Fun, reinterpret_cast<void*>((arg.has_value() ? arg.value() : 0)));
 	if (hCoprocess)
 	{

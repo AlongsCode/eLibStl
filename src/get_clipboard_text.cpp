@@ -28,7 +28,7 @@ EXTERN_C void Fn_GetClipBoardTextW(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 	std::wstring text(pClipboardData);
 	GlobalUnlock(hClipboardData);
 	CloseClipboard();
-	pRetData->m_pBin = elibkrnln::clone_textw(text);
+	pRetData->m_pBin = elibstl::clone_textw(text);
 }
 
 FucInfo get_clip_board_text_w = { {

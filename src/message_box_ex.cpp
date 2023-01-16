@@ -66,12 +66,12 @@ EXTERN_C void Fn_TaskDialogW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 {
 	const PWSTR icon[] = { nullptr,TD_ERROR_ICON,TD_INFORMATION_ICON,TD_SHIELD_ICON,TD_WARNING_ICON , MAKEINTRESOURCEW(-8),MAKEINTRESOURCEW(-7) };
 	const std::wstring_view&
-		lpContent = elibkrnln::args_to_wsdata(pArgInf, 0),
-		lpTitle = elibkrnln::args_to_wsdata(pArgInf, 1),
-		lpWindowTitle = elibkrnln::args_to_wsdata(pArgInf, 3);
-	auto hwndParent = elibkrnln::args_to_data<INT>(pArgInf, 4),
-		standardButtons = elibkrnln::args_to_data<INT>(pArgInf, 2),
-		inicon = elibkrnln::args_to_data<INT>(pArgInf, 5);
+		lpContent = elibstl::args_to_wsdata(pArgInf, 0),
+		lpTitle = elibstl::args_to_wsdata(pArgInf, 1),
+		lpWindowTitle = elibstl::args_to_wsdata(pArgInf, 3);
+	auto hwndParent = elibstl::args_to_data<INT>(pArgInf, 4),
+		standardButtons = elibstl::args_to_data<INT>(pArgInf, 2),
+		inicon = elibstl::args_to_data<INT>(pArgInf, 5);
 	PWSTR boxicon = MAKEINTRESOURCEW(-8);
 	if (inicon.has_value() && inicon.value() > 0 && inicon.value() <= 6)
 	{

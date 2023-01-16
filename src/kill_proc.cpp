@@ -171,11 +171,11 @@ EXTERN_C void Fn_kill_process_w(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 	BOOL ret = FALSE;
 	if (pArgInf->m_dtDataType == SDT_BIN)
 	{
-		ret = kill_process_w(std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0)));
+		ret = kill_process_w(std::wstring(elibstl::args_to_wsdata(pArgInf, 0)));
 	}
 	else if (pArgInf->m_dtDataType == SDT_TEXT)
 	{
-		ret = kill_process_w(std::string(elibkrnln::args_to_sdata(pArgInf, 0)));
+		ret = kill_process_w(std::string(elibstl::args_to_sdata(pArgInf, 0)));
 	}
 	else if (pArgInf->m_dtDataType == SDT_INT)
 	{

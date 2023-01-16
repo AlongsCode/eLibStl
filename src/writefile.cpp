@@ -28,7 +28,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_writefileA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::string_view& filename = elibkrnln::args_to_sdata(pArgInf, 0);
+	const std::string_view& filename = elibstl::args_to_sdata(pArgInf, 0);
 	//std::vector<unsigned char> data = ebin2v(pArgInf->m_pBin);
 	if (filename.empty() || pArgInf[1].m_pBin == nullptr || *reinterpret_cast<DWORD*>(pArgInf[1].m_pBin + sizeof(DWORD)) == 0) {
 		pRetData->m_bool = false;
@@ -97,7 +97,7 @@ static ARG_INFO WArgs[] =
 
 EXTERN_C void Fn_writefileW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::wstring_view& filename = elibkrnln::args_to_wsdata(pArgInf, 0);
+	const std::wstring_view& filename = elibstl::args_to_wsdata(pArgInf, 0);
 	//std::vector<unsigned char> data = ebin2v(pArgInf->m_pBin);
 	if (filename.empty() || pArgInf[1].m_pBin == nullptr || *reinterpret_cast<DWORD*>(pArgInf[1].m_pBin + sizeof(DWORD)) == 0) {
 		pRetData->m_bool = false;

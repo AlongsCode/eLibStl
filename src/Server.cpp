@@ -62,16 +62,16 @@ static void Sever_RegWndClass()
 static void server_callback_incline(eServer* pServer) {
 
 	EVENT_NOTIFY2 event(pServer->m_dwWinFormID, pServer->m_dwUnitID, 1);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 static void server_callback_get_data(eServer* pServer) {
 
 	EVENT_NOTIFY2 event(pServer->m_dwWinFormID, pServer->m_dwUnitID, 0);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 static void server_callback_outcline(eServer* pServer) {
 	EVENT_NOTIFY2 event(pServer->m_dwWinFormID, pServer->m_dwUnitID, 2);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 HUNIT WINAPI Create_SeverWindow(
 	LPBYTE pAllPropertyData,            //   指向本窗口单元的已有属性数据, 由本窗口单元的ITF_GET_PROPERTY_DATA接口产生, 如果没有数据则为NULL
@@ -127,12 +127,12 @@ HUNIT WINAPI Create_SeverWindow(
 	}
 	server->m_dwUnitID = dwUnitID;
 	server->m_dwWinFormID = dwWinFormID;
-	return elibkrnln::make_cwnd(hWnd);
+	return elibstl::make_cwnd(hWnd);
 }
 BOOL WINAPI NotifyPropertyChanged_ServerApp(HUNIT hUnit, INT nPropertyIndex,
 	PUNIT_PROPERTY_VALUE pValue, LPTSTR* ppszTipText)    //目前尚未使用
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	switch (nPropertyIndex)
 	{
@@ -149,7 +149,7 @@ BOOL WINAPI NotifyPropertyChanged_ServerApp(HUNIT hUnit, INT nPropertyIndex,
 }
 HGLOBAL WINAPI GetAllPropertyData_ServerApp(HUNIT hUnit)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(u_short));
 	if (hGlobal)
@@ -166,7 +166,7 @@ HGLOBAL WINAPI GetAllPropertyData_ServerApp(HUNIT hUnit)
 BOOL WINAPI GetPropertyData_ServerApp(HUNIT hUnit, INT nPropertyIndex,
 	PUNIT_PROPERTY_VALUE pValue)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	switch (nPropertyIndex)
 	{
@@ -184,7 +184,7 @@ BOOL WINAPI GetPropertyData_ServerApp(HUNIT hUnit, INT nPropertyIndex,
 	}
 	return FALSE;
 }
-extern "C" PFN_INTERFACE WINAPI libkrnln_GetInterface_serverex(INT nInterfaceNO)
+extern "C" PFN_INTERFACE WINAPI libstl_GetInterface_serverex(INT nInterfaceNO)
 {
 
 	return nInterfaceNO == ITF_CREATE_UNIT ? (PFN_INTERFACE)Create_SeverWindow :
@@ -231,7 +231,7 @@ static UNIT_PROPERTY s_server_member[] =
 	/*000*/ {"默认ip", "ip", "默认为本机ip", UD_TEXT, UW_ONLY_READ | _PROP_OS(__OS_WIN), NULL},
 };
 
-namespace libkrnln {
+namespace elibstl {
 	LIB_DATA_TYPE_INFO severex = {
 		/*m_szName*/			"服务器Ex",
 		/*m_szEgName*/			"serverex",
@@ -244,7 +244,7 @@ namespace libkrnln {
 		/*m_pEventBegin*/		s_sever_event,
 		/*m_nPropertyCount*/	sizeof(s_server_member) / sizeof(s_server_member[0]),
 		/*m_pPropertyBegin*/	s_server_member,
-		/*m_pfnGetInterface*/	 libkrnln_GetInterface_serverex,
+		/*m_pfnGetInterface*/	 libstl_GetInterface_serverex,
 		/*m_nElementCount*/		0,
 		/*m_pElementBegin*/		NULL,
 	};
@@ -257,7 +257,7 @@ namespace libkrnln {
 #pragma region servercmd
 EXTERN_C void Fn_Server_start(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	pRetData->m_bool = pServer->start();
 }
@@ -278,7 +278,7 @@ FucInfo Server_start = { {
 	} ,Fn_Server_start ,"Fn_Server_start" };
 EXTERN_C void Fn_Server_close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	pRetData->m_bool = pServer->close();
 }
@@ -300,7 +300,7 @@ FucInfo Server_close = { {
 
 EXTERN_C void Fn_Server_is_open(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	pRetData->m_bool = pServer->is_create();
 }
@@ -324,10 +324,10 @@ FucInfo Server_is_open = { {
 
 EXTERN_C void Fn_Server_GetData(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	vector<unsigned char> tempdata = pServer->get_data();
-	pRetData->m_pBin = elibkrnln::clone_bin(tempdata.data(), tempdata.size());
+	pRetData->m_pBin = elibstl::clone_bin(tempdata.data(), tempdata.size());
 }
 
 FucInfo Server_GetData = { {
@@ -348,7 +348,7 @@ FucInfo Server_GetData = { {
 
 EXTERN_C void Fn_Server_GetCline(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	pRetData->m_int = pServer->get_clinet();
 }
@@ -392,9 +392,9 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_Server_CloseClient(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	auto bnow = elibkrnln::args_to_data<BOOL>(pArgInf, 2);
+	auto bnow = elibstl::args_to_data<BOOL>(pArgInf, 2);
 	pRetData->m_bool = pServer->breakoff(pArgInf[1].m_int, bnow.has_value() ? bnow.value() : FALSE);
 }
 
@@ -446,9 +446,9 @@ static ARG_INFO Args2[] =
 
 EXTERN_C void Fn_Server_Send(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	auto bnow = elibkrnln::args_to_data<BOOL>(pArgInf, 3);
+	auto bnow = elibstl::args_to_data<BOOL>(pArgInf, 3);
 	pRetData->m_bool = pServer->send(pArgInf[1].m_int, ebin2v(pArgInf[2].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
 }
 

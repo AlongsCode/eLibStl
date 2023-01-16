@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_SetConsoleTitleW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::wstring_view& text = elibkrnln::args_to_wsdata(pArgInf, 0);
+	const std::wstring_view& text = elibstl::args_to_wsdata(pArgInf, 0);
 	pRetData->m_bool = SetConsoleTitleW(std::wstring(text).c_str());
 }
 

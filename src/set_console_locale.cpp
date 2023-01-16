@@ -25,8 +25,8 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_setconsolelocale(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto type = elibkrnln::args_to_data<INT>(pArgInf, 0);
-	auto loacl = elibkrnln::args_to_sdata(pArgInf, 1);
+	auto type = elibstl::args_to_data<INT>(pArgInf, 0);
+	auto loacl = elibstl::args_to_sdata(pArgInf, 1);
 	std::string local_in = loacl.empty() ? "chs" : std::string(loacl);
 	if (type.has_value() && type.value() >= 1 && type.value() <= 4)
 	{

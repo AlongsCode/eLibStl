@@ -40,8 +40,8 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_normalization_path_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto path = elibkrnln::args_to_wsdata(pArgInf, 0);
-	pRetData->m_pBin = elibkrnln::clone_textw(normalization_path(wstring(path)));
+	auto path = elibstl::args_to_wsdata(pArgInf, 0);
+	pRetData->m_pBin = elibstl::clone_textw(normalization_path(wstring(path)));
 }
 
 FucInfo normalization_path_W = { {

@@ -40,7 +40,7 @@ static LPBYTE GetSpecialFolderPath(DWORD Type) {
 			path[lenth] = L'\\';
 			path[lenth + 1] = L'\0';
 		}
-		Ret = elibkrnln::clone_textw(path);
+		Ret = elibstl::clone_textw(path);
 	}
 	return Ret;
 };

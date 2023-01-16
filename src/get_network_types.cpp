@@ -19,11 +19,11 @@ static std::vector<LPBYTE> GetNetworkTypes()
 					for (DWORD i = 0; i < cEntries; i++) {
 						if (lpnrLocal[i].lpRemoteName)
 						{
-							result.push_back(elibkrnln::clone_textw(lpnrLocal[i].lpRemoteName));
+							result.push_back(elibstl::clone_textw(lpnrLocal[i].lpRemoteName));
 						}
 						else if (lpnrLocal[i].lpProvider)
 						{
-							result.push_back(elibkrnln::clone_textw(lpnrLocal[i].lpProvider));
+							result.push_back(elibstl::clone_textw(lpnrLocal[i].lpProvider));
 						}
 					}
 				}
@@ -44,7 +44,7 @@ static std::vector<LPBYTE> GetNetworkTypes()
 EXTERN_C void Fn_GetNetworkTypesW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::vector<LPBYTE> ret = GetNetworkTypes();
-	pRetData->m_pAryData = elibkrnln::create_array<LPBYTE>(ret.data(), ret.size());
+	pRetData->m_pAryData = elibstl::create_array<LPBYTE>(ret.data(), ret.size());
 
 }
 

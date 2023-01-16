@@ -18,7 +18,7 @@ EXTERN_C void Fn_current_path_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 {
 	//标准库不给用，恶心
 	//pRetData->m_pBin = elibkrnln::clone_textw(std::filesystem::current_path().wstring());
-	pRetData->m_pBin = elibkrnln::clone_textw(get_current_path());
+	pRetData->m_pBin = elibstl::clone_textw(get_current_path());
 
 }
 

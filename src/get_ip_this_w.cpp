@@ -37,7 +37,7 @@ static std::wstring get_ip_this_w() {
 }
 EXTERN_C void Fn_get_ip_this_w(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	pRetData->m_pBin = elibkrnln::clone_textw(get_ip_this_w());
+	pRetData->m_pBin = elibstl::clone_textw(get_ip_this_w());
 }
 
 FucInfo get_ip_this = { {

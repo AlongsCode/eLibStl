@@ -16,26 +16,26 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_getconsolelocale(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto type = elibkrnln::args_to_data<INT>(pArgInf, 0);
+	auto type = elibstl::args_to_data<INT>(pArgInf, 0);
 	if (type.has_value() && type.value() >= 1 && type.value() <= 4)
 	{
 		switch (type.value())
 		{
 		case 2:
-			pRetData->m_pText = elibkrnln::clone_text(std::wcin.getloc().name());
+			pRetData->m_pText = elibstl::clone_text(std::wcin.getloc().name());
 			return;
 		case 3:
-			pRetData->m_pText = elibkrnln::clone_text(std::cout.getloc().name());
+			pRetData->m_pText = elibstl::clone_text(std::cout.getloc().name());
 			return;
 		case 4:
-			pRetData->m_pText = elibkrnln::clone_text(std::cin.getloc().name());
+			pRetData->m_pText = elibstl::clone_text(std::cin.getloc().name());
 			return;
 		default:
-			pRetData->m_pText = elibkrnln::clone_text(std::wcout.getloc().name());
+			pRetData->m_pText = elibstl::clone_text(std::wcout.getloc().name());
 			return;
 		}
 	}
-	pRetData->m_pText = elibkrnln::clone_text(std::wcout.getloc().name());
+	pRetData->m_pText = elibstl::clone_text(std::wcout.getloc().name());
 }
 
 FucInfo get_console_locale = { {

@@ -55,7 +55,7 @@ std::vector<LPBYTE> get_cmdline()
 			while (*ps != L'\0' && *ps != L'\"')
 				ps++;
 
-			saryArgs.push_back(elibkrnln::clone_textw(std::wstring(psCommand, ps - psCommand)));
+			saryArgs.push_back(elibstl::clone_textw(std::wstring(psCommand, ps - psCommand)));
 
 			psCommand = ps;
 			if (*psCommand != L'\0')
@@ -67,7 +67,7 @@ std::vector<LPBYTE> get_cmdline()
 			while (*ps != L'\0' && !iswspace(*ps))
 				ps++;
 
-			saryArgs.push_back(elibkrnln::clone_textw(std::wstring(psCommand, ps - psCommand)));
+			saryArgs.push_back(elibstl::clone_textw(std::wstring(psCommand, ps - psCommand)));
 			psCommand = ps;
 		}
 		else
@@ -85,7 +85,7 @@ std::vector<LPBYTE> get_cmdline()
 EXTERN_C void Fn_get_cmdline_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::vector<LPBYTE> ret = get_cmdline();
-	pRetData->m_pAryData = elibkrnln::create_array<LPBYTE>(ret.data(), ret.size());
+	pRetData->m_pAryData = elibstl::create_array<LPBYTE>(ret.data(), ret.size());
 }
 
 FucInfo get_cmdline_W = { {

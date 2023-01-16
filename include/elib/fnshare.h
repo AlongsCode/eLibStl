@@ -8,7 +8,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<optional>
 #include<vector>
 #include<string>
-namespace elibkrnln
+namespace elibstl
 {
 
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);

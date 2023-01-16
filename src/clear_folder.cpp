@@ -53,7 +53,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_clear_folder_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto filename = elibkrnln::args_to_wsdata(pArgInf, 0);
+	auto filename = elibstl::args_to_wsdata(pArgInf, 0);
 	pRetData->m_bool = ClearFolder(std::wstring(filename));
 }
 

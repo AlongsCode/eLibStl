@@ -62,9 +62,9 @@ return exec_path.filename().wstring();*/
 }
 EXTERN_C void Fn_prevent_duplicate_execution_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto in_bs = elibkrnln::args_to_wsdata(pArgInf, 0);
+	auto in_bs = elibstl::args_to_wsdata(pArgInf, 0);
 	std::wstring bs = in_bs.empty() ? get_exe_name() : std::wstring(in_bs);
-	auto sub = elibkrnln::args_to_data<DWORD>(pArgInf, 1);
+	auto sub = elibstl::args_to_data<DWORD>(pArgInf, 1);
 	int(WINAPI * subProgram)();
 	subProgram = (int(WINAPI*)())(sub.has_value() ? sub.value() : 0);
 	prevent_duplicate_execution(bs, subProgram);

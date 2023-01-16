@@ -120,9 +120,9 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_get_complete_path_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 
-	auto filename = elibkrnln::args_to_wsdata(pArgInf, 0);
-	auto path = elibkrnln::args_to_wsdata(pArgInf, 1);
-	pRetData->m_pBin = elibkrnln::clone_textw(get_complete_path(wstring(filename), wstring(path)));
+	auto filename = elibstl::args_to_wsdata(pArgInf, 0);
+	auto path = elibstl::args_to_wsdata(pArgInf, 1);
+	pRetData->m_pBin = elibstl::clone_textw(get_complete_path(wstring(filename), wstring(path)));
 }
 
 FucInfo get_complete_path_W = { {

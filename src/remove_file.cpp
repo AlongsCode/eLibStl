@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_remove_file_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto filename = elibkrnln::args_to_wsdata(pArgInf, 0);
+	auto filename = elibstl::args_to_wsdata(pArgInf, 0);
 	pRetData->m_bool = DeleteFileW(std::wstring(filename).c_str());
 }
 

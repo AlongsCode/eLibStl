@@ -27,8 +27,8 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_set_env_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto env_name = elibkrnln::args_to_wsdata(pArgInf, 0);
-	auto env_val = elibkrnln::args_to_wsdata(pArgInf, 1);
+	auto env_name = elibstl::args_to_wsdata(pArgInf, 0);
+	auto env_val = elibstl::args_to_wsdata(pArgInf, 1);
 	pRetData->m_bool = SetEnvironmentVariableW(wstring(env_name).c_str(), wstring(env_val).c_str()) == TRUE;
 }
 

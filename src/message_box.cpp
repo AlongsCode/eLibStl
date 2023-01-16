@@ -56,11 +56,11 @@ EXTERN_C int WINAPI MessageBoxTimeoutW(IN HWND hWnd, IN LPCWSTR lpText, IN LPCWS
 
 EXTERN_C void Fn_MessageBoxW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	const std::wstring_view& text = elibkrnln::args_to_wsdata(pArgInf, 0);
-	auto button = elibkrnln::args_to_data<INT>(pArgInf, 1);
-	const std::wstring_view& title = elibkrnln::args_to_wsdata(pArgInf, 2);
-	auto hpwnd = elibkrnln::args_to_data<INT>(pArgInf, 3);
-	auto time = elibkrnln::args_to_data<INT>(pArgInf, 4);
+	const std::wstring_view& text = elibstl::args_to_wsdata(pArgInf, 0);
+	auto button = elibstl::args_to_data<INT>(pArgInf, 1);
+	const std::wstring_view& title = elibstl::args_to_wsdata(pArgInf, 2);
+	auto hpwnd = elibstl::args_to_data<INT>(pArgInf, 3);
+	auto time = elibstl::args_to_data<INT>(pArgInf, 4);
 	const HWND hOldFocusWnd = ::GetFocus();
 	INT nResult;
 	if (time.has_value() && time.value() >= 0) {

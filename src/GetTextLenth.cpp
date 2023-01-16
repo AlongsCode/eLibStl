@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_lenA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::string_view
-		text = elibkrnln::args_to_sdata(pArgInf, 0);
+		text = elibstl::args_to_sdata(pArgInf, 0);
 	pRetData->m_int = text.length();
 }
 FucInfo strlen_a = { {
@@ -50,7 +50,7 @@ static ARG_INFO WArgs[] =
 EXTERN_C void Fn_lenW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0);
+		text = elibstl::args_to_wsdata(pArgInf, 0);
 	pRetData->m_int = text.length();
 }
 FucInfo wcslen_w = { {

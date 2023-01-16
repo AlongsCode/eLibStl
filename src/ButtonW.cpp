@@ -152,7 +152,7 @@ public:
 	}
 	void OnClick() {
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
-		elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 	}
 
 	//内部使用的
@@ -305,7 +305,7 @@ public:
 		if (pData != NULL && nSize != 0)
 		{
 			SetWindowLongPtrW(m_hWnd, GWL_STYLE, GetWindowLongPtrW(m_hWnd, GWL_STYLE) | BS_BITMAP);
-			m_hBitmap = elibkrnln::make_hbit(pData, nSize);
+			m_hBitmap = elibstl::make_hbit(pData, nSize);
 			if (m_hBitmap)
 			{
 				SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)m_hBitmap);
@@ -446,14 +446,14 @@ static HUNIT WINAPI Create(
 )
 {
 	eButtonEx* Button = new eButtonEx(pAllPropertyData, nAllPropertyDataSize, dwStyle, x, y, cx, cy, hParentWnd, uID, blInDesignMode, dwWinFormID, dwUnitID);
-	return elibkrnln::make_cwnd(Button->GetHwnd());
+	return elibstl::make_cwnd(Button->GetHwnd());
 }
 
 
 static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
 	LPTSTR* ppszTipText) {  //目前尚未使用
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 
 	switch (nPropertyIndex)
@@ -497,7 +497,7 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 
 static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 
 	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	//获取基础数据
@@ -539,7 +539,7 @@ static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 
 static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	if (!Button)
 	{
@@ -600,7 +600,7 @@ static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE
 static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	BOOL* pblModified, LPVOID pResultExtraData)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	if (nPropertyIndex == 5)
 	{
@@ -610,7 +610,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	return *pblModified;
 }
 
-EXTERN_C PFN_INTERFACE WINAPI libkrnln_GetInterface_ButtonW(INT nInterfaceNO)
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
@@ -674,7 +674,7 @@ static UNIT_PROPERTY s_member[] =
 };
 
 
-namespace libkrnln {
+namespace elibstl {
 
 
 	LIB_DATA_TYPE_INFO buttonw = {
@@ -689,7 +689,7 @@ namespace libkrnln {
 		s_event,
 		sizeof(s_member) / sizeof(s_member[0]),//属性数
 		s_member,//属性指针
-		libkrnln_GetInterface_ButtonW,//组件交互子程序
+		libstl_GetInterface_ButtonW,//组件交互子程序
 		NULL,//成员数量
 		NULL//成员数据数组
 	};

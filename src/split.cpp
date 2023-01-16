@@ -6,20 +6,20 @@ static  std::vector<LPBYTE> split_text(const std::wstring& text, const  std::wst
 	std::vector<LPBYTE> ret;
 	if (str.empty() || text == L"")
 	{
-		ret.push_back(elibkrnln::clone_textw(text));
+		ret.push_back(elibstl::clone_textw(text));
 		return ret;
 	}
 	size_t start = 0, index = text.find_first_of(str, 0);
 	while (index != text.npos)
 	{
 		if (start != index)
-			ret.push_back(elibkrnln::clone_textw(text.substr(start, index - start)));
+			ret.push_back(elibstl::clone_textw(text.substr(start, index - start)));
 		start = index + 1;
 		index = text.find_first_of(str, start);
 	}
 	if (text.substr(start) != L"")
 	{
-		ret.push_back(elibkrnln::clone_textw(text.substr(start)));
+		ret.push_back(elibstl::clone_textw(text.substr(start)));
 	}
 	if (count != -1 && count <= ret.size())
 	{
@@ -63,15 +63,15 @@ static ARG_INFO WArgs[] =
 EXTERN_C void Fn_splitW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0),
-		search = elibkrnln::args_to_wsdata(pArgInf, 1);
-	std::optional<INT> count = elibkrnln::args_to_data<INT>(pArgInf, 2);
+		text = elibstl::args_to_wsdata(pArgInf, 0),
+		search = elibstl::args_to_wsdata(pArgInf, 1);
+	std::optional<INT> count = elibstl::args_to_data<INT>(pArgInf, 2);
 	std::wstring s = L",";
 	if (!search.empty()) {
 		s = std::wstring(search);
 	}
 	std::vector<LPBYTE> ret = split_text(std::wstring(text), s, count.has_value() && count.value() > 0 ? count.value() : -1);
-	pRetData->m_pAryData = elibkrnln::create_array<LPBYTE>(ret.data(), ret.size());
+	pRetData->m_pAryData = elibstl::create_array<LPBYTE>(ret.data(), ret.size());
 
 }
 

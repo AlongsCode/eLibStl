@@ -7,12 +7,12 @@
 //我怕vc2017linker链接不上,静态库用宏屏蔽掉吧，也不影响动态库的编译
 #include<algorithm>
 #include<iterator>
-EXTERN_C INT WINAPI LibKrnln_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);
+EXTERN_C INT WINAPI LibStl_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);
 #pragma region 暴露接口
 extern FucInfo
 ALL_E_LIB_CMD;
 //防止符号污染
-namespace libkrnln {
+namespace elibstl {
 	extern LIB_DATA_TYPE_INFO
 		ALL_E_LIB_CLASS
 		;
@@ -43,9 +43,9 @@ namespace libkrnln {
 		/*m_nRqSysKrnlLibMajorVer*/ 3, // 所需要的系统核心支持库的主版本号
 		/*m_nRqSysKrnlLibMinorVer*/ 0, // 所需要的系统核心支持库的次版本号
 
-		/*m_szName*/                "LibKrnln", // 库名, 不能为NULL或空
+		/*m_szName*/                "标准模板库", // 库名, 不能为NULL或空
 		/*m_nLanguage*/             __GBK_LANG_VER, // 库所支持的语言
-		/*m_szExplain*/             "", // 库详细解释
+		/*m_szExplain*/             "易语言核心库拓展", // 库详细解释
 		/*m_dwState*/               _LIB_OS(OS_ALL), // _LIB_OS() | LBS_ 开头常量, 如果是插件,必须包含 LBS_IDE_PLUGIN
 
 		/*m_szAuthor*/              "阿龙", // 作者
@@ -80,7 +80,7 @@ namespace libkrnln {
 		/*m_pfnRunAddInFn*/         NULL,
 		NULL, // 功能详细介绍(仅限一行60字符), 最后由两个空串结束
 
-		/*m_pfnNotify*/             LibKrnln_ProcessNotifyLib, // 不能为NULL,和易语言通讯的子程序
+		/*m_pfnNotify*/             LibStl_ProcessNotifyLib, // 不能为NULL,和易语言通讯的子程序
 
 		/*m_pfnSuperTemplate*/      NULL, // 模板 可为NULL
 	  //  有关SuperTemplate的说明, 两个字符串说明一个SuperTemplate。
@@ -97,7 +97,7 @@ namespace libkrnln {
 
 extern "C" _declspec(dllexport)  PLIB_INFO  GetNewInf()
 {
-	using namespace libkrnln;
+	using namespace elibstl;
 	//没初始化的话先初始化
 	if (s_LibInfo.m_nCmdCount != g_all_cmd.size())
 	{
@@ -135,13 +135,13 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 }
 
 #endif 
-EXTERN_C INT WINAPI LibKrnln_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+EXTERN_C INT WINAPI LibStl_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2)
 {
 
 #ifndef __E_STATIC_LIB
 
 	if (nMsg == NL_GET_CMD_FUNC_NAMES) {
-		using namespace libkrnln;
+		using namespace elibstl;
 		if (g_cmd_name.empty())
 		{
 			std::transform(g_all_cmd.begin(), g_all_cmd.end(), std::back_inserter(g_cmd_name), [](const auto& elem) { return elem.FucName; });
@@ -151,13 +151,13 @@ EXTERN_C INT WINAPI LibKrnln_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dw
 
 	else if (nMsg == NL_GET_NOTIFY_LIB_FUNC_NAME)
 
-		return (INT)"LibKrnln_ProcessNotifyLib";
+		return (INT)"LibStl_ProcessNotifyLib";
 
 	else if (nMsg == NL_GET_DEPENDENT_LIBS) return (INT)NULL;
 
 
 #endif
 
-	return elibkrnln::ProcessNotifyLib(nMsg, dwParam1, dwParam2);
+	return elibstl::ProcessNotifyLib(nMsg, dwParam1, dwParam2);
 
 }

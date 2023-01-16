@@ -172,7 +172,7 @@ public:
 	}
 	void OnChange() {
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
-		elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 	}
 	BOOL SetPos(int width, int height) {//容器被改变时请调用此函数
 		return SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER | SWP_NOMOVE);
@@ -480,13 +480,13 @@ static HUNIT WINAPI Create(
 {
 	eEditBoxEx* EditBox = new eEditBoxEx(pAllPropertyData, nAllPropertyDataSize, dwStyle, x, y, cx, cy, hParentWnd, uID, dwWinFormID, dwUnitID);
 
-	return elibkrnln::make_cwnd(EditBox->GetHwnd());
+	return elibstl::make_cwnd(EditBox->GetHwnd());
 }
 
 static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
 	LPTSTR* ppszTipText) {  //目前尚未使用
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 
 	switch (nPropertyIndex)
@@ -549,7 +549,7 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 
 static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	CEDITDATA temp;
 	temp.m_font = EditBox->GetFont(&temp.m_fontdata);
@@ -581,7 +581,7 @@ static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 
 static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	if (!EditBox)
 	{
@@ -657,7 +657,7 @@ static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE
 static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	BOOL* pblModified, LPVOID pResultExtraData)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_hunit(hUnit);
+	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
 	if (nPropertyIndex == 1)
 	{
@@ -667,7 +667,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	return *pblModified;
 }
 
-EXTERN_C PFN_INTERFACE WINAPI libkrnln_GetInterface_EditBoxW(INT nInterfaceNO)
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditBoxW(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
@@ -733,7 +733,7 @@ static UNIT_PROPERTY s_member[] =
 	/*008*/  {"编辑框背景颜色", "", "设置编辑框的背景颜色", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
 
 };
-namespace libkrnln {
+namespace elibstl {
 
 	LIB_DATA_TYPE_INFO editboxw = {
 		"编辑框W",//中文名称
@@ -747,7 +747,7 @@ namespace libkrnln {
 		s_event,
 		sizeof(s_member) / sizeof(s_member[0]),//属性数
 		s_member,//属性指针
-		libkrnln_GetInterface_EditBoxW,//组件交互子程序
+		libstl_GetInterface_EditBoxW,//组件交互子程序
 		NULL,//成员数量
 		NULL//成员数据数组
 	};
@@ -775,12 +775,12 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_EditBoxW_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 
 	for (INT i = 1; i < nArgCount; i++)
 	{
-		auto bnow = elibkrnln::args_to_wsdata(pArgInf, i);
+		auto bnow = elibstl::args_to_wsdata(pArgInf, i);
 		Button->AddText(std::wstring(bnow));
 
 	}

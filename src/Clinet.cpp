@@ -62,19 +62,19 @@ static void Clinet_RegWndClass()
 static void clinet_callback_con(eClinet* pClinet) {
 
 	EVENT_NOTIFY2 event(pClinet->m_dwWinFormID, pClinet->m_dwUnitID, 1);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 //数据到达
 static void clinet_callback_get_data(eClinet* pClinet) {
 
 	EVENT_NOTIFY2 event(pClinet->m_dwWinFormID, pClinet->m_dwUnitID, 0);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 //断开连接
 static void clinet_callback_out(eClinet* pClinet) {
 	pClinet->backoff();
 	EVENT_NOTIFY2 event(pClinet->m_dwWinFormID, pClinet->m_dwUnitID, 2);
-	elibkrnln::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 }
 HUNIT WINAPI Create_clinetWindow(
 	LPBYTE pAllPropertyData,            //   指向本窗口单元的已有属性数据, 由本窗口单元的ITF_GET_PROPERTY_DATA接口产生, 如果没有数据则为NULL
@@ -122,7 +122,7 @@ HUNIT WINAPI Create_clinetWindow(
 	SetWindowLongPtrW(hWnd, GWL_USERDATA, (LONG_PTR)pClinet);
 	pClinet->m_dwUnitID = dwUnitID;
 	pClinet->m_dwWinFormID = dwWinFormID;
-	return elibkrnln::make_cwnd(hWnd);
+	return elibstl::make_cwnd(hWnd);
 }
 BOOL WINAPI NotifyPropertyChanged_clinetApp(HUNIT hUnit, INT nPropertyIndex,
 	PUNIT_PROPERTY_VALUE pValue, LPTSTR* ppszTipText)    //目前尚未使用
@@ -139,7 +139,7 @@ BOOL WINAPI GetPropertyData_clinetApp(HUNIT hUnit, INT nPropertyIndex,
 {
 	return FALSE;
 }
-extern "C" PFN_INTERFACE WINAPI libkrnln_GetInterface_clinetex(INT nInterfaceNO)
+extern "C" PFN_INTERFACE WINAPI libstl_GetInterface_clinetex(INT nInterfaceNO)
 {
 
 	return nInterfaceNO == ITF_CREATE_UNIT ? (PFN_INTERFACE)Create_clinetWindow :
@@ -181,7 +181,7 @@ static UNIT_PROPERTY s_clinet_member[] =
 	/*007*/ {"鼠标指针", "MousePointer", NULL, UD_CURSOR, _PROP_OS(OS_ALL), NULL},
 };
 
-namespace libkrnln {
+namespace elibstl {
 	LIB_DATA_TYPE_INFO clinetex = {
 		/*m_szName*/			"客户端Ex",
 		/*m_szEgName*/			"clinetex",
@@ -194,7 +194,7 @@ namespace libkrnln {
 		/*m_pEventBegin*/		s_clinet_event,
 		/*m_nPropertyCount*/	sizeof(s_clinet_member) / sizeof(s_clinet_member[0]),
 		/*m_pPropertyBegin*/	s_clinet_member,
-		/*m_pfnGetInterface*/	 libkrnln_GetInterface_clinetex,
+		/*m_pfnGetInterface*/	 libstl_GetInterface_clinetex,
 		/*m_nElementCount*/		0,
 		/*m_pElementBegin*/		NULL,
 	};
@@ -229,9 +229,9 @@ static ARG_INFO connectArgs[] =
 };
 EXTERN_C void Fn_Clinet_connect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	pRetData->m_bool = pClinet->connect(string(elibkrnln::args_to_sdata(pArgInf, 1)), pArgInf[2].m_short);
+	pRetData->m_bool = pClinet->connect(string(elibstl::args_to_sdata(pArgInf, 1)), pArgInf[2].m_short);
 }
 
 FucInfo Clinet_connect = { {
@@ -250,7 +250,7 @@ FucInfo Clinet_connect = { {
 	} ,Fn_Clinet_connect ,"Fn_Clinet_connect" };
 EXTERN_C void Fn_Clinet_close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	pRetData->m_bool = pClinet->backoff();
 }
@@ -274,10 +274,10 @@ FucInfo Clinet_close = { {
 
 EXTERN_C void Fn_Clinet_GetData(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	vector<unsigned char> tempdata = pClinet->get_data();
-	pRetData->m_pBin = elibkrnln::clone_bin(tempdata.data(), tempdata.size());
+	pRetData->m_pBin = elibstl::clone_bin(tempdata.data(), tempdata.size());
 }
 
 FucInfo Clinet_GetData = { {
@@ -320,9 +320,9 @@ static ARG_INFO Args[] =
 
 EXTERN_C void Fn_Clinet_Send(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	HWND hWnd = elibkrnln::get_hwnd_from_arg(pArgInf);
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	auto bnow = elibkrnln::args_to_data<BOOL>(pArgInf, 2);
+	auto bnow = elibstl::args_to_data<BOOL>(pArgInf, 2);
 
 	pRetData->m_bool = pClinet->send(ebin2v(pArgInf[1].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
 }

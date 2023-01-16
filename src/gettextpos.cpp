@@ -25,8 +25,8 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_leftW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0);
-	pRetData->m_pBin = elibkrnln::clone_textw(std::wstring(text.substr(0, pArgInf[1].m_int > 0 ? pArgInf[1].m_int : 1)));
+		text = elibstl::args_to_wsdata(pArgInf, 0);
+	pRetData->m_pBin = elibstl::clone_textw(std::wstring(text.substr(0, pArgInf[1].m_int > 0 ? pArgInf[1].m_int : 1)));
 }
 FucInfo left_text_t = { {
 		/*ccname*/  ("取文本左边W"),
@@ -48,17 +48,17 @@ FucInfo left_text_t = { {
 EXTERN_C void Fn_rightW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring_view
-		text = elibkrnln::args_to_wsdata(pArgInf, 0);
+		text = elibstl::args_to_wsdata(pArgInf, 0);
 	if (text.empty()) {
 		return;
 	}
 	int num = pArgInf[1].m_int > 0 ? pArgInf[1].m_int : 1;
 	if (num >= text.size()) {
 
-		pRetData->m_pBin = elibkrnln::clone_textw(std::wstring(text));
+		pRetData->m_pBin = elibstl::clone_textw(std::wstring(text));
 		return;
 	}
-	pRetData->m_pBin = elibkrnln::clone_textw(std::wstring(text.substr(text.length() - num)));
+	pRetData->m_pBin = elibstl::clone_textw(std::wstring(text.substr(text.length() - num)));
 }
 FucInfo right_text_w = { {
 		/*ccname*/  ("取文本右边W"),
@@ -110,9 +110,9 @@ static ARG_INFO wArgs[] =
 EXTERN_C void Fn_midW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibkrnln::args_to_wsdata(pArgInf, 0));
+		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
 
-	pRetData->m_pBin = elibkrnln::clone_textw(std::wstring((text.substr((pArgInf[1].m_int > 0 ? pArgInf[1].m_int : 1) - 1, pArgInf[2].m_int > 0 ? pArgInf[2].m_int : 1))));
+	pRetData->m_pBin = elibstl::clone_textw(std::wstring((text.substr((pArgInf[1].m_int > 0 ? pArgInf[1].m_int : 1) - 1, pArgInf[2].m_int > 0 ? pArgInf[2].m_int : 1))));
 }
 FucInfo mid_text_w = { {
 		/*ccname*/  ("取文本中间W"),

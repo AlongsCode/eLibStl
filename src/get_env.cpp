@@ -30,8 +30,8 @@ wstring get_env(const wstring& env_name) {
 }
 EXTERN_C void Fn_get_env_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto env_name = elibkrnln::args_to_wsdata(pArgInf, 0);
-	pRetData->m_pBin = elibkrnln::clone_textw(get_env(wstring(env_name)));
+	auto env_name = elibstl::args_to_wsdata(pArgInf, 0);
+	pRetData->m_pBin = elibstl::clone_textw(get_env(wstring(env_name)));
 }
 
 FucInfo get_env_W = { {

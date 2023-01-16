@@ -31,7 +31,7 @@ return exec_path.filename().wstring();*/
 
 EXTERN_C void Fn_get_exe_name_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	pRetData->m_pBin = elibkrnln::clone_textw(get_exe_name());
+	pRetData->m_pBin = elibstl::clone_textw(get_exe_name());
 }
 
 FucInfo get_exe_name_W = { {

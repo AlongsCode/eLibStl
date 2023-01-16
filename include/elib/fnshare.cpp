@@ -4,7 +4,7 @@
 
 
 
-namespace elibkrnln
+namespace elibstl
 {
 	static PFN_NOTIFY_SYS s_pfnNotifySys = 0;
 	static PFN_NOTIFY_SYS s_pfnuserNotifySys = 0;    // ”…∫Ø ˝ SetUserSysNotify() …Ë÷√, 
