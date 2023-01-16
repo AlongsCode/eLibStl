@@ -6,7 +6,7 @@
 #define SERVEREX L"my_e_sever_ex"
 static INT s_server_cmd[] = { 39 , 40 , 41 , 42 , 43 , 44 ,45 };
 
-HBITMAP g_hbmp_server = NULL;
+static HBITMAP g_hbmp_server = NULL;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

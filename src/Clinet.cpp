@@ -6,7 +6,7 @@
 #define CLINETEX L"my_e_clinet_ex"
 static INT s_clinet_cmd[] = { 46,47,48,49 };
 
-HBITMAP g_hbmp_clinet = NULL;
+static HBITMAP g_hbmp_clinet = NULL;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
