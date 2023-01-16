@@ -105,7 +105,8 @@ Media_SetMediaVolume,/*置媒体音量*/\
 Media_SetPlaySpeed,/*置播放速度*/\
 Media_GetPlaySpeed,/*取播放速度*/\
 Media_SetPos,/*置位置*/\
-Media_SetFrame/*跳到指定帧*/\
+Media_SetFrame,/*跳到指定帧*/\
+Media_IsOpen/*是否已打开*/\
 
 #pragma endregion
 

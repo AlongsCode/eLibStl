@@ -69,7 +69,9 @@ public:
 		}
 		return true;
 	}
-
+	bool IsOpen() {
+		return !m_MediaAlias.empty();
+	}
 
 	bool Play(int position = -1)
 	{
@@ -496,7 +498,7 @@ public:
 
 
 };
-static INT s_dtCmdIndexcommobj_media_play[] = { 77,78,79,80,81,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105 };
+static INT s_dtCmdIndexcommobj_media_play[] = { 77,78,79,80,81,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106 };
 static LIB_DATA_TYPE_ELEMENT s_dt_const_media_play[] =
 {
 	/*000*/ {SDT_INT, 0, "左声道", "AUDIO_CHANNEL_LEFT", NULL, LES_HAS_DEFAULT_VALUE, (INT)1},
@@ -578,7 +580,7 @@ FucInfo Media_destruct = { {
 		/*arg lp*/  NULL,
 	} ,fn_media_destruct ,"fn_media_destruct" };
 
-static ARG_INFO g_argumentInfo_emmedia_global_var[] =
+static ARG_INFO m_media_arg[] =
 {
 	{
 		/*name*/    "文件名",
@@ -621,7 +623,7 @@ EXTERN_C void Fn_media_open(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 FucInfo Media_open = { {
 		/*ccname*/  ("打开"),
 		/*egname*/  ("open"),
-		/*explain*/ ("打开指定媒体文件。成功返回真，失败返回假。"),
+		/*explain*/ ("打开指定媒体文件。成功返回真，失败返回假。如果已经打开则直接返回真，想要重新打开文件,请关闭以后再次打开新文件。"),
 		/*category*/-1,
 		/*state*/   NULL,
 		/*ret*/     SDT_BOOL,
@@ -630,7 +632,7 @@ FucInfo Media_open = { {
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*ArgCount*/2,
-		/*arg lp*/   &g_argumentInfo_emmedia_global_var[0],
+		/*arg lp*/   &m_media_arg[0],
 	} ,Fn_media_open ,"Fn_media_open" };
 
 EXTERN_C void Fn_media_IsVideo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -659,7 +661,7 @@ EXTERN_C void Fn_media_SetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pA
 	pRetData->m_bool = self->SetHwnd(reinterpret_cast<HWND>(pArgInf[1].m_int));
 }
 FucInfo Media_SetHwnd = { {
-		"置句柄", "SetHwnd", "设置当前视频播放窗口的Windows 窗口句柄，成功返回真，失败返回假", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, g_argumentInfo_emmedia_global_var + 2} ,
+		"置句柄", "SetHwnd", "设置当前视频播放窗口的Windows 窗口句柄，成功返回真，失败返回假", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, m_media_arg + 2} ,
 		Fn_media_SetHwnd ,
 		"Fn_media_SetHwnd" };
 EXTERN_C void Fn_media_GetMode(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -719,7 +721,7 @@ EXTERN_C void Fn_media_Play(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 	pRetData->m_int = self->Play(pos.has_value() ? pos.value() : -1);
 }
 FucInfo Media_Play = { {
-		"播放", "Play", "从指定位置开始播放。成功返回真，失败返回假,播放窗口为打开或者置句柄的指定的窗口", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, g_argumentInfo_emmedia_global_var + 3}
+		"播放", "Play", "从指定位置开始播放。成功返回真，失败返回假,播放窗口为打开或者置句柄的指定的窗口", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, m_media_arg + 3}
 		,Fn_media_Play,
 		"Fn_media_Play" };
 
@@ -775,7 +777,7 @@ EXTERN_C void Fn_media_SetVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	pRetData->m_bool = self->SetVolume(left.has_value() ? left.value() : -1, right.has_value() ? right.value() : -1);
 }
 FucInfo Media_SetVolume = { {
-		"置音量", "SetVolume", " 设置当前播放媒体的音量，不影响系统音量。左右声道中只要有一个设置失败，就会返回假。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2, g_argumentInfo_emmedia_global_var + 4},
+		"置音量", "SetVolume", " 设置当前播放媒体的音量，不影响系统音量。左右声道中只要有一个设置失败，就会返回假。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2, m_media_arg + 4},
 		Fn_media_SetVolume,
 		"Fn_media_SetVolume" };
 
@@ -788,7 +790,7 @@ EXTERN_C void Fn_media_GetVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	pRetData->m_bool = self->GetVolume(left.has_value() ? left.value() : 0, right.has_value() ? right.value() : 0);
 }
 FucInfo Media_GetVolume = { {
-		"取音量", "GetVolume", "获取当前播放音量（非系统音量）。左右声道中只要有一个获取失败，就会返回假。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2, g_argumentInfo_emmedia_global_var + 6},
+		"取音量", "GetVolume", "获取当前播放音量（非系统音量）。左右声道中只要有一个获取失败，就会返回假。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2, m_media_arg + 6},
 		Fn_media_GetVolume,
 		"Fn_media_GetVolume" };
 
@@ -821,7 +823,7 @@ EXTERN_C void Fn_media_SetChannel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 	pRetData->m_bool = self->SetChannel(pArgInf[1].m_int);
 }
 FucInfo Media_SetChannel = { {
-		"置媒体声道", "SetChannel", "设置媒体声道类型", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, g_argumentInfo_emmedia_global_var + 8},
+		"置媒体声道", "SetChannel", "设置媒体声道类型", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1, m_media_arg + 8},
 		Fn_media_SetChannel,
 		"Fn_media_SetChannel" };
 
@@ -854,7 +856,7 @@ EXTERN_C void Fn_media_SetMediaVolume(PMDATA_INF pRetData, INT nArgCount, PMDATA
 	pRetData->m_bool = self->SetMediaVolume(pArgInf[1].m_int);
 }
 FucInfo Media_SetMediaVolume = { {
-		"置媒体音量", "SetMediaVolume", "执行后的实际音量可能最多±2的误差，这里设置的是系统的音量值", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1,g_argumentInfo_emmedia_global_var + 9},
+		"置媒体音量", "SetMediaVolume", "执行后的实际音量可能最多±2的误差，这里设置的是系统的音量值", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1,m_media_arg + 9},
 		Fn_media_SetMediaVolume,
 		"Fn_media_SetMediaVolume" };
 
@@ -864,7 +866,7 @@ EXTERN_C void Fn_media_SetPlaySpeed(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	pRetData->m_bool = self->SetPlaySpeed(pArgInf[1].m_int);
 }
 FucInfo Media_SetPlaySpeed = { {
-		"置播放速度", "SetPlaySpeed", "设置当前媒体的播放速度。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1,g_argumentInfo_emmedia_global_var + 10},
+		"置播放速度", "SetPlaySpeed", "设置当前媒体的播放速度。", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 1,m_media_arg + 10},
 		Fn_media_SetPlaySpeed,
 		"Fn_media_SetPlaySpeed" };
 
@@ -886,7 +888,7 @@ EXTERN_C void Fn_media_SetPos(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 	pRetData->m_bool = self->SetPos(pArgInf[1].m_int, is_now.has_value() ? is_now.value() : false);
 }
 FucInfo Media_SetPos = { {
-		"置位置", "SetPos", "设置媒体当前播放的位置", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2,g_argumentInfo_emmedia_global_var + 11},
+		"置位置", "SetPos", "设置媒体当前播放的位置", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2,m_media_arg + 11},
 		Fn_media_SetPos,
 		"Fn_media_SetPos" };
 
@@ -897,10 +899,19 @@ EXTERN_C void Fn_media_SetFrame(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 	pRetData->m_bool = self->SetFrame(pArgInf[1].m_int, is_now.has_value() ? is_now.value() : false);
 }
 FucInfo Media_SetFrame = { {
-		"跳到指定帧", "SetFrame", "跳到指定帧", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2,g_argumentInfo_emmedia_global_var + 11},
+		"跳到指定帧", "SetFrame", "跳到指定帧", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 2,m_media_arg + 11},
 		Fn_media_SetFrame,
 		"Fn_media_SetFrame" };
 
+EXTERN_C void Fn_media_IsOpen(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
+	pRetData->m_bool = self->IsOpen();
+}
+FucInfo Media_IsOpen = { {
+		"是否已打开", "IsOpen", "判断是否已打开", -1, _CMD_OS(__OS_WIN), SDT_BOOL, 0, LVL_SIMPLE, 0, 0, 0,0},
+		Fn_media_IsOpen,
+		"Fn_media_IsOpen" };
 
 
 namespace elibstl {

@@ -29,8 +29,8 @@ namespace elibcoroutine {
 	//		(*fn)();
 	//	};
 	//	void* coroutine_fiber = CreateFiber(0, (LPFIBER_START_ROUTINE)pfn_fiber, new std::function<void()>(fn));
-	//	if (coroutine_fiber == NULL) {
-	//		return NULL;
+	//	if (coroutine_fiber == nullptr) {
+	//		return nullptr;
 	//	}
 	//	return coroutine_fiber;
 	//}
