@@ -92,7 +92,6 @@
   <ItemGroup>
     <ClInclude Include="include\DefCmd.h" />
     <ClInclude Include="include\EcontrolHelp.h" />
-    <ClInclude Include="include\EKrnln.h" />
     <ClInclude Include="include\ElibHelp.h" />
     <ClInclude Include="include\elib\fnshare.h" />
     <ClInclude Include="include\elib\krnllib.h" />
