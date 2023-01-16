@@ -119,9 +119,6 @@
     <ClCompile Include="src\Elibdef.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="include\global.cpp">
-      <Filter>头文件\elib</Filter>
-    </ClCompile>
     <ClCompile Include="include\ElibHelp.cpp">
       <Filter>头文件\elibhelp</Filter>
     </ClCompile>

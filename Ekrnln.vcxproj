@@ -29,7 +29,6 @@
   <ItemGroup>
     <ClCompile Include="include\ElibHelp.cpp" />
     <ClCompile Include="include\elib\fnshare.cpp" />
-    <ClCompile Include="include\global.cpp" />
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
     <ClCompile Include="src\atomic_addition.cpp" />
