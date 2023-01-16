@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{ddafb396-46f6-42fd-a443-e6458ff6b5d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\elib">
+      <UniqueIdentifier>{a5d1e6eb-079f-43b1-a0e7-512f300882a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\elibhelp">
+      <UniqueIdentifier>{70413c80-5d29-4e20-a7af-556a88f9a4be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{bf31333c-c787-4289-a57b-dde1ed63262c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现">
+      <UniqueIdentifier>{3bad6066-3422-483d-9727-87fd990d8b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令">
+      <UniqueIdentifier>{8f2dbe8d-ee54-4550-84f8-9221cc9745e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件">
+      <UniqueIdentifier>{54b7c66e-7d17-4c5a-b2e6-bb22684cbbc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyLib">
+      <UniqueIdentifier>{61180433-4d60-45ee-85f8-9275737be88a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\资源文件">
+      <UniqueIdentifier>{e0569e42-c333-45f0-8d00-716272d0f0f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\文本">
+      <UniqueIdentifier>{7346b8ae-2f96-497c-9091-904eec66c5f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\算数">
+      <UniqueIdentifier>{9d2d7a63-bb5a-44d4-a21d-07d8f4066277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\操作系统">
+      <UniqueIdentifier>{97c9b339-1e2f-498b-88d7-f408db18e043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\磁盘操作">
+      <UniqueIdentifier>{bdc67ce8-c5bf-4335-856d-4a672ad3040c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\控制台">
+      <UniqueIdentifier>{c70f6d19-6a4c-4f2a-a7da-e884240250c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\系统处理">
+      <UniqueIdentifier>{041676d8-13e2-481c-bffc-fe39e6e9e64c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\网络通信">
+      <UniqueIdentifier>{ab8f8305-f823-4c69-ae16-afbe6b132824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型">
+      <UniqueIdentifier>{bdaf7984-9a55-4fb0-bb04-f27ba1f3bfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\资源文件\图标">
+      <UniqueIdentifier>{bce4d947-ebdb-49c5-a788-f24e40725d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\环境存取">
+      <UniqueIdentifier>{fd0cd181-2eb9-461f-b0de-0a64d87f95f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\进程线程携程">
+      <UniqueIdentifier>{d3c4af63-94b6-4209-a5b4-37c92b7ec720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\tcp">
+      <UniqueIdentifier>{3172fe02-efab-4d60-860c-c9b5bce4d232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\tcp\etcp">
+      <UniqueIdentifier>{809df93a-658c-48b5-9b08-6ec10b5f65a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\媒体播放">
+      <UniqueIdentifier>{4691a7aa-bce6-4ec3-b1fa-27debf983305}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\EKrnln.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\fnshare.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\krnllib.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\lang.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\lib2.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\mtypes.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\PublicIDEFunctions.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\elib\untshare.h">
+      <Filter>头文件\elib</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcontrolHelp.h">
+      <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ElibHelp.h">
+      <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\ETCP\etcpapi.h">
+      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\elib\fnshare.cpp">
+      <Filter>头文件\elib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Elibdef.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="include\global.cpp">
+      <Filter>头文件\elib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ElibHelp.cpp">
+      <Filter>头文件\elibhelp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EditBoxW.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ButtonW.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EcontrolHelp.cpp">
+      <Filter>头文件\elibhelp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FindText.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GetTextLenth.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UnicodeBase.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rndEx.cpp">
+      <Filter>源文件\实现\全局命令\算数</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rtoa.cpp">
+      <Filter>源文件\实现\全局命令\算数</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prime.cpp">
+      <Filter>源文件\实现\全局命令\算数</Filter>
+    </ClCompile>
+    <ClCompile Include="src\message_box.cpp">
+      <Filter>源文件\实现\全局命令\操作系统</Filter>
+    </ClCompile>
+    <ClCompile Include="src\readfile.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\writefile.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\message_box_ex.cpp">
+      <Filter>源文件\实现\全局命令\操作系统</Filter>
+    </ClCompile>
+    <ClCompile Include="src\toupper.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tolower.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tofull.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tohalf.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InStrRev.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\split.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wchar_code.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Trim.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gettextpos.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\open_console.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\set_console_title.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\read_console.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cout_console.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\set_console_locale.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_console_locale.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_clipboard_text.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\set_clipboard_text..cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_network_types.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\ETCP\etcp.cpp">
+      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\ETCP\etcpapi.cpp">
+      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\clear_folder.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\create_dir.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\remove_dir.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\remove_file.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_current_dir.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_complete_path.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\normalization_path.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_exe_name.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_cmdline.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_env.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\set_env.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_special_folder_path.cpp">
+      <Filter>源文件\实现\全局命令\环境存取</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prevent_duplicate_execution.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_increment.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_exchange.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_decrement.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_addition.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\coroutine.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\free_console.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_ip_this_w.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kill_proc.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Is_64_bit.cpp">
+      <Filter>源文件\实现\全局命令\操作系统</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Clinet.cpp">
+      <Filter>源文件\组件\通用型\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Server.cpp">
+      <Filter>源文件\组件\通用型\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MediaPlay.cpp">
+      <Filter>源文件\组件\通用型\媒体播放</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ekrnln.rc">
+      <Filter>源文件\资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ObjTextBox_W.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
+    <Image Include="res\ObjServer_Ex.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
+    <Image Include="res\ObjButton_W.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
+    <Image Include="res\ObjClinet_Ex.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\LibCpp\krnln\LibKrnln\Win32\Static\LibKrnln.lib">
+      <Filter>MyLib</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
