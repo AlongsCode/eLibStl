@@ -22,9 +22,6 @@
     <Filter Include="源文件\组件">
       <UniqueIdentifier>{54b7c66e-7d17-4c5a-b2e6-bb22684cbbc4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MyLib">
-      <UniqueIdentifier>{61180433-4d60-45ee-85f8-9275737be88a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\资源文件">
       <UniqueIdentifier>{e0569e42-c333-45f0-8d00-716272d0f0f6}</UniqueIdentifier>
     </Filter>
@@ -315,10 +312,5 @@
     <Image Include="res\ObjClinet_Ex.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\LibCpp\krnln\LibKrnln\Win32\Static\LibKrnln.lib">
-      <Filter>MyLib</Filter>
-    </Library>
   </ItemGroup>
 </Project>

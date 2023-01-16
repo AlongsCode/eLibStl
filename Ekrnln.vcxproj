@@ -113,9 +113,6 @@
     <Image Include="res\ObjServer_Ex.bmp" />
     <Image Include="res\ObjTextBox_W.bmp" />
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\LibCpp\krnln\LibKrnln\Win32\Static\LibKrnln.lib" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
