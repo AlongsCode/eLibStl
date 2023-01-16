@@ -1,4 +1,7 @@
 #include"ElibHelp.h"
+
+/*协程执行，用纤程代替协程，找到合适的轻量级win协程库再换 c++20的无栈协程用不了，操蛋，腾讯的libco挺好用，仅限于macos和linux*/
+
 static LIB_DATA_TYPE_ELEMENT* m_hCoprocess;
 namespace elibstl {
 	LIB_DATA_TYPE_INFO hCoprocessD = {

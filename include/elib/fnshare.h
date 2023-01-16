@@ -67,7 +67,7 @@ namespace elibstl
 	}
 	inline auto args_to_wsdata(PMDATA_INF pArgInf, int index)
 	{
-		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) && *reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
+		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
 			//无需对原始指针操作的情况下映射为string_view
 			return std::wstring_view(reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
 		}
