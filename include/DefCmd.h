@@ -106,7 +106,10 @@ Media_SetPlaySpeed,/*置播放速度*/\
 Media_GetPlaySpeed,/*取播放速度*/\
 Media_SetPos,/*置位置*/\
 Media_SetFrame,/*跳到指定帧*/\
-Media_IsOpen/*是否已打开*/\
+Media_IsOpen,/*是否已打开*/\
+is_connect_to_internet,/*是否已联网*/\
+check_port,/*端口是否可用*/\
+send_net_msg/*发送网络消息*/\
 
 #pragma endregion
 

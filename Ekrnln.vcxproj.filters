@@ -290,6 +290,15 @@
     <ClCompile Include="src\MediaPlay.cpp">
       <Filter>源文件\组件\通用型\媒体播放</Filter>
     </ClCompile>
+    <ClCompile Include="src\is_login_net.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
+    <ClCompile Include="src\check_port.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
+    <ClCompile Include="src\send_net_msg.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

@@ -22,16 +22,16 @@ static std::wstring get_ip_this_w() {
 	}
 	if (widesize == 0)
 	{
-		throw std::exception("Error in conversion.");
+		return L"";
 	}
 	wchar_t* resultstring = new wchar_t[widesize];
 
 	int convresult = MultiByteToWideChar(CP_ACP, 0, localIP.c_str(), -1, resultstring, widesize);
-	if (convresult != widesize)
+	std::wstring wstrReturn;
+	if (convresult == widesize)
 	{
-		throw std::exception("La falla!");
+		wstrReturn = resultstring;
 	}
-	std::wstring wstrReturn(resultstring);
 	delete[] resultstring;
 	return wstrReturn;
 }
