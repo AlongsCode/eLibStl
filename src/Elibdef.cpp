@@ -61,7 +61,7 @@ namespace libkrnln {
 		/*g_DataType_web*/         g_DataType, // 本库中所有的自定义数据类型
 
 		/*m_nCategoryCount*/        9, // 全局命令类别数目, 可为0
-		/*m_szzCategory*/           
+		/*m_szzCategory*/
 		"0000算术运算\0"
 		"0000文本操作\0"
 		"0000操作系统\0"
