@@ -1,7 +1,7 @@
 #include"EcontrolHelp.h"
 #include<Richedit.h>
 #pragma warning(disable:4996)
-static INT s_editbox_cmd[] = { 50 };
+static INT s_editbox_cmd[] = { 50 ,110 };
 
 typedef struct _CEditExDATA
 {
@@ -258,6 +258,10 @@ public:
 	HWND GetHwnd() const
 	{
 		return m_hParentWnd;
+	}
+	HWND GetcHwnd() const
+	{
+		return m_hWnd;
 	}
 	HFONT GetFont(LOGFONTA* Font) {
 		if (m_hFont)
@@ -801,5 +805,30 @@ FucInfo EditBoxW_AddText = { {
 		/*ArgCount*/1,
 		/*arg lp*/  Args,
 	} , Fn_EditBoxW_AddText ,"Fn_EditBoxW_AddText" };
+
+
+EXTERN_C void Fn_EditBoxW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+
+	pRetData->m_int = reinterpret_cast<INT>(Button->GetcHwnd());
+}
+
+
+FucInfo EditBoxW_GetHwnd = { {
+		/*ccname*/  ("È¡±à¼­¿ò¾ä±ú"),
+		/*egname*/  ("GetHwnd"),
+		/*explain*/ ("È¡³ö±à¼­¿òµÄ¾ä±ú¡£"),
+		/*category*/-1,
+		/*state*/   NULL,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  0,
+	} , Fn_EditBoxW_GetHwnd ,"Fn_EditBoxW_GetHwnd" };
 
 #pragma endregion

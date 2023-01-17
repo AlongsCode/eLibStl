@@ -20,6 +20,7 @@ namespace elibstl {
 	std::vector<FucInfo> g_all_cmd = {
 		ALL_E_LIB_CMD
 	};
+
 	//所有对象,此下用于动态添加,只需要将每个obj暴漏的接口添加到下方就好
 	static LIB_DATA_TYPE_INFO g_DataType[] = {
 		ALL_E_LIB_CLASS

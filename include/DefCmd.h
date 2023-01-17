@@ -109,7 +109,8 @@ Media_SetFrame,/*跳到指定帧*/\
 Media_IsOpen,/*是否已打开*/\
 is_connect_to_internet,/*是否已联网*/\
 check_port,/*端口是否可用*/\
-send_net_msg/*发送网络消息*/\
+send_net_msg,/*发送网络消息*/\
+EditBoxW_GetHwnd/*编辑框取编辑框句柄*/\
 
 #pragma endregion
 
@@ -125,7 +126,8 @@ severex,/*服务器Ex*/\
 clinetex,/*客户端Ex*/\
 hCoprocessD,/*协程句柄*/\
 media_play_ex,/*媒体播放*/\
-TaskDialog_Button_Type/*高级信息框按钮*/\
+TaskDialog_Button_Type,/*高级信息框按钮*/\
+UpDown/*调节器*/\
 
 #pragma endregion
 

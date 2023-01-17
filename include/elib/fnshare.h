@@ -85,6 +85,10 @@ namespace elibstl
 	inline HWND get_hwnd_from_hunit(HUNIT hUnit) {
 		return ((HWND)NotifySys(NAS_GET_HWND_OF_CWND_OBJECT, (INT)hUnit, 0));
 	}
+	template <typename T>
+	inline T get_obj_from_hunit(HUNIT hUnit) {
+		return reinterpret_cast<T>(GetWindowLongPtrW((HWND)NotifySys(NAS_GET_HWND_OF_CWND_OBJECT, (INT)hUnit, 0), GWL_USERDATA));
+	}
 	inline void* GetWndPtr(PMDATA_INF pInf)
 	{
 		return (void*)NotifySys(NRS_GET_AND_CHECK_UNIT_PTR, pInf->m_unit.m_dwFormID,
