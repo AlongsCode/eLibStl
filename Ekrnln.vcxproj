@@ -89,6 +89,7 @@
     <ClCompile Include="src\Trim.cpp" />
     <ClCompile Include="src\UnicodeBase.cpp" />
     <ClCompile Include="src\rndEx.cpp" />
+    <ClCompile Include="src\UpDownEx.cpp" />
     <ClCompile Include="src\wchar_code.cpp" />
     <ClCompile Include="src\writefile.cpp" />
   </ItemGroup>
@@ -114,6 +115,8 @@
     <Image Include="res\ObjClinet_Ex.bmp" />
     <Image Include="res\ObjServer_Ex.bmp" />
     <Image Include="res\ObjTextBox_W.bmp" />
+    <Image Include="res\ObjUpDown_Ex.bmp" />
+    <Image Include="res\updown_e.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

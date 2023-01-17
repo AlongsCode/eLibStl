@@ -299,6 +299,9 @@
     <ClCompile Include="src\send_net_msg.cpp">
       <Filter>源文件\实现\全局命令\网络通信</Filter>
     </ClCompile>
+    <ClCompile Include="src\UpDownEx.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">
@@ -318,5 +321,9 @@
     <Image Include="res\ObjClinet_Ex.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
+    <Image Include="res\ObjUpDown_Ex.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
+    <Image Include="res\updown_e.bmp" />
   </ItemGroup>
 </Project>

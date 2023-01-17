@@ -50,13 +50,15 @@ END
 // Bitmap
 //
 
-IDB_BITMAP1             BITMAP                  "res\\ObjButton_W.bmp"
+IDB_BUTTON_W            BITMAP                  "res\\ObjButton_W.bmp"
 
-IDB_BITMAP2             BITMAP                  "res\\ObjTextBox_W.bmp"
+IDB_TEXTBOX_W           BITMAP                  "res\\ObjTextBox_W.bmp"
 
 IDB_CLINET_EX           BITMAP                  "res\\ObjClinet_Ex.bmp"
 
 IDB_SERVER_EX           BITMAP                  "res\\ObjServer_Ex.bmp"
+
+IDB_UPDOWN_EX           BITMAP                  "res\\updown_e.bmp"
 
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
