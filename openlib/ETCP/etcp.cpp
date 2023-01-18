@@ -18,7 +18,7 @@ static int g_cpu = 0;
 static int buf_len = 65535;
 static tcp_fun g_fun = NULL;
 static tcp_fun_client g_fun_client = NULL;
-
+#include"Tace.hpp"
 int closesockets(SOCKET so)
 {
 	if (INVALID_SOCKET == so)
@@ -832,6 +832,7 @@ void tcp_client::OnConnect(bool ercode, P_tcpstruct_client op)
 {
 
 	setsockopt(m_so, SOL_SOCKET, 0x7010, NULL, 0);
+	debug_put((void*)g_fun_client);
 
 	g_fun_client(this, m_so, 1, NULL, 0);
 
@@ -1582,6 +1583,7 @@ namespace etcpkrnln {
 		return localIP;
 	}
 	bool myetcp_init(void* cb_s, void* cb_c, int bufflen) {
+		debug_put(cb_s, cb_c);
 		return etcp_vip((tcp_fun)cb_s, (tcp_fun_client)cb_c, bufflen);
 	}
 	HANDLE myetcp_sever_create(u_short port, bool nls, const char* ip) {

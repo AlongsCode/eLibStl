@@ -1,7 +1,7 @@
 #include"ElibHelp.h"
 #include"elib/lang.h"
 #include"DefCmd.h"
-
+#pragma comment(lib, "legacy_stdio_definitions.lib") 
 //以下代码无需关注，添加命令自建cpp,命令和对象添加到DefCmd
 #ifndef  __E_STATIC_LIB
 //我怕vc2017linker链接不上,静态库用宏屏蔽掉吧，也不影响动态库的编译

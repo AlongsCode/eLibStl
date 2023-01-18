@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ekrnln", "Ekrnln.vcxproj", 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_exe|x64 = Debug_exe|x64
+		Debug_exe|x86 = Debug_exe|x86
 		Debug_Lib|x64 = Debug_Lib|x64
 		Debug_Lib|x86 = Debug_Lib|x86
 		Lib|x64 = Lib|x64
@@ -15,6 +17,10 @@ Global
 		Static|x86 = Static|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_exe|x64.ActiveCfg = Debug_exe|x64
+		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_exe|x64.Build.0 = Debug_exe|x64
+		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_exe|x86.ActiveCfg = Debug_exe|Win32
+		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_exe|x86.Build.0 = Debug_exe|Win32
 		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_Lib|x64.ActiveCfg = Debug_Lib|x64
 		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_Lib|x64.Build.0 = Debug_Lib|x64
 		{8797A36D-5147-4AE1-9F2A-AFA4E87A1AAE}.Debug_Lib|x86.ActiveCfg = Debug_Lib|Win32

@@ -46,7 +46,6 @@ static bool Ipv6_send_net_msg(const std::string& serverIP, u_short port, LPBYTE 
 
 	if (inet_pton(AF_INET, serverIP.data(), &server.sin_addr) == 1) {
 		//IPV4不做特殊处理
-		MessageBox(0, 0, 0, 0);
 	}
 	else {
 		sockaddr_in6 server6;

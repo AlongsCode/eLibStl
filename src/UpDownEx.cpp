@@ -100,7 +100,7 @@ public:
 		case WM_DESTROY: {
 
 			pEUpDown->~eUpDown();
-			break;
+			return FALSE;
 		}
 		default:
 			break;

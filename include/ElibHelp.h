@@ -4,6 +4,8 @@
 #include<vector>
 #include<string>
 #include"..\resource.h"
+
+#include"Tace.hpp"
 struct FucInfo
 {
 	CMD_INFO FucDef;

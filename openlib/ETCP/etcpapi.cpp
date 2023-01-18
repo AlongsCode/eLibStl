@@ -106,8 +106,8 @@ static u_short s_default_port = 23461;
 #pragma endregion
 static void destroy_pBind(void* pTCP);
 static void* get_pBind(void* pTCP);
-static void  server_callback(HANDLE  pS, SOCKET  pC, int  eventype, char* ip, int  size, int  conut);
-static void  clinet_callback(HANDLE   pC, SOCKET  pS, int  eventype, char* ip, int  size);
+static void CALLBACK server_callback(HANDLE  pS, SOCKET  pC, int  eventype, char* ip, int  size, int  conut);
+static void CALLBACK clinet_callback(HANDLE   pC, SOCKET  pS, int  eventype, char* ip, int  size);
 #define ETCP_ERROR_INIT  3001;
 #define ETCP_ERROR_SERVER_CREATE  3002;
 #define ETCP_ERROR_CLINET_CREATE  3003
@@ -261,7 +261,7 @@ static void server_call(void* pFunc, eServer* pSever)
 	Fun(pSever);
 }
 
-void  server_callback(HANDLE  pS, SOCKET  pC, int  event_type, char* ip_f, int  size_f, int  sever_count)//多线程回调，例如在回调函数体内使用ADO请自己初始化：CoInitialize(0)
+void CALLBACK server_callback(HANDLE  pS, SOCKET  pC, int  event_type, char* ip_f, int  size_f, int  sever_count)//多线程回调，例如在回调函数体内使用ADO请自己初始化：CoInitialize(0)
 {
 	eServer* pServer_temp = (eServer*)get_pBind(pS);
 	if (!pServer_temp)
@@ -542,7 +542,7 @@ static void ClinetCall(void* pfun, eClinet* pSever)
 	Func pFunc = (Func)pfun;
 	pFunc(pSever);
 }
-static void  clinet_callback(HANDLE   pClient, SOCKET  pS, int  msg, char* ip_f, int  size_f)//多线程回调，例如在回调函数体内使用ADO请自己初始化：CoInitialize(0)
+static void CALLBACK  clinet_callback(HANDLE   pClient, SOCKET  pS, int  msg, char* ip_f, int  size_f)//多线程回调，例如在回调函数体内使用ADO请自己初始化：CoInitialize(0)
 {
 
 	eClinet* pClinet_temp = (eClinet*)get_pBind(pClient);

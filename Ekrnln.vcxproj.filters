@@ -67,6 +67,9 @@
     <Filter Include="源文件\组件\通用型\媒体播放">
       <UniqueIdentifier>{4691a7aa-bce6-4ec3-b1fa-27debf983305}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\流程控制">
+      <UniqueIdentifier>{e19928b1-fc12-4f5c-b26d-7aa4fbf21537}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -104,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="include\DefCmd.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tace.hpp">
+      <Filter>头文件\elibhelp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
