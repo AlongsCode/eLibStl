@@ -70,6 +70,12 @@
     <Filter Include="源文件\实现\全局命令\流程控制">
       <UniqueIdentifier>{e19928b1-fc12-4f5c-b26d-7aa4fbf21537}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine">
+      <UniqueIdentifier>{a2d4a048-773f-4310-8cbb-bbfe73f86c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine\mini_co">
+      <UniqueIdentifier>{01deff0d-0c2c-4f34-ac96-40b4f8a1b7e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -110,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="include\Tace.hpp">
       <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\MiniCo\coroutine.h">
+      <Filter>源文件\实现\全局命令\进程线程携程\coroutine\mini_co</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -272,9 +281,6 @@
     <ClCompile Include="src\atomic_addition.cpp">
       <Filter>源文件\实现\全局命令\进程线程携程</Filter>
     </ClCompile>
-    <ClCompile Include="src\coroutine.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
     <ClCompile Include="src\free_console.cpp">
       <Filter>源文件\实现\全局命令\控制台</Filter>
     </ClCompile>
@@ -307,6 +313,12 @@
     </ClCompile>
     <ClCompile Include="src\UpDownEx.cpp">
       <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\MiniCo\coroutine.c">
+      <Filter>源文件\实现\全局命令\进程线程携程\coroutine\mini_co</Filter>
+    </ClCompile>
+    <ClCompile Include="src\e_coroutine.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\coroutine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -49,7 +49,8 @@ public:
 		m_oldProc(0),
 		m_hParentWnd(0),
 		m_font_bkgcolor(16777215),
-		m_bkgcolor(16777215)
+		m_bkgcolor(16777215),
+		m_is_vsroll(0)
 	{
 		m_hParentWnd = CreateWindowExW(0, L"Static", 0, dwStyle | WS_VISIBLE | WS_CHILDWINDOW | WS_CLIPSIBLINGS, x, y, cx, cy, hParent, (HMENU)nId, GetModuleHandle(0), 0);
 
@@ -164,11 +165,17 @@ public:
 		m_Max = Max;
 	}
 	void SetVscroll(BOOL is_set) {
+		m_is_vsroll = is_set;
 		ShowScrollBar(m_hWnd, SB_VERT, is_set);
 	}
 	BOOL GetVscroll() {
-		long style = GetWindowLong(m_hWnd, GWL_STYLE);
-		return (style & WS_VSCROLL);
+		if (!m_hWnd)
+		{
+			return false;
+		}
+		//long style = GetWindowLong(m_hWnd, GWL_STYLE);
+		//return (style & WS_VSCROLL);
+		return m_is_vsroll;
 	}
 	void OnChange() {
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
@@ -413,6 +420,7 @@ private:
 	HWND m_hParentWnd;
 	char* m_TextA;
 	DWORD m_dwWinFormID, m_dwUnitID;
+	bool m_is_vsroll;
 
 };
 
@@ -522,27 +530,27 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 	case 4:
 	{
 		EditBox->SetMaxText(pPropertyVaule->m_int);
-		return FALSE;
+		break;
 	}
 	case 5:
 	{
 		EditBox->SetVscroll(pPropertyVaule->m_bool);
-		return FALSE;
+		break;
 	}
 	case 6:
 	{
 		EditBox->SetFontColor(pPropertyVaule->m_clr);
-		return FALSE;
+		break;
 	}
 	case 7:
 	{
 		EditBox->SetFontBkgColor(pPropertyVaule->m_clr);
-		return FALSE;
+		break;
 	}
 	case 8:
 	{
 		EditBox->SetBkgColor(pPropertyVaule->m_clr);
-		return FALSE;
+		break;
 	}
 	default:
 
@@ -596,7 +604,7 @@ static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE
 	case 0:
 	{
 		pPropertyVaule->m_szText = EditBox->outGetText();
-		return FALSE;
+		break;
 	}
 	case 1:
 	{
@@ -606,12 +614,12 @@ static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE
 			pPropertyVaule->m_data.m_pData = (LPBYTE)wcs;
 			pPropertyVaule->m_data.m_nDataSize = wcslen(wcs) * sizeof(wchar_t);
 		}
-		return FALSE;
+		break;
 	}
 	case 2:
 	{
 		pPropertyVaule->m_int = EditBox->GetBorder();
-		return FALSE;
+		break;
 	}
 	case 3:
 	{
@@ -623,33 +631,33 @@ static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE
 
 		}
 
-		return FALSE;
+		break;
 	}
 	case 4:
 	{
 		pPropertyVaule->m_int = EditBox->GetMaxText();
-		return FALSE;
+		break;
 	}
 	case 5:
 	{
 		pPropertyVaule->m_bool = EditBox->GetVscroll();
-		return FALSE;
+		break;
 	}
 	case 6:
 	{
 		pPropertyVaule->m_clr = EditBox->GetFontColor();
 		//MessageBoxA(0, std::to_string((int)EditBox->GetEditBoxFontColor()).c_str(), 0, 0);
-		return FALSE;
+		break;
 	}
 	case 7:
 	{
 		pPropertyVaule->m_clr = EditBox->GetFontBkgColor();
-		return FALSE;
+		break;
 	}
 	case 8:
 	{
 		pPropertyVaule->m_clr = EditBox->GetBkgColor();
-		return FALSE;
+		break;
 	}
 	default:
 

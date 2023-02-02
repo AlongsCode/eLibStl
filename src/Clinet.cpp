@@ -227,11 +227,37 @@ static ARG_INFO connectArgs[] =
 		/*state*/   NULL,
 	}
 };
+inline string get_ip_this_a() {
+	WORD wVersionRequested = MAKEWORD(2, 2);
+	WSADATA wsaData;
+	if (WSAStartup(wVersionRequested, &wsaData) != 0)
+		return "";
+	char local[255] = { 0 };
+	gethostname(local, sizeof(local));
+	hostent* ph = gethostbyname(local);
+	if (ph == NULL)
+		return "";
+	in_addr addr;
+	memcpy(&addr, ph->h_addr_list[0], sizeof(in_addr));
+	std::string localIP;
+	localIP.assign(inet_ntoa(addr));
+	WSACleanup();
+	return localIP;
+}
 EXTERN_C void Fn_Clinet_connect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	pRetData->m_bool = pClinet->connect(string(elibstl::args_to_sdata(pArgInf, 1)), pArgInf[2].m_short);
+	string ip = string(elibstl::args_to_sdata(pArgInf, 1));
+	if (ip.empty())
+	{
+		return;
+	}
+	if (ip == "127.0.0.1")
+	{
+		ip = get_ip_this_a();
+	}
+	pRetData->m_bool = pClinet->connect(ip, pArgInf[2].m_short);
 }
 
 FucInfo Clinet_connect = { {

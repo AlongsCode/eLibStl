@@ -39,6 +39,7 @@
     <ClCompile Include="include\elib\fnshare.cpp" />
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
+    <ClCompile Include="openlib\MiniCo\coroutine.c" />
     <ClCompile Include="src\atomic_addition.cpp" />
     <ClCompile Include="src\atomic_decrement.cpp" />
     <ClCompile Include="src\atomic_exchange.cpp" />
@@ -48,7 +49,7 @@
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
-    <ClCompile Include="src\coroutine.cpp" />
+    <ClCompile Include="src\e_coroutine.cpp" />
     <ClCompile Include="src\create_dir.cpp" />
     <ClCompile Include="src\EcontrolHelp.cpp" />
     <ClCompile Include="src\EditBoxW.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="include\elib\untshare.h" />
     <ClInclude Include="include\Tace.hpp" />
     <ClInclude Include="openlib\ETCP\etcpapi.h" />
+    <ClInclude Include="openlib\MiniCo\coroutine.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
