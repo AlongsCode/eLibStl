@@ -1,6 +1,6 @@
 #include"ElibHelp.h"
-#include <algorithm>
 
+#pragma warning(disable:6031)
 #pragma comment(lib,"Mpr.lib")
 static std::vector<LPBYTE> GetNetworkTypes()
 {

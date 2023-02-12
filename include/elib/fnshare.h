@@ -53,16 +53,25 @@ namespace elibstl
 		}
 		return reinterpret_cast<T>(pArgInf[index].m_pCompoundData);
 	}
+	inline std::vector<unsigned char> arg_to_vdata(PMDATA_INF pArgInf, int index) {
+		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
+			//无需对原始指针操作的情况下映射为string_view
+			return  std::vector<unsigned char>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2, pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2 + *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)));
+		}
+		else {
+			return  std::vector<unsigned char>();
+		}
+	}
 	inline auto args_to_sdata(PMDATA_INF pArgInf, int index)
 	{
 
-		if (pArgInf[index].m_pText && *pArgInf[index].m_pText != '\0') {
+		if (pArgInf[index].m_dtDataType == SDT_TEXT && pArgInf[index].m_pText && *pArgInf[index].m_pText != '\0') {
 			//无需对原始指针操作的情况下映射为string_view
 			return std::string_view(pArgInf[index].m_pText);
 		}
 		else {
 
-			return std::string_view();
+			return std::string_view("");
 		}
 	}
 	inline auto args_to_wsdata(PMDATA_INF pArgInf, int index)
@@ -210,6 +219,7 @@ namespace elibstl
 	inline std::vector<T> get_vector_from_array(const void* pAryData, const size_t arrCount) {
 		return std::vector<T>(static_cast<const T*>(pAryData), static_cast<const T*>(pAryData) + arrCount);
 	}
+
 	inline std::vector<std::string_view> get_vector_from_array(LPSTR* pAryData, const size_t arrCount) {
 		std::vector<std::string_view> result;
 		result.reserve(arrCount);

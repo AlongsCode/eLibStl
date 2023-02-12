@@ -113,7 +113,12 @@ send_net_msg,/*发送网络消息*/\
 EditBoxW_GetHwnd,/*编辑框取编辑框句柄*/\
 e_coroutine_close,/*释放协程调度器*/\
 e_coroutine_open,/*创建协程调度器*/\
-e_hCoi2h/*指针到调度器*/
+e_hCoi2h,/*指针到调度器*/\
+analog_press,/*模拟按下*/\
+analog_up,/*模拟弹起*/\
+get_cpu_usges,/*取CPU当前使用率*/\
+get_cpu_id,/*获取CPU序列号*/\
+network_post/*网页访问*/\
 
 #pragma endregion
 

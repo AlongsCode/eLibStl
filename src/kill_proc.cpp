@@ -11,7 +11,7 @@
 
 
 
-bool kill_process_w(const std::wstring& process_name_or_window_title) {
+inline bool kill_process_w(const std::wstring& process_name_or_window_title) {
 	// 用于存储进程 ID 的变量
 	unsigned int process_id = 0;
 
@@ -72,7 +72,7 @@ bool kill_process_w(const std::wstring& process_name_or_window_title) {
 	return kill_result == 0;
 #endif
 }
-bool kill_process_w(const std::string& process_name_or_window_title) {
+inline bool kill_process_w(const std::string& process_name_or_window_title) {
 	// 用于存储进程 ID 的变量
 	unsigned int process_id = 0;
 
@@ -133,7 +133,7 @@ bool kill_process_w(const std::string& process_name_or_window_title) {
 	return kill_result == 0;
 #endif
 }
-bool kill_process_w(unsigned int process_id) {
+inline bool kill_process_w(unsigned int process_id) {
 	if (process_id == 0)
 	{
 		return 0;

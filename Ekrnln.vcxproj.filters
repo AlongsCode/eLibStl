@@ -320,6 +320,18 @@
     <ClCompile Include="src\e_coroutine.cpp">
       <Filter>源文件\实现\全局命令\进程线程携程\coroutine</Filter>
     </ClCompile>
+    <ClCompile Include="src\analog_press.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_cpu_usges.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_cpu_id.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network_post.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

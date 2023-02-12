@@ -40,6 +40,7 @@
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
     <ClCompile Include="openlib\MiniCo\coroutine.c" />
+    <ClCompile Include="src\analog_press.cpp" />
     <ClCompile Include="src\atomic_addition.cpp" />
     <ClCompile Include="src\atomic_decrement.cpp" />
     <ClCompile Include="src\atomic_exchange.cpp" />
@@ -58,6 +59,8 @@
     <ClCompile Include="src\get_clipboard_text.cpp" />
     <ClCompile Include="src\get_cmdline.cpp" />
     <ClCompile Include="src\get_complete_path.cpp" />
+    <ClCompile Include="src\get_cpu_id.cpp" />
+    <ClCompile Include="src\get_cpu_usges.cpp" />
     <ClCompile Include="src\get_current_dir.cpp" />
     <ClCompile Include="src\get_env.cpp" />
     <ClCompile Include="src\get_exe_name.cpp" />
@@ -72,6 +75,7 @@
     <ClCompile Include="src\MediaPlay.cpp" />
     <ClCompile Include="src\message_box.cpp" />
     <ClCompile Include="src\message_box_ex.cpp" />
+    <ClCompile Include="src\network_post.cpp" />
     <ClCompile Include="src\normalization_path.cpp" />
     <ClCompile Include="src\open_console.cpp" />
     <ClCompile Include="src\prevent_duplicate_execution.cpp" />

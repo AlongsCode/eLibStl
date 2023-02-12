@@ -5,7 +5,7 @@
 
 EXTERN_C void Fn_free_console(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	FreeConsole();
+	pRetData->m_bool = FreeConsole();
 }
 
 FucInfo free_console = { {
