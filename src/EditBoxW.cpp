@@ -19,6 +19,7 @@ typedef struct _CEditExDATA
 	}
 } CEDITDATA, * PCEDITDATA;
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK WndCProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 class eEditBoxEx
 {
 public:
@@ -50,7 +51,8 @@ public:
 		m_hParentWnd(0),
 		m_font_bkgcolor(16777215),
 		m_bkgcolor(16777215),
-		m_is_vsroll(0)
+		m_is_vsroll(0),
+		m_ColdProc(NULL)
 	{
 		m_hParentWnd = CreateWindowExW(0, L"Static", 0, dwStyle | WS_VISIBLE | WS_CHILDWINDOW | WS_CLIPSIBLINGS, x, y, cx, cy, hParent, (HMENU)nId, GetModuleHandle(0), 0);
 
@@ -104,6 +106,11 @@ public:
 		}
 		SetWindowLongPtrW(m_hParentWnd, GWL_USERDATA, (LONG_PTR)this);
 		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
+
+		//子类化组件
+		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
+		//记录原始回调
+		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
 	}
 	void SetFontColor(COLORREF color)
 	{
@@ -201,6 +208,25 @@ public:
 			return 0;
 		}
 		return m_Max;
+	}
+	DWORD GetID() const {
+
+		return m_dwWinFormID;
+	}
+	DWORD GetUID() const {
+
+		return m_dwUnitID;
+	}
+	WNDPROC GetCOldProc() const {
+		if (!m_hWnd)
+		{
+			return 0;
+		}
+		if (m_ColdProc <= 0)
+		{
+			return 0;
+		}
+		return m_ColdProc;
 	}
 	void SetFont(LOGFONTA Font)
 	{
@@ -409,7 +435,7 @@ public:
 		return m_Style;
 	}
 private:
-	WNDPROC m_oldProc;
+	WNDPROC m_oldProc, m_ColdProc;
 	INT m_Max;
 	LOGFONTA* m_Font;
 	HFONT m_hFont;
@@ -423,7 +449,26 @@ private:
 	bool m_is_vsroll;
 
 };
+static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	if (!pEditBox)
+	{
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+	//早知道服用就建个基类了，操了
+	WNDPROC oldproc = pEditBox->GetCOldProc();
+	if (oldproc == NULL)
+	{
+		oldproc = DefWindowProc;
+	}
 
+	bool is_continue = SendToParentsHwnd(pEditBox->GetID(), pEditBox->GetUID(), uMsg, wParam, lParam);
+	if (!is_continue)
+	{
+		return 0;
+	}
+	return oldproc(hWnd, uMsg, wParam, lParam);
+};
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	if (!pEditBox)
@@ -825,9 +870,9 @@ EXTERN_C void Fn_EditBoxW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 
 
 FucInfo EditBoxW_GetHwnd = { {
-		/*ccname*/  ("取编辑框句柄"),
+		/*ccname*/  ("取组件句柄"),
 		/*egname*/  ("GetHwnd"),
-		/*explain*/ ("取出编辑框的句柄。"),
+		/*explain*/ ("取窗口句柄获取的为容器句柄,此命令为取出编辑框的句柄。"),
 		/*category*/-1,
 		/*state*/   NULL,
 		/*ret*/     SDT_INT,

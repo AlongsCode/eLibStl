@@ -7,7 +7,7 @@ using namespace std;
 
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
+static LRESULT CALLBACK WndCProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 //后紧随图片，图片后直到数据结束为窗口标题
 typedef struct _EButtonExDATA
@@ -67,7 +67,8 @@ public:
 		m_transverse(1),
 		m_portrait(1),
 		m_hBitmap(NULL),
-		m_TextW(NULL)
+		m_TextW(NULL),
+		m_ColdProc(NULL)
 
 	{
 		//操作的是组件容器
@@ -114,6 +115,11 @@ public:
 		//记录原始回调
 		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
 
+		//子类化组件
+		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
+		//记录原始回调
+		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
+
 	}
 	EBUTTONDATA GetBaseData() const {
 		EBUTTONDATA temp;
@@ -134,6 +140,25 @@ public:
 		}
 		return m_oldProc;
 	}
+	DWORD GetID() const {
+
+		return m_dwWinFormID;
+	}
+	DWORD GetUID() const {
+
+		return m_dwUnitID;
+	}
+	WNDPROC GetCOldProc() const {
+		if (!m_hWnd)
+		{
+			return 0;
+		}
+		if (m_ColdProc <= 0)
+		{
+			return 0;
+		}
+		return m_ColdProc;
+	}
 	HWND GetChild()const {
 		if (!m_hParentWnd)
 		{
@@ -152,6 +177,14 @@ public:
 	}
 	void OnClick() {
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
+		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
+	}
+	void OnKEYDOWN_UP(UINT MSG, WPARAM wparam, int mod) {
+
+		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 247 - MSG);
+		event.m_nArgCount = 2;
+		event.m_arg[0].m_inf.m_int = wparam;
+		event.m_arg[1].m_inf.m_int = mod;
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
 	}
 
@@ -389,7 +422,7 @@ private:
 	DWORD m_dwWinFormID, m_dwUnitID;
 	HWND m_hParentWnd,//容器句柄
 		m_hWnd;//按钮句柄
-	WNDPROC m_oldProc;
+	WNDPROC m_oldProc, m_ColdProc;
 	BOOL m_blInDesignMode;
 };
 
@@ -428,6 +461,26 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		break;
 	}
 	return oldproc(hWnd, message, wParam, lParam);
+};
+
+static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	eButtonEx* pButton = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	if (!pButton)
+	{
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+	WNDPROC oldproc = pButton->GetCOldProc();
+	if (oldproc == NULL)
+	{
+		oldproc = DefWindowProc;
+	}
+
+	bool is_continue = SendToParentsHwnd(pButton->GetID(), pButton->GetUID(), uMsg, wParam, lParam);
+	if (!is_continue)
+	{
+		return 0;
+	}
+	return oldproc(hWnd, uMsg, wParam, lParam);
 };
 
 
@@ -673,7 +726,7 @@ static UNIT_PROPERTY s_member[] =
 	/*000*/ {"标题W", "PIC", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 };
 
-
+static INT s_cmd[] = { 120 };
 namespace elibstl {
 
 
@@ -681,8 +734,8 @@ namespace elibstl {
 		"按钮W",//中文名称
 		"ButtonW",//英文名称
 		"unicode按钮",//说明
-		0,//命令数量
-		0,//在全局函数中对应的索引
+		sizeof(s_cmd) / sizeof(INT),//命令数量
+		s_cmd,//在全局函数中对应的索引
 		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
 		103,//资源ID
 		sizeof(s_event) / sizeof(s_event[0]),
@@ -693,4 +746,30 @@ namespace elibstl {
 		NULL,//成员数量
 		NULL//成员数据数组
 	};
+
+
+
 }
+EXTERN_C void Fn_EButtonW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+
+	pRetData->m_int = reinterpret_cast<INT>(Button->GetChild());
+}
+
+
+FucInfo EButtonW_GetHwnd = { {
+		/*ccname*/  ("取组件句柄"),
+		/*egname*/  ("GetHwnd"),
+		/*explain*/ ("取窗口句柄获取的为容器句柄,此命令为取出组件的句柄。"),
+		/*category*/-1,
+		/*state*/   NULL,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  0,
+	} , Fn_EButtonW_GetHwnd ,"Fn_EButtonW_GetHwnd" };

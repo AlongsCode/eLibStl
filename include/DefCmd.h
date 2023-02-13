@@ -116,9 +116,13 @@ e_coroutine_open,/*创建协程调度器*/\
 e_hCoi2h,/*指针到调度器*/\
 analog_press,/*模拟按下*/\
 analog_up,/*模拟弹起*/\
-get_cpu_usges,/*取CPU当前使用率*/\
+replace_substring_w,/*取CPU当前使用率*/\
 get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
+,capitalize_first_letter/*首字母大写*/\
+,EButtonW_GetHwnd/*按钮取组件句柄*/\
+,EUpDown_GetHwnd/*调节器取组件句柄*/\
+
 
 #pragma endregion
 

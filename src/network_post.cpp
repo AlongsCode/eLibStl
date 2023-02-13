@@ -2,66 +2,6 @@
 #include<wininet.h>
 #include <algorithm>
 #include<sstream>
-#pragma region Help
-//分割文本
-static  std::vector<std::string> split_text(const std::string& text, const  std::string& str) {
-	std::vector<std::string> ret;
-	if (str.empty() || text == "")
-	{
-		ret.push_back(text);
-		return ret;
-	}
-	size_t start = 0, index = text.find_first_of(str, 0);
-	while (index != text.npos)
-	{
-		if (start != index)
-			ret.push_back(text.substr(start, index - start));
-		start = index + 1;
-		index = text.find_first_of(str, start);
-	}
-	if (text.substr(start) != "")
-	{
-		ret.push_back(text.substr(start));
-	}
-	return ret;
-}
-//首字母到大写
-static std::string capitalize_first_letter(const std::string& text) {
-	if (text.empty() || !isalpha(text[0])) {
-		return text;
-	}
-
-	std::string result;
-	result.push_back(std::toupper(text[0]));
-	result += text.substr(1);
-	return result;
-}
-
-
-//取中间文本,是否考虑加入标准模板库
-//static std::string 取中间文本(const std::string& full_text, const std::string& before_text, const std::string& after_text)
-//{
-//	size_t before_pos, after_pos;
-//	before_pos = full_text.find(before_text);
-//	if (before_pos != std::string::npos)
-//	{
-//		before_pos += before_text.size();
-//		after_pos = full_text.find(after_text, before_pos);
-//		if (after_pos != std::string::npos)
-//		{
-//			return full_text.substr(before_pos, after_pos - before_pos);
-//		}
-//	}
-//	return "";
-//}
-
-
-#pragma endregion
-
-
-
-
-
 static ARG_INFO Args[] =
 {
 	{
@@ -186,7 +126,6 @@ static ARG_INFO Args[] =
 
 
 
-
 /**
  * @brief 使用WinInet API方式访问网页
  *
@@ -206,7 +145,7 @@ static ARG_INFO Args[] =
  *
  * @return std::vector<unsigned char> 所访问网页的内容二进制数据容器。
  */
-static std::vector<unsigned char>
+static LPBYTE
 web_visit(
 	std::string_view  n_url,//0
 	int  n_access_method,//1
@@ -520,18 +459,17 @@ web_visit(
 		elibstl::free(*pRetCookies);
 		*pRetCookies = elibstl::clone_text(temp_cookies);
 	}
-	return pageContent;
+	return elibstl::clone_bin(pageContent.data(), pageContent.size());
 }
 
 EXTERN_C void Fn_estl_network_post(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	using namespace std;
 	auto url = elibstl::args_to_sdata(pArgInf, 0);
 	if (url.empty())
 	{
 		return;
 	}
-	vector<unsigned char> ret = web_visit(url, elibstl::args_to_data<INT>(pArgInf, 1).value_or(0),
+	pRetData->m_pBin = web_visit(url, elibstl::args_to_data<INT>(pArgInf, 1).value_or(0),
 		elibstl::args_to_sdata(pArgInf, 2),
 		elibstl::args_to_sdata(pArgInf, 3),
 		pArgInf[4].m_ppText,
@@ -544,7 +482,6 @@ EXTERN_C void Fn_estl_network_post(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 		elibstl::args_to_data<BOOL>(pArgInf, 11),
 		elibstl::args_to_data<BOOL>(pArgInf, 12)
 	);
-	pRetData->m_pBin = elibstl::clone_bin(ret.data(), ret.size());
 }
 
 FucInfo network_post = { {

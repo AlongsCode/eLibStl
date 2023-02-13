@@ -332,6 +332,12 @@
     <ClCompile Include="src\network_post.cpp">
       <Filter>源文件\实现\全局命令\网络通信</Filter>
     </ClCompile>
+    <ClCompile Include="src\capitalize_first_letter.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\replace_substring.cpp">
+      <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

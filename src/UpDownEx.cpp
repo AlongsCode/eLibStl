@@ -107,11 +107,30 @@ public:
 		}
 		return oldproc(hWnd, message, wParam, lParam);
 	};
+	static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		eUpDown* pEUpDown = (eUpDown*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+		if (!pEUpDown)
+		{
+			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		}
+		WNDPROC oldproc = pEUpDown->GetCOldProc();
+		if (oldproc == NULL)
+		{
+			oldproc = DefWindowProc;
+		}
+
+		bool is_continue = SendToParentsHwnd(pEUpDown->GetID(), pEUpDown->GetUID(), uMsg, wParam, lParam);
+		if (!is_continue)
+		{
+			return 0;
+		}
+		return oldproc(hWnd, uMsg, wParam, lParam);
+	};
 private:
 	//容器句柄，和调节器句柄
 	HWND m_hWnd, m_hParentWnd;
 	//容器旧过程
-	WNDPROC m_oldProc;
+	WNDPROC m_oldProc, m_ColdProc;;
 	//绑定窗口的数据
 	BINDWINDOWDATA m_BindWinow;
 	INT m_dwWinFormID, m_dwUnitID;
@@ -146,7 +165,8 @@ public:
 		m_hWnd(nullptr),
 		m_hParentWnd(nullptr),
 		m_oldProc(nullptr),
-		m_dwWinFormID(dwWinFormID), m_dwUnitID(dwUnitID)
+		m_dwWinFormID(dwWinFormID), m_dwUnitID(dwUnitID),
+		m_ColdProc(NULL)
 	{
 
 		//创建容器
@@ -204,11 +224,33 @@ public:
 		SetWindowLongPtrW(m_hParentWnd, GWL_USERDATA, (LONG_PTR)this);
 		//绑定容器回调函数
 		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
-
+		//子类化组件
+		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
+		//记录原始回调
+		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
 		SetPos(cx, cy);
 
 	}
 public:
+	DWORD GetID() const {
+
+		return m_dwWinFormID;
+	}
+	DWORD GetUID() const {
+
+		return m_dwUnitID;
+	}
+	WNDPROC GetCOldProc() const {
+		if (!m_hWnd)
+		{
+			return 0;
+		}
+		if (m_ColdProc <= 0)
+		{
+			return 0;
+		}
+		return m_ColdProc;
+	}
 	//按下回调
 	void OnDeltaPos(int nID)
 	{
@@ -545,7 +587,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 
 
 
-
+static INT s_cmd[] = { 121 };
 
 
 namespace elibstl {
@@ -554,8 +596,8 @@ namespace elibstl {
 		"调节器",//中文名称
 		"UpDown",//英文名称
 		"类似编辑的调节器，具有更多的功能和拓展性",//说明
-		0,//命令数量
-		0,//在全局函数中对应的索引
+		sizeof(s_cmd) / sizeof(INT),//命令数量
+		s_cmd,//在全局函数中对应的索引
 		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
 		IDB_UPDOWN_EX,//资源ID
 		sizeof(s_event) / sizeof(s_event[0]),
@@ -569,6 +611,28 @@ namespace elibstl {
 }
 
 
+EXTERN_C void Fn_EUpDown_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	eUpDown* pEUpDown = (eUpDown*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 
+	pRetData->m_int = reinterpret_cast<INT>(pEUpDown->GetUpDownHwnd());
+}
+
+
+FucInfo EUpDown_GetHwnd = { {
+		/*ccname*/  ("取组件句柄"),
+		/*egname*/  ("GetHwnd"),
+		/*explain*/ ("取窗口句柄获取的为容器句柄,此命令为取出调节器组件的句柄。"),
+		/*category*/-1,
+		/*state*/   NULL,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  0,
+	} ,Fn_EUpDown_GetHwnd ,"Fn_EUpDown_GetHwnd" };
 
 

@@ -46,6 +46,7 @@
     <ClCompile Include="src\atomic_exchange.cpp" />
     <ClCompile Include="src\atomic_increment.cpp" />
     <ClCompile Include="src\ButtonW.cpp" />
+    <ClCompile Include="src\capitalize_first_letter.cpp" />
     <ClCompile Include="src\check_port.cpp" />
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
@@ -86,6 +87,7 @@
     <ClCompile Include="src\read_console.cpp" />
     <ClCompile Include="src\remove_dir.cpp" />
     <ClCompile Include="src\remove_file.cpp" />
+    <ClCompile Include="src\replace_substring.cpp" />
     <ClCompile Include="src\rtoa.cpp" />
     <ClCompile Include="src\send_net_msg.cpp" />
     <ClCompile Include="src\Server.cpp" />
