@@ -22,4 +22,3 @@ extern HMODULE g_elibstl_hModule;
 //void AddFuc(FucInfo Func);
 //void AddDataType(LIB_DATA_TYPE_INFO Func);
 //LIB_INFO* elibkrnlnmake();
-std::vector<unsigned char> ebin2v(LPBYTE bin);

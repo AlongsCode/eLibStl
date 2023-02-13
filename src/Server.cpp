@@ -449,7 +449,7 @@ EXTERN_C void Fn_Server_Send(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	auto bnow = elibstl::args_to_data<BOOL>(pArgInf, 3);
-	pRetData->m_bool = pServer->send(pArgInf[1].m_int, ebin2v(pArgInf[2].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
+	pRetData->m_bool = pServer->send(pArgInf[1].m_int, elibstl::arg_to_vdata(pArgInf[2].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
 }
 
 FucInfo Server_Send = { {

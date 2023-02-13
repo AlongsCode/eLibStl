@@ -350,7 +350,7 @@ EXTERN_C void Fn_Clinet_Send(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
 	auto bnow = elibstl::args_to_data<BOOL>(pArgInf, 2);
 
-	pRetData->m_bool = pClinet->send(ebin2v(pArgInf[1].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
+	pRetData->m_bool = pClinet->send(elibstl::arg_to_vdata(pArgInf[1].m_pBin), bnow.has_value() ? bnow.value() : FALSE);
 }
 
 FucInfo  Clinet_Send = { {
