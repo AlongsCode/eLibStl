@@ -19,13 +19,13 @@ bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM w
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
 		INT control_type = 0;
 		if (uMsg != WM_CHAR && uMsg != WM_SETFOCUS && uMsg != WM_KILLFOCUS) {
-			if ((GetKeyState(17) & 16384) != 0) {
+			if ((GetKeyState(VK_CONTROL) & 16384) != 0) {
 				control_type = 1;
 			}
-			if ((GetKeyState(16) & 16384) != 0) {
+			if ((GetKeyState(VK_SHIFT) & 16384) != 0) {
 				control_type = control_type | 2;
 			}
-			if ((GetKeyState(18) & 16384) != 0) {
+			if ((GetKeyState(VK_MENU) & 16384) != 0) {
 				control_type = control_type | 4;
 			}
 		}
