@@ -104,13 +104,13 @@ public:
 			m_hFont = CreateFontIndirectA(m_Font);
 			SetFont(*m_Font);
 		}
-		SetWindowLongPtrW(m_hParentWnd, GWL_USERDATA, (LONG_PTR)this);
-		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
+		SetWindowLongPtrW(m_hParentWnd, GWLP_USERDATA, (LONG_PTR)this);
+		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 
 		//子类化组件
-		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtrW(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 		//记录原始回调
-		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
+		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWLP_WNDPROC, (LONG_PTR)WndCProc);
 	}
 	void SetFontColor(COLORREF color)
 	{
@@ -253,7 +253,7 @@ public:
 	{
 		if (m_hParentWnd)
 		{
-			::SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)m_oldProc);
+			::SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)m_oldProc);
 		}
 		if (m_hWnd)
 		{
@@ -450,7 +450,7 @@ private:
 
 };
 static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 	if (!pEditBox)
 	{
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -470,7 +470,7 @@ static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	return oldproc(hWnd, uMsg, wParam, lParam);
 };
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 	if (!pEditBox)
 	{
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -501,11 +501,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		return reinterpret_cast<LRESULT>(hBrush);
 	}
 	case WM_DESTROY: {
-		HBRUSH hBrush = reinterpret_cast<HBRUSH>(GetClassLong(hWnd, GCL_HBRBACKGROUND));
-		if (hBrush)
-		{
-			DeleteObject(hBrush);
-		}
+        // GetClassLong 返回的值属于整个类的, 不是属于某个窗口的, 所以返回的东西不能释放, 可以在取消注册类的时候释放
+		
+		//HBRUSH hBrush = reinterpret_cast<HBRUSH>(GetClassLong(hWnd, GCLP_HBRBACKGROUND));
+		//if (hBrush)
+		//{
+		//	DeleteObject(hBrush);
+		//}
 		pEditBox->~eEditBoxEx();
 		break;
 	}
@@ -544,7 +546,7 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
 	LPTSTR* ppszTipText) {  //目前尚未使用
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 
 	switch (nPropertyIndex)
 	{
@@ -607,7 +609,7 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	CEDITDATA temp;
 	temp.m_font = EditBox->GetFont(&temp.m_fontdata);
 	temp.m_Border = EditBox->GetBorder();
@@ -639,7 +641,7 @@ static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (!EditBox)
 	{
 		return 0;
@@ -715,7 +717,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	BOOL* pblModified, LPVOID pResultExtraData)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (nPropertyIndex == 1)
 	{
 		Button->SetText(std::wstring(MyInputBox(Button->GetText()).c_str()).c_str());
@@ -833,7 +835,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_EditBoxW_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
 	for (INT i = 1; i < nArgCount; i++)
 	{
@@ -863,7 +865,7 @@ FucInfo EditBoxW_AddText = { {
 EXTERN_C void Fn_EditBoxW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
 	pRetData->m_int = reinterpret_cast<INT>(Button->GetcHwnd());
 }

@@ -111,14 +111,14 @@ public:
 
 
 		//子类化容器
-		SetWindowLongPtrW(m_hParentWnd, GWL_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtrW(m_hParentWnd, GWLP_USERDATA, (LONG_PTR)this);
 		//记录原始回调
-		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
+		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 
 		//子类化组件
-		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtrW(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 		//记录原始回调
-		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
+		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWLP_WNDPROC, (LONG_PTR)WndCProc);
 
 	}
 	EBUTTONDATA GetBaseData() const {
@@ -243,7 +243,7 @@ public:
 		{
 			m_portrait = portrait;
 			DWORD style = portrait == 0 ? BS_TOP : portrait == 1 ? BS_VCENTER : BS_BOTTOM;
-			SetWindowLongPtrW(m_hWnd, GWL_STYLE, (GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ~(BS_TOP | BS_VCENTER | BS_BOTTOM)) | style);
+			SetWindowLongPtrW(m_hWnd, GWL_STYLE, (GetWindowLongPtrW(m_hWnd, GWLP_STYLE) & ~(BS_TOP | BS_VCENTER | BS_BOTTOM)) | style);
 		}
 	}
 	char* GetTextAtoE()
@@ -286,7 +286,7 @@ public:
 		//交还WNDPROC
 		if (m_hParentWnd)
 		{
-			::SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)m_oldProc);
+			::SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)m_oldProc);
 		}
 		m_hParentWnd = NULL;
 		//再被销毁→
@@ -427,7 +427,7 @@ private:
 };
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	eButtonEx* pButton = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eButtonEx* pButton = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 	if (!pButton)
 	{
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -464,7 +464,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 };
 
 static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	eButtonEx* pButton = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eButtonEx* pButton = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 	if (!pButton)
 	{
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -507,7 +507,7 @@ static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
 	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
 	LPTSTR* ppszTipText) {  //目前尚未使用
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 
 	switch (nPropertyIndex)
 	{
@@ -552,7 +552,7 @@ static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 
-	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	//获取基础数据
 	EBUTTONDATA temp = Button->GetBaseData();
 	//获取标题
@@ -593,7 +593,7 @@ static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
 static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (!Button)
 	{
 		return 0;
@@ -654,7 +654,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	BOOL* pblModified, LPVOID pResultExtraData)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);;
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (nPropertyIndex == 5)
 	{
 		Button->SetText(MyInputBox(Button->GetText()).c_str());
@@ -753,7 +753,7 @@ namespace elibstl {
 EXTERN_C void Fn_EButtonW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
 	pRetData->m_int = reinterpret_cast<INT>(Button->GetChild());
 }
