@@ -38,7 +38,7 @@ static ATOM g_atom_clinet_ex = NULL;
 static void Clinet_RegWndClass()
 {
 #ifndef __E_STATIC_LIB
-	g_hbmp_clinet = (HBITMAP)LoadImageW(g_hModule, MAKEINTRESOURCEW(IDB_CLINET_EX), IMAGE_BITMAP, 0, 0, 0);
+	g_hbmp_clinet = (HBITMAP)LoadImageW(g_elibstl_hModule, MAKEINTRESOURCEW(IDB_CLINET_EX), IMAGE_BITMAP, 0, 0, 0);
 #endif
 	WNDCLASSW wc = { sizeof(WNDCLASSW) };
 	wc.lpszClassName = CLINETEX;

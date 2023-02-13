@@ -243,7 +243,7 @@ public:
 		{
 			m_portrait = portrait;
 			DWORD style = portrait == 0 ? BS_TOP : portrait == 1 ? BS_VCENTER : BS_BOTTOM;
-			SetWindowLongPtrW(m_hWnd, GWL_STYLE, (GetWindowLongPtrW(m_hWnd, GWLP_STYLE) & ~(BS_TOP | BS_VCENTER | BS_BOTTOM)) | style);
+			SetWindowLongPtrW(m_hWnd, GWL_STYLE, (GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ~(BS_TOP | BS_VCENTER | BS_BOTTOM)) | style);
 		}
 	}
 	char* GetTextAtoE()
@@ -475,7 +475,7 @@ static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		oldproc = DefWindowProc;
 	}
 
-	bool is_continue = SendToParentsHwnd(pButton->GetID(), pButton->GetUID(), uMsg, wParam, lParam);
+	bool is_continue = elibstl::SendToParentsHwnd(pButton->GetID(), pButton->GetUID(), uMsg, wParam, lParam);
 	if (!is_continue)
 	{
 		return 0;
@@ -657,7 +657,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	eButtonEx* Button = (eButtonEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (nPropertyIndex == 5)
 	{
-		Button->SetText(MyInputBox(Button->GetText()).c_str());
+		Button->SetText(elibstl::MyInputBox(Button->GetText()).c_str());
 		*pblModified = true;
 	}
 	return *pblModified;

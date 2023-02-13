@@ -462,7 +462,7 @@ static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		oldproc = DefWindowProc;
 	}
 
-	bool is_continue = SendToParentsHwnd(pEditBox->GetID(), pEditBox->GetUID(), uMsg, wParam, lParam);
+	bool is_continue = elibstl::SendToParentsHwnd(pEditBox->GetID(), pEditBox->GetUID(), uMsg, wParam, lParam);
 	if (!is_continue)
 	{
 		return 0;
@@ -501,8 +501,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		return reinterpret_cast<LRESULT>(hBrush);
 	}
 	case WM_DESTROY: {
-        // GetClassLong 返回的值属于整个类的, 不是属于某个窗口的, 所以返回的东西不能释放, 可以在取消注册类的时候释放
-		
+		// GetClassLong 返回的值属于整个类的, 不是属于某个窗口的, 所以返回的东西不能释放, 可以在取消注册类的时候释放
+
 		//HBRUSH hBrush = reinterpret_cast<HBRUSH>(GetClassLong(hWnd, GCLP_HBRBACKGROUND));
 		//if (hBrush)
 		//{
@@ -720,7 +720,7 @@ static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
 	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
 	if (nPropertyIndex == 1)
 	{
-		Button->SetText(std::wstring(MyInputBox(Button->GetText()).c_str()).c_str());
+		Button->SetText(std::wstring(elibstl::MyInputBox(Button->GetText()).c_str()).c_str());
 		*pblModified = true;
 	}
 	return *pblModified;

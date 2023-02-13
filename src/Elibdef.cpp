@@ -122,7 +122,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH: {
-		g_hModule = hModule;
+		g_elibstl_hModule = hModule;
 		break;
 	}
 	case DLL_PROCESS_DETACH:

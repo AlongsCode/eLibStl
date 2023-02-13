@@ -13,7 +13,7 @@ struct FucInfo
 	const char* FucName;
 };
 //字符串拼接重载运算符，也可使使用字符串拼接函数
-extern HMODULE g_hModule;
+extern HMODULE g_elibstl_hModule;
 //extern vector<PFN_EXECUTE_CMD> s_ExecuteCommand;
 //extern vector<const char*> s_CommandNames;
 //extern vector<CMD_INFO> s_Commands;

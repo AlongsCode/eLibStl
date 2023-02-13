@@ -119,7 +119,7 @@ public:
 			oldproc = DefWindowProc;
 		}
 
-		bool is_continue = SendToParentsHwnd(pEUpDown->GetID(), pEUpDown->GetUID(), uMsg, wParam, lParam);
+		bool is_continue = elibstl::SendToParentsHwnd(pEUpDown->GetID(), pEUpDown->GetUID(), uMsg, wParam, lParam);
 		if (!is_continue)
 		{
 			return 0;
