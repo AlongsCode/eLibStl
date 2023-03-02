@@ -41,6 +41,7 @@
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
     <ClCompile Include="openlib\MiniCo\coroutine.c" />
     <ClCompile Include="src\analog_press.cpp" />
+    <ClCompile Include="src\ansiwindow_to_unicodewindow.cpp" />
     <ClCompile Include="src\atomic_addition.cpp" />
     <ClCompile Include="src\atomic_decrement.cpp" />
     <ClCompile Include="src\atomic_exchange.cpp" />
@@ -51,6 +52,7 @@
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
+    <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\e_coroutine.cpp" />
     <ClCompile Include="src\create_dir.cpp" />
     <ClCompile Include="src\EcontrolHelp.cpp" />

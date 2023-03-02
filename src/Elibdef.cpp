@@ -61,7 +61,7 @@ namespace elibstl {
 		/*m_nDataTypeCount*/       sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
 		/*g_DataType_web*/         g_DataType, // 本库中所有的自定义数据类型
 
-		/*m_nCategoryCount*/        9, // 全局命令类别数目, 可为0
+		/*m_nCategoryCount*/        11, // 全局命令类别数目, 可为0
 		/*m_szzCategory*/
 		"0000算术运算\0"
 		"0000文本操作\0"
@@ -72,6 +72,8 @@ namespace elibstl {
 		"0000网络通信\0"
 		"0000环境存取\0"
 		"0000进程线程协程\0"
+		"0000窗口操作\0"
+		"0000代码调试\0"
 		"\0",
 
 		/*m_nCmdCount*/             0, // 本库中提供的所有命令(全局命令及对象命令)的数目, 可为0

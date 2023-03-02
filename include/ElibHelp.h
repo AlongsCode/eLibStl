@@ -22,3 +22,7 @@ extern HMODULE g_elibstl_hModule;
 //void AddFuc(FucInfo Func);
 //void AddDataType(LIB_DATA_TYPE_INFO Func);
 //LIB_INFO* elibkrnlnmake();
+namespace elibstl {
+	bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf);
+
+}

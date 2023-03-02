@@ -42,3 +42,7 @@ FucInfo atomic_exchange = { {
 		/*ArgCount*/2,
 		/*arg lp*/  &Args[0],
 	} ,Fn_atomic_exchange ,"Fn_atomic_exchange" };
+
+
+
+

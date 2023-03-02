@@ -122,6 +122,9 @@ network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
 ,EButtonW_GetHwnd/*按钮取组件句柄*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
+, e_debugput/*调试*/\
+//,ansiwindow_to_unicodewindow/*窗口unicode支持*/
+
 
 
 #pragma endregion

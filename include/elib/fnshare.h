@@ -10,6 +10,16 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<string>
 namespace elibstl
 {
+	/*易库通信,调用易库命令等*/
+
+
+
+
+
+
+
+
+
 
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);
 	// 向易语言ide发送消息
@@ -311,6 +321,15 @@ namespace elibstl
 		*reinterpret_cast<LPINT>(p) = 1;
 		*reinterpret_cast<LPINT>(p + 4) = 0;
 		return p;
+	}
+	//获取多数组维数
+	inline int get_array_dimension(LPVOID n_pAryData) {
+		return static_cast<int*>(n_pAryData)[0];
+	}
+	//获取多数组对应维的成员数，指针和维索引
+	inline int get_array_count(void* pBase, INT dimension)
+	{
+		return reinterpret_cast<INT*>(static_cast<char*>(pBase) + dimension * sizeof(INT))[0];
 	}
 	template <typename T>
 	void* create_array(void* data, size_t size)

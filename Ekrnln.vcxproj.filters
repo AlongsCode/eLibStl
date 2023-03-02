@@ -76,6 +76,12 @@
     <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine\mini_co">
       <UniqueIdentifier>{01deff0d-0c2c-4f34-ac96-40b4f8a1b7e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\窗口操作">
+      <UniqueIdentifier>{0e8454ea-efd0-4d12-a724-e35b19308d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\代码调试">
+      <UniqueIdentifier>{de01d852-eb52-4e95-b4b5-5497f70e16c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -337,6 +343,12 @@
     </ClCompile>
     <ClCompile Include="src\replace_substring.cpp">
       <Filter>源文件\实现\全局命令\文本</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ansiwindow_to_unicodewindow.cpp">
+      <Filter>源文件\实现\全局命令\窗口操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debugput.cpp">
+      <Filter>源文件\实现\全局命令\代码调试</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
