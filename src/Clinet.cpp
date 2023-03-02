@@ -253,10 +253,7 @@ EXTERN_C void Fn_Clinet_connect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 	{
 		return;
 	}
-	if (ip == "127.0.0.1")
-	{
-		ip = get_ip_this_a();
-	}
+
 	pRetData->m_bool = pClinet->connect(ip, pArgInf[2].m_short);
 }
 

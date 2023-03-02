@@ -113,13 +113,15 @@ HUNIT WINAPI Create_SeverWindow(
 	}
 
 	eServer* server = new eServer;
-	server->m_clinet_enter = server_callback_incline;
-	server->m_clinet_leave = server_callback_outcline;
-	server->m_data_get = server_callback_get_data;
 	if (pAllPropertyData && nAllPropertyDataSize == sizeof(u_short))
 	{
 		server->m_port_num = *reinterpret_cast<u_short*>(pAllPropertyData);
+		server->set_ip(string(reinterpret_cast<char*>(pAllPropertyData) + sizeof(u_short)));
 	}
+	server->m_clinet_enter = server_callback_incline;
+	server->m_clinet_leave = server_callback_outcline;
+	server->m_data_get = server_callback_get_data;
+
 	SetWindowLongPtrW(hWnd, GWL_USERDATA, (LONG_PTR)server);
 	if (!blInDesignMode)
 	{
@@ -151,13 +153,15 @@ HGLOBAL WINAPI GetAllPropertyData_ServerApp(HUNIT hUnit)
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(u_short));
+
+	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(u_short) + 16);
 	if (hGlobal)
 	{
 		void* pGlobal = GlobalLock(hGlobal);
 		if (pGlobal)
 		{
 			memcpy(pGlobal, &pServer->m_port_num, sizeof(u_short));
+			memcpy(reinterpret_cast<unsigned char*>(pGlobal) + sizeof(u_short), pServer->get_ip(), 16);
 			GlobalUnlock(hGlobal);
 		}
 	}
@@ -174,10 +178,9 @@ BOOL WINAPI GetPropertyData_ServerApp(HUNIT hUnit, INT nPropertyIndex,
 		pValue->m_int = pServer->m_port_num;
 		return FALSE;
 	case 1: {
-		char ip[16] = { 0 };
-		memcpy(ip, pServer->get_ip().c_str(), pServer->get_ip().size());
+
 		//是否为拷贝构造？先用临时变量试一下;
-		pValue->m_szText = ip;
+		pValue->m_szText = pServer->get_ip();
 		return FALSE;
 	}
 	default:break;
@@ -228,7 +231,7 @@ static UNIT_PROPERTY s_server_member[] =
 
 
 	/*000*/ {"端口号", "port", "可以是大于 0 小于 32767 的任何自定数值", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*000*/ {"默认ip", "ip", "默认为本机ip", UD_TEXT, UW_ONLY_READ | _PROP_OS(__OS_WIN), NULL},
+	/*000*/ {"默认ip", "ip", "默认为本机ip", UD_TEXT,  _PROP_OS(__OS_WIN), NULL},
 };
 
 namespace elibstl {

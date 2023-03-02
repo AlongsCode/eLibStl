@@ -1,6 +1,4 @@
 #include <sstream>  
-#include <string>
-#include <ctime>
 #include <iomanip>
 #include"ElibHelp.h"
 
@@ -79,7 +77,7 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 			oss << static_cast<int>(b) << ",";
 		}
 		if (!bytes.empty()) { oss.seekp(-1, std::ios_base::end); }  // 去掉最后一个逗号
-		oss << "}";
+		oss << "} | ";
 		break;
 	}
 	case SDT_DATE_TIME:
@@ -181,6 +179,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 		}
 		case SDT_BIN:
 		{
+
 			if ((*(LPVOID*)p) == 0)
 			{
 				oss << "字节集:0{},";
@@ -249,6 +248,7 @@ EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 			printParamArray(str, pParam);
 		}
 	}
+	//把" | "去掉
 	if (str.str().size() >= 3) {
 		str.str(str.str().substr(0, str.str().size() - 3));
 	}

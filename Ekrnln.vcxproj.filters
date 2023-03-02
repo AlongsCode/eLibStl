@@ -82,6 +82,9 @@
     <Filter Include="源文件\实现\全局命令\代码调试">
       <UniqueIdentifier>{de01d852-eb52-4e95-b4b5-5497f70e16c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\其他">
+      <UniqueIdentifier>{869ceffb-f788-4cdc-bbef-91d434b329e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -349,6 +352,18 @@
     </ClCompile>
     <ClCompile Include="src\debugput.cpp">
       <Filter>源文件\实现\全局命令\代码调试</Filter>
+    </ClCompile>
+    <ClCompile Include="src\e_call.cpp">
+      <Filter>源文件\实现\全局命令\其他</Filter>
+    </ClCompile>
+    <ClCompile Include="src\delay.cpp">
+      <Filter>源文件\实现\全局命令\代码调试</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GetConutEx.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\call_lib_e_fun.cpp">
+      <Filter>源文件\实现\全局命令\其他</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

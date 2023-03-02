@@ -53,7 +53,7 @@ public:
 	bool is_create();
 	void set_ip(string IP);
 	void set_ip(wstring IP);
-	string get_ip();
+	char* get_ip();
 	bool breakoff(SOCKET pC, bool is_now = false);
 	string get_clinet_ip(SOCKET pC);
 	wstring get_clinet_ip_w(SOCKET pC);

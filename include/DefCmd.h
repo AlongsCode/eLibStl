@@ -123,6 +123,10 @@ network_post/*网页访问*/\
 ,EButtonW_GetHwnd/*按钮取组件句柄*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
 , e_debugput/*调试*/\
+,e_CallEfun/*执行函数*/\
+,_e_delay/*延迟Ex*/\
+,e_GetTickCount_ex/*取启动时间Ex*/\
+,e_eLibCallEfun/*调用易库函数*/\
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 
 

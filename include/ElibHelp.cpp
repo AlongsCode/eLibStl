@@ -55,7 +55,6 @@ namespace elibstl {
 			::FreeLibrary(hModule);
 			return false;
 		}
-
 		pEdef(pRetData, nArgCount, pArgInf);
 		::FreeLibrary(hModule);
 		return true;

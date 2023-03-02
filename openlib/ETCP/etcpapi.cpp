@@ -141,7 +141,7 @@ public:
 	bool is_create();
 	void set_ip(string IP);
 	void set_ip(wstring IP);
-	string get_ip();
+	char* get_ip();
 	bool breakoff(SOCKET pC, bool is_now = false);
 	string get_clinet_ip(SOCKET pC);
 	wstring get_clinet_ip_w(SOCKET pC);
@@ -155,7 +155,7 @@ private:
 	void pointer_synchronization();
 	void* m_sever_num = NULL;
 	int m_error_code = 0;
-	string m_defalt_ip = "";
+	char m_defalt_ip[16] = "";
 };
 bool eServer::is_create() {
 	return m_sever_num != NULL;
@@ -182,12 +182,12 @@ eServer::eServer(u_short arg_port, void* c_en_cb, void* data_get_cb, void* c_lea
 	{
 		m_clinet_enter = c_en_cb;
 	}
-	if (m_defalt_ip.empty())
+	if (*m_defalt_ip == '\0')
 	{
-		m_defalt_ip = get_ip_this_a();
-		if (m_defalt_ip.empty())
+		strcpy_s(m_defalt_ip, "127.0.0.1");
+		if (*m_defalt_ip == '\0')
 		{
-			m_defalt_ip = "0.0.0.0";
+			strcpy_s(m_defalt_ip, "0.0.0.0");
 		}
 	}
 	if (!s_is_etcp_init)
@@ -207,19 +207,19 @@ void eServer::pointer_synchronization() {
 	temp.pControl = this;
 	g_bind_control.push_back(temp);
 }
-string eServer::get_ip() {
+char* eServer::get_ip() {
 	return m_defalt_ip;
 };
 eServer::eServer()
 {
 	m_port_num = s_default_port;
 	s_default_port++;
-	if (m_defalt_ip.empty())
+	if (*m_defalt_ip == '\0')
 	{
-		m_defalt_ip = get_ip_this_a();
-		if (m_defalt_ip.empty())
+		strcpy_s(m_defalt_ip, "127.0.0.1");
+		if (*m_defalt_ip == '\0')
 		{
-			m_defalt_ip = "0.0.0.0";
+			strcpy_s(m_defalt_ip, "0.0.0.0");
 		}
 	}
 	if (!s_is_etcp_init)
@@ -239,7 +239,7 @@ bool eServer::start() {
 	{
 		return false;
 	}
-	m_sever_num = myetcp_sever_create(m_port_num, false, m_defalt_ip.c_str());
+	m_sever_num = myetcp_sever_create(m_port_num, false, m_defalt_ip);
 	if (!m_sever_num)
 	{
 		m_error_code = ETCP_ERROR_SERVER_CREATE;
@@ -298,11 +298,11 @@ void CALLBACK server_callback(HANDLE  pS, SOCKET  pC, int  event_type, char* ip_
 }
 
 void eServer::set_ip(string IP) {
-	m_defalt_ip = IP;
+	strcpy_s(m_defalt_ip, IP.c_str());
 };
 void eServer::set_ip(wstring IP) {
 
-	m_defalt_ip = wcs2cs(IP);
+	strcpy_s(m_defalt_ip, wcs2cs(IP).c_str());
 
 };
 bool eServer::breakoff(SOCKET pSvever, bool is_now) {
