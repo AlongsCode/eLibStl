@@ -365,6 +365,12 @@
     <ClCompile Include="src\call_lib_e_fun.cpp">
       <Filter>源文件\实现\全局命令\其他</Filter>
     </ClCompile>
+    <ClCompile Include="src\OpenFileDialog.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\e_fnBrowseForFolder.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

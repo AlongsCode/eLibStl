@@ -127,6 +127,11 @@ network_post/*网页访问*/\
 ,_e_delay/*延迟Ex*/\
 ,e_GetTickCount_ex/*取启动时间Ex*/\
 ,e_eLibCallEfun/*调用易库函数*/\
+,e_Open_File_Dialog_A/*文件选择夹*/\
+,e_Open_File_Dialog_W/*文件选择夹W*/\
+,e_BrowseForFolder_W/*文件浏览夹W*/\
+,e_BrowseForFolder_A/*文件浏览夹*/\
+
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 
 

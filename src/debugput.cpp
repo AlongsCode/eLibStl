@@ -198,21 +198,17 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 		}
 		case SDT_DATE_TIME:
 		{
-			MessageBoxA(0, "TIME", 0, 0);
 			const DATE temp = *(DATE*)p;  p += sizeof(DATE);
 			oss << "[" << DateTimeFormat(temp) << "],";
 			break;
 		}
 		case SDT_SUB_PTR:
-			MessageBoxA(0, "VOID*", 0, 0);
 			oss << "(子程序地址:" + std::to_string(*reinterpret_cast<const DWORD*>(p));
 			break;
 		case _SDT_NULL:
-			MessageBoxA(0, "NULL", 0, 0);
 			oss << "(空)";
 			break;
 		default:
-			MessageBoxA(0, "(?未知?)", 0, 0);
 			oss << "(?未知?)";
 			break;
 		}

@@ -61,6 +61,7 @@
     <ClCompile Include="src\EcontrolHelp.cpp" />
     <ClCompile Include="src\EditBoxW.cpp" />
     <ClCompile Include="src\Elibdef.cpp" />
+    <ClCompile Include="src\e_fnBrowseForFolder.cpp" />
     <ClCompile Include="src\free_console.cpp" />
     <ClCompile Include="src\GetConutEx.cpp" />
     <ClCompile Include="src\get_clipboard_text.cpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="src\message_box_ex.cpp" />
     <ClCompile Include="src\network_post.cpp" />
     <ClCompile Include="src\normalization_path.cpp" />
+    <ClCompile Include="src\OpenFileDialog.cpp" />
     <ClCompile Include="src\open_console.cpp" />
     <ClCompile Include="src\prevent_duplicate_execution.cpp" />
     <ClCompile Include="src\Prime.cpp" />

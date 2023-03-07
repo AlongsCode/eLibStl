@@ -1,14 +1,14 @@
 #include"ElibHelp.h"
 #include"MiniCo/coroutine.h"
 
-static LIB_DATA_TYPE_ELEMENT* m_hCoprocess;
-static LIB_DATA_TYPE_ELEMENT* m_hCoroutine;
+static LIB_DATA_TYPE_ELEMENT* m_hCoprocess = nullptr;
+static LIB_DATA_TYPE_ELEMENT* m_hCoroutine = nullptr;
 namespace elibstl {
 	LIB_DATA_TYPE_INFO hCoprocessD = {
-		  "协程句柄", "hCoprocess", "协程映射的对象ID", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,m_hCoprocess ,
+		  "协程句柄", "hCoprocess", "协程映射的对象ID", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
 	};
 	LIB_DATA_TYPE_INFO hCoroutine = {
-		  "协程调度器", "hCoroutine", "用于协程调度切换", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,m_hCoroutine ,
+		  "协程调度器", "hCoroutine", "用于协程调度切换", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
 	};
 }
 

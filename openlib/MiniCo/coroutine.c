@@ -110,6 +110,7 @@ void __stdcall coroutine_main(LPVOID lpParameter)
 	--s->conums;
 	s->co[id] = NULL;
 	//co_delete(co);
+
 	SwitchToFiber(s->main);
 }
 
