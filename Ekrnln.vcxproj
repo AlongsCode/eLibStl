@@ -77,6 +77,7 @@
     <ClCompile Include="src\get_special_folder_path.cpp" />
     <ClCompile Include="src\InStrRev.cpp" />
     <ClCompile Include="src\gettextpos.cpp" />
+    <ClCompile Include="src\isVM.cpp" />
     <ClCompile Include="src\Is_64_bit.cpp" />
     <ClCompile Include="src\is_login_net.cpp" />
     <ClCompile Include="src\kill_proc.cpp" />

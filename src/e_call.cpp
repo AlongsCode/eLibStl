@@ -222,8 +222,6 @@ static ARG_INFO Args[] =
 //
 //
 //}
-#pragma endregion
-
 
 
 EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf) {
@@ -254,13 +252,8 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 			arg = pArgInf[i].m_dwSubCodeAdr;
 			break;
 		case SDT_FLOAT:
-		{
-			float f = pArgInf[i].m_float;
-			int i = 0;
-			__asm fld f;
-			__asm fst i;
-			arg = (int)i;
-			break; }
+			arg = pArgInf[i].m_uint;
+			break;
 		case SDT_DOUBLE:
 		case SDT_DATE_TIME:
 			arg = *(reinterpret_cast<std::uint32_t*>(&pArgInf[i].m_date) + 1);	//	高32位
@@ -333,10 +326,7 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 
 	case SDT_FLOAT:
 		if (pArgInf[1].m_pFloat) {
-			float f = 0;
-			__asm fld lpart;
-			__asm fst f;
-			*pArgInf[1].m_pFloat = f;
+			*pArgInf[1].m_pFloat = *reinterpret_cast<float*>(&lpart);
 		}
 		break;
 
@@ -384,6 +374,235 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 
 
 }
+
+
+
+#pragma endregion
+
+
+
+
+
+
+
+
+
+
+#pragma region new
+//inline  void* _GetPointerByIndex(void* pBase, int index)
+//{
+//	return (void*)((INT)pBase + index * sizeof(INT));
+//}
+//
+//inline  INT _GetIntByIndex(void* pBase, INT index)
+//{
+//	return *((INT*)_GetPointerByIndex(pBase, index));
+//}
+//inline void CallFunction_GetValue(PMDATA_INF pMData, int& HiValue, int& LowValue, int& bytes)
+//{
+//	HiValue = LowValue = 0;
+//	if (pMData->m_dtDataType == _SDT_NULL) return;
+//	bytes = 4;
+//	switch (pMData->m_dtDataType)
+//	{
+//	case SDT_INT:
+//		LowValue = (int)pMData->m_int; break;
+//	case SDT_SHORT:
+//		LowValue = (int)pMData->m_short; bytes = 2; break;
+//	case SDT_BYTE:
+//		LowValue = (int)pMData->m_byte; bytes = 1; break;
+//	case SDT_INT64:
+//	{
+//		LowValue = (int)_GetIntByIndex(&(pMData->m_int64), 0);
+//		HiValue = (int)_GetIntByIndex(&(pMData->m_int64), 1);
+//		bytes = 8;
+//		break;
+//	}
+//	case SDT_FLOAT:
+//	{
+//		float f = pMData->m_float;
+//		int i = 0;
+//		__asm fld f;
+//		__asm fst i;
+//		LowValue = (int)i;
+//		bytes = 4;
+//		break;
+//	}
+//	case SDT_DOUBLE:
+//	case SDT_DATE_TIME:
+//	{
+//		LowValue = (int)_GetIntByIndex(&(pMData->m_double), 0);
+//		HiValue = (int)_GetIntByIndex(&(pMData->m_double), 1);
+//		bytes = 8;
+//		break;
+//	}
+//	case SDT_BOOL:
+//		LowValue = (int)(pMData->m_bool ? 1 : 0); bytes = 4; break;
+//	case SDT_TEXT:
+//		LowValue = (int)(DWORD)pMData->m_pText; break;
+//	case SDT_BIN:
+//	{
+//		if (pMData->m_pBin == NULL) //! 字节集为空的情况!
+//		{
+//			LowValue = (int)0; break;
+//		}
+//		LowValue = (int)(DWORD)(LPBYTE)_GetPointerByIndex(pMData->m_pBin, 2);
+//		break;
+//	}
+//	case SDT_SUB_PTR:
+//		LowValue = (int)((DWORD)pMData->m_dwSubCodeAdr); break;
+//	case _SDT_NULL:
+//		LowValue = (int)0; break;
+//	case SDT_STATMENT:
+//		//todo: 执行子语句并取其值
+//		LowValue = (int)0; //!!!
+//		break;
+//	default: LowValue = (int)pMData->m_int; break;
+//	}
+//}
+//
+////将寄存器EAX或ST0中的值写入pMData
+//inline void CallFunction_GetReturnedValue(PMDATA_INF pMData, int eaxValue, int edxValue, double stValue)
+//{
+//	if (pMData->m_dtDataType == _SDT_NULL) return;
+//
+//	switch (pMData->m_dtDataType)
+//	{
+//	case SDT_INT: case SDT_SHORT: case SDT_BYTE:
+//		*(pMData->m_pInt) = eaxValue;
+//		break;
+//	case SDT_INT64:
+//	{
+//		//EAX在低位, EDX在高位, 组成double
+//		int temp[2];
+//		temp[0] = eaxValue; temp[1] = edxValue;
+//		*(pMData->m_pInt64) = *(INT64*)temp;
+//		break;
+//	}
+//	case SDT_FLOAT:
+//		//根据VC编译器生成的代码，返回的浮点数(float,double)应该在ST0中；看来易编译器与其不同。
+//		//*(pMData->m_pFloat) = (float)stValue; 
+//	{
+//		float f = 0;
+//		__asm fld eaxValue;
+//		__asm fst f;
+//		*pMData->m_pFloat = f;
+//		debug_put(f);
+//	}
+//	break;
+//	case SDT_DOUBLE:
+//	case SDT_DATE_TIME:
+//		//根据VC编译器生成的代码，返回的浮点数(float,double)应该在ST0中；看来易编译器与其不同。
+//		//*(pMData->m_pDouble) = stValue;
+//	{
+//		//EAX在低位, EDX在高位, 组成double
+//		int temp[2];
+//		temp[0] = eaxValue; temp[1] = edxValue;
+//		*(pMData->m_pDouble) = *(double*)temp;
+//	}
+//	break;
+//	case SDT_BOOL:
+//		*(pMData->m_pBool) = (eaxValue != 0);
+//		break;
+//	case SDT_TEXT:
+//		*(pMData->m_ppText) = elibstl::clone_text((char*)eaxValue);
+//		break;
+//	case SDT_BIN:
+//
+//		break;
+//	case SDT_SUB_PTR:
+//		break;
+//	case _SDT_NULL:
+//		break;
+//	case SDT_STATMENT:
+//		break;
+//
+//	default:
+//		break;
+//	}
+//}
+//inline BOOL Global_CallFunction(PMDATA_INF pFuncMData, INT nArgCount)
+//{
+//
+//	//取被调用子程序的执行地址(pFunc)
+//	int pFunc = NULL; //pArgInf[0].m_dwSubCodeAdr;
+//	int temp = 0;
+//	CallFunction_GetValue(pFuncMData, temp, pFunc, temp);
+//	if (pFunc == 0) return FALSE;
+//
+//	//返回值
+//	PMDATA_INF pReturnMData = &pFuncMData[1];
+//	//参数
+//	PMDATA_INF pParamsMData = &pFuncMData[2];
+//
+//	//参数依次反序压栈
+//	int  HiValue = 0, LowValue = 0;
+//	int bytes = 0;
+//	int byteValue = 0;
+//	int shortValue = 0;
+//	if (!(pParamsMData[0].m_dtDataType == _SDT_NULL && nArgCount <= 1)) //第一个参数被省略表示没有参数
+//	{
+//		for (int i = nArgCount - 1; i >= 0; i--) //反序压栈
+//		{
+//			CallFunction_GetValue(&pParamsMData[i], HiValue, LowValue, bytes); //函数调用会影响参数栈吗?
+//
+//			//经查看VC编译器生成的汇编代码，参数压栈总是以4字节为单位
+//			byteValue = (int)(byte)LowValue; shortValue = (int)(short)LowValue;
+//
+//			//如果是8字节数值的话,先高位入栈,后低位入栈
+//			if (bytes == 8)
+//			{
+//				__asm PUSH HiValue;
+//				__asm PUSH LowValue;
+//			}
+//			else if (bytes == 4)
+//				__asm PUSH LowValue;
+//			else if (bytes == 2)
+//				__asm PUSH shortValue;
+//			else if (bytes == 1)
+//				__asm PUSH byteValue;
+//
+//		}
+//	}
+//
+//	//调用子程序
+//	__asm CALL pFunc;
+//
+//	//取被调用子程序的返回值 (须在CALL之后立刻读取)
+//	int eaxValue = 0, edxValue = 0;
+//	double stValue = 0.0;
+//	__asm mov eaxValue, eax;
+//	__asm mov edxValue, edx;
+//	__asm fst stValue; //! 取ST0寄存器中存储的浮点数值(float,double)
+//
+//	if (pReturnMData->m_dtDataType != _SDT_NULL)
+//		CallFunction_GetReturnedValue(pReturnMData, eaxValue, edxValue, stValue);
+//
+//	return TRUE;
+//
+//
+//
+//}
+//
+//
+//
+//
+//EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf) {
+//
+//	BOOL bOK = Global_CallFunction(pArgInf, nArgCount - 2);
+//	if (pRetData)
+//	{
+//		pRetData->m_bool = bOK;
+//	}
+//}
+
+
+#pragma endregion
+
+
+
+
+
 FucInfo e_CallEfun = { {
 		/*ccname*/  ("调用函数"),
 		/*egname*/  ("e_call"),

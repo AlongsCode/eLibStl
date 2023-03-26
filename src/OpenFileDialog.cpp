@@ -85,6 +85,7 @@ static ARG_INFO Args[] =
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
+
 	{
 		/*name*/    "对话框类型",
 		/*explain*/ ("0为打开，1为保存，默认为0"),
@@ -93,14 +94,74 @@ static ARG_INFO Args[] =
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "创建时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "覆盖时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "默认文件后缀",
+		/*explain*/ ("保存文件时，默认文件后缀"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_TEXT,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "是否启用旧式风格",
+		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+	,{
+		/*name*/    "默认文件名",
+		/*explain*/ (""),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_TEXT,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
 
-static std::string OpenFileDialog(const char* title, const char* filter, int initFilter, const char* initDir, bool noChangeDir, HWND parentWnd, int openMode)
+static std::string OpenFileDialog(const char* title,
+	const char* filter,
+	int initFilter,
+	const char* initDir,
+	bool noChangeDir,
+	HWND parentWnd,
+	int openMode,
+	bool bCreateprompt,
+	bool bOverrideprompt,
+	const char* deflutext,
+	bool bOldStyle,
+	const char* defaultFileName)
 {
 	std::string fileName;
 	CHAR szFile[MAX_PATH] = { 0 };
+	if (defaultFileName && *defaultFileName != '\0')
+	{
+		strcpy_s(szFile, MAX_PATH, ("\\" + std::string(defaultFileName)).c_str());
+	}
+
+
+
 	OPENFILENAMEA ofn = { sizeof(ofn) };
 	ofn.hwndOwner = parentWnd;
 	ofn.lpstrTitle = title;
@@ -109,22 +170,44 @@ static std::string OpenFileDialog(const char* title, const char* filter, int ini
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.lpstrInitialDir = initDir;
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-	if (noChangeDir) ofn.Flags |= OFN_NOCHANGEDIR;
-	if (openMode == 1) ofn.Flags |= OFN_OVERWRITEPROMPT;
-	if (GetOpenFileNameA(&ofn))
-	{
-		fileName = szFile;
+	DWORD dwFlags = OFN_HIDEREADONLY;
+	if (bCreateprompt)  dwFlags |= OFN_CREATEPROMPT;
+	if (noChangeDir) dwFlags |= OFN_NOCHANGEDIR;
+	if (bOverrideprompt)  dwFlags |= OFN_OVERWRITEPROMPT;
+	if (bOldStyle) dwFlags |= OFN_EXPLORER;
+	//非保存模式文件必须存在，且为文件增加默认后缀
+
+	if (openMode != 1) {
+		dwFlags |= OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;;
+		ofn.Flags = dwFlags;
+		if (GetOpenFileNameA(&ofn))
+		{
+			fileName = szFile;
+		}
 	}
+	else {
+		ofn.lpstrDefExt = deflutext;
+		ofn.Flags = dwFlags;
+		if (GetSaveFileNameA(&ofn))
+		{
+			fileName = szFile;
+		}
+	}
+
+
 	return fileName;
 }
 EXTERN_C void Fn_Open_File_Dialog_A(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto title = elibstl::args_to_sdata(pArgInf, 0), filter = elibstl::args_to_sdata(pArgInf, 1), initDir = elibstl::args_to_sdata(pArgInf, 3);
+	auto title = elibstl::args_to_sdata(pArgInf, 0), filter = elibstl::args_to_sdata(pArgInf, 1), initDir = elibstl::args_to_sdata(pArgInf, 3), deflutext = elibstl::args_to_sdata(pArgInf, 9), deflufilename = elibstl::args_to_sdata(pArgInf, 11);;;
 	int initFilter = elibstl::args_to_data<int>(pArgInf, 2).value_or(0), openMode = elibstl::args_to_data<int>(pArgInf, 6).value_or(0);
-	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false);
+	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false), bCreateprompt = elibstl::args_to_data<BOOL>(pArgInf, 7).value_or(true), bOverrideprompt = elibstl::args_to_data<BOOL>(pArgInf, 8).value_or(true),
+		bOldStyle = elibstl::args_to_data<BOOL>(pArgInf, 10).value_or(false);
 	HWND parentWnd = reinterpret_cast<HWND> (elibstl::args_to_data<INT>(pArgInf, 5).value_or(0));
-	pRetData->m_pText = elibstl::clone_text(OpenFileDialog(title.data(), filter.data(), initFilter, initDir.data(), noChangeDir, parentWnd, openMode));
+	pRetData->m_pText = elibstl::clone_text(OpenFileDialog(title.data(), filter.data(), initFilter, initDir.data(), noChangeDir, parentWnd, openMode, bCreateprompt,
+		bOverrideprompt,
+		deflutext.data(),
+		bOldStyle, deflufilename.data()));
 }
 
 FucInfo e_Open_File_Dialog_A = { {
@@ -210,15 +293,65 @@ static ARG_INFO WArgs[] =
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "创建时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "覆盖时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "默认文件后缀",
+		/*explain*/ ("保存文件时，默认文件后缀"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+	},{
+		/*name*/    "是否启用旧式风格",
+		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+	,{
+		/*name*/    "默认文件名",
+		/*explain*/ (""),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
-
-
-static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter, int initFilter, const wchar_t* initDir, bool noChangeDir, HWND parentWnd, int openMode)
-{
+static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter, int initFilter, const wchar_t* initDir, bool noChangeDir, HWND parentWnd, int openMode,
+	bool bCreateprompt,
+	bool bOverrideprompt,
+	const wchar_t* deflutext,
+	bool bOldStyle,
+	const wchar_t* defaultFileName) {
 	std::wstring fileName;
 	WCHAR szFile[MAX_PATH] = { 0 };
+	if (defaultFileName && *defaultFileName != L'\0')
+	{
+		wcscpy_s(szFile, MAX_PATH, (L"\\" + std::wstring(defaultFileName)).c_str());
+	}
+
+
+
 	OPENFILENAMEW ofn = { sizeof(ofn) };
 	ofn.hwndOwner = parentWnd;
 	ofn.lpstrTitle = title;
@@ -227,22 +360,46 @@ static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter,
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.lpstrInitialDir = initDir;
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-	if (noChangeDir) ofn.Flags |= OFN_NOCHANGEDIR;
-	if (openMode == 1) ofn.Flags |= OFN_OVERWRITEPROMPT;
-	if (GetOpenFileNameW(&ofn))
-	{
-		fileName = szFile;
+	DWORD dwFlags = OFN_HIDEREADONLY;
+	if (bCreateprompt)  dwFlags |= OFN_CREATEPROMPT;
+	if (noChangeDir) dwFlags |= OFN_NOCHANGEDIR;
+	if (bOverrideprompt)  dwFlags |= OFN_OVERWRITEPROMPT;
+	if (bOldStyle) dwFlags |= OFN_EXPLORER;
+	//非保存模式文件必须存在，且为文件增加默认后缀
+
+	if (openMode != 1) {
+		dwFlags |= OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;;
+		ofn.Flags = dwFlags;
+		if (GetOpenFileNameW(&ofn))
+		{
+			fileName = szFile;
+		}
 	}
+	else {
+		ofn.lpstrDefExt = deflutext;
+		ofn.Flags = dwFlags;
+		if (GetSaveFileNameW(&ofn))
+		{
+			fileName = szFile;
+		}
+	}
+
+
 	return fileName;
 }
+
+
 EXTERN_C void Fn_Open_File_Dialog_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto title = elibstl::args_to_wsdata(pArgInf, 0), filter = elibstl::args_to_wsdata(pArgInf, 1), initDir = elibstl::args_to_wsdata(pArgInf, 3);
+	auto title = elibstl::args_to_wsdata(pArgInf, 0), filter = elibstl::args_to_wsdata(pArgInf, 1), initDir = elibstl::args_to_wsdata(pArgInf, 3), deflutext = elibstl::args_to_wsdata(pArgInf, 9), deflufilename = elibstl::args_to_wsdata(pArgInf, 11);;
 	int initFilter = elibstl::args_to_data<int>(pArgInf, 2).value_or(0), openMode = elibstl::args_to_data<int>(pArgInf, 6).value_or(0);
-	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false);
+	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false), bCreateprompt = elibstl::args_to_data<BOOL>(pArgInf, 7).value_or(true), bOverrideprompt = elibstl::args_to_data<BOOL>(pArgInf, 8).value_or(true),
+		bOldStyle = elibstl::args_to_data<BOOL>(pArgInf, 10).value_or(false);
 	HWND parentWnd = reinterpret_cast<HWND> (elibstl::args_to_data<INT>(pArgInf, 5).value_or(0));
-	pRetData->m_pBin = elibstl::clone_textw(OpenFileDialogW(std::wstring(title).c_str(), std::wstring(filter).data(), initFilter, std::wstring(initDir).data(), noChangeDir, parentWnd, openMode));
+	pRetData->m_pBin = elibstl::clone_textw(OpenFileDialogW(std::wstring(title).c_str(), std::wstring(filter).data(), initFilter, std::wstring(initDir).data(), noChangeDir, parentWnd, openMode, bCreateprompt,
+		bOverrideprompt,
+		std::wstring(deflutext).data(),
+		bOldStyle, std::wstring(deflufilename).data()));
 }
 
 FucInfo e_Open_File_Dialog_W = { {
@@ -256,6 +413,6 @@ FucInfo e_Open_File_Dialog_W = { {
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/sizeof(Args) / sizeof(Args[0]),
-		/*arg lp*/  Args,
+		/*ArgCount*/sizeof(WArgs) / sizeof(WArgs[0]),
+		/*arg lp*/  WArgs,
 	} ,Fn_Open_File_Dialog_W ,"Fn_Open_File_Dialog_W" };
