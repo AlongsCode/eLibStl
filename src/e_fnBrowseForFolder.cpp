@@ -88,10 +88,10 @@ EXTERN_C void Fn_BrowseForFolder_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 
 FucInfo e_BrowseForFolder_A = { {
-		/*ccname*/  ("文件浏览夹"),
+		/*ccname*/  ("浏览文件对话框"),
 		/*egname*/  (""),
 		/*explain*/ ("打开一个对话框，浏览系统中存在的所有文件夹，返回被选定文件夹的路径名，如果未选中任何文件夹，则返回空文本"),
-		/*category*/6,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_TEXT,
 		/*reserved*/NULL,
@@ -104,10 +104,10 @@ FucInfo e_BrowseForFolder_A = { {
 
 
 FucInfo e_BrowseForFolder_W = { {
-		/*ccname*/  ("文件浏览夹W"),
+		/*ccname*/  ("浏览文件对话框W"),
 		/*egname*/  (""),
 		/*explain*/ ("打开一个对话框，浏览系统中存在的所有文件夹，返回被选定文件夹的路径名，如果未选中任何文件夹，则返回空文本"),
-		/*category*/6,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_BIN,
 		/*reserved*/NULL,

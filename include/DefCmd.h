@@ -131,6 +131,27 @@ network_post/*网页访问*/\
 ,e_Open_File_Dialog_W/*文件选择夹W*/\
 ,e_BrowseForFolder_W/*文件浏览夹W*/\
 ,e_BrowseForFolder_A/*文件浏览夹*/\
+,e_lib_CreateEbds/*文件浏览夹*/\
+,edbs_ex_structure/*EDBS构造*/\
+,edbs_ex_copy/*EDB复制*/\
+,edbs_ex_destruct/*析构*/\
+,edbs_ex_open/*打开*/\
+,edbs_get_row_num/*取记录数*/\
+,edbs_ex_addpendnop/*加空记录*/\
+,edbs_set_current/*跳到*/\
+,edbs_read/*读*/\
+,edbs_write/*写*/\
+, edbs_close/*关闭*/\
+,edbs_next\
+,edbs_previous\
+,edbs_clean\
+,edbs_begin\
+,edbs_commit\
+,edbs_get_current\
+,edbs_get_column_name\
+,edbs_get_column_num\
+,edbs_set_column_name\
+
 
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 
@@ -152,7 +173,8 @@ hCoprocessD,/*协程句柄*/\
 media_play_ex,/*媒体播放*/\
 TaskDialog_Button_Type,/*高级信息框按钮*/\
 UpDown,/*调节器*/\
-hCoroutine/*协程调度器*/\
+hCoroutine,/*协程调度器*/\
+edbs_ex/*edbs*/\
 
 #pragma endregion
 

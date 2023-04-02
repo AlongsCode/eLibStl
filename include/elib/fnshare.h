@@ -277,7 +277,7 @@ namespace elibstl
 	inline std::vector <T> get_array_element_inf(PMDATA_INF pAryData)
 	{
 
-		if (pAryData == nullptr) return nullptr;
+		if (pAryData == nullptr) return std::vector <T>();
 		if ((pAryData->m_dtDataType & DT_IS_ARY) == 0) {
 			auto data = args_to_data<T>(pAryData, 0);
 			return  data.has_value() ? std::vector <T>(data.value()) : std::vector <T>();

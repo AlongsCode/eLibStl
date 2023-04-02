@@ -133,15 +133,16 @@ namespace elibstl {
 		if (hwndParent == 0) {
 			return 0;
 		}
-		if (GetProp(hwndParent, PSUBPARHWND) == 0) {
-			oldProc = (WNDPROC)SetWindowLongPtrW(hwndParent, -4, (LONG_PTR)newProc);
+		if (GetProp(hwndParent, PSUBPARHWND) == NULL) {
+			oldProc = (WNDPROC)SetWindowLongPtrW(hwndParent, GWLP_WNDPROC, (LONG_PTR)newProc);
 			SetProp(hwndParent, PSUBPARHWND, newProc);
 			SetProp(hwndParent, WNDOLDPROC, oldProc);
 		}
 		else {
 			oldProc = (WNDPROC)GetProp(hwndParent, WNDOLDPROC);
 		}
-		if (GetProp(hwnd, PARWNDOLDPROC) == 0) {
+
+		if (GetProp(hwnd, PARWNDOLDPROC) == NULL) {
 			SetProp(hwnd, PARWNDOLDPROC, oldProc);
 		}
 		return oldProc;

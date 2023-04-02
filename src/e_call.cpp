@@ -385,9 +385,6 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 
 
 
-
-
-
 #pragma region new
 //inline  void* _GetPointerByIndex(void* pBase, int index)
 //{

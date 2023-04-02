@@ -88,6 +88,9 @@
     <Filter Include="源文件\实现\全局命令\对话框类">
       <UniqueIdentifier>{4ccfef69-c0a8-4a7f-a44b-648c501777a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\通用型\edb">
+      <UniqueIdentifier>{22bd8156-f4f6-4b52-b118-9e310e17ec2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -368,14 +371,17 @@
     <ClCompile Include="src\call_lib_e_fun.cpp">
       <Filter>源文件\实现\全局命令\其他</Filter>
     </ClCompile>
-    <ClCompile Include="src\e_fnBrowseForFolder.cpp">
-      <Filter>源文件\实现\全局命令\系统处理</Filter>
-    </ClCompile>
     <ClCompile Include="src\isVM.cpp">
       <Filter>源文件\实现\全局命令\系统处理</Filter>
     </ClCompile>
     <ClCompile Include="src\OpenFileDialog.cpp">
       <Filter>源文件\实现\全局命令\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\e_fnBrowseForFolder.cpp">
+      <Filter>源文件\实现\全局命令\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\edb.cpp">
+      <Filter>源文件\组件\通用型\edb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
