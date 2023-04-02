@@ -30,6 +30,60 @@
 //	return fileNames;
 //}
 
+
+
+
+
+
+
+static  std::vector<std::wstring> split_text(const std::wstring& text, const  wchar_t* str) {
+	std::vector<std::wstring> ret;
+	if (str == nullptr || *str == L'\0' || text == L"")
+	{
+		ret.push_back((text));
+		return ret;
+	}
+	size_t start = 0, index = text.find_first_of(str, 0);
+	while (index != text.npos)
+	{
+		if (start != index)
+			ret.push_back((text.substr(start, index - start)));
+		start = index + 1;
+		index = text.find_first_of(str, start);
+	}
+	if (text.substr(start) != L"")
+	{
+		ret.push_back((text.substr(start)));
+	}
+	return ret;
+}
+
+
+static  std::vector<std::string> split_text(const std::string& text, const  char* str) {
+	std::vector<std::string> ret;
+	if (str == nullptr || *str == '\0' || text == "")
+	{
+		ret.push_back((text));
+		return ret;
+	}
+	size_t start = 0, index = text.find_first_of(str, 0);
+	while (index != text.npos)
+	{
+		if (start != index)
+			ret.push_back((text.substr(start, index - start)));
+		start = index + 1;
+		index = text.find_first_of(str, start);
+	}
+	if (text.substr(start) != "")
+	{
+		ret.push_back((text.substr(start)));
+	}
+	return ret;
+}
+
+
+
+
 static ARG_INFO Args[] =
 {
 	{
@@ -161,11 +215,30 @@ static std::string OpenFileDialog(const char* title,
 	}
 
 
+	auto filterarry = split_text(filter, "|");
+	std::vector<char> all_filter;
+	for (size_t i = 0; i < filterarry.size(); i++)
+	{
+		if (i + 1 == filterarry.size()) {
+			auto temp = std::vector<char>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
 
+			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
+			all_filter.push_back('\0');
+			all_filter.push_back('\0');
+		}
+		else {
+			auto temp = std::vector<char>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
+			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
+			all_filter.push_back('\0');
+		}
+	}
 	OPENFILENAMEA ofn = { sizeof(ofn) };
+	if (!all_filter.empty())
+	{
+		ofn.lpstrFilter = all_filter.data();
+	}
 	ofn.hwndOwner = parentWnd;
 	ofn.lpstrTitle = title;
-	ofn.lpstrFilter = filter;
 	ofn.nFilterIndex = initFilter;
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
@@ -211,10 +284,10 @@ EXTERN_C void Fn_Open_File_Dialog_A(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 
 FucInfo e_Open_File_Dialog_A = { {
-		/*ccname*/  ("文件选择夹"),
+		/*ccname*/  ("文件对话框"),
 		/*egname*/  (""),
 		/*explain*/ ("显示一个文件打开对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本。如果用户未输入或按“取消”按钮退出，则返回一个空文本"),
-		/*category*/6,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_TEXT,
 		/*reserved*/NULL,
@@ -350,12 +423,31 @@ static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter,
 		wcscpy_s(szFile, MAX_PATH, (L"\\" + std::wstring(defaultFileName)).c_str());
 	}
 
+	auto filterarry = split_text(filter, L"|");
+	std::vector<wchar_t> all_filter;
+	for (size_t i = 0; i < filterarry.size(); i++)
+	{
+		if (i + 1 == filterarry.size()) {
+			auto temp = std::vector<wchar_t>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
 
-
+			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
+			all_filter.push_back(L'\0');
+			all_filter.push_back(L'\0');
+		}
+		else {
+			auto temp = std::vector<wchar_t>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
+			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
+			all_filter.push_back(L'\0');
+		}
+	}
 	OPENFILENAMEW ofn = { sizeof(ofn) };
+	if (!all_filter.empty())
+	{
+		ofn.lpstrFilter = all_filter.data();
+	}
 	ofn.hwndOwner = parentWnd;
 	ofn.lpstrTitle = title;
-	ofn.lpstrFilter = filter;
+
 	ofn.nFilterIndex = initFilter;
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
@@ -403,10 +495,10 @@ EXTERN_C void Fn_Open_File_Dialog_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 
 FucInfo e_Open_File_Dialog_W = { {
-		/*ccname*/  ("文件选择夹W"),
+		/*ccname*/  ("文件对话框W"),
 		/*egname*/  (""),
 		/*explain*/ ("显示一个文件打开对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本。如果用户未输入或按“取消”按钮退出，则返回一个空文本"),
-		/*category*/6,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_BIN,
 		/*reserved*/NULL,
