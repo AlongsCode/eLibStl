@@ -1,4 +1,5 @@
 #pragma region 命令添加到这
+#define CMD_START_LINE __LINE__
 #define ALL_E_LIB_CMD \
 rnd_ex,/*取随机数Ex*/\
 L,/*unicode_base*/\
@@ -120,9 +121,9 @@ replace_substring_w,/*取CPU当前使用率*/\
 get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
-,EButtonW_GetHwnd/*按钮取组件句柄*/\
+,capitalize_first_letter/*按钮取组件句柄*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
-, e_debugput/*调试*/\
+,e_debugput/*调试*/\
 ,e_CallEfun/*执行函数*/\
 ,_e_delay/*延迟Ex*/\
 ,e_GetTickCount_ex/*取启动时间Ex*/\
@@ -153,6 +154,7 @@ network_post/*网页访问*/\
 ,edbs_set_column_name\
 
 
+
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 
 
@@ -165,7 +167,7 @@ network_post/*网页访问*/\
 
 #pragma region 对象添加到这
 #define ALL_E_LIB_CLASS \
-buttonw,/*按钮W*/\
+CtButtonW,/*按钮W*/\
 editboxw,/*编辑框W*/\
 severex,/*服务器Ex*/\
 clinetex,/*客户端Ex*/\
@@ -175,6 +177,8 @@ TaskDialog_Button_Type,/*高级信息框按钮*/\
 UpDown,/*调节器*/\
 hCoroutine,/*协程调度器*/\
 edbs_ex/*edbs*/\
+CtCheckButtonW/*选择框*/\
+CtCommandLink/*命令链接*/\
 
 #pragma endregion
 
