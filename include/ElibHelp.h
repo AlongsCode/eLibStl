@@ -3,6 +3,7 @@
 #include"elib/fnshare.h"
 #include<vector>
 #include<string>
+#include <tuple>
 #include"..\resource.h"
 
 #include"Tace.hpp"
@@ -45,11 +46,35 @@ PWSTR A2W(PCSTR pszA);
 /// <summary>
 /// 调用易语言支持库函数
 /// </summary>
-/// <param name="elib_name"></param>
-/// <param name="def_name"></param>
-/// <param name="pRetData"></param>
-/// <param name="nArgCount"></param>
-/// <param name="pArgInf"></param>
-/// <returns></returns>
 bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf);
+
+
+template<class T>
+eStlInline const T& ESTLPRIV_MultiSelectHelp___(int i, const T& Item)
+{
+	return Item;
+}
+
+template<class T, class...Args>
+eStlInline const T& ESTLPRIV_MultiSelectHelp___(int i, const T& Item, const Args&...Items)
+{
+	if (i > 0)
+	{
+		i--;
+		return ESTLPRIV_MultiSelectHelp___(i, Items...);
+	}
+	else
+		return Item;
+}
+
+/// <summary>
+/// 多项选择。
+/// 第一个参数指示从0开始的索引。
+/// </summary>
+template<class...T>
+eStlInline const auto& MultiSelect(int i, const T&...Items)
+{
+	assert(i >= 0 || i < sizeof...(Items));
+	return ESTLPRIV_MultiSelectHelp___(i, Items...);
+}
 ESTL_NAMESPACE_END

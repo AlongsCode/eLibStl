@@ -3,17 +3,17 @@
 #include <CommCtrl.h>
 
 #include <unordered_map>
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 ESTL_NAMESPACE_BEGIN
 
 std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap);
-std::wstring MyInputBox(const std::wstring& title);
-//转发消息给子窗口
-bool ForwardMessageToComponent(HWND componentHandle, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-//子类化窗口操作，保存旧回调确并保父窗口不会重复子类化
-WNDPROC SubclassParent(HWND hwnd, WNDPROC newProc);
 
+std::wstring MyInputBox(const std::wstring& title);
+
+/// <summary>
+/// 发送通用事件。
+/// 向易语言通知控件通用事件的产生
+/// </summary>
 eStlInline bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE 
@@ -96,9 +96,31 @@ eStlInline bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMs
 	return true;
 }
 
+/// <summary>
+/// 克隆Unicode字符串。
+/// 内存分配释放由new/delete[]进行
+/// </summary>
+/// <param name="pszDst">目标字符串，如果不为NULL则函数会将其释放</param>
+/// <param name="pszSrc">源字符串</param>
+/// <param name="cchSrc">字符数</param>
+/// <returns>复制的字符数</returns>
 int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = 0);
+
+/// <summary>
+/// 克隆ANSI字符串。
+/// 内存分配释放由new/delete[]进行
+/// </summary>
+/// <param name="pszDst">目标字符串，如果不为NULL则函数会将其释放</param>
+/// <param name="pszSrc">源字符串</param>
+/// <param name="cchSrc">字符数</param>
+/// <returns>复制的字符数</returns>
 int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc = 0);
 
+/// <summary>
+/// 取默认字体
+/// </summary>
+/// <param name="hWnd">控件窗口句柄</param>
+/// <returns>默认字体LOGFONTA结构</returns>
 eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 {
 	LOGFONTA lf{};
@@ -107,7 +129,6 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 	strcpy(lf.lfFaceName, "宋体");
 	lf.lfCharSet = GB2312_CHARSET;
 	ReleaseDC(hWnd, hDC);
-
 	return lf;
 }
 
@@ -148,7 +169,7 @@ public:
 		m_ParentInfo(ParentInfo), m_CtrlInfo(CtrlInfo),
 		m_pfnParentSubclass(pfnParentSubclass), m_pfnCtrlSubclass(pfnCtrlSubclass), m_uIDParent(uIDParent), m_uIDCtrl(uIDCtrl) {}
 
-	~CSubclassMgr() {}
+	~CSubclassMgr() = default;
 
 	/// <summary>
 	/// 控件已创建
@@ -205,6 +226,41 @@ public:
 			m_ParentInfo.erase(hParent);
 	}
 };
+
+eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, BOOL bAutoMaskNew = FALSE, int idx = GWL_STYLE)
+{
+	if (bAutoMaskNew)
+		dwMask |= dwNew;
+	DWORD dwStyle = GetWindowLongPtrW(hWnd, idx);
+	dwStyle &= ~dwMask;
+	dwStyle |= dwNew;
+	SetWindowLongPtrW(hWnd, idx, dwStyle);
+	return dwStyle;
+}
+
+template<class...T>
+eStlInline int MultiSelectWndStyle(HWND hWnd, int idx, T...dwStyle)
+{
+	int c = sizeof...(dwStyle);
+	for (int i = 0; i < c; ++i)
+	{
+		if (GetWindowLongPtrW(hWnd, idx) & ESTLPRIV_MultiSelectHelp___(i, dwStyle...))
+			return i;
+	}
+	return -1;
+}
+
+template<class U, class...T>
+eStlInline int MultiSelectEqual(U i, T...j)
+{
+	int c = sizeof...(j);
+	for (int i = 0; i < c; ++i)
+	{
+		if (i == ESTLPRIV_MultiSelectHelp___(i, j...))
+			return i;
+	}
+	return -1;
+}
 ESTL_NAMESPACE_END
 
 struct EFONTDATA
@@ -220,11 +276,15 @@ struct EFONTDATA
 // 创建控件接口参数定义
 #define STD_ECTRL_CREATE_ARGS \
 	LPVOID pAllData, int cbData, DWORD dwStyle, int x, int y, int cx, int cy, \
-	HWND hParent, UINT nId, BOOL blInDesignMode, DWORD dwWinFormID, DWORD dwUnitID
+	HWND hParent, UINT nID, BOOL blInDesignMode, DWORD dwWinFormID, DWORD dwUnitID
 // 创建控件接口参数
 #define STD_ECTRL_CREATE_REAL_ARGS \
 	pAllData, cbData, dwStyle, x, y, cx, cy, \
-	hParent, nId, blInDesignMode, dwWinFormID, dwUnitID
+	hParent, nID, blInDesignMode, dwWinFormID, dwUnitID
+// 易语言创建控件接口参数定义，跟上面的略有不同
+#define STD_EINTF_CREATE_ARGS \
+	LPBYTE pAllData, INT cbData, DWORD dwStyle, HWND hParent, UINT nID, \
+	HMENU hMenu, INT x, INT y, INT cx, INT cy, DWORD dwWinFormID, DWORD dwUnitID, HWND hDesignWnd, BOOL blInDesignMode
 // 声明子类化管理器所需成员
 #define SUBCLASS_MGR_DECL(Class) \
 	public: \
@@ -232,7 +292,7 @@ struct EFONTDATA
 		static std::unordered_map<HWND, int> m_ParentSCInfo; \
 	private: \
 		static elibstl::CSubclassMgr<Class> m_SM;
-// 参数子类化管理器所需成员
+// 初始化子类化管理器所需成员
 #define SUBCLASS_MGR_INIT(Class, uIDParent, uIDCtrl) \
 	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
 	std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \

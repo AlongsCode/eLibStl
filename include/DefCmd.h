@@ -1,5 +1,4 @@
 #pragma region 命令添加到这
-#define CMD_START_LINE __LINE__
 #define ALL_E_LIB_CMD \
 rnd_ex,/*取随机数Ex*/\
 L,/*unicode_base*/\
@@ -121,7 +120,7 @@ replace_substring_w,/*取CPU当前使用率*/\
 get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
-,capitalize_first_letter/*按钮取组件句柄*/\
+,s_Fn_BtnGetIdealSize/*按钮_取理想尺寸*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
 ,e_debugput/*调试*/\
 ,e_CallEfun/*执行函数*/\
@@ -176,8 +175,8 @@ media_play_ex,/*媒体播放*/\
 TaskDialog_Button_Type,/*高级信息框按钮*/\
 UpDown,/*调节器*/\
 hCoroutine,/*协程调度器*/\
-edbs_ex/*edbs*/\
-CtCheckButtonW/*选择框*/\
+edbs_ex,/*edbs*/\
+CtCheckButtonW,/*选择框*/\
 CtCommandLink/*命令链接*/\
 
 #pragma endregion

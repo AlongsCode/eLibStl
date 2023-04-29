@@ -1,11 +1,12 @@
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
-using namespace std;
+
 
 //有写地方需要使用到，所以先定义
 HMODULE g_elibstl_hModule = NULL;
+
 ESTL_NAMESPACE_BEGIN
-vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
+std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
 {
 	HDC hdc;			//设备描述表
 	int ibits;
@@ -93,8 +94,8 @@ vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
 	bmfhdr.bfReserved2 = 0;
 	bmfhdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) +
 		(DWORD)sizeof(BITMAPINFOHEADER) + dwpalettesize;
-	vector<unsigned char> head((unsigned char*)&bmfhdr, (unsigned char*)&bmfhdr + sizeof(BITMAPFILEHEADER));
-	vector<unsigned char> body((unsigned char*)lpbi, (unsigned char*)lpbi + dwdibsize);
+	std::vector<unsigned char> head((unsigned char*)&bmfhdr, (unsigned char*)&bmfhdr + sizeof(BITMAPFILEHEADER));
+	std::vector<unsigned char> body((unsigned char*)lpbi, (unsigned char*)lpbi + dwdibsize);
 
 	//清除 
 	GlobalUnlock(hdib);
@@ -106,52 +107,7 @@ vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
 	return result;
 }
 
-
-//窗口旧过程
-#define WNDOLDPROC L"ewinoldproc"
-//父窗口子类化指针
-#define PSUBPARHWND L"subclassParent"
-//父窗口旧过程
-#define PARWNDOLDPROC L"eparwinoldproc"
-
-
-//转发消息给子窗口
-bool ForwardMessageToComponent(HWND componentHandle, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	if (GetProp(hwnd, WNDOLDPROC) == GetProp(componentHandle, PARWNDOLDPROC) && GetProp(componentHandle, PARWNDOLDPROC) != 0) {
-		SendMessage(componentHandle, msg, wparam, lparam);
-		return true;
-	}
-	return false;
-}
-
-//子类化窗口操作，保存旧回调确并保父窗口不会重复子类化
-WNDPROC SubclassParent(HWND hwnd, WNDPROC newProc) {
-	WNDPROC oldProc = NULL;
-	HWND hwndParent = GetParent(hwnd);
-	if (hwndParent == 0) {
-		return 0;
-	}
-	if (GetProp(hwndParent, PSUBPARHWND) == NULL) {
-		oldProc = (WNDPROC)SetWindowLongPtrW(hwndParent, GWLP_WNDPROC, (LONG_PTR)newProc);
-		SetProp(hwndParent, PSUBPARHWND, newProc);
-		SetProp(hwndParent, WNDOLDPROC, oldProc);
-	}
-	else {
-		oldProc = (WNDPROC)GetProp(hwndParent, WNDOLDPROC);
-	}
-
-	if (GetProp(hwnd, PARWNDOLDPROC) == NULL) {
-		SetProp(hwnd, PARWNDOLDPROC, oldProc);
-	}
-	return oldProc;
-}
-
-
-static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,  // handle to dialog box 
-	UINT uMsg,     // message 
-	WPARAM wParam, // first message parameter 
-	LPARAM lParam  // second message parameter 
-)
+static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
 	HWND hwndEDIT = GetDlgItem(hwndDlg, 1001);
 	switch (uMsg)
@@ -177,8 +133,8 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,  // handle to dialog box
 			{
 				wchar_t* Editstr = new wchar_t[nLen + 1] { 0 };
 				GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
-				wstring* result = (wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
-				*result = wstring(Editstr);
+				std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
+				*result = std::wstring(Editstr);
 				delete[]Editstr;
 			}
 			DestroyWindow(hwndDlg);
@@ -191,8 +147,8 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,  // handle to dialog box
 		{
 			wchar_t* Editstr = new wchar_t[nLen + 1] { 0 };
 			GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
-			wstring* result = (wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
-			*result = wstring(Editstr);
+			std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
+			*result = std::wstring(Editstr);
 			delete[]Editstr;
 		}
 		DestroyWindow(hwndDlg);
@@ -206,16 +162,9 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,  // handle to dialog box
 	}
 	return TRUE;
 }
-//无论是设置标准GUI的风格还是调整link的组件库都无法使对话框为通用组件库6.0的风格，我不知道为什么，也许使跟着进程的
-inline void EnableNewCommonControls()
+
+std::wstring MyInputBox(const std::wstring& title)
 {
-	INITCOMMONCONTROLSEX icex;
-	icex.dwICC = ICC_WIN95_CLASSES;
-	InitCommonControlsEx(&icex);
-}
-wstring MyInputBox(const wstring& title)
-{
-	EnableNewCommonControls();
 	//对话框二进制模板，方便脱离MFC
 	const  BYTE MyInputBoxDialogTemplateData[] = {
 	0x01,0x00,0xFF,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x08,0xC8,0x80,
@@ -228,9 +177,8 @@ wstring MyInputBox(const wstring& title)
 	0x6E,0x78,0xA4,0x8B,0x93,0x8F,0x65,0x51,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x50,0xBB,0x00,0xC7,0x00,0x37,0x00,0x13,0x00,
 	0x02,0x00,0x00,0x00,0xFF,0xFF,0x80,0x00,0x05,0x6E,0x7A,0x7A,0x00,0x00,0x00,0x00
-	}
-	;
-	wstring result;
+	};
+	std::wstring result;
 	HWND hDlg = CreateDialogIndirectParamW(::GetModuleHandleW(NULL), (LPCDLGTEMPLATE)MyInputBoxDialogTemplateData, 0, (DLGPROC)MyInputBoxDlgProcW, (LPARAM)title.c_str());
 	::SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)&result);
 	//result = temp;
