@@ -1,6 +1,12 @@
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
+#define WCN_INTPUTBOX L"eLibStl.WndClass.InputBox"
+
+#define IDC_ED_INPUT	101
+#define IDC_BT_READIN	201
+#define IDC_BT_OK		202
+#define IDC_BT_CANCEL	203
 
 //有写地方需要使用到，所以先定义
 HMODULE g_elibstl_hModule = NULL;
@@ -107,6 +113,23 @@ std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
 	return result;
 }
 
+HFONT EzFont(PCWSTR pszFontName, int iPoint, int iWeight, BOOL bItalic, BOOL bUnderline, BOOL bStrikeOut)
+{
+	HDC hDC = GetDC(NULL);
+	int iSize;
+	iSize = -MulDiv(iPoint, GetDeviceCaps(hDC, LOGPIXELSY), 72);
+	ReleaseDC(NULL, hDC);
+	return CreateFontW(iSize, 0, 0, 0, iWeight, bItalic, bUnderline, bStrikeOut, 0, 0, 0, 0, 0, pszFontName);
+}
+
+struct ESTLPRIV_INPUTBOXCTX
+{
+	PCWSTR pszInitContent;
+	PWSTR* ppszInput;
+	HFONT hFont;
+	BOOL bOK;
+};
+static ATOM s_atomInputBox = 0;
 static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
 	HWND hwndEDIT = GetDlgItem(hwndDlg, 1001);
@@ -162,6 +185,216 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 	}
 	return TRUE;
 }
+static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	const int cyBtn = 36, cxBtn1 = 110, cxBtn2 = 90, sizePadding = 10;
+	switch (uMsg)
+	{
+	case WM_SIZE:
+	{
+		int cxClient = LOWORD(lParam), cyClient = HIWORD(lParam);
+		SetWindowPos(GetDlgItem(hWnd, IDC_ED_INPUT), NULL, 0, 0,
+			cxClient - sizePadding * 2,
+			cyClient - cyBtn - sizePadding * 3,
+			SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+
+		int yBtn = cyClient - cyBtn - sizePadding;
+		SetWindowPos(GetDlgItem(hWnd, IDC_BT_READIN), NULL,
+			sizePadding,
+			yBtn,
+			0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		SetWindowPos(GetDlgItem(hWnd, IDC_BT_OK), NULL,
+			cxClient - cxBtn2 * 2 - sizePadding * 2,
+			yBtn,
+			0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		SetWindowPos(GetDlgItem(hWnd, IDC_BT_CANCEL), NULL,
+			cxClient - cxBtn2 - sizePadding,
+			yBtn,
+			0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	return 0;
+
+	case WM_COMMAND:
+	{
+		if (HIWORD(wParam) != BN_CLICKED)
+			break;
+		if (!lParam)
+			break;
+		switch (LOWORD(wParam))
+		{
+		case IDC_BT_READIN:
+		{
+			WCHAR szPath[MAX_PATH]{};
+			OPENFILENAMEW ofn{};
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = hWnd;
+			ofn.lpstrFile = szPath;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+			if (!GetOpenFileNameW(&ofn))
+				return 0;
+			HANDLE hFile = CreateFileW(szPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (hFile == INVALID_HANDLE_VALUE)
+			{
+				wsprintfW(szPath, L"打开文件失败！\n错误码：0x%08X", GetLastError());
+				MessageBoxW(hWnd, szPath, L"错误", MB_ICONERROR);
+				return 0;
+			}
+
+			ULONGLONG ullSize;
+			GetFileSizeEx(hFile, (LARGE_INTEGER*)&ullSize);
+			if (ullSize >> 32)
+			{
+				MessageBoxW(hWnd, L"文件过大！", L"错误", MB_ICONERROR);
+				CloseHandle(hFile);
+				return 0;
+			}
+			DWORD dwSize = (DWORD)ullSize;
+			if (!dwSize)
+			{
+				CloseHandle(hFile);
+				return 0;
+			}
+
+			PWSTR p;
+			ULONG uExceptionCode;
+			__try
+			{
+				p = (PWSTR)HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, dwSize + sizeof(WCHAR));
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER)
+			{
+				uExceptionCode = GetExceptionCode();
+				CloseHandle(hFile);
+				wsprintfW(szPath, L"分配%u字节内存失败！\n异常代码：0x%08X", dwSize + sizeof(WCHAR), uExceptionCode);
+				MessageBoxW(hWnd, szPath, L"错误", MB_ICONERROR);
+				return 0;
+			}
+
+			DWORD dwRead;
+			ReadFile(hFile, p, dwSize, &dwRead, NULL);
+			CloseHandle(hFile);
+			*(p + dwSize / sizeof(WCHAR)) = L'\0';
+			SetWindowTextW(GetDlgItem(hWnd, IDC_ED_INPUT), p);
+			HeapFree(GetProcessHeap(), 0, p);
+		}
+		return 0;
+
+		case IDC_BT_OK:
+		{
+			auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
+			p->bOK = TRUE;
+			HWND hED = GetDlgItem(hWnd, IDC_ED_INPUT);
+			int cch = GetWindowTextLengthW(hED);
+			if (cch)
+			{
+				PWSTR psz = new WCHAR[cch + 1];
+				GetWindowTextW(hED, psz, cch + 1);
+				*(p->ppszInput) = psz;
+			}
+			else
+				*(p->ppszInput) = NULL;
+
+			DestroyWindow(hWnd);
+		}
+		return 0;
+
+		case IDC_BT_CANCEL:
+		{
+			auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
+			p->bOK = FALSE;
+			*(p->ppszInput) = NULL;
+			DestroyWindow(hWnd);
+		}
+		return 0;
+		}
+	}
+	break;
+
+	case WM_CLOSE:
+	{
+		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
+		p->bOK = FALSE;
+		*(p->ppszInput) = NULL;
+		DestroyWindow(hWnd);
+	}
+	return 0;
+
+	case WM_CREATE:
+	{
+		auto p = (ESTLPRIV_INPUTBOXCTX*)((CREATESTRUCTW*)lParam)->lpCreateParams;
+		SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
+		p->hFont = EzFont(L"微软雅黑", 10);
+		SendMessageW(hWnd, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+		HWND hCtrl;
+		hCtrl = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, p->pszInitContent, WS_CHILD | WS_VISIBLE | ES_MULTILINE,
+			sizePadding, sizePadding, 0, 0, hWnd, (HMENU)IDC_ED_INPUT, g_elibstl_hModule, NULL);
+		ShowScrollBar(hCtrl, SB_VERT, TRUE);
+		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"导入文本(&I)", WS_CHILD | WS_VISIBLE,
+			0, 0, cxBtn1, cyBtn, hWnd, (HMENU)IDC_BT_READIN, g_elibstl_hModule, NULL);
+		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"确定(&O)", WS_CHILD | WS_VISIBLE,
+			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_OK, g_elibstl_hModule, NULL);
+		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"取消(&C)", WS_CHILD | WS_VISIBLE,
+			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_CANCEL, g_elibstl_hModule, NULL);
+		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+	}
+	return 0;
+
+	case WM_DESTROY:
+	{
+		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
+		DeleteObject(p->hFont);
+		PostQuitMessage(0);
+	}
+	return 0;
+	}
+
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
+{
+	if (!s_atomInputBox)
+	{
+		WNDCLASSW wc{};
+		wc.lpszClassName = WCN_INTPUTBOX;
+		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+		wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+		wc.style = CS_VREDRAW | CS_HREDRAW;
+		wc.hInstance = g_elibstl_hModule;
+		wc.lpfnWndProc = WndProc_InputBox;
+		wc.cbWndExtra = sizeof(void*);
+		s_atomInputBox = RegisterClassW(&wc);
+	}
+
+	auto pCtx = new ESTLPRIV_INPUTBOXCTX;
+	ZeroMemory(pCtx, sizeof(ESTLPRIV_INPUTBOXCTX));
+	pCtx->pszInitContent = pszInitContent;
+	pCtx->ppszInput = ppszInput;
+
+	const int cxInit = 560, cyInit = 500;
+	HWND hWnd = CreateWindowExW(0, MAKEINTATOMW(s_atomInputBox), pszCaption, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		CW_USEDEFAULT, SW_SHOW, cxInit, cyInit, NULL, NULL, g_elibstl_hModule, pCtx);
+	assert(hWnd);
+
+	MSG msg;
+	while (GetMessageW(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+
+	BOOL bOK = pCtx->bOK;
+	delete pCtx;
+	return bOK;
+}
 
 std::wstring MyInputBox(const std::wstring& title)
 {
@@ -197,6 +430,11 @@ std::wstring MyInputBox(const std::wstring& title)
 int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc)
 {
 	delete[] pszDst;
+	if (!pszSrc)
+	{
+		pszDst = NULL;
+		return 0;
+	}
 	if (!cchSrc)
 		cchSrc = wcslen(pszSrc);
 	pszDst = new WCHAR[cchSrc + 1];
@@ -208,11 +446,169 @@ int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc)
 int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc)
 {
 	delete[] pszDst;
+	if (!pszSrc)
+	{
+		pszDst = NULL;
+		return 0;
+	}
 	if (!cchSrc)
 		cchSrc = strlen(pszSrc);
 	pszDst = new CHAR[cchSrc + 1];
 	strncpy(pszDst, pszSrc, cchSrc);
 	*(pszDst + cchSrc) = '\0';
 	return cchSrc;
+}
+
+void SetFrameType(HWND hWnd, int iFrame)
+{
+	DWORD dwStyle = GetWindowLongPtrW(hWnd, GWL_STYLE) & (~WS_BORDER);
+	DWORD dwExStyle = GetWindowLongPtrW(hWnd, GWL_EXSTYLE)
+		& (~(WS_EX_WINDOWEDGE | WS_EX_STATICEDGE | WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE));
+
+	switch (iFrame)
+	{
+	case 0: break;// 无边框
+	case 1: dwExStyle |= WS_EX_CLIENTEDGE; break;// 凹入式
+	case 2: dwExStyle |= (WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME); break;// 凸出式
+	case 3: dwExStyle |= WS_EX_STATICEDGE; break;// 浅凹入式
+	case 4: dwExStyle |= (WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE); break;// 镜框式
+	case 5: dwStyle |= WS_BORDER; break;// 单线边框式
+	}
+
+	SetWindowLongPtrW(hWnd, GWL_STYLE, dwStyle);
+	SetWindowLongPtrW(hWnd, GWL_EXSTYLE, dwExStyle);
+}
+
+int GetFrameType(HWND hWnd)
+{
+	DWORD dwStyle = GetWindowLongPtrW(hWnd, GWL_STYLE);
+	DWORD dwExStyle = GetWindowLongPtrW(hWnd, GWL_EXSTYLE);
+	if (dwExStyle & WS_EX_DLGMODALFRAME)
+	{
+		if (dwExStyle & WS_EX_WINDOWEDGE)
+			return 2;// 凸出式
+		if (dwExStyle & WS_EX_CLIENTEDGE)
+			return 4;// 镜框式
+	}
+
+	if (dwExStyle & WS_EX_CLIENTEDGE)
+		return 1;// 凹入式
+	if (dwExStyle & WS_EX_STATICEDGE)
+		return 3;// 浅凹入式
+	if (dwStyle & WS_BORDER)
+		return 5;// 单线边框式
+
+	return 0;// 无边框
+}
+
+
+SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
+{
+	m_bInDesignMode = bInDesignMode;
+	m_dwWinFormID = dwWinFormID;
+	m_dwUnitID = dwUnitID;
+
+	if (pAllData)
+	{
+		memcpy(&m_Info0, pAllData, sizeof(ECTRLINFO));
+		BYTE* p = (BYTE*)pAllData + sizeof(ECTRLINFO) + m_Info0.cbPic;
+
+		m_Info0.pszTextW = NULL;
+		if (m_Info0.cchText)
+		{
+			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, (PCWSTR)p, m_Info0.cchText);
+			m_Info0.pszTextA = elibstl::W2A(m_Info0.pszTextW);
+		}
+		else
+			m_Info0.pszTextA = NULL;
+	}
+	else
+	{
+		m_Info0.pszTextW = NULL;
+		m_Info0.pszTextA = NULL;
+	}
+
+	m_Info0.pPicData = NULL;
+	m_Info0.iVer = DATA_VER_BASE_1;
+
+	if (pAllData)
+		return sizeof(ECTRLINFO) + m_Info0.cbPic + m_Info0.cchText * sizeof(WCHAR);
+	else
+		return 0;
+}
+
+void CCtrlBase::InitBase0(PCVOID pAllData)
+{
+	if (pAllData)
+	{
+		BYTE* p = (BYTE*)pAllData + sizeof(ECTRLINFO);
+		SetPic(p, m_Info0.cbPic);
+		SetFrame(m_Info0.iFrame);
+	}
+	else
+		m_Info0.Font = elibstl::GetEDefLOGFONT(m_hWnd);
+
+	SetFont(&m_Info0.Font);
+}
+
+void CCtrlBase::SetPic(void* pPic, int cbSize)
+{
+	m_Info0.cbPic = cbSize;
+	if (m_hBitmap)
+		DeleteObject(m_hBitmap);
+
+	if (cbSize)
+	{
+		if (m_bInDesignMode)
+		{
+			delete[] m_Info0.pPicData;
+			m_Info0.pPicData = new BYTE[cbSize];
+			memcpy(m_Info0.pPicData, pPic, cbSize);
+		}
+		m_hBitmap = elibstl::make_hbit((BYTE*)pPic, cbSize);
+		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)m_hBitmap);
+	}
+	else
+	{
+		if (m_bInDesignMode)
+		{
+			delete[] m_Info0.pPicData;
+			m_Info0.pPicData = NULL;
+		}
+		m_hBitmap = NULL;
+		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, NULL);
+	}
+}
+
+HGLOBAL CCtrlBase::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
+{
+	BYTE* p;
+	auto pszText = GetTextW();
+	m_Info0.cchText = wcslen(pszText);
+	int cbText = m_Info0.cchText * sizeof(WCHAR);
+	SIZE_T cbMem = sizeof(ECTRLINFO) + m_Info0.cbPic + cbText;
+	if (pcbBaseData)
+		*pcbBaseData = cbMem;
+	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, cbMem + cbExtra);
+	if (!hGlobal)
+		goto FailAlloc;
+	p = (BYTE*)GlobalLock(hGlobal);
+	if (!p)
+		goto FailLock;
+	// 结构
+	memcpy(p, &m_Info0, sizeof(ECTRLINFO));
+	// 图片
+	p += sizeof(ECTRLINFO);
+	memcpy(p, m_Info0.pPicData, m_Info0.cbPic);
+	// 文本
+	p += m_Info0.cbPic;
+	memcpy(p, pszText, cbText);
+	// 
+	GlobalUnlock(hGlobal);
+	return hGlobal;
+FailLock:
+	GlobalFree(hGlobal);
+FailAlloc:
+	return NULL;
 }
 ESTL_NAMESPACE_END

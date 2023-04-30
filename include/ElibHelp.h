@@ -17,6 +17,8 @@
 #define eStlInline inline
 #endif
 
+#define MAKEINTATOMW(i)  (PWSTR)((ULONG_PTR)((WORD)(i)))
+
 typedef LPCVOID PCVOID;
 
 struct FucInfo
@@ -47,7 +49,6 @@ PWSTR A2W(PCSTR pszA);
 /// 调用易语言支持库函数
 /// </summary>
 bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf);
-
 
 template<class T>
 eStlInline const T& ESTLPRIV_MultiSelectHelp___(int i, const T& Item)

@@ -8,6 +8,20 @@ ESTL_NAMESPACE_BEGIN
 
 std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap);
 
+/// <summary>
+/// 创建字体。
+/// easy font
+/// （CreateFont wrapper）
+/// </summary>
+/// <param name="pszFontName">字体名</param>
+/// <param name="nPoint">点数</param>
+/// <param name="nWeight">粗细，1~1000</param>
+/// <param name="IsItalic">是否倾斜</param>
+/// <param name="IsUnderline">是否下划线</param>
+/// <param name="IsStrikeOut">是否删除线</param>
+/// <returns>成功返回字体句柄，失败返回NULL</returns>
+HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic = FALSE, BOOL bUnderline = FALSE, BOOL bStrikeOut = FALSE);
+
 std::wstring MyInputBox(const std::wstring& title);
 
 /// <summary>
@@ -132,6 +146,8 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 	return lf;
 }
 
+BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent = NULL, PCWSTR pszCaption = L"请输入文本：");
+
 /// <summary>
 /// 控件实用类：子类化管理器
 /// </summary>
@@ -227,7 +243,7 @@ public:
 	}
 };
 
-eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, BOOL bAutoMaskNew = FALSE, int idx = GWL_STYLE)
+eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, int idx = GWL_STYLE, BOOL bAutoMaskNew = FALSE)
 {
 	if (bAutoMaskNew)
 		dwMask |= dwNew;
@@ -261,6 +277,287 @@ eStlInline int MultiSelectEqual(U i, T...j)
 	}
 	return -1;
 }
+
+void SetFrameType(HWND hWnd, int iFrame);
+int GetFrameType(HWND hWnd);
+
+// 控件基础数据
+/*
+* 版本1数据布局：
+* ECTRLINFO结构
+* 图片
+* 文本
+*/
+
+#define DATA_VER_BASE_1	1
+struct ECTRLINFO
+{
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
+
+	LOGFONTA Font;			// 字体
+	int cchText;			// 文本长度，仅用于保存信息
+	PSTR pszTextA;			// 标题A
+	PWSTR pszTextW;			// 标题W
+	int cbPic;				// 图片字节流长度
+	void* pPicData;			// 图片数据
+	int iFrame;				// 边框
+};
+
+// 控件基类
+// 请勿直接实例化此类
+class CCtrlBase
+{
+protected:
+	// 易系统相关
+	DWORD m_dwWinFormID = 0;
+	DWORD m_dwUnitID = 0;
+	BOOL m_bInDesignMode = FALSE;
+	// 窗口句柄
+	HWND m_hWnd = NULL;
+	// 位图句柄
+	HBITMAP m_hBitmap = NULL;
+	// 字体句柄
+	HFONT m_hFont = NULL;
+	// 信息
+	ECTRLINFO m_Info0{};
+
+	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID);
+
+	void InitBase0(PCVOID pAllData);
+public:
+	CCtrlBase() {}
+
+	virtual ~CCtrlBase()
+	{
+		DeleteObject(m_hFont);
+		DeleteObject(m_hBitmap);
+		delete[] m_Info0.pszTextA;
+		delete[] m_Info0.pszTextW;
+		delete[] m_Info0.pPicData;
+	}
+
+	/// <summary>
+	/// 置标题A
+	/// </summary>
+	/// <param name="pszText">文本指针</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
+	eStlInline BOOL SetTextA(PCSTR pszText)
+	{
+		if (m_bInDesignMode)
+		{
+			elibstl::DupStringForNewDeleteA(m_Info0.pszTextA, pszText);
+			delete[] m_Info0.pszTextW;
+			if (pszText)
+				m_Info0.pszTextW = elibstl::A2W(pszText);
+			else
+				m_Info0.pszTextW = NULL;
+		}
+		return SetWindowTextA(m_hWnd, pszText);
+	}
+
+	/// <summary>
+	/// 置标题W
+	/// </summary>
+	/// <param name="pszText">文本指针</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
+	eStlInline BOOL SetTextW(PCWSTR pszText)
+	{
+		if (m_bInDesignMode)
+		{
+			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, pszText);
+			delete[] m_Info0.pszTextA;
+			if (pszText)
+				m_Info0.pszTextA = elibstl::W2A(pszText);
+			else
+				m_Info0.pszTextA = NULL;
+		}
+		return SetWindowTextW(m_hWnd, pszText);
+	}
+
+	/// <summary>
+	/// 置标题W。
+	/// 此函数不复制字符串
+	/// </summary>
+	/// <param name="pszText">文本指针，此指针在函数调用结束后归控件对象所有</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
+	eStlInline BOOL SetTextNoCopyW(PWSTR pszText)
+	{
+		if (m_bInDesignMode)
+		{
+			delete[] m_Info0.pszTextW;
+			m_Info0.pszTextW = pszText;
+			delete[] m_Info0.pszTextA;
+			if (pszText)
+				m_Info0.pszTextA = elibstl::W2A(pszText);
+			else
+				m_Info0.pszTextA = NULL;
+		}
+		return SetWindowTextW(m_hWnd, pszText);
+	}
+
+	/// <summary>
+	/// 取文本W。
+	/// 返回的文本为对象内部所有，不可释放
+	/// </summary>
+	/// <returns>文本指针</returns>
+	eStlInline PWSTR GetTextW()
+	{
+		if (!m_bInDesignMode)
+		{
+			int cch = GetWindowTextLengthW(m_hWnd);
+			if (cch)
+			{
+				delete[] m_Info0.pszTextW;
+				m_Info0.pszTextW = new WCHAR[cch + 1];
+				GetWindowTextW(m_hWnd, m_Info0.pszTextW, cch + 1);
+			}
+		}
+
+		return m_Info0.pszTextW;
+	}
+
+	/// <summary>
+	/// 取文本A。
+	/// 返回的文本为对象内部所有，不可释放
+	/// </summary>
+	/// <returns>文本指针</returns>
+	eStlInline PCSTR GetTextA()
+	{
+		if (!m_bInDesignMode)
+		{
+			int cch = GetWindowTextLengthA(m_hWnd);
+			if (cch)
+			{
+				delete[] m_Info0.pszTextA;
+				m_Info0.pszTextA = new CHAR[cch + 1];
+				GetWindowTextA(m_hWnd, m_Info0.pszTextA, cch + 1);
+			}
+		}
+
+		return m_Info0.pszTextA;
+	}
+
+	/// <summary>
+	/// 置图片
+	/// </summary>
+	/// <param name="pPic">图片数据</param>
+	/// <param name="cbSize">图片数据长度</param>
+	void SetPic(void* pPic, int cbSize);
+
+	/// <summary>
+	/// 取图片。
+	/// 返回的文本为对象内部所有，不可释放
+	/// </summary>
+	/// <param name="pcb">指向接收图片数据长度变量的指针</param>
+	/// <returns>图片数据指针</returns>
+	eStlInline BYTE* GetPic(int* pcb)
+	{
+		if (!m_bInDesignMode)
+		{
+			auto&& x = elibstl::GetDataFromHBIT(m_hBitmap);
+			delete[] m_Info0.pPicData;
+			m_Info0.cbPic = x.size();
+			m_Info0.pPicData = new BYTE[m_Info0.cbPic];
+			memcpy(m_Info0.pPicData, x.data(), m_Info0.cbPic);
+		}
+
+		*pcb = m_Info0.cbPic;
+		return (BYTE*)m_Info0.pPicData;
+	}
+
+	/// <summary>
+	/// 置字体
+	/// </summary>
+	/// <param name="plf">LOGFONTA指针</param>
+	eStlInline void SetFont(LOGFONTA* plf)
+	{
+		if (m_hFont)
+			DeleteObject(m_hFont);
+
+		m_Info0.Font = *plf;
+		m_hFont = CreateFontIndirectA(plf);
+		SendMessageW(m_hWnd, WM_SETFONT, (WPARAM)m_hFont, TRUE);
+	}
+
+	/// <summary>
+	/// 取字体
+	/// </summary>
+	/// <returns>LOGFONTA指针，为迎合易语言回调参数类型而设为BYTE*，不要释放。</returns>
+	eStlInline BYTE* GetFont()
+	{
+		if (!m_bInDesignMode)
+		{
+			HFONT hFont = (HFONT)SendMessageW(m_hWnd, WM_GETFONT, 0, 0);
+			GetObjectA(hFont, sizeof(m_Info0.Font), &m_Info0.Font);
+		}
+		return (BYTE*)&m_Info0.Font;
+	}
+
+	/// <summary>
+	/// 置边框
+	/// </summary>
+	/// <param name="iFrame">边框</param>
+	eStlInline void SetFrame(int iFrame)
+	{
+		m_Info0.iFrame = iFrame;
+		elibstl::SetFrameType(m_hWnd, iFrame);
+		FrameChanged();
+	}
+
+	/// <summary>
+	/// 取边框
+	/// </summary>
+	/// <returns>边框</returns>
+	eStlInline int GetFrame() const
+	{
+		if (m_bInDesignMode)
+			return m_Info0.iFrame;
+		else
+			return elibstl::GetFrameType(m_hWnd);
+	}
+
+	/// <summary>
+	/// 平面化基类数据。
+	/// 扩展数据应在其后附加
+	/// </summary>
+	/// <returns></returns>
+	HGLOBAL FlattenInfoBase0(SIZE_T cbExtra = 0u, SIZE_T* pcbBaseData = NULL);
+
+	/// <summary>
+	/// 平面化数据。
+	/// 用于向易语言返回所有属性。
+	/// 内存布局参见文件首部数据版本定义处
+	/// </summary>
+	/// <returns></returns>
+	virtual HGLOBAL FlattenInfo() { assert(FALSE); return NULL; }
+
+	/// <summary>
+	/// 重画
+	/// </summary>
+	eStlInline void Redraw()
+	{
+		InvalidateRect(m_hWnd, NULL, TRUE);
+		UpdateWindow(m_hWnd);
+	}
+
+	/// <summary>
+	/// 强制重新核算非客户区
+	/// </summary>
+	eStlInline void FrameChanged()
+	{
+		SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+	}
+
+	/// <summary>
+	/// 取窗口句柄
+	/// </summary>
+	/// <returns>窗口句柄</returns>
+	eStlInline HWND GetHWND() const
+	{
+		return m_hWnd;
+	}
+};
 ESTL_NAMESPACE_END
 
 struct EFONTDATA
@@ -276,15 +573,15 @@ struct EFONTDATA
 // 创建控件接口参数定义
 #define STD_ECTRL_CREATE_ARGS \
 	LPVOID pAllData, int cbData, DWORD dwStyle, int x, int y, int cx, int cy, \
-	HWND hParent, UINT nID, BOOL blInDesignMode, DWORD dwWinFormID, DWORD dwUnitID
+	HWND hParent, UINT nID, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID
 // 创建控件接口参数
 #define STD_ECTRL_CREATE_REAL_ARGS \
 	pAllData, cbData, dwStyle, x, y, cx, cy, \
-	hParent, nID, blInDesignMode, dwWinFormID, dwUnitID
+	hParent, nID, bInDesignMode, dwWinFormID, dwUnitID
 // 易语言创建控件接口参数定义，跟上面的略有不同
 #define STD_EINTF_CREATE_ARGS \
 	LPBYTE pAllData, INT cbData, DWORD dwStyle, HWND hParent, UINT nID, \
-	HMENU hMenu, INT x, INT y, INT cx, INT cy, DWORD dwWinFormID, DWORD dwUnitID, HWND hDesignWnd, BOOL blInDesignMode
+	HMENU hMenu, INT x, INT y, INT cx, INT cy, DWORD dwWinFormID, DWORD dwUnitID, HWND hDesignWnd, BOOL bInDesignMode
 // 声明子类化管理器所需成员
 #define SUBCLASS_MGR_DECL(Class) \
 	public: \

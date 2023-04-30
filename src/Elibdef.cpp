@@ -123,7 +123,7 @@ extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 	return  &s_LibInfo;
 };
 #pragma endregion ±©Â¶½Ó¿Ú
-
+#include <EcontrolHelp.h>
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
