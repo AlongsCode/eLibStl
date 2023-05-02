@@ -176,6 +176,7 @@ network_post/*网页访问*/\
 ,Fn_EditPaste/*编辑框.粘贴*/\
 ,Fn_EditCopy/*编辑框.复制*/\
 ,Fn_EditSelAll/*编辑框.全选*/\
+,eto_wstring/*到文本W*/\
 
 
 
