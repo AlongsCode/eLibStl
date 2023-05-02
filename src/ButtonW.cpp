@@ -353,6 +353,10 @@ private:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
 			SUBCLASS_RET_DEFPROC;
+
+		case WM_SHOWWINDOW:
+			CHECK_PARENT_CHANGE;
+			break;
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -375,13 +379,14 @@ public:
 
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | BS_PUSHBUTTON,
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
 		SetDef(m_InfoEx.iDef);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
-		m_SM.OnCtrlCreate(this,hParent);
+		m_SM.OnCtrlCreate(this);
 		HWND h = GetParent(m_hWnd);
 		h = NULL;
 	}
@@ -589,6 +594,10 @@ private:
 
 		case WM_NCCALCSIZE:
 			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+
+		case WM_SHOWWINDOW:
+			CHECK_PARENT_CHANGE;
+			break;
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -874,6 +883,10 @@ private:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
 			SUBCLASS_RET_DEFPROC;
+
+		case WM_SHOWWINDOW:
+			CHECK_PARENT_CHANGE;
+			break;
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);

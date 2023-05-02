@@ -191,14 +191,31 @@ public:
 	/// 控件已创建
 	/// </summary>
 	/// <param name="pClass">控件类</param>
-	void OnCtrlCreate(TC* pClass, HWND hParent=NULL)
+	void OnCtrlCreate(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
-		//HWND hParent = GetParent(hWnd);
+		HWND hParent = GetParent(hWnd);
 		m_CtrlInfo[hWnd] = pClass;
 
 		auto b = SetWindowSubclass(hWnd, m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
 
+		if (!m_ParentInfo.count(hParent))
+		{
+			SetWindowSubclass(hParent, m_pfnParentSubclass, m_uIDParent, 0);
+			m_ParentInfo[hParent] = 1;
+		}
+		else
+			m_ParentInfo[hParent]++;
+	}
+
+	/// <summary>
+	/// 控件的父窗口已被改变。
+	/// 原先的父窗口引用不能去掉，因为WM_NOTIFY总是发给创建时的父窗口，WM_COMMAND总是发给直接父窗口
+	/// </summary>
+	/// <param name="pClass">控件类</param>
+	void OnParentChanged(TC* pClass)
+	{
+		HWND hParent = GetParent(pClass->GetHWND());
 		if (!m_ParentInfo.count(hParent))
 		{
 			SetWindowSubclass(hParent, m_pfnParentSubclass, m_uIDParent, 0);
@@ -216,6 +233,7 @@ public:
 	{
 		HWND hWnd = pClass->GetHWND();
 		HWND hParent = GetParent(hWnd);
+
 		if (m_ParentInfo.count(hParent))
 		{
 			auto& v = m_ParentInfo[hParent];
@@ -226,6 +244,19 @@ public:
 				m_ParentInfo.erase(hParent);
 			}
 		}
+
+		HWND hParent2 = pClass->GetHParent();
+		if (hParent != hParent2)
+			if (m_ParentInfo.count(hParent2))
+			{
+				auto& v = m_ParentInfo[hParent2];
+				v--;
+				if (v <= 0)
+				{
+					RemoveWindowSubclass(hParent2, m_pfnParentSubclass, m_uIDParent);
+					m_ParentInfo.erase(hParent2);
+				}
+			}
 
 		if (m_CtrlInfo.count(hWnd))
 			m_CtrlInfo.erase(hWnd);
@@ -327,6 +358,8 @@ protected:
 	BOOL m_bInDesignMode = FALSE;
 	// 窗口句柄
 	HWND m_hWnd = NULL;
+	HWND m_hParent = NULL;
+	BOOL m_bParentChanged = FALSE;
 	// 位图句柄
 	HBITMAP m_hBitmap = NULL;
 	// 字体句柄
@@ -585,6 +618,14 @@ public:
 	{
 		return m_hWnd;
 	}
+
+	/// <summary>
+	/// 取首次创建父窗口
+	/// </summary>
+	eStlInline HWND GetHParent() const
+	{
+		return m_hParent;
+	}
 };
 ESTL_NAMESPACE_END
 
@@ -630,3 +671,11 @@ struct EFONTDATA
 	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 #define SUBCLASS_RET_DEFPROC \
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam)
+// 检查父窗口是否改变，放在WM_SHOWWINDOW下，控件在容器中时，创建参数中的父窗口句柄实际上是顶级窗口句柄，WM_SHOWWINDOW前会被改为容器窗口
+#define CHECK_PARENT_CHANGE \
+	if (!p->m_bParentChanged) \
+		if (GetParent(hWnd) != p->m_hParent) \
+		{ \
+			m_SM.OnParentChanged(p); \
+			p->m_bParentChanged = TRUE; \
+		}

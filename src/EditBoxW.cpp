@@ -52,19 +52,6 @@ private:
 	HBRUSH m_hbrEditBK = NULL;
 	PWSTR m_pszSelText = NULL;
 
-	int m_cyText = 0;
-	int m_yText = 0;
-	RECT m_rcWnd{};
-	RECT m_rcMargins{};
-
-	eStlInline void UpdateTextInfo()
-	{
-		HFONT hFont = (HFONT)SendMessageW(m_hWnd, WM_GETFONT, 0, 0);
-		LOGFONTW lf;
-		GetObjectW(hFont, sizeof(lf), &lf);
-		m_cyText = abs(lf.lfHeight);
-	}
-
 	eStlInline void OnChange()
 	{
 		EVENT_NOTIFY2 evt(m_dwWinFormID, m_dwUnitID, 0);
@@ -118,123 +105,9 @@ private:
 			delete p;
 			SUBCLASS_RET_DEFPROC;
 
-		//case WM_NCCALCSIZE:
-		//{
-		//	LRESULT lResult;
-		//	if (!p->GetMultiLine() && p->m_cyText)
-		//	{
-		//		p->UpdateTextInfo();
-		//		HDC hDC = GetDC(hWnd);
-		//		SIZE size;
-		//		SelectObject(hDC, (HFONT)SendMessageW(hWnd, WM_GETFONT, 00, 0));
-		//		GetTextExtentPoint32W(hDC, L"bp", 2, &size);
-		//		p->m_cyText = size.cy;
-		//		if (wParam)
-		//		{
-		//			lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		//			RECT rcWnd, rcClient;
-		//			GetClientRect(hWnd, &rcClient);
-		//			GetWindowRect(hWnd, &rcWnd);
-		//			ScreenToClient((hWnd), (POINT*)&rcWnd);
-		//			ScreenToClient((hWnd), (POINT*)&rcWnd + 1);
-
-		//			p->m_rcMargins = { rcClient.left - rcWnd.left, rcClient.top - rcWnd.top,
-		//				rcWnd.right - rcClient.right, rcWnd.bottom - rcClient.bottom };
-		//			p->m_yText = rcWnd.top + (rcWnd.bottom - rcWnd.top - p->m_cyText) / 2;
-		//			auto pnccsp = (NCCALCSIZE_PARAMS*)lParam;
-		//			//p->m_rcMargins.left = pnccsp->rgrc[0].left - pnccsp->rgrc[1].left;
-		//			//p->m_rcMargins.top = pnccsp->rgrc[0].top - pnccsp->rgrc[1].top;
-		//			//p->m_rcMargins.right = pnccsp->rgrc[1].right - pnccsp->rgrc[0].right;
-		//			//p->m_rcMargins.bottom = pnccsp->rgrc[1].bottom - pnccsp->rgrc[0].bottom;
-
-		//			pnccsp->rgrc[0].top += ((pnccsp->rgrc[0].bottom - pnccsp->rgrc[0].top - p->m_cyText) / 2);
-		//			pnccsp->rgrc[0].bottom = pnccsp->rgrc[0].top + p->m_cyText;
-
-		//			//p->m_yText = pnccsp->rgrc[0].top - p->m_rcWnd.top;
-		//			assert(p->m_yText > 0);
-		//		}
-		//		else
-		//		{
-		//			auto prc = (RECT*)lParam;
-		//			p->m_rcMargins = *prc;
-		//			lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		//			RECT rcWnd, rcClient;
-		//			GetClientRect(hWnd, &rcClient);
-		//			GetWindowRect(hWnd, &rcWnd);
-		//			ScreenToClient((hWnd), (POINT*)&rcWnd);
-		//			ScreenToClient((hWnd), (POINT*)&rcWnd + 1);
-
-		//			p->m_rcMargins = { rcClient.left - rcWnd.left, rcClient.top - rcWnd.top,
-		//				rcWnd.right - rcClient.right, rcWnd.bottom - rcClient.bottom };
-		//			p->m_yText = rcWnd.top + (rcWnd.bottom - rcWnd.top - p->m_cyText) / 2;
-		//			//p->m_rcMargins.left = prc->left - p->m_rcMargins.left;
-		//			//p->m_rcMargins.top = prc->top - p->m_rcMargins.top;
-		//			//p->m_rcMargins.right -= prc->right;
-		//			//p->m_rcMargins.bottom -= prc->bottom;
-
-		//			prc->top += ((prc->bottom - prc->top - p->m_cyText) / 2);
-		//			prc->bottom = prc->top + p->m_cyText;
-
-		//			//p->m_yText = prc->top - p->m_rcWnd.top;
-		//			assert(p->m_yText > 0);
-		//		}
-		//		return lResult;
-		//	}
-		//}
-		//break;
-
-		//case WM_NCPAINT:
-		//{
-		//	if (!p->m_cyText)
-		//		break;
-
-
-		//	HDC hDC = GetWindowDC(hWnd);
-		//	RECT rc;
-		//	rc.left = p->m_rcMargins.left;
-		//	rc.right = p->m_rcWnd.right - p->m_rcMargins.right;
-
-		//	rc.top = p->m_rcMargins.top;
-		//	rc.bottom = p->m_yText;
-		//	FillRect(hDC, &rc, p->m_hbrEditBK);
-		//	rc.top = rc.bottom + p->m_cyText;
-		//	rc.bottom = p->m_rcWnd.bottom - p->m_rcMargins.bottom;
-		//	FillRect(hDC, &rc, p->m_hbrEditBK);
-		//	ReleaseDC(hWnd, hDC);
-		//}
-		//break;
-
-		//case WM_SETFONT:
-		//{
-		//	auto lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		//	if (!p->GetMultiLine())
-		//	{
-		//		p->UpdateTextInfo();
-		//		p->FrameChanged();
-		//	}
-		//	return lResult;
-		//}
-
-		//case WM_WINDOWPOSCHANGED:
-		//{
-		//	auto pwp = (WINDOWPOS*)lParam;
-		//	p->m_rcWnd.left = pwp->x;
-		//	p->m_rcWnd.top = pwp->y;
-		//	p->m_rcWnd.right = pwp->cx;
-		//	p->m_rcWnd.bottom = pwp->cy;
-		//}
-		//break;
-
-		//case WM_NCHITTEST:
-		//{
-		//	auto lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		//	if (!p->GetMultiLine())
-		//	{
-		//		if (lResult == HTNOWHERE)// 修复一下NC命中测试，不然设计器选不上控件
-		//			lResult = HTBORDER;
-		//	}
-		//	return lResult;
-		//}
+		case WM_SHOWWINDOW:
+			CHECK_PARENT_CHANGE;
+			break;
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -297,10 +170,6 @@ public:
 		SetSelNum(m_Info.iSelNum);
 		SetCueBannerNoCopy(m_Info.pszCueBanner);
 
-		GetWindowRect(m_hWnd, &m_rcWnd);
-		ScreenToClient(hParent, (POINT*)&m_rcWnd);
-		ScreenToClient(hParent, (POINT*)&m_rcWnd + 1);
-		UpdateTextInfo();
 		FrameChanged();
 
 		ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
