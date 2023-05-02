@@ -191,13 +191,13 @@ public:
 	/// 控件已创建
 	/// </summary>
 	/// <param name="pClass">控件类</param>
-	void OnCtrlCreate(TC* pClass)
+	void OnCtrlCreate(TC* pClass, HWND hParent=NULL)
 	{
 		HWND hWnd = pClass->GetHWND();
-		HWND hParent = GetParent(hWnd);
+		//HWND hParent = GetParent(hWnd);
 		m_CtrlInfo[hWnd] = pClass;
 
-		SetWindowSubclass(hWnd, m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
+		auto b = SetWindowSubclass(hWnd, m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
 
 		if (!m_ParentInfo.count(hParent))
 		{

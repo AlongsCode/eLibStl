@@ -345,6 +345,7 @@ private:
 
 	SUBCLASS_CTRL_FNHEAD
 	{
+		HWND hh = GetParent(hWnd);
 		auto p = (CPushButton*)dwRefData;
 		switch (uMsg)
 		{
@@ -380,7 +381,9 @@ public:
 		SetDef(m_InfoEx.iDef);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
-		m_SM.OnCtrlCreate(this);
+		m_SM.OnCtrlCreate(this,hParent);
+		HWND h = GetParent(m_hWnd);
+		h = NULL;
 	}
 
 	/// <summary>

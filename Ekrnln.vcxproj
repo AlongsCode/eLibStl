@@ -233,7 +233,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Lib|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>eStlLib</TargetName>
+    <TargetName>libstl</TargetName>
     <OutDir>E:\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
@@ -249,7 +249,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_exe|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>eStlLib</TargetName>
+    <TargetName>libstl</TargetName>
     <OutDir>E:\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
@@ -282,7 +282,7 @@
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <TargetName>eStlLib</TargetName>
+    <TargetName>libstl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
