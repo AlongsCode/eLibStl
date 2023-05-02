@@ -242,7 +242,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Lib|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>E:\e\lib\</OutDir>
+    <OutDir>G:\IDE\E语言\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -250,7 +250,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_exe|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>E:\e\lib\</OutDir>
+    <OutDir>G:\IDE\E语言\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
