@@ -273,7 +273,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 				MessageBoxW(hWnd, szPath, L"错误", MB_ICONERROR);
 				return 0;
 			}
-
+			assert(p);// 消掉下面那个警告
 			DWORD dwRead;
 			ReadFile(hFile, p, dwSize, &dwRead, NULL);
 			CloseHandle(hFile);
@@ -543,11 +543,11 @@ void CCtrlBase::InitBase0(PCVOID pAllData)
 	{
 		BYTE* p = (BYTE*)pAllData + sizeof(ECTRLINFO);
 		SetPic(p, m_Info0.cbPic);
-		SetFrame(m_Info0.iFrame);
 	}
 	else
 		m_Info0.Font = elibstl::GetEDefLOGFONT(m_hWnd);
 
+	SetFrame(m_Info0.iFrame);
 	SetFont(&m_Info0.Font);
 }
 
@@ -584,7 +584,10 @@ HGLOBAL CCtrlBase::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
 {
 	BYTE* p;
 	auto pszText = GetTextW();
-	m_Info0.cchText = wcslen(pszText);
+	if (pszText)
+		m_Info0.cchText = wcslen(pszText);
+	else
+		m_Info0.cchText = 0;
 	int cbText = m_Info0.cchText * sizeof(WCHAR);
 	SIZE_T cbMem = sizeof(ECTRLINFO) + m_Info0.cbPic + cbText;
 	if (pcbBaseData)

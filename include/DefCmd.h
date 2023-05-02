@@ -50,7 +50,7 @@ Clinet_connect,/*连接*/\
 Clinet_close,/*关闭*/\
 Clinet_GetData,/*取回数据*/\
 Clinet_Send,/*发送数据*/\
-EditBoxW_AddText,/*编辑框.加入文本*/\
+Fn_EditAddText,/*编辑框.加入文本*/\
 clear_folder_W,/*磁盘操作→清空目录*/\
 create_dir_W,/*创建目录W*/\
 remove_dir_W,/*删除目录W*/\
@@ -110,7 +110,7 @@ Media_IsOpen,/*是否已打开*/\
 is_connect_to_internet,/*是否已联网*/\
 check_port,/*端口是否可用*/\
 send_net_msg,/*发送网络消息*/\
-EditBoxW_GetHwnd,/*编辑框取编辑框句柄*/\
+Fn_EditCharFromPos,/*编辑框.取坐标处字符*/\
 e_coroutine_close,/*释放协程调度器*/\
 e_coroutine_open,/*创建协程调度器*/\
 e_hCoi2h,/*指针到调度器*/\
@@ -120,7 +120,7 @@ replace_substring_w,/*取CPU当前使用率*/\
 get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
-,s_Fn_BtnGetIdealSize/*按钮_取理想尺寸*/\
+,s_Fn_BtnGetIdealSize/*按钮.取理想尺寸*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
 ,e_debugput/*调试*/\
 ,e_CallEfun/*执行函数*/\
@@ -151,6 +151,31 @@ network_post/*网页访问*/\
 ,edbs_get_column_name\
 ,edbs_get_column_num\
 ,edbs_set_column_name\
+,Fn_EditCanUndo/*编辑框.是否可撤销*/\
+,Fn_EditEmptyUndoBuf/*编辑框.清空撤销队列*/\
+,Fn_EditGetFirstLine/*编辑框.取第一可见行*/\
+,Fn_EditGetLineCount/*编辑框.取行数*/\
+,Fn_EditGetModify/*编辑框.取修改标志*/\
+,Fn_EditHideBallloonTip/*编辑框.隐藏气球提示*/\
+,Fn_EditLineLength/*编辑框.取某行长度*/\
+,Fn_EditGetLine/*编辑框.取行文本*/\
+,Fn_EditGetMargins/*编辑框.取边距*/\
+,Fn_EditGetRect/*编辑框.取显示矩形*/\
+,Fn_EditLineFromChar/*编辑框.字符位置到行数*/\
+,Fn_EditLineIndex/*编辑框.取某行第一字符位置*/\
+,Fn_EditScroll/*编辑框.滚动*/\
+,Fn_EditLineScroll/*编辑框.滚动行*/\
+,Fn_EditPosFromChar/*编辑框.取字符坐标*/\
+,Fn_EditReplaceSel/*编辑框.替换选中文本*/\
+,Fn_EditSetMargins/*编辑框.置边距*/\
+,Fn_EditSetModify/*编辑框.置修改标志*/\
+,Fn_EditSetRect/*编辑框.置显示矩形*/\
+,Fn_EditSetTabStop/*编辑框.置制表位*/\
+,Fn_EditSetBallloonTip/*编辑框.弹出气球提示*/\
+,Fn_EditUndo/*编辑框.撤销*/\
+,Fn_EditPaste/*编辑框.粘贴*/\
+,Fn_EditCopy/*编辑框.复制*/\
+,Fn_EditSelAll/*编辑框.全选*/\
 
 
 
@@ -167,7 +192,7 @@ network_post/*网页访问*/\
 #pragma region 对象添加到这
 #define ALL_E_LIB_CLASS \
 CtButtonW,/*按钮W*/\
-editboxw,/*编辑框W*/\
+CtEdit,/*编辑框W*/\
 severex,/*服务器Ex*/\
 clinetex,/*客户端Ex*/\
 hCoprocessD,/*协程句柄*/\

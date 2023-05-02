@@ -21,6 +21,16 @@
 
 typedef LPCVOID PCVOID;
 
+#define va_arg_idx(ap, idx, t) (*(t*)((ap)+_INTSIZEOF(t)*(idx)))
+
+template<class... Args>
+eStlInline int ArgsNum(Args&&... args)
+{
+	return sizeof...(args);
+}
+
+#define ESTLVAL(...) ArgsNum(__VA_ARGS__), __VA_ARGS__
+
 struct FucInfo
 {
 	CMD_INFO FucDef;
@@ -50,32 +60,18 @@ PWSTR A2W(PCSTR pszA);
 /// </summary>
 bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf);
 
-template<class T>
-eStlInline const T& ESTLPRIV_MultiSelectHelp___(int i, const T& Item)
-{
-	return Item;
-}
-
-template<class T, class...Args>
-eStlInline const T& ESTLPRIV_MultiSelectHelp___(int i, const T& Item, const Args&...Items)
-{
-	if (i > 0)
-	{
-		i--;
-		return ESTLPRIV_MultiSelectHelp___(i, Items...);
-	}
-	else
-		return Item;
-}
-
 /// <summary>
 /// 多项选择。
 /// 第一个参数指示从0开始的索引。
 /// </summary>
-template<class...T>
-eStlInline const auto& MultiSelect(int i, const T&...Items)
+template <class T>
+eStlInline T MultiSelect(int n, ...)
 {
-	assert(i >= 0 || i < sizeof...(Items));
-	return ESTLPRIV_MultiSelectHelp___(i, Items...);
+	assert(n >= 0);
+	va_list Args;
+	va_start(Args, n);
+	T Ret = va_arg_idx(Args, n, T);
+	va_end(Args);
+	return Ret;
 }
 ESTL_NAMESPACE_END

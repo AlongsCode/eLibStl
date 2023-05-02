@@ -1,6 +1,6 @@
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+//#pragma comment(linker,"\"/manifestdependency:type='win32' \
+//name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+//processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 
 #include"ElibHelp.h"
@@ -123,7 +123,6 @@ extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 	return  &s_LibInfo;
 };
 #pragma endregion ±©Â¶½Ó¿Ú
-#include <EcontrolHelp.h>
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)

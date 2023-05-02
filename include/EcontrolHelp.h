@@ -254,29 +254,41 @@ eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, in
 	return dwStyle;
 }
 
-template<class...T>
-eStlInline int MultiSelectWndStyle(HWND hWnd, int idx, T...dwStyle)
+eStlInline int ESTLPRIV_MultiSelectWndStyle___(HWND hWnd, int idx, int cStyle,...)
 {
-	int c = sizeof...(dwStyle);
-	for (int i = 0; i < c; ++i)
+	va_list Args;
+	va_start(Args, cStyle);
+	for (int i = 0; i < cStyle; ++i)
 	{
-		if (GetWindowLongPtrW(hWnd, idx) & ESTLPRIV_MultiSelectHelp___(i, dwStyle...))
+		if (GetWindowLongPtrW(hWnd, idx) & va_arg_idx(Args, i, DWORD))
+		{
+			va_end(Args);
 			return i;
+		}
 	}
+	va_end(Args);
 	return -1;
 }
+#define MultiSelectWndStyle(hWnd, ...) elibstl::ESTLPRIV_MultiSelectWndStyle___(hWnd, GWL_STYLE, ESTLVAL(__VA_ARGS__))
+#define MultiSelectWndExStyle(hWnd, ...) elibstl::ESTLPRIV_MultiSelectWndStyle___(hWnd, GWL_EXSTYLE, ESTLVAL(__VA_ARGS__))
 
-template<class U, class...T>
-eStlInline int MultiSelectEqual(U i, T...j)
+template<class T>
+eStlInline int ESTLPRIV_MultiSelectEqual___(T ii, int cItem, ...)
 {
-	int c = sizeof...(j);
-	for (int i = 0; i < c; ++i)
+	va_list Args;
+	va_start(Args, cItem);
+	for (int i = 0; i < cItem; ++i)
 	{
-		if (i == ESTLPRIV_MultiSelectHelp___(i, j...))
+		if (ii == va_arg_idx(Args, i, T))
+		{
+			va_end(Args);
 			return i;
+		}
 	}
+	va_end(Args);
 	return -1;
 }
+#define MultiSelectEqual(i, ...) elibstl::ESTLPRIV_MultiSelectEqual___(i, ESTLVAL(__VA_ARGS__))
 
 void SetFrameType(HWND hWnd, int iFrame);
 int GetFrameType(HWND hWnd);
@@ -401,7 +413,7 @@ public:
 	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
 	/// <returns>文本指针</returns>
-	eStlInline PWSTR GetTextW()
+	eStlInline PWSTR GetTextW(SIZE_T* pcb = NULL)
 	{
 		if (!m_bInDesignMode)
 		{
@@ -411,8 +423,24 @@ public:
 				delete[] m_Info0.pszTextW;
 				m_Info0.pszTextW = new WCHAR[cch + 1];
 				GetWindowTextW(m_hWnd, m_Info0.pszTextW, cch + 1);
+				if (pcb)
+					*pcb = (cch + 1) * sizeof(WCHAR);
 			}
+			else
+				if (pcb)
+					*pcb = 0u;
+
 		}
+		else
+			if (pcb)
+			{
+				if (!m_Info0.pszTextW)
+					*pcb = 0u;
+				else
+					*pcb = (wcslen(m_Info0.pszTextW) + 1) * sizeof(WCHAR);
+			}
+			
+				
 
 		return m_Info0.pszTextW;
 	}

@@ -327,7 +327,7 @@ namespace elibstl
 		return static_cast<int*>(n_pAryData)[0];
 	}
 	//获取多数组对应维的成员数，指针和维索引
-	inline int get_array_count(void* pBase, INT dimension)
+	inline int get_array_count(void* pBase, INT dimension = 1)
 	{
 		return reinterpret_cast<INT*>(static_cast<char*>(pBase) + dimension * sizeof(INT))[0];
 	}

@@ -1,825 +1,759 @@
-#include"EcontrolHelp.h"
-#include<Richedit.h>
+#include "EcontrolHelp.h"
+#include <Richedit.h>
+
 #pragma warning(disable:4996)
-static INT s_editbox_cmd[] = { 50 ,110 };
 
-typedef struct _CEditExDATA
-{
-	INT m_Border;
-	HFONT m_font;//用来判断字体是否有效的
-	LOGFONTA m_fontdata;
-	INT m_max;
-	BOOL m_vscroll;
-	COLORREF m_color;
-	COLORREF m_font_bkgcolor;
-	COLORREF m_bkgcolor;
-	_CEditExDATA()
-	{
-		memset(this, 0, sizeof(*this));
-	}
-} CEDITDATA, * PCEDITDATA;
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-static LRESULT CALLBACK WndCProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-class eEditBoxEx
-{
-public:
-	eEditBoxEx(
-		LPBYTE pAllPropertyData,
-		INT nAllPropertyDataSize,
-		DWORD dwStyle,
-		int x,
-		int y,
-		int cx,
-		int cy,
-		HWND hParent,
-		UINT nId,
-		DWORD dwWinFormID,
-		DWORD dwUnitID
-	)
-		:
-		m_dwWinFormID(dwWinFormID),
-		m_dwUnitID(dwUnitID),
-		m_hWnd(NULL),
-		m_Style(0),
-		m_Color(0),
-		m_hFont(0),
-		m_Font(0),
-		m_TextA(0),
-		m_TextW(0),
-		m_Max(0),
-		m_oldProc(0),
-		m_hParentWnd(0),
-		m_font_bkgcolor(16777215),
-		m_bkgcolor(16777215),
-		m_is_vsroll(0),
-		m_ColdProc(NULL)
-	{
-		m_hParentWnd = CreateWindowExW(0, L"Static", 0, dwStyle | WS_VISIBLE | WS_CHILDWINDOW | WS_CLIPSIBLINGS, x, y, cx, cy, hParent, (HMENU)nId, GetModuleHandle(0), 0);
+#define SCID_EDIT		20230501'01u
+#define SCID_EDITPARENT	20230501'02u
 
-		m_hWnd = CreateWindowExW(
-			0,
-			L"Edit",
-			L"",
-			dwStyle | WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_MULTILINE | WS_CLIPSIBLINGS | ES_AUTOVSCROLL,
-			0,
-			0,
-			cx,
-			cy,
-			m_hParentWnd,
-			(HMENU)nId,
-			GetModuleHandle(0),
-			0
-		);
-		if (pAllPropertyData && nAllPropertyDataSize > 0)
+#define ED_CUEBANNER_MAXLEN 260
+
+// 编辑框
+/*
+* 版本1数据布局：
+* EEDITDATA结构
+* 提示文本
+*/
+#define DATA_VER_EDIT_1	1
+struct EEDITDATA
+{
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
+
+	COLORREF crText;		// 文本颜色
+	COLORREF crTextBK;		// 文本背景色
+	COLORREF crBK;			// 编辑框背景色
+	BOOL bHideSel;			// 隐藏选择
+	int iMaxLen;			// 最大允许长度
+	BOOL bMultiLine;		// 多行
+	int iScrollBar;			// 滚动条
+	int iAlign;				// 对齐
+	int iInputMode;			// 输入方式
+	union
+	{
+		WCHAR chMask;		// 密码遮盖字符
+		int PRIV_ALIGN___;
+	};
+	int iTransformMode;		// 转换方式
+	int iSelPos;			// 起始选择位置
+	int iSelNum;			// 被选择字符数
+	int cchCueBanner;		// 提示文本长度，仅保存信息时有效
+	PWSTR pszCueBanner;		// 提示文本，没有获取长度的接口，这里就固定为260个字符（含终止NULL）
+	BOOL bCueBannerShowAlways;// 总是显示提示文本，即使编辑框具有焦点
+};
+
+class CEdit :public elibstl::CCtrlBase
+{
+	SUBCLASS_MGR_DECL(CEdit)
+private:
+	EEDITDATA m_Info{};
+
+	HBRUSH m_hbrEditBK = NULL;
+	PWSTR m_pszSelText = NULL;
+
+	SUBCLASS_PARENT_FNHEAD
+	{
+		switch(uMsg)
 		{
-			PCEDITDATA WinData = (PCEDITDATA)pAllPropertyData;
-			SetBorder(WinData->m_Border);
-			if (WinData->m_font)
+		case WM_CTLCOLOREDIT:
+		{
+			if (m_CtrlSCInfo.count((HWND)lParam))
 			{
-				SetFont(WinData->m_fontdata);
+				auto p = m_CtrlSCInfo[(HWND)lParam];
+				HBRUSH hbr;
+				if (p->m_hbrEditBK)
+					hbr = p->m_hbrEditBK;
+				else
+					hbr = (HBRUSH)DefSubclassProc(hWnd, uMsg, wParam, lParam);
+				SetTextColor((HDC)wParam, p->m_Info.crText);
+				SetBkColor((HDC)wParam, p->m_Info.crTextBK);
+				return (LRESULT)hbr;
 			}
-			else {
-				m_Font = new LOGFONTA{ 0 };
-				char FontName[LF_FACESIZE] = "Microsoft YaHei UI";
-				strcpy(m_Font->lfFaceName, FontName);
-				m_Font->lfHeight = 16;
-				m_hFont = CreateFontIndirectA(m_Font);
-				SetFont(*m_Font);
+		}
+		break;
+
+		case WM_DESTROY:
+			m_SM.OnParentDestroy(hWnd);
+			break;
+		}
+
+		SUBCLASS_RET_DEFPROC;
+	}
+
+	SUBCLASS_CTRL_FNHEAD
+	{
+		auto p = (CEdit*)dwRefData;
+		switch (uMsg)
+		{
+		case WM_DESTROY:
+			m_SM.OnCtrlDestroy(p);
+			delete p;
+			SUBCLASS_RET_DEFPROC;
+		}
+
+		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		SUBCLASS_RET_DEFPROC;
+	}
+public:
+	CEdit() = delete;
+	CEdit(STD_ECTRL_CREATE_ARGS)
+	{
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+
+		if (pAllData)
+		{
+			BYTE* p = (BYTE*)pAllData + cbBaseData;
+			memcpy(&m_Info, p, sizeof(EEDITDATA));
+
+			m_Info.pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
+			*m_Info.pszCueBanner = L'\0';
+
+			p += sizeof(EEDITDATA);
+			if (m_Info.cchCueBanner)
+			{
+				memcpy(m_Info.pszCueBanner, p, m_Info.cchCueBanner * sizeof(WCHAR));
+				*(m_Info.pszCueBanner + m_Info.cchCueBanner) = L'\0';
 			}
-			SetMaxText(WinData->m_max);
-			SetText((WCHAR*)(pAllPropertyData + sizeof(CEDITDATA)));
-			SetVscroll(WinData->m_vscroll);
-			SetFontColor(WinData->m_color);
-			SetFontBkgColor(WinData->m_font_bkgcolor);
-			SetBkgColor(WinData->m_bkgcolor);
 		}
 		else
-		{	//默认样式
-			SetBorder(1);
-			//默认字体
-			m_Font = new LOGFONTA{ 0 };
-			char FontName[LF_FACESIZE] = "Microsoft YaHei UI";
-			strcpy(m_Font->lfFaceName, FontName);
-			m_Font->lfHeight = 16;
-			m_hFont = CreateFontIndirectA(m_Font);
-			SetFont(*m_Font);
-		}
-		SetWindowLongPtrW(m_hParentWnd, GWLP_USERDATA, (LONG_PTR)this);
-		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
-
-		//子类化组件
-		SetWindowLongPtrW(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
-		//记录原始回调
-		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWLP_WNDPROC, (LONG_PTR)WndCProc);
-	}
-	void SetFontColor(COLORREF color)
-	{
-		if (!m_hWnd)
 		{
-			return;
-		}
-		m_Color = color;
-	}
-	COLORREF GetFontColor()
-	{
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		return m_Color;
-
-	}
-	void SetFontBkgColor(COLORREF color)
-	{
-		if (!m_hWnd)
-		{
-			return;
-		}
-		m_font_bkgcolor = color;
-	}
-	COLORREF GetFontBkgColor()
-	{
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		return m_font_bkgcolor;
-
-	}
-	void SetBkgColor(COLORREF color)
-	{
-		if (!m_hWnd)
-		{
-			return;
-		}
-		m_bkgcolor = color;
-	}
-	COLORREF GetBkgColor()
-	{
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		return m_bkgcolor;
-
-	}
-	void SetMaxText(INT Max) {
-		if (!m_hWnd)
-		{
-			return;
-		}
-		SendMessage(m_hWnd, EM_LIMITTEXT, (WPARAM)Max, 0);
-		m_Max = Max;
-	}
-	void SetVscroll(BOOL is_set) {
-		m_is_vsroll = is_set;
-		ShowScrollBar(m_hWnd, SB_VERT, is_set);
-	}
-	BOOL GetVscroll() {
-		if (!m_hWnd)
-		{
-			return false;
-		}
-		//long style = GetWindowLong(m_hWnd, GWL_STYLE);
-		//return (style & WS_VSCROLL);
-		return m_is_vsroll;
-	}
-	void OnChange() {
-		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
-		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-	}
-	BOOL SetPos(int width, int height) {//容器被改变时请调用此函数
-		return SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER | SWP_NOMOVE);
-	}
-	WNDPROC GetOldProc() const {
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		if (m_oldProc <= 0)
-		{
-			return 0;
-		}
-		return m_oldProc;
-	}
-	INT GetMaxText()const {
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		return m_Max;
-	}
-	DWORD GetID() const {
-
-		return m_dwWinFormID;
-	}
-	DWORD GetUID() const {
-
-		return m_dwUnitID;
-	}
-	WNDPROC GetCOldProc() const {
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		if (m_ColdProc <= 0)
-		{
-			return 0;
-		}
-		return m_ColdProc;
-	}
-	void SetFont(LOGFONTA Font)
-	{
-		if (!m_hWnd)
-		{
-			return;
-		}
-		if (m_hFont) {//存在句柄则销毁
-
-			DeleteObject(m_hFont);
-			m_hFont = NULL;
-		}
-		if (m_Font)//存在易需求数据
-		{
-			delete m_Font;
-			m_Font = NULL;
-		}
-		m_Font = new LOGFONTA{ 0 };
-		memcpy(m_Font, &Font, sizeof(LOGFONTA));
-		m_hFont = CreateFontIndirectA(&Font);
-		SendMessageW(m_hWnd, WM_SETFONT, (WPARAM)m_hFont, 1);
-	}
-	~eEditBoxEx()
-	{
-		if (m_hParentWnd)
-		{
-			::SetWindowLongW(m_hParentWnd, GWLP_WNDPROC, (LONG_PTR)m_oldProc);
-		}
-		if (m_hWnd)
-		{
-
-			DestroyWindow(m_hWnd);
-			m_hWnd = 0;
+			m_Info0.iFrame = 1;
+			m_Info.pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
+			*m_Info.pszCueBanner = L'\0';
+			m_Info.crTextBK = 0x00FFFFFF;
+			m_Info.crBK = 0x00FFFFFF;
+			m_Info.bHideSel = TRUE;
 		}
 
-		Delete();
+		m_Info.iVer = DATA_VER_EDIT_1;
 
-	}
-	void Delete() {
+		DWORD dwEDStyle = (m_Info.bMultiLine ? (ES_MULTILINE | ES_AUTOVSCROLL) : (ES_AUTOHSCROLL));
 
-		if (m_hFont) {//存在句柄则销毁
+		m_hWnd = CreateWindowExW(0, WC_EDITW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | dwEDStyle,
+			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
 
-			DeleteObject(m_hFont);
-			m_hFont = NULL;
-		}
-		if (m_Font)//存在易需求数据
-		{
-			delete m_Font;
-			m_Font = NULL;
-		}
-		if (m_TextA)
-		{
-			delete[]m_TextA;
-			m_TextA = NULL;
-		}
-		if (m_TextW)
-		{
-			delete[]m_TextW;
-			m_TextW = NULL;
-		}
+		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
+		InitBase0(pAllData);
+		SetClr(0, m_Info.crText);
+		SetClr(1, m_Info.crTextBK);
+		SetClr(2, m_Info.crBK);
+		SetHideSel(m_Info.bHideSel);
+		SetMaxLen(m_Info.iMaxLen);
+		SetMultiLine(m_Info.bMultiLine);
+		SetScrollBar(m_Info.iScrollBar);
+		SetAlign(m_Info.iAlign);
+		SetInputMode(m_Info.iInputMode);
+		if (m_Info.chMask)
+			SetMaskChar(m_Info.chMask);
+		SetTransformMode(m_Info.iTransformMode);
+		SetSelPos(m_Info.iSelPos);
+		SetSelNum(m_Info.iSelNum);
+		SetCueBannerNoCopy(m_Info.pszCueBanner);
+		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
+		Redraw();
+		m_SM.OnCtrlCreate(this);
 	}
-	HWND GetHwnd() const
-	{
-		return m_hParentWnd;
-	}
-	HWND GetcHwnd() const
-	{
-		return m_hWnd;
-	}
-	HFONT GetFont(LOGFONTA* Font) {
-		if (m_hFont)
-		{
-			memcpy(Font, m_Font, sizeof(LOGFONTA));
-		}
-		return m_hFont;
-	}
-	LOGFONTA* outGetFont() {
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		return m_Font;
-	}
-	void SetText(const wchar_t* text)
-	{
-		if (!m_hWnd)
-		{
-			return;
-		}
 
-		SetWindowTextW(m_hWnd, text);
-	}
-	void SetText(const char* text)
+	~CEdit()
 	{
-		if (!m_hWnd)
-		{
-			return;
-		}
+		DeleteObject(m_hbrEditBK);
+		delete[] m_pszSelText;
+		delete[] m_Info.pszCueBanner;
+	}
 
-		SetWindowTextA(m_hWnd, text);
-	}
-	void AddText(const std::wstring& text) {
-		// 获取编辑框的文本长度
-		LRESULT length = SendMessageW(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
-		// 设置文本选择的开始和结束位置到文本末尾
-		SendMessageW(m_hWnd, EM_SETSEL, (WPARAM)length, (LPARAM)length);
-		SendMessageW(m_hWnd, EM_REPLACESEL, (WPARAM)FALSE, (LPARAM)text.c_str());
-		length = SendMessageW(m_hWnd, WM_GETTEXTLENGTH, 0, 0);
-	}
-	std::wstring GetText() const
+	eStlInline void SetClr(int iType, COLORREF cr)
 	{
-		if (!m_hWnd)
+		switch (iType)
 		{
-			return std::wstring();
+		case 0:m_Info.crText = cr; break;
+		case 1:m_Info.crTextBK = cr; break;
+		case 2:
+			if (m_hbrEditBK)
+				DeleteObject(m_hbrEditBK);
+			m_hbrEditBK = CreateSolidBrush(cr);
+			m_Info.crBK = cr;
+			break;
 		}
-		int length = GetWindowTextLengthW(m_hWnd);
-		std::vector<wchar_t> buffer(length + 1);
-		GetWindowTextW(m_hWnd, buffer.data(), buffer.size());
-		return std::wstring(buffer.data());
+		Redraw();
 	}
-	char* outGetText()
-	{
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		if (m_TextA)
-		{
-			delete[]m_TextA;
-			m_TextA = NULL;
-		}
-		int length = GetWindowTextLengthA(m_hWnd);
-		m_TextA = new char[length + 1]{ 0 };
-		GetWindowTextA(m_hWnd, m_TextA, length);
-		return m_TextA;
-	}
-	wchar_t* GetTextWtoE()
-	{
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		if (m_TextW)
-		{
-			delete[]m_TextW;
-			m_TextW = NULL;
-		}
-		int length = GetWindowTextLengthW(m_hWnd);
-		m_TextW = new wchar_t[length + 1]{ 0 };
-		GetWindowTextW(m_hWnd, m_TextW, length + 1);
 
-		return m_TextW;
-	}
-	// 设置边框
-	void SetBorder(INT type)
+	eStlInline COLORREF GetClr(int iType)
 	{
-		// 如果当前窗口带有单线边框样式，则先移除单线边框样式
-		if (GetWindowLongPtrW(m_hWnd, GWL_STYLE) & WS_BORDER)
-		{
-			SetWindowLongPtrW(m_hWnd, GWL_STYLE, GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ~WS_BORDER);
-		}
+		return elibstl::MultiSelect<COLORREF>(iType, m_Info.crText, m_Info.crTextBK, m_Info.crBK);
+	}
 
-		// 根据类型设置窗口的扩展样式
-		switch (type)
+	eStlInline void SetHideSel(BOOL bHideSel)
+	{
+		m_Info.bHideSel = bHideSel;
+		elibstl::ModifyWindowStyle(m_hWnd, (bHideSel ? 0 : ES_NOHIDESEL), ES_NOHIDESEL);
+	}
+
+	eStlInline BOOL GetHideSel()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bHideSel;
+		else
+			return !(!!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ES_NOHIDESEL));
+	}
+
+	eStlInline void SetMaxLen(int iMaxLen)
+	{
+		m_Info.iMaxLen = iMaxLen;
+		SendMessageW(m_hWnd, EM_SETLIMITTEXT, iMaxLen, 0);
+	}
+
+	eStlInline int GetMaxLen()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iMaxLen;
+		else
+			return SendMessageW(m_hWnd, EM_GETLIMITTEXT, 0, 0);
+	}
+
+	eStlInline void SetMultiLine(BOOL bMultiLine)
+	{
+		m_Info.bMultiLine = bMultiLine;
+		//elibstl::ModifyWindowStyle(m_hWnd, (bMultiLine ? ES_MULTILINE | ES_WANTRETURN : 0), ES_MULTILINE | ES_WANTRETURN);
+	}
+
+	eStlInline BOOL GetMultiLine()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bMultiLine;
+		else
+			return !!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ES_MULTILINE);
+	}
+
+	void SetScrollBar(int i)
+	{
+		m_Info.iScrollBar = i;
+		switch (i)
 		{
 		case 0:
-			// 无边框
-			m_Style = 0;
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, 0);
+			ShowScrollBar(m_hWnd, SB_VERT, FALSE);
+			ShowScrollBar(m_hWnd, SB_HORZ, FALSE);
 			break;
 		case 1:
-			// 凹入式
-			m_Style = 1;
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, WS_EX_CLIENTEDGE);
+			ShowScrollBar(m_hWnd, SB_VERT, FALSE);
+			ShowScrollBar(m_hWnd, SB_HORZ, TRUE);
 			break;
 		case 2:
-			// 突出式
-			m_Style = 2;
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME);
+			ShowScrollBar(m_hWnd, SB_VERT, TRUE);
+			ShowScrollBar(m_hWnd, SB_HORZ, FALSE);
 			break;
 		case 3:
-			// 浅框入式
-			m_Style = 3;
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, WS_EX_STATICEDGE);
-			break;
-		case 4:
-			// 镜框式
-			m_Style = 4;
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, WS_EX_DLGMODALFRAME);
-			break;
-		case 5:
-			// 单线边框式
-			m_Style = 5;
-			SetWindowLongPtrW(m_hWnd, GWL_STYLE, GetWindowLongPtrW(m_hWnd, GWL_STYLE) | WS_BORDER);
-			SetWindowLongPtrW(m_hWnd, GWL_EXSTYLE, 0);
-			break;
-		default:
+			ShowScrollBar(m_hWnd, SB_VERT, TRUE);
+			ShowScrollBar(m_hWnd, SB_HORZ, TRUE);
 			break;
 		}
-
-		// 通知系统窗口样式已经改变
-		SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
-	}
-	INT GetBorder() const
-	{
-		return m_Style;
-	}
-private:
-	WNDPROC m_oldProc, m_ColdProc;
-	INT m_Max;
-	LOGFONTA* m_Font;
-	HFONT m_hFont;
-	COLORREF m_Color, m_font_bkgcolor, m_bkgcolor;
-	INT m_Style;
-	HWND m_hWnd;
-	wchar_t* m_TextW;
-	HWND m_hParentWnd;
-	char* m_TextA;
-	DWORD m_dwWinFormID, m_dwUnitID;
-	bool m_is_vsroll;
-
-};
-static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-	if (!pEditBox)
-	{
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
-	}
-	//早知道服用就建个基类了，操了
-	WNDPROC oldproc = pEditBox->GetCOldProc();
-	if (oldproc == NULL)
-	{
-		oldproc = DefWindowProc;
 	}
 
-	bool is_continue = elibstl::SendToParentsHwnd(pEditBox->GetID(), pEditBox->GetUID(), uMsg, wParam, lParam);
-	if (!is_continue)
+	int GetScrollBar()
 	{
-		return 0;
-	}
-	return oldproc(hWnd, uMsg, wParam, lParam);
-};
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	eEditBoxEx* pEditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-	if (!pEditBox)
-	{
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	WNDPROC oldproc = pEditBox->GetOldProc();
-	if (oldproc == NULL)
-	{
-		oldproc = DefWindowProc;
-	}
-
-	switch (message)
-	{
-	case WM_SIZE://容器窗口被改变时改变按钮大小
-	{
-		int width = LOWORD(lParam);
-		int height = HIWORD(lParam);
-		pEditBox->SetPos(width, height);
-		break;
-	}
-	case WM_CTLCOLOREDIT:
-	{
-		//文本颜色
-		SetTextColor(reinterpret_cast<HDC>(wParam), pEditBox->GetFontColor());
-		//文本背景颜色
-		SetBkColor(reinterpret_cast<HDC>(wParam), pEditBox->GetFontBkgColor());
-		//HDC画刷,编辑框整体颜色
-		HBRUSH hBrush = CreateSolidBrush(pEditBox->GetBkgColor());
-		return reinterpret_cast<LRESULT>(hBrush);
-	}
-	case WM_DESTROY: {
-		// GetClassLong 返回的值属于整个类的, 不是属于某个窗口的, 所以返回的东西不能释放, 可以在取消注册类的时候释放
-
-		//HBRUSH hBrush = reinterpret_cast<HBRUSH>(GetClassLong(hWnd, GCLP_HBRBACKGROUND));
-		//if (hBrush)
-		//{
-		//	DeleteObject(hBrush);
-		//}
-		pEditBox->~eEditBoxEx();
-		break;
-	}
-
-	case WM_COMMAND:
-		if (HIWORD(wParam) == EN_CHANGE)
+		if (m_bInDesignMode)
+			return m_Info.iScrollBar;
+		else
 		{
-			pEditBox->OnChange();
-		}
-		break;
-	default:
-		break;
-	}
-	return oldproc(hWnd, message, wParam, lParam);
-};
+			BOOL bVSB = GetWindowLongPtrW(m_hWnd, GWL_STYLE) & WS_VSCROLL;
+			BOOL bHSB = GetWindowLongPtrW(m_hWnd, GWL_STYLE) & WS_HSCROLL;
+			if (bVSB)
+				if (bHSB)
+					return 3;
+				else
+					return 2;
+			if (bHSB)
+				return 1;
 
-static HUNIT WINAPI Create(
-	LPBYTE pAllPropertyData,            //   指向本窗口单元的已有属性数据, 由本窗口单元的ITF_GET_PROPERTY_DATA接口产生, 如果没有数据则为NULL
-	INT nAllPropertyDataSize,           //   提供pAllPropertyData所指向数据的尺寸, 如果没有则为0
-	DWORD dwStyle,                      //   预先设置的窗口风格
-	HWND hParentWnd,                    //   父窗口句柄
-	UINT uID,                           //   在父窗口中的ID
-	HMENU hMenu,                        //   未使用
-	INT x, INT y, INT cx, INT cy,       //   指定位置及尺寸
-	DWORD dwWinFormID, DWORD dwUnitID,  //   本窗口单元所在窗口及本身的ID, 用作通知到系统
-	HWND hDesignWnd,                    //   如果blInDesignMode为真, 则hDesignWnd提供所设计窗口的窗口句柄
-	BOOL blInDesignMode                 //   说明是否被易语言IDE调用以进行可视化设计, 运行时为假
-)
-{
-	eEditBoxEx* EditBox = new eEditBoxEx(pAllPropertyData, nAllPropertyDataSize, dwStyle, x, y, cx, cy, hParentWnd, uID, dwWinFormID, dwUnitID);
-
-	return elibstl::make_cwnd(EditBox->GetHwnd());
-}
-
-static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
-	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
-	LPTSTR* ppszTipText) {  //目前尚未使用
-	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
-
-	switch (nPropertyIndex)
-	{
-	case 0: {
-		EditBox->SetText(pPropertyVaule->m_szText);
-		break;
-	}
-	case 1:
-		if (pPropertyVaule->m_data.m_pData && pPropertyVaule->m_data.m_nDataSize)
-		{
-			std::vector<unsigned char> wcs(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_pData + pPropertyVaule->m_data.m_nDataSize);
-			std::wstring wstr;
-			wstr.append((wchar_t*)wcs.data(), wcs.size() / sizeof(wchar_t));
-			EditBox->SetText(std::wstring(wstr.c_str()).c_str());
-		}
-		break;
-	case 2:
-		EditBox->SetBorder(pPropertyVaule->m_int);
-		break;
-	case 3: {
-		LOGFONTA* Font = (LOGFONTA*)pPropertyVaule->m_int;
-		if (Font)
-		{
-			EditBox->SetFont(*Font);
-		}
-		break;
-	}
-	case 4:
-	{
-		EditBox->SetMaxText(pPropertyVaule->m_int);
-		break;
-	}
-	case 5:
-	{
-		EditBox->SetVscroll(pPropertyVaule->m_bool);
-		break;
-	}
-	case 6:
-	{
-		EditBox->SetFontColor(pPropertyVaule->m_clr);
-		break;
-	}
-	case 7:
-	{
-		EditBox->SetFontBkgColor(pPropertyVaule->m_clr);
-		break;
-	}
-	case 8:
-	{
-		EditBox->SetBkgColor(pPropertyVaule->m_clr);
-		break;
-	}
-	default:
-
-		break;
-	}
-	return 1;
-}
-
-static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
-{
-	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
-	CEDITDATA temp;
-	temp.m_font = EditBox->GetFont(&temp.m_fontdata);
-	temp.m_Border = EditBox->GetBorder();
-	temp.m_max = EditBox->GetMaxText();
-	temp.m_vscroll = EditBox->GetVscroll();
-	temp.m_color = EditBox->GetFontColor();
-	temp.m_font_bkgcolor = EditBox->GetFontBkgColor();
-	temp.m_bkgcolor = EditBox->GetBkgColor();
-	std::wstring wstr = EditBox->GetText();
-
-	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(CEDITDATA) + (wstr.size() + 1) * sizeof(wchar_t));
-	if (hGlobal)
-	{
-		PVOID pGlobal = ::GlobalLock(hGlobal);
-		if (pGlobal)
-		{
-			memcpy(pGlobal, &temp, sizeof(CEDITDATA));
-			if (!wstr.empty())
-			{
-				memcpy((LPBYTE)pGlobal + sizeof(CEDITDATA), wstr.c_str(), wstr.size() * sizeof(wchar_t));
-			}
-			::GlobalUnlock(hGlobal);
+			return 0;
 		}
 	}
-	return hGlobal;
-	//return 0;
-}
 
-static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
-{
-	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* EditBox = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
-	if (!EditBox)
+	eStlInline void SetAlign(int iAlign)
 	{
-		return 0;
+		m_Info.iAlign = iAlign;
+		elibstl::ModifyWindowStyle(m_hWnd,
+			elibstl::MultiSelect<DWORD>(iAlign, ES_LEFT, ES_CENTER, ES_RIGHT),
+			ES_LEFT | ES_CENTER | ES_RIGHT);
 	}
-	switch (nPropertyIndex)
+
+	eStlInline int GetAlign()
 	{
-	case 0:
-	{
-		pPropertyVaule->m_szText = EditBox->outGetText();
-		break;
+		if (m_bInDesignMode)
+			return m_Info.iAlign;
+		else
+			return MultiSelectWndStyle(m_hWnd, ES_LEFT, ES_CENTER, ES_RIGHT);
 	}
-	case 1:
+
+	eStlInline void SetInputMode(int iInputMode)
 	{
-		WCHAR* wcs = EditBox->GetTextWtoE();
-		if (wcs)
+		m_Info.iInputMode = iInputMode;
+		if (iInputMode == 2)// 密码输入
+			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, L'*', 0);
+		else
+			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, 0, 0);
+
+		elibstl::ModifyWindowStyle(m_hWnd, ((iInputMode == 1) ? ES_READONLY : 0), ES_READONLY);
+	}
+
+	eStlInline int GetInputMode()
+	{
+		return m_Info.iInputMode;
+	}
+
+	eStlInline void SetMaskChar(WCHAR chMask)
+	{
+		if (!chMask)
+			chMask = L'*';
+		m_Info.chMask = chMask;
+		SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, chMask, 0);
+	}
+
+	eStlInline WCHAR GetMaskChar()
+	{
+		if (m_bInDesignMode)
+			return m_Info.chMask;
+		else
+			return SendMessageW(m_hWnd, EM_GETPASSWORDCHAR, 0, 0);
+	}
+
+	void SetTransformMode(int iTransformMode)
+	{
+		m_Info.iTransformMode = iTransformMode;
+		elibstl::ModifyWindowStyle(m_hWnd,
+			elibstl::MultiSelect<DWORD>(iTransformMode, 0, ES_LOWERCASE, ES_UPPERCASE),
+			ES_LOWERCASE | ES_UPPERCASE);
+	}
+
+	int GetTransformMode()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iTransformMode;
+		else
 		{
-			pPropertyVaule->m_data.m_pData = (LPBYTE)wcs;
-			pPropertyVaule->m_data.m_nDataSize = wcslen(wcs) * sizeof(wchar_t);
+			DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
+			if (dwStyle & ES_LOWERCASE)
+				return 1;
+			else if (dwStyle & ES_UPPERCASE)
+				return 2;
+			else
+				return 0;
 		}
-		break;
 	}
-	case 2:
+
+	void SetSelPos(int iSelPos)
 	{
-		pPropertyVaule->m_int = EditBox->GetBorder();
-		break;
+		m_Info.iSelPos = iSelPos;
+		DWORD dwStart, dwEnd;
+		SendMessageW(m_hWnd, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
+		DWORD dwLen;
+		if (dwStart > dwEnd)
+			dwLen = dwStart - dwEnd;
+		else
+			dwLen = dwEnd - dwStart;
+		SendMessageW(m_hWnd, EM_SETSEL, iSelPos, iSelPos + dwLen);
 	}
-	case 3:
+
+	eStlInline int GetSelPos()
 	{
-		LOGFONTA* Font = EditBox->outGetFont();
-		if (Font)
+		if (m_bInDesignMode)
+			return m_Info.iSelPos;
+		else
 		{
-			pPropertyVaule->m_data.m_pData = (LPBYTE)Font;
+			DWORD dwStart;
+			SendMessageW(m_hWnd, EM_GETSEL, (WPARAM)&dwStart, NULL);
+			return dwStart;
+		}
+	}
+
+	eStlInline void SetSelNum(int iSelNum)
+	{
+		m_Info.iSelNum = iSelNum;
+		DWORD dwStart;
+		SendMessageW(m_hWnd, EM_GETSEL, (WPARAM)&dwStart, NULL);
+		SendMessageW(m_hWnd, EM_SETSEL, dwStart, dwStart + iSelNum);
+	}
+
+	int GetSelNum()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iSelNum;
+		else
+		{
+			DWORD dwStart, dwEnd;
+			SendMessageW(m_hWnd, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
+			DWORD dwLen;
+			if (dwStart > dwEnd)
+				dwLen = dwStart - dwEnd;
+			else
+				dwLen = dwEnd - dwStart;
+			return (int)dwLen;
+		}
+	}
+
+	eStlInline void SetSelText(PCWSTR pszText)
+	{
+		SendMessageW(m_hWnd, EM_REPLACESEL, TRUE, (LPARAM)pszText);
+	}
+
+	PWSTR GetSelText(SIZE_T* pcb = NULL)
+	{
+		delete[] m_pszSelText;
+		m_pszSelText = NULL;
+		if (pcb)
+			*pcb = 0u;
+		int cch = GetWindowTextLengthW(m_hWnd);
+		if (!cch)
+			return NULL;
+
+		DWORD dwStart, dwEnd;
+		SendMessageW(m_hWnd, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
+		DWORD dwLen;
+		if (dwStart > dwEnd)
+			dwLen = dwStart - dwEnd;
+		else
+			dwLen = dwEnd - dwStart;
+		if (!dwLen)
+			return NULL;
+		m_pszSelText = new WCHAR[dwEnd + 1];// UTF-16是变长的，这里按说还要多一步解析，先这样吧。。
+		GetWindowTextW(m_hWnd, m_pszSelText, (int)dwEnd + 1);
+		if (pcb)
+			*pcb = (dwEnd + 1) * sizeof(WCHAR);
+		return m_pszSelText;
+	}
+
+	eStlInline void SetCueBannerNoCopy(PCWSTR psz)
+	{
+		if (!m_bInDesignMode)
+			SendMessageW(m_hWnd, EM_SETCUEBANNER, m_Info.bCueBannerShowAlways, (LPARAM)psz);
+	}
+
+	void SetCueBanner(PCWSTR psz)
+	{
+		if (!psz)
+		{
+			*m_Info.pszCueBanner = L'\0';
+			SetCueBannerNoCopy(NULL);
+			return;
+		}
+
+		wcsncpy(m_Info.pszCueBanner, psz, ED_CUEBANNER_MAXLEN - 1);
+		*(m_Info.pszCueBanner + ED_CUEBANNER_MAXLEN - 1) = L'\0';
+		SetCueBannerNoCopy(m_Info.pszCueBanner);
+	}
+
+	eStlInline PCWSTR GetCueBanner(SIZE_T* pcb = NULL)
+	{
+		if (!m_bInDesignMode)
+			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_Info.pszCueBanner, ED_CUEBANNER_MAXLEN);
+		if (pcb)
+			*pcb = wcslen(m_Info.pszCueBanner);
+		return m_Info.pszCueBanner;
+	}
+
+	void SetCueBannerShowAlways(BOOL b)
+	{
+		m_Info.bCueBannerShowAlways = b;
+		SetCueBannerNoCopy(m_Info.pszCueBanner);
+	}
+
+	eStlInline BOOL GetCueBannerShowAlways()
+	{
+		return m_Info.bCueBannerShowAlways;
+	}
+
+	eStlInline HGLOBAL FlattenInfo() override
+	{
+		BYTE* p;
+		SIZE_T cbBaseData;
+		SIZE_T cbCueBanner;
+		auto pszCueBanner = GetCueBanner();
+		if (pszCueBanner)
+		{
+			m_Info.cchCueBanner = wcslen(pszCueBanner);
+			cbCueBanner = (m_Info.cchCueBanner + 1) * sizeof(WCHAR);
+		}
+		else
+		{
+			m_Info.cchCueBanner = 0;
+			cbCueBanner = 0u;
+		}
+
+		auto hGlobal = FlattenInfoBase0(sizeof(EEDITDATA) + cbCueBanner, &cbBaseData);
+		if (!hGlobal)
+			goto Fail;
+		p = (BYTE*)GlobalLock(hGlobal);
+		if (!p)
+			goto Fail;
+		// 结构
+		p += cbBaseData;
+		memcpy(p, &m_Info, sizeof(EEDITDATA));
+		// 提示文本
+		p += sizeof(EEDITDATA);
+		memcpy(p, m_Info.pszCueBanner, cbCueBanner);
+		// 
+		GlobalUnlock(hGlobal);
+	Fail:
+		return hGlobal;
+	}
+
+	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
+	{
+		auto pButton = new CEdit(STD_ECTRL_CREATE_REAL_ARGS);
+		return elibstl::make_cwnd(pButton->GetHWND());
+	}
+
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+
+		switch (nPropertyIndex)
+		{
+		case 0:// 内容
+			p->SetTextA(pPropertyVaule->m_szText);
+			break;
+		case 1:// 内容W
+			p->SetTextW((PCWSTR)pPropertyVaule->m_data.m_pData);
+			break;
+		case 2:// 边框
+			p->SetFrame(pPropertyVaule->m_int);
+			break;
+		case 3:// 文本颜色
+		case 4:// 文本背景颜色
+		case 5:// 编辑框背景颜色
+			p->SetClr(nPropertyIndex - 3, pPropertyVaule->m_clr);
+			break;
+		case 6:// 字体
+			p->SetFont((LOGFONTA*)pPropertyVaule->m_data.m_pData);
+			break;
+		case 7:// 隐藏选择
+			p->SetHideSel(pPropertyVaule->m_bool);
+			break;
+		case 8:// 最大允许长度
+			p->SetMaxLen(pPropertyVaule->m_int);
+			break;
+		case 9:// 是否允许多行
+			p->SetMultiLine(pPropertyVaule->m_bool);
+			return TRUE;
+		case 10:// 滚动条
+			p->SetScrollBar(pPropertyVaule->m_int);
+			break;
+		case 11:// 对齐方式
+			p->SetAlign(pPropertyVaule->m_int);
+			break;
+		case 12:// 输入方式
+			p->SetInputMode(pPropertyVaule->m_int);
+			break;
+		case 13:// 密码遮盖字符
+			if (pPropertyVaule->m_data.m_nDataSize)
+				p->SetMaskChar(*(PWSTR)pPropertyVaule->m_data.m_pData);
+			else
+				p->SetMaskChar(L'*');
+			break;
+		case 14:// 转换方式
+			p->SetTransformMode(pPropertyVaule->m_int);
+			break;
+		case 15:// 起始选择位置
+			p->SetSelPos(pPropertyVaule->m_int);
+			break;
+		case 16:// 被选择字符数
+			p->SetSelNum(pPropertyVaule->m_int);
+			break;
+		case 17:// 被选择文本
+			p->SetSelText((PCWSTR)pPropertyVaule->m_data.m_pData);
+			break;
+		case 18:// 提示文本
+			p->SetCueBanner((PCWSTR)pPropertyVaule->m_data.m_pData);
+			break;
+		case 19:// 总是显示提示文本
+			p->SetCueBannerShowAlways(pPropertyVaule->m_bool);
+			break;
+		}
+
+		return FALSE;
+	}
+
+	static HGLOBAL WINAPI EGetAlldata(HUNIT hUnit)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+		return p->FlattenInfo();
+	}
+
+	static BOOL WINAPI EGetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+
+		switch (nPropertyIndex)
+		{
+		case 0:// 内容
+			pPropertyVaule->m_szText = p->GetTextA();
+			break;
+		case 1:// 内容W
+			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 2:// 边框
+			pPropertyVaule->m_int = p->GetFrame();
+			break;
+		case 3:// 文本颜色
+		case 4:// 文本背景颜色
+		case 5:// 编辑框背景颜色
+			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 3);
+			break;
+		case 6:// 字体
+			pPropertyVaule->m_data.m_pData = p->GetFont();
 			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
-
+			break;
+		case 7:// 隐藏选择
+			pPropertyVaule->m_bool = p->GetHideSel();
+			break;
+		case 8:// 最大允许长度
+			pPropertyVaule->m_int = p->GetMaxLen();
+			break;
+		case 9:// 是否允许多行
+			pPropertyVaule->m_bool = p->GetMultiLine();
+			break;
+		case 10:// 滚动条
+			pPropertyVaule->m_int = p->GetScrollBar();
+			break;
+		case 11:// 对齐方式
+			pPropertyVaule->m_int = p->GetAlign();
+			break;
+		case 12:// 输入方式
+			pPropertyVaule->m_int = p->GetInputMode();
+			break;
+		case 13:// 密码遮盖字符
+			//pPropertyVaule->m_int = p->
+			break;
+		case 14:// 转换方式
+			pPropertyVaule->m_int = p->GetTransformMode();
+			break;
+		case 15:// 起始选择位置
+			pPropertyVaule->m_int = p->GetSelPos();
+			break;
+		case 16:// 被选择字符数
+			pPropertyVaule->m_int = p->GetSelNum();
+			break;
+		case 17:// 被选择文本
+			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetSelText((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 18:// 提示文本
+			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetCueBanner((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 19:// 总是显示提示文本
+			pPropertyVaule->m_bool = p->GetCueBannerShowAlways();
+			break;
 		}
 
-		break;
-	}
-	case 4:
-	{
-		pPropertyVaule->m_int = EditBox->GetMaxText();
-		break;
-	}
-	case 5:
-	{
-		pPropertyVaule->m_bool = EditBox->GetVscroll();
-		break;
-	}
-	case 6:
-	{
-		pPropertyVaule->m_clr = EditBox->GetFontColor();
-		//MessageBoxA(0, std::to_string((int)EditBox->GetEditBoxFontColor()).c_str(), 0, 0);
-		break;
-	}
-	case 7:
-	{
-		pPropertyVaule->m_clr = EditBox->GetFontBkgColor();
-		break;
-	}
-	case 8:
-	{
-		pPropertyVaule->m_clr = EditBox->GetBkgColor();
-		break;
-	}
-	default:
-
-		return false;
+		return TRUE;
 	}
 
-	return true;
-}
-static BOOL WINAPI InputW(HUNIT hUnit, INT nPropertyIndex,
-	BOOL* pblModified, LPVOID pResultExtraData)
-{
-	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);;
-	if (nPropertyIndex == 1)
+	static BOOL WINAPI EInputW(HUNIT hUnit, INT nPropertyIndex, BOOL* pblModified, LPVOID pResultExtraData)
 	{
-		Button->SetText(std::wstring(elibstl::MyInputBox(Button->GetText()).c_str()).c_str());
-		*pblModified = true;
-	}
-	return *pblModified;
-}
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+		PWSTR psz;
+		*pblModified = FALSE;
+		switch(nPropertyIndex)
+		{
+		case 1:// 内容W
+		{
+			if (elibstl::IntputBox(&psz, p->GetTextW()))
+			{
+				p->SetTextNoCopyW(psz);
+				*pblModified = TRUE;
+			}
+		}
+		break;
 
-EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditBoxW(INT nInterfaceNO)
+		case 13:// 密码遮盖字符W
+		{
+			WCHAR sz[2]{ p->GetMaskChar(),L'\0' };
+			if (elibstl::IntputBox(&psz, sz, L"请输入密码遮盖字符，仅第一个字符有效："))
+			{
+				p->SetMaskChar(*psz);
+				delete psz;
+				*pblModified = TRUE;
+			}
+		}
+		break;
+
+		case 18:// 提示文本
+		{
+			if (elibstl::IntputBox(&psz, p->GetCueBanner()))
+			{
+				p->SetCueBanner(psz);
+				*pblModified = TRUE;
+				delete psz;
+			}
+		}
+		break;
+		}
+		return FALSE;
+	}
+};
+SUBCLASS_MGR_INIT(CEdit, SCID_EDITPARENT, SCID_EDIT)
+
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
 	case ITF_CREATE_UNIT:
-	{
-		// 创建组件
-		return (PFN_INTERFACE)Create;
-	}
+		return (PFN_INTERFACE)CEdit::ECreate;
 	case ITF_NOTIFY_PROPERTY_CHANGED:
-	{
-		// 通知某属性数据被用户修改
-		return (PFN_INTERFACE)Change;
-	}
+		return (PFN_INTERFACE)CEdit::EChange;
 	case ITF_GET_ALL_PROPERTY_DATA:
-	{
-		// 取全部属性数据
-		return (PFN_INTERFACE)GetAlldata;
-	}
+		return (PFN_INTERFACE)CEdit::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
-	{
-		// 取某属性数据
-		return (PFN_INTERFACE)GetData;
-	}
+		return (PFN_INTERFACE)CEdit::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
-	{
-		return (PFN_INTERFACE)InputW;
-	}
-	default:
-		return NULL;
+		return (PFN_INTERFACE)CEdit::EInputW;
 	}
 	return NULL;
 }
 
-static EVENT_INFO2 s_event[] =
+static EVENT_INFO2 s_Event_Edit[] =
 {
-	/*000*/ {"字符被改变", "当字符被改变时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"内容被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
-static UNIT_PROPERTY s_member[] =
+static UNIT_PROPERTY s_Member_Edit[] =
 {
-	// FIXED_WIN_UNIT_PROPERTY,    // 必须加上此宏, 或者直接展开, 这里就展开
+	FIXED_WIN_UNIT_PROPERTY,
 	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
-	/*000*/ {"左边", "left", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*001*/ {"顶边", "top", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*002*/ {"宽度", "width", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*003*/ {"高度", "height", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*004*/ {"标记", "tag", NULL, UD_TEXT, _PROP_OS(OS_ALL), NULL},
-	/*005*/ {"可视", "visible", NULL, UD_BOOL, _PROP_OS(OS_ALL), NULL},
-	/*006*/ {"禁止", "disable", NULL, UD_BOOL, _PROP_OS(OS_ALL), NULL},
-	/*007*/ {"鼠标指针", "MousePointer", NULL, UD_CURSOR, _PROP_OS(OS_ALL), NULL},
-
-	// 以上属性是易语言需要的默认属性, 每个组件都必须有, 但是可以手动隐藏
-	// 以下属性是组件自身带的, 这些不是强制需要的
-	// 这些属性在易语言的回调里是从0开始的, 所以, 这些序号也从0开始
-	/*000*/  {"内容", "title", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL},
-	/*001*/  {"内容W", "PIC", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*002*/	 {"边框", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""突出式\0""浅框入式\0""镜框式\0""单线边框式\0""\0"},
-	/*003*/  {"字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL} ,
-	/*004*/  {"最大限制长度", "", "不限制为0", UD_INT, _PROP_OS(__OS_WIN),  NULL},
-	/*005*/  {"滚动条", "", "设置春之滚动条", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*006*/  {"字体颜色", "", "设置字体颜色", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*007*/  {"字体背景颜色", "", "设置编辑框中字体的背景颜色", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*008*/  {"编辑框背景颜色", "", "设置编辑框的背景颜色", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-
+	/*000*/  {"内容", "Text", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL},
+	/*001*/  {"内容W", "TextW", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*002*/	 {"边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
+	/*003*/  {"文本颜色", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
+	/*004*/  {"文本背景颜色", "TextBKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
+	/*005*/  {"编辑框背景颜色", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
+	/*006*/  {"字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
+	/*007*/  {"隐藏选择", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*008*/  {"最大允许长度", "", "0为不限制", UD_INT, _PROP_OS(__OS_WIN),  NULL},
+	/*009*/  {"是否允许多行", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*010*/  {"滚动条", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""横向滚动条\0""纵向滚动条\0""横向及纵向滚动条\0""\0"},
+	/*011*/  {"对齐方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左对齐\0""居中\0""右对齐\0""\0"},
+	/*012*/  {"输入方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), 
+					"通常\0""只读\0""密码\0""整数文本\0""小数文本\0""输入字节\0""输入短整数\0""输入整数\0""输入长整数\0""输入小数\0"
+					"输入双精度小数\0""输入日期时间\0""\0"},
+	/*013*/		{"密码遮盖字符W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*014*/  {"转换方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""大写到小写\0""小写到大写\0""\0"},
+	/*015*/  {"起始选择位置", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*016*/  {"被选择字符数", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*017*/  {"被选择文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*018*/  {"提示文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*019*/  {"总是显示提示文本", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
-namespace elibstl {
+///////////////////////////////////方法
+static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175 };
 
-	LIB_DATA_TYPE_INFO editboxw = {
-		"编辑框W",//中文名称
-		"EditBoxW",//英文名称
-		"unicode编辑框",//说明
-		sizeof(s_editbox_cmd) / sizeof(s_editbox_cmd[0]),//命令数量
-		s_editbox_cmd,//在全局函数中对应的索引
-		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-		104,//资源ID
-		sizeof(s_event) / sizeof(s_event[0]),
-		s_event,
-		sizeof(s_member) / sizeof(s_member[0]),//属性数
-		s_member,//属性指针
-		libstl_GetInterface_EditBoxW,//组件交互子程序
-		NULL,//成员数量
-		NULL//成员数据数组
-	};
+EXTERN_C void libstl_Edit_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	for (int i = 1; i <= nArgCount-1; ++i)
+	{
+		SendMessageW(hWnd, EM_SETSEL, -2, -1);
+		SendMessageW(hWnd, EM_REPLACESEL, FALSE, (LPARAM)pArgInf[i].m_pBin + 8);
+	}
 }
-
-
-
-
-
-
-#pragma region 方法
-
-static ARG_INFO Args[] =
+static ARG_INFO s_ArgsAddText[] =
 {
 	{
 		/*name*/    "文本",
@@ -831,59 +765,995 @@ static ARG_INFO Args[] =
 		/*state*/   NULL,
 	}
 };
-
-EXTERN_C void Fn_EditBoxW_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
-{
-	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-
-	for (INT i = 1; i < nArgCount; i++)
-	{
-		auto bnow = elibstl::args_to_wsdata(pArgInf, i);
-		Button->AddText(std::wstring(bnow));
-
-	}
-}
-
-
-FucInfo EditBoxW_AddText = { {
-		/*ccname*/  ("加入文本"),
-		/*egname*/  ("AddText"),
-		/*explain*/ ("将指定文本加入到编辑框内容的尾部。"),
+FucInfo Fn_EditAddText = { {
+		/*ccname*/  ("加入文本W"),
+		/*egname*/  ("AddTextW"),
+		/*explain*/ ("将指定文本加入到编辑框内容的尾部"),
 		/*category*/-1,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,
 		/*ret*/     _SDT_NULL,
 		/*reserved*/NULL,
-		/*level*/   LVL_HIGH,
+		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/1,
-		/*arg lp*/  Args,
-	} , Fn_EditBoxW_AddText ,"Fn_EditBoxW_AddText" };
-
-
-EXTERN_C void Fn_EditBoxW_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+		/*ArgCount*/ARRAYSIZE(s_ArgsAddText),
+		/*arg lp*/  s_ArgsAddText,
+	} , libstl_Edit_AddText ,"libstl_Edit_AddText" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_CharFromPos(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eEditBoxEx* Button = (eEditBoxEx*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-
-	pRetData->m_int = reinterpret_cast<INT>(Button->GetcHwnd());
+	DWORD dwRet = SendMessageW(hWnd, EM_CHARFROMPOS, 0, MAKELPARAM(pArgInf[1].m_int, pArgInf[2].m_int));
+	USHORT usPos = LOWORD(dwRet);
+	if (usPos == 65535)
+		pRetData->m_int = -1;
+	else
+		pRetData->m_int = usPos;
+	if(pArgInf[3].m_pInt)
+	{
+		usPos = HIWORD(dwRet);
+		if (usPos == 65535)
+			*pArgInf[3].m_pInt = -1;
+		else
+			*pArgInf[3].m_pInt = usPos;
+	}
 }
-
-
-FucInfo EditBoxW_GetHwnd = { {
-		/*ccname*/  ("取组件句柄"),
-		/*egname*/  ("GetHwnd"),
-		/*explain*/ ("取窗口句柄获取的为容器句柄,此命令为取出编辑框的句柄。"),
-		/*category*/-1,
+static ARG_INFO s_ArgsCharFromPos[] =
+{
+	{
+		/*name*/    "横向位置",
+		/*explain*/ "相对客户区",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
 		/*state*/   NULL,
+	},
+	{
+		/*name*/    "纵向位置",
+		/*explain*/ "相对客户区",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   NULL,
+	},
+	{
+		/*name*/    "行中位置",
+		/*explain*/ "接收字符行中位置的变量，若函数失败，则改变量的值为-1",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditCharFromPos = { {
+		/*ccname*/  "取坐标处字符",
+		/*egname*/  "CharFromPos",
+		/*explain*/ "返回字符位置，失败返回-1",
+		/*category*/-1,
+		/*state*/   0,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,
-		/*level*/   LVL_HIGH,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsCharFromPos),
+		/*arg lp*/  s_ArgsCharFromPos,
+	} , libstl_Edit_CharFromPos ,"libstl_Edit_CharFromPos" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_CanUndo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = SendMessageW(hWnd, EM_CANUNDO, 0, 0);
+
+}
+FucInfo Fn_EditCanUndo = { {
+		/*ccname*/  "是否可撤销",
+		/*egname*/  "CanUndo",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
-		/*arg lp*/  0,
-	} , Fn_EditBoxW_GetHwnd ,"Fn_EditBoxW_GetHwnd" };
+		/*arg lp*/  NULL,
+	} , libstl_Edit_CanUndo ,"libstl_Edit_CanUndo" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_EmptyUndoBuf(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, EM_EMPTYUNDOBUFFER, 0, 0);
+}
+FucInfo Fn_EditEmptyUndoBuf = { {
+		/*ccname*/  "清空撤销队列",
+		/*egname*/  "EmptyUndoBuf",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_EmptyUndoBuf ,"libstl_Edit_EmptyUndoBuf" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetFirstLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_GETFIRSTVISIBLELINE, 0, 0);
+}
+FucInfo Fn_EditGetFirstLine = { {
+		/*ccname*/  "取第一可见行",
+		/*egname*/  "GetFirstLine",
+		/*explain*/ "返回行索引",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_GetFirstLine ,"libstl_Edit_GetFirstLine" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetLineCount(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_GETLINECOUNT, 0, 0);
+}
+FucInfo Fn_EditGetLineCount = { {
+		/*ccname*/  "取行数",
+		/*egname*/  "GetLineCount",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_GetLineCount ,"libstl_Edit_GetLineCount" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetModify(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_GETMODIFY, 0, 0);
+}
+FucInfo Fn_EditGetModify = { {
+		/*ccname*/  "取修改标志",
+		/*egname*/  "GetModify",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_GetModify ,"libstl_Edit_GetModify" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_HideBallloonTip(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = SendMessageW(hWnd, EM_HIDEBALLOONTIP, 0, 0);
+}
+FucInfo Fn_EditHideBallloonTip = { {
+		/*ccname*/  "隐藏气球提示",
+		/*egname*/  "HideBallloonTip",
+		/*explain*/ "该函数需要在清单中指定Comctl6.0",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_HideBallloonTip ,"libstl_Edit_HideBallloonTip" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_LineLength(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_LINELENGTH, pArgInf[1].m_int, 0);
+}
+static ARG_INFO s_ArgsLineLength[] =
+{
+	{
+		/*name*/    "行中的字符索引",
+		/*explain*/ "若此参数设为-1，则返回选区所在各行的未选定字符数",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   NULL,
+	}
+};
+FucInfo Fn_EditLineLength = { {
+		/*ccname*/  "取某行长度",
+		/*egname*/  "LineLength",
+		/*explain*/ "返回某一行字符的长度，若编辑框为单行模式，则返回全部文本的长度，失败返回0",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsLineLength),
+		/*arg lp*/  s_ArgsLineLength,
+	} , libstl_Edit_LineLength ,"libstl_Edit_LineLength" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	int cch = SendMessageW(hWnd, EM_LINELENGTH, SendMessageW(hWnd, EM_LINEINDEX, pArgInf[1].m_int, 0), 0);
+	if (cch)
+	{
+		BYTE* pBuf = elibstl::malloc_array<BYTE>((cch + 1) * sizeof(WCHAR));
+		*(WORD*)(pBuf + 8) = cch;// 发送消息前将第一个WORD设置为缓冲区大小
+		SendMessageW(hWnd, EM_GETLINE, pArgInf[1].m_int, (LPARAM)(pBuf + 8));
+		*(((PWSTR)(pBuf + 8)) + cch) = L'\0';// 复制完成后不会添加结尾NULL
+		pRetData->m_pBin = pBuf;
+	}
+	else
+		pRetData->m_pBin = NULL;
+}
+static ARG_INFO s_ArgsGetLine[] =
+{
+	{
+		/*name*/    "行索引",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   NULL,
+	}
+};
+FucInfo Fn_EditGetLine = { {
+		/*ccname*/  "取行文本",
+		/*egname*/  "GetLine",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BIN,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetLine),
+		/*arg lp*/  s_ArgsGetLine,
+	} , libstl_Edit_GetLine ,"libstl_Edit_GetLine" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	DWORD dwRet = SendMessageW(hWnd, EM_GETMARGINS, 0, 0);
+	if (pArgInf[1].m_pInt)
+		*pArgInf[1].m_pInt = LOWORD(dwRet);
+	if (pArgInf[2].m_pInt)
+		*pArgInf[2].m_pInt = HIWORD(dwRet);
+}
+static ARG_INFO s_ArgsGetMargins[] =
+{
+	{
+		/*name*/    "接收左边距变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收右边距变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditGetMargins = { {
+		/*ccname*/  "取边距",
+		/*egname*/  "GetMargins",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetMargins),
+		/*arg lp*/  s_ArgsGetMargins,
+	} , libstl_Edit_GetMargins ,"libstl_Edit_GetMargins" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_GetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	RECT rc;
+	DWORD dwRet = SendMessageW(hWnd, EM_GETRECT, 0, (LPARAM)&rc);
+	if (pArgInf[1].m_pInt)
+		*pArgInf[1].m_pInt = rc.left;
+	if (pArgInf[2].m_pInt)
+		*pArgInf[2].m_pInt = rc.top;
+	if (pArgInf[3].m_pInt)
+		*pArgInf[3].m_pInt = rc.right - rc.left;
+	if (pArgInf[4].m_pInt)
+		*pArgInf[4].m_pInt = rc.bottom - rc.top;
+}
+static ARG_INFO s_ArgsGetRect[] =
+{
+	{
+		/*name*/    "接收横向位置变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收纵向位置变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收宽度变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收高度变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditGetRect = { {
+		/*ccname*/  "取显示矩形",
+		/*egname*/  "GetRect",
+		/*explain*/ "返回字符位置，失败返回-1",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetRect),
+		/*arg lp*/  s_ArgsGetRect,
+	} , libstl_Edit_GetRect ,"libstl_Edit_GetRect" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_LineFromChar(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_LINEFROMCHAR, pArgInf[1].m_int, 0);
+}
+static ARG_INFO s_ArgsLineFromChar[] =
+{
+	{
+		/*name*/    "字符索引",
+		/*explain*/ "若该参数设为-1，则返回当前光标所在行，或者返回选定内容所在行（如果有）",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   0,
+	}
+};
+FucInfo Fn_EditLineFromChar = { {
+		/*ccname*/  "字符位置到行数",
+		/*egname*/  "LineFromChar",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsLineFromChar),
+		/*arg lp*/  s_ArgsLineFromChar,
+	} , libstl_Edit_LineFromChar ,"libstl_Edit_LineFromChar" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_LineIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int = SendMessageW(hWnd, EM_LINEINDEX, pArgInf[1].m_int, 0);
+}
+static ARG_INFO s_ArgsLineIndex[] =
+{
+	{
+		/*name*/    "行索引",
+		/*explain*/ "若该参数设为-1，则指定当前光标所在行",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   0,
+	}
+};
+FucInfo Fn_EditLineIndex = { {
+		/*ccname*/  "取某行第一字符位置",
+		/*egname*/  "LineIndex",
+		/*explain*/ "失败返回-1",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsLineIndex),
+		/*arg lp*/  s_ArgsLineIndex,
+	} , libstl_Edit_LineIndex ,"libstl_Edit_LineIndex" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_Scroll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = HIWORD(SendMessageW(hWnd, EM_SCROLL, pArgInf[1].m_int, 0));
+}
+static ARG_INFO s_ArgsScroll[] =
+{
+	{
+		/*name*/    "滚动操作",
+		/*explain*/ "0 - 向上一行   1 - 向下一行   2 - 向上一页   3 - 向下一页",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   0,
+	}
+};
+FucInfo Fn_EditScroll = { {
+		/*ccname*/  "滚动",
+		/*egname*/  "Scroll",
+		/*explain*/ "失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsScroll),
+		/*arg lp*/  s_ArgsScroll,
+	} , libstl_Edit_Scroll ,"libstl_Edit_Scroll" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_LineScroll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = HIWORD(SendMessageW(hWnd, EM_LINESCROLL, pArgInf[1].m_int, pArgInf[2].m_int));
+}
+static ARG_INFO s_ArgsLineScroll[] =
+{
+	{
+		/*name*/    "水平滚动字符数",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "垂直滚动行数",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditLineScroll = { {
+		/*ccname*/  "滚动行",
+		/*egname*/  "LineScroll",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsLineScroll),
+		/*arg lp*/  s_ArgsLineScroll,
+	} , libstl_Edit_LineScroll ,"libstl_Edit_LineScroll" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_PosFromChar(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	DWORD dwRet = SendMessageW(hWnd, EM_LINESCROLL, pArgInf[1].m_int, 0);
+	if (pArgInf[2].m_pInt)
+		*pArgInf[2].m_pInt = LOWORD(dwRet);
+	if (pArgInf[3].m_pInt)
+		*pArgInf[3].m_pInt = HIWORD(dwRet);
+}
+static ARG_INFO s_ArgsPosFromChar[] =
+{
+	{
+		/*name*/    "字符索引",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   0,
+	},
+	{
+		/*name*/    "接收横向位置变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收纵向位置变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditPosFromChar = { {
+		/*ccname*/  "取字符坐标",
+		/*egname*/  "PosFromChar",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsPosFromChar),
+		/*arg lp*/  s_ArgsPosFromChar,
+	} , libstl_Edit_PosFromChar ,"libstl_Edit_PosFromChar" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_ReplaceSel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	DWORD dwRet = SendMessageW(hWnd, EM_REPLACESEL, pArgInf[2].m_int, (LPARAM)(pArgInf[1].m_pBin + 8));
+}
+static ARG_INFO s_ArgsReplaceSel[] =
+{
+	{
+		/*name*/    "用作替换的文本",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/   0,
+	},
+	{
+		/*name*/    "能否撤销",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ FALSE,
+		/*state*/   AS_HAS_DEFAULT_VALUE,
+	}
+};
+FucInfo Fn_EditReplaceSel = { {
+		/*ccname*/  "替换选中文本",
+		/*egname*/  "ReplaceSel",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsReplaceSel),
+		/*arg lp*/  s_ArgsReplaceSel,
+	} , libstl_Edit_ReplaceSel ,"libstl_Edit_ReplaceSel" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	DWORD dwMask = 0u;
+	if (pArgInf[1].m_dtDataType != _SDT_NULL)
+	{
+		if (pArgInf[1].m_int < 0)
+			pArgInf[1].m_int = EC_USEFONTINFO;
+		dwMask |= EC_LEFTMARGIN;
+	}
 
-#pragma endregion
+	if (pArgInf[2].m_dtDataType != _SDT_NULL)
+	{
+		if (pArgInf[2].m_int < 0)
+			pArgInf[2].m_int = EC_USEFONTINFO;
+		dwMask |= EC_RIGHTMARGIN;
+	}
+
+	SendMessageW(hWnd, EM_SETMARGINS, pArgInf[1].m_int, MAKELPARAM(pArgInf[1].m_int, pArgInf[2].m_int));
+}
+static ARG_INFO s_ArgsSetMargins[] =
+{
+	{
+		/*name*/    "左边距",
+		/*explain*/ "空为不设置，-1为设为默认",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "右边距",
+		/*explain*/ "空为不设置，-1为设为默认",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditSetMargins = { {
+		/*ccname*/  "置边距",
+		/*egname*/  "SetMargins",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetMargins),
+		/*arg lp*/  s_ArgsSetMargins,
+	} , libstl_Edit_SetMargins ,"libstl_Edit_SetMargins" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SetModify(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, EM_SETMODIFY, pArgInf[1].m_bool, 0);
+}
+static ARG_INFO s_ArgsSetModify[] =
+{
+	{
+		/*name*/    "是否已修改",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   0,
+	}
+};
+FucInfo Fn_EditSetModify = { {
+		/*ccname*/  "置修改标志",
+		/*egname*/  "SetModify",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetModify),
+		/*arg lp*/  s_ArgsSetModify,
+	} , libstl_Edit_SetModify ,"libstl_Edit_SetModify" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	if (pArgInf[1].m_dtDataType == _SDT_NULL&& pArgInf[2].m_dtDataType == _SDT_NULL&& 
+		pArgInf[3].m_dtDataType == _SDT_NULL&& pArgInf[4].m_dtDataType == _SDT_NULL)
+	{
+		SendMessageW(hWnd, EM_SETRECT, 0, NULL);
+		return;
+	}
+	RECT rc{ pArgInf[1].m_int,  pArgInf[2].m_int,  pArgInf[3].m_int,  pArgInf[4].m_int };
+	SendMessageW(hWnd, EM_SETRECT, 0, (LPARAM)&rc);
+}
+static ARG_INFO s_ArgsSetRect[] =
+{
+	{
+		/*name*/    "左边",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "右边",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "宽度",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "高度",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditSetRect = { {
+		/*ccname*/  "置显示矩形",
+		/*egname*/  "SetRect",
+		/*explain*/ "若四个参数全为空，则将显示矩形置回默认",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetRect),
+		/*arg lp*/  s_ArgsSetRect,
+	} , libstl_Edit_SetRect ,"libstl_Edit_SetRect" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SetTabStop(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+	if (pArgInf[1].m_dtDataType == _SDT_NULL)
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, 0, 0);
+		return;
+	}
+	int cAry = elibstl::get_array_count(pArgInf[1].m_pAryData);
+	if (!cAry)
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, 0, 0);
+		return;
+	}
+	else if (cAry == 1)
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, 1, *(int*)((BYTE*)pArgInf[1].m_pAryData + 8));
+		return;
+	}
+	else
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, cAry, (LPARAM)((BYTE*)pArgInf[1].m_pAryData + 8));
+		return;
+	}
+}
+static ARG_INFO s_ArgsSetTabStop[] =
+{
+	{
+		/*name*/    "制表位数组",
+		/*explain*/ "以对话框单位表示的制表位数组，若此参数设为空，则将制表位置回默认",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_ARRAY_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+FucInfo Fn_EditSetTabStop = { {
+		/*ccname*/  "置制表位",
+		/*egname*/  "SetTabStop",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetTabStop),
+		/*arg lp*/  s_ArgsSetTabStop,
+	} , libstl_Edit_SetTabStop ,"libstl_Edit_SetTabStop" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SetBallloonTip(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	EDITBALLOONTIP ebt;
+	ebt.cbStruct = sizeof(EDITBALLOONTIP);
+
+	if (pArgInf[1].m_dtDataType == _SDT_NULL)
+		ebt.pszTitle = NULL;
+	else if (!elibstl::get_array_count(pArgInf[1].m_pBin))
+		ebt.pszTitle = NULL;
+	else
+		ebt.pszTitle = (PCWSTR)(pArgInf[1].m_pBin + 8);
+
+	if (pArgInf[2].m_dtDataType == _SDT_NULL)
+		ebt.pszText = NULL;
+	else if (!elibstl::get_array_count(pArgInf[2].m_pBin))
+		ebt.pszText = NULL;
+	else
+		ebt.pszText = (PCWSTR)(pArgInf[2].m_pBin + 8);
+
+	ebt.ttiIcon = pArgInf[3].m_int;
+
+	pRetData->m_bool = SendMessageW(hWnd, EM_SHOWBALLOONTIP, 0, (LPARAM)&ebt);
+}
+static ARG_INFO s_ArgsSetBallloonTip[] =
+{
+	{
+		/*name*/    "标题",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "内容",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "图标类型",
+		/*explain*/ "0 - 无图标   1 - 信息图标   2 - 警告图标   3 - 错误图标   4 - 大信息图标   5 - 大警告图标   6 - 大错误图标，默认0",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_HAS_DEFAULT_VALUE,
+	}
+};
+FucInfo Fn_EditSetBallloonTip = { {
+		/*ccname*/  "弹出气球提示",
+		/*egname*/  "SetBallloonTip",
+		/*explain*/ "该函数需要在清单中指定Comctl6.0，失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetBallloonTip),
+		/*arg lp*/  s_ArgsSetBallloonTip,
+	} , libstl_Edit_SetBallloonTip ,"libstl_Edit_SetBallloonTip" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_Undo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = SendMessageW(hWnd, WM_UNDO, 0, 0);
+
+}
+FucInfo Fn_EditUndo = { {
+		/*ccname*/  "撤销",
+		/*egname*/  "Undo",
+		/*explain*/ "失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_Undo ,"libstl_Edit_Undo" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_Paste(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, WM_PASTE, 0, 0);
+}
+FucInfo Fn_EditPaste = { {
+		/*ccname*/  "粘贴",
+		/*egname*/  "Paste",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_Paste ,"libstl_Edit_Paste" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_Copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, WM_COPY, 0, 0);
+}
+FucInfo Fn_EditCopy = { {
+		/*ccname*/  "复制",
+		/*egname*/  "Copy",
+		/*explain*/ "失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_Copy ,"libstl_Edit_Copy" };
+///////////////////////////////////
+EXTERN_C void libstl_Edit_SelAll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, EM_SETSEL, 0, -1);
+}
+FucInfo Fn_EditSelAll = { {
+		/*ccname*/  "全选",
+		/*egname*/  "SelAll",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , libstl_Edit_SelAll ,"libstl_Edit_SelAll" };
+ESTL_NAMESPACE_BEGIN
+LIB_DATA_TYPE_INFO CtEdit = {
+	"编辑框W",//中文名称
+	"EditW",//英文名称
+	"Unicode编辑框",//说明
+	ARRAYSIZE(s_Cmd_Edit),//命令数量
+	s_Cmd_Edit,//在全局函数中对应的索引
+	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
+	104,//资源ID
+	ARRAYSIZE(s_Event_Edit),
+	s_Event_Edit,
+	ARRAYSIZE(s_Member_Edit),//属性数
+	s_Member_Edit,//属性指针
+	libstl_GetInterface_EditW,//组件交互子程序
+	NULL,//成员数量
+	NULL//成员数据数组
+};
+ESTL_NAMESPACE_END

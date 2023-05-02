@@ -31,8 +31,7 @@
 		pPropertyVaule->m_szText = p->GetTextA(); \
 		break; \
 	case 3:/*标题W*/ \
-		if (pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW()) \
-			pPropertyVaule->m_data.m_nDataSize = wcslen((PCWSTR)pPropertyVaule->m_data.m_pData); \
+		pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize); \
 		break; \
 	case 4:/*横向对齐*/ \
 		pPropertyVaule->m_int = p->GetAlign(TRUE); \
@@ -134,7 +133,6 @@ struct EBUTTONDATA_CMDLINK
 	int iDef;				// 默认
 };
 
-
 // 按钮基类。
 // 请勿直接实例化此类
 class CButton :public elibstl::CCtrlBase
@@ -174,12 +172,6 @@ protected:
 			m_Info.algV = 1;
 		}
 	}
-
-	eStlInline void Redraw()
-	{
-		InvalidateRect(m_hWnd, NULL, TRUE);
-		UpdateWindow(m_hWnd);
-	}
 public:
 	CButton() {}
 
@@ -195,7 +187,7 @@ public:
 		DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
 		if (bShowTextAndImage)
 			dwStyle &= (~(BS_BITMAP));
-		else
+		else if (m_Info0.pPicData && m_Info0.cbPic)
 			dwStyle |= BS_BITMAP;
 		SetWindowLongPtrW(m_hWnd, GWL_STYLE, dwStyle);
 	}
@@ -257,9 +249,9 @@ public:
 				return m_Info.algV;
 		else
 			if (bHAlign)
-				return elibstl::MultiSelectWndStyle(m_hWnd, GWL_STYLE, BS_LEFT, BS_CENTER, BS_RIGHT);
+				return MultiSelectWndStyle(m_hWnd, BS_LEFT, BS_CENTER, BS_RIGHT);
 			else
-				return elibstl::MultiSelectWndStyle(m_hWnd, GWL_STYLE, BS_TOP, BS_VCENTER, BS_BOTTOM);
+				return MultiSelectWndStyle(m_hWnd, BS_TOP, BS_VCENTER, BS_BOTTOM);
 	}
 
 	eStlInline void SetPicBtn(void* pPic, int cbSize)
@@ -478,7 +470,6 @@ public:
 		return hGlobal;
 	}
 
-
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
 		auto pButton = new CPushButton(STD_ECTRL_CREATE_REAL_ARGS);
@@ -547,24 +538,6 @@ public:
 		}
 		return FALSE;
 	}
-
-	static PFN_INTERFACE WINAPI EGetInterface(INT nInterfaceNO)
-	{
-		switch (nInterfaceNO)
-		{
-		case ITF_CREATE_UNIT:
-			return (PFN_INTERFACE)ECreate;
-		case ITF_NOTIFY_PROPERTY_CHANGED:
-			return (PFN_INTERFACE)EChange;
-		case ITF_GET_ALL_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetAlldata;
-		case ITF_GET_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetData;
-		case ITF_DLG_INIT_CUSTOMIZE_DATA:
-			return (PFN_INTERFACE)EInputW;
-		}
-		return NULL;
-	}
 };
 SUBCLASS_MGR_INIT(CPushButton, SCID_PUSHBTNPARENT, SCID_PUSHBTN)
 
@@ -631,6 +604,8 @@ public:
 
 		if (pAllData)
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CHECKBTN));
+		else
+			m_Info.algH = 0;
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
 
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | BS_AUTORADIOBUTTON,
@@ -669,7 +644,7 @@ public:
 		m_InfoEx.iType = iType;
 		elibstl::ModifyWindowStyle(
 			m_hWnd,
-			elibstl::MultiSelect(iType, BS_AUTORADIOBUTTON, BS_AUTOCHECKBOX, BS_AUTO3STATE),
+			elibstl::MultiSelect<DWORD>(iType, BS_AUTORADIOBUTTON, BS_AUTOCHECKBOX, BS_AUTO3STATE),
 			BS_AUTORADIOBUTTON | BS_AUTOCHECKBOX | BS_AUTO3STATE);
 		Redraw();
 	}
@@ -680,7 +655,7 @@ public:
 			return m_InfoEx.iType;
 		else
 		{
-			auto i = elibstl::MultiSelectWndStyle(m_hWnd, GWL_STYLE,
+			auto i = MultiSelectWndStyle(m_hWnd,
 				BS_AUTORADIOBUTTON | BS_RADIOBUTTON, BS_AUTOCHECKBOX | BS_CHECKBOX, BS_AUTO3STATE | BS_3STATE);
 			if (i < 0)
 				i = 0;
@@ -691,7 +666,7 @@ public:
 	eStlInline void SetCheckState(int iState)
 	{
 		m_InfoEx.iCheckState = iState;
-		SendMessageW(m_hWnd, BM_SETCHECK, elibstl::MultiSelect(iState, BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE), 0);
+		SendMessageW(m_hWnd, BM_SETCHECK, elibstl::MultiSelect<DWORD>(iState, BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE), 0);
 	}
 
 	int GetCheckState()
@@ -700,7 +675,7 @@ public:
 			return m_InfoEx.iCheckState;
 		else
 		{
-			int i = elibstl::MultiSelectEqual(SendMessageW(m_hWnd, BM_GETCHECK, 0, 0), BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE);
+			int i = MultiSelectEqual(SendMessageW(m_hWnd, BM_GETCHECK, 0, 0), BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE);
 			if (i < 0)
 				i = 0;
 			return i;
@@ -851,24 +826,6 @@ public:
 		}
 		return FALSE;
 	}
-
-	static PFN_INTERFACE WINAPI EGetInterface(INT nInterfaceNO)
-	{
-		switch (nInterfaceNO)
-		{
-		case ITF_CREATE_UNIT:
-			return (PFN_INTERFACE)ECreate;
-		case ITF_NOTIFY_PROPERTY_CHANGED:
-			return (PFN_INTERFACE)EChange;
-		case ITF_GET_ALL_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetAlldata;
-		case ITF_GET_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetData;
-		case ITF_DLG_INIT_CUSTOMIZE_DATA:
-			return (PFN_INTERFACE)EInputW;
-		}
-		return NULL;
-	}
 };
 SUBCLASS_MGR_INIT(CCheckButton, SCID_CHECKBTNPARENT, SCID_CHECKBTN)
 
@@ -943,11 +900,11 @@ public:
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE |
 			(m_bInDesignMode ? BS_PUSHBUTTON : BS_COMMANDLINK),
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
-
+		
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
 		SetShieldIcon(m_InfoEx.bShieldIcon);
-		SetNote(m_InfoEx.pszNote);
+		//SetNote(m_InfoEx.pszNote);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
 		m_SM.OnCtrlCreate(this);
@@ -1170,30 +1127,10 @@ public:
 		}
 		return FALSE;
 	}
-
-	static PFN_INTERFACE WINAPI EGetInterface(INT nInterfaceNO)
-	{
-		switch (nInterfaceNO)
-		{
-		case ITF_CREATE_UNIT:
-			return (PFN_INTERFACE)ECreate;
-		case ITF_NOTIFY_PROPERTY_CHANGED:
-			return (PFN_INTERFACE)EChange;
-		case ITF_GET_ALL_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetAlldata;
-		case ITF_GET_PROPERTY_DATA:
-			return (PFN_INTERFACE)EGetData;
-		case ITF_DLG_INIT_CUSTOMIZE_DATA:
-			return (PFN_INTERFACE)EInputW;
-		}
-		return NULL;
-	}
 };
 SUBCLASS_MGR_INIT(CCommandLink, SCID_CMDLINKPARENT, SCID_CMDLINK)
 
-//////////////////////////////////////////////////////////////////////
-/////////////////////////////普通按钮//////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////普通按钮
 static EVENT_INFO2 s_Event_PushBtn[] =
 {
 	/*000*/ {"按钮被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
@@ -1208,10 +1145,7 @@ static UNIT_PROPERTY s_Member_PushBtn[] =
 	/*007*/ {"默认", "Def", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "通常\0""默认\0""\0"},
 	/*008*/ {"类型", "Type", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "普通按钮\0""拆分按钮\0""\0"},
 };
-
-//////////////////////////////////////////////////////////////////////
-///////////////////////////////选择框//////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+///////////////////////////////选择框
 static EVENT_INFO2 s_Event_CheckBtn[] =
 {
 	/*000*/ {"被单击", "当选择框被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
@@ -1229,10 +1163,7 @@ static UNIT_PROPERTY s_Member_CheckBtn[] =
 	/*011*/ {"标题居左", "IsTextLeft", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
 	/*012*/ {"边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
 };
-
-//////////////////////////////////////////////////////////////////////
-/////////////////////////////命令链接//////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////命令链接
 static EVENT_INFO2 s_Event_CmdLink[] =
 {
 	/*000*/ {"被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
@@ -1246,11 +1177,10 @@ static UNIT_PROPERTY s_Member_CmdLink[] =
 	/*007*/ {"注释文本", "Note", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 	/*008*/ {"是否为盾牌图标", "IsShieldIcon", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
 };
-
-
+/////////////////////////////方法
 static int s_Cmd_PushBtn[] = { 120 };
 
-EXTERN_C void BtnGetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+EXTERN_C void libstl_BtnGetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	SIZE size{ *pArgInf[1].m_pInt,0 };
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
@@ -1302,9 +1232,62 @@ FucInfo s_Fn_BtnGetIdealSize = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/ARRAYSIZE(s_Args_BtnGetIdealSize),
 		/*arg lp*/  s_Args_BtnGetIdealSize,
-	} ,BtnGetIdealSize ,"BtnGetIdealSize" };
+	} ,libstl_BtnGetIdealSize ,"libstl_BtnGetIdealSize" };
+/////////////////////////////取接口
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
+{
+	switch (nInterfaceNO)
+	{
+	case ITF_CREATE_UNIT:
+		return (PFN_INTERFACE)CPushButton::ECreate;
+	case ITF_NOTIFY_PROPERTY_CHANGED:
+		return (PFN_INTERFACE)CPushButton::EChange;
+	case ITF_GET_ALL_PROPERTY_DATA:
+		return (PFN_INTERFACE)CPushButton::EGetAlldata;
+	case ITF_GET_PROPERTY_DATA:
+		return (PFN_INTERFACE)CPushButton::EGetData;
+	case ITF_DLG_INIT_CUSTOMIZE_DATA:
+		return (PFN_INTERFACE)CPushButton::EInputW;
+	}
+	return NULL;
+}
 
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CheckButtonW(INT nInterfaceNO)
+{
+	switch (nInterfaceNO)
+	{
+	case ITF_CREATE_UNIT:
+		return (PFN_INTERFACE)CCheckButton::ECreate;
+	case ITF_NOTIFY_PROPERTY_CHANGED:
+		return (PFN_INTERFACE)CCheckButton::EChange;
+	case ITF_GET_ALL_PROPERTY_DATA:
+		return (PFN_INTERFACE)CCheckButton::EGetAlldata;
+	case ITF_GET_PROPERTY_DATA:
+		return (PFN_INTERFACE)CCheckButton::EGetData;
+	case ITF_DLG_INIT_CUSTOMIZE_DATA:
+		return (PFN_INTERFACE)CCheckButton::EInputW;
+	}
+	return NULL;
+}
 
+EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CommandLink(INT nInterfaceNO)
+{
+	switch (nInterfaceNO)
+	{
+	case ITF_CREATE_UNIT:
+		return (PFN_INTERFACE)CCommandLink::ECreate;
+	case ITF_NOTIFY_PROPERTY_CHANGED:
+		return (PFN_INTERFACE)CCommandLink::EChange;
+	case ITF_GET_ALL_PROPERTY_DATA:
+		return (PFN_INTERFACE)CCommandLink::EGetAlldata;
+	case ITF_GET_PROPERTY_DATA:
+		return (PFN_INTERFACE)CCommandLink::EGetData;
+	case ITF_DLG_INIT_CUSTOMIZE_DATA:
+		return (PFN_INTERFACE)CCommandLink::EInputW;
+	}
+	return NULL;
+}
+/////////////////////////////类型定义
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtButtonW =
 {
@@ -1319,7 +1302,7 @@ LIB_DATA_TYPE_INFO CtButtonW =
 	s_Event_PushBtn,
 	ARRAYSIZE(s_Member_PushBtn),
 	s_Member_PushBtn,
-	CPushButton::EGetInterface,
+	libstl_GetInterface_ButtonW,
 	0,					//成员数量
 	NULL				//成员数据数组
 };
@@ -1337,7 +1320,7 @@ LIB_DATA_TYPE_INFO CtCheckButtonW =
 	s_Event_CheckBtn,
 	ARRAYSIZE(s_Member_CheckBtn),
 	s_Member_CheckBtn,
-	CCheckButton::EGetInterface,
+	libstl_GetInterface_CheckButtonW,
 	0,					//成员数量
 	NULL				//成员数据数组
 };
@@ -1355,7 +1338,7 @@ LIB_DATA_TYPE_INFO CtCommandLink =
 	s_Event_CmdLink,
 	ARRAYSIZE(s_Member_CmdLink),
 	s_Member_CmdLink,
-	CCommandLink::EGetInterface,
+	libstl_GetInterface_CommandLink,
 	0,					//成员数量
 	NULL				//成员数据数组
 };
