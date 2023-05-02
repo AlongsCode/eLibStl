@@ -2,12 +2,12 @@
 #include <algorithm>
 
 
-static  std::vector<LPBYTE> split_text(const std::wstring& text, const  std::wstring& str, size_t count) {
-	std::vector<LPBYTE> ret;
+static  void split_text(const std::wstring_view& text, const  std::wstring_view& str, size_t count, std::vector<LPBYTE>& ret) {
+
 	if (str.empty() || text == L"")
 	{
 		ret.push_back(elibstl::clone_textw(text));
-		return ret;
+		return;
 	}
 	size_t start = 0, index = text.find_first_of(str, 0);
 	while (index != text.npos)
@@ -25,7 +25,7 @@ static  std::vector<LPBYTE> split_text(const std::wstring& text, const  std::wst
 	{
 		ret.resize(count);
 	}
-	return ret;
+	return;
 }
 
 
@@ -66,11 +66,11 @@ EXTERN_C void Fn_splitW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 		text = elibstl::args_to_wsdata(pArgInf, 0),
 		search = elibstl::args_to_wsdata(pArgInf, 1);
 	std::optional<INT> count = elibstl::args_to_data<INT>(pArgInf, 2);
-	std::wstring s = L",";
-	if (!search.empty()) {
-		s = std::wstring(search);
-	}
-	std::vector<LPBYTE> ret = split_text(std::wstring(text), s, count.has_value() && count.value() > 0 ? count.value() : -1);
+
+	if (search.empty())
+		search = L",";
+	std::vector<LPBYTE> ret;
+	split_text(text, search, count.has_value() && count.value() > 0 ? count.value() : -1, ret);
 	pRetData->m_pAryData = elibstl::create_array<LPBYTE>(ret.data(), ret.size());
 
 }

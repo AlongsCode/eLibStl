@@ -201,36 +201,49 @@ namespace elibstl
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(std::uint32_t)) = nDataSize;
 		return pd;
 	}
-	inline LPBYTE clone_textw(const std::wstring& s)
+	inline LPBYTE clone_textw(const std::wstring& s, bool bTerminator = true)
 	{
-		const INT nLen = s.length() * sizeof(wchar_t);
+		if (s.empty())
+			return nullptr;
+		const INT nLen = (s.length() + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
 		LPBYTE pd = static_cast<LPBYTE>(malloc(nLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nLen;
-		std::memcpy(pd + sizeof(uint32_t) * 2, s.data(), nLen);
+		std::memcpy(pd + sizeof(uint32_t) * 2, s.data(), s.length() * sizeof(wchar_t));
 		return pd;
 	}
-	inline LPBYTE clone_textw(LPCWSTR ps)
+	inline LPBYTE clone_textw(const std::wstring_view& s, bool bTerminator = true)
 	{
-		if (ps == nullptr || *ps == '\0')
+		if (s.empty())
 			return nullptr;
-		const INT nTextLen = static_cast<INT>(wcslen(ps));
+		const INT nLen = (s.length() + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
+		LPBYTE pd = static_cast<LPBYTE>(malloc(nLen + sizeof(uint32_t) * 2));
+		*reinterpret_cast<std::uint32_t*>(pd) = 1;
+		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nLen;
+		std::memcpy(pd + sizeof(uint32_t) * 2, s.data(), s.length() * sizeof(wchar_t));
+		return pd;
+	}
+	inline LPBYTE clone_textw(LPCWSTR ps, bool bTerminator = true)
+	{
+		if (ps == nullptr || *ps == L'\0')
+			return nullptr;
+		const INT nTextLen = static_cast<INT>(wcslen(ps) + (bTerminator ? 1 : 0));
 		const INT nWideLen = nTextLen * sizeof(wchar_t);
 		LPBYTE pd = static_cast<LPBYTE>(malloc(nWideLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nWideLen;
-		std::memcpy(pd + sizeof(uint32_t) * 2, ps, nWideLen);
+		std::memcpy(pd + sizeof(uint32_t) * 2, ps, wcslen(ps) * sizeof(wchar_t));
 		return pd;
 	}
-	inline LPBYTE clone_textw(LPCWSTR ps, INT nTextLen)
+	inline LPBYTE clone_textw(LPCWSTR ps, INT nTextLen, bool bTerminator = true)
 	{
 		if (ps == nullptr || *ps == '\0' || nTextLen == 0)
 			return nullptr;
-		const INT nWideLen = nTextLen * sizeof(wchar_t);
+		const INT nWideLen = (nTextLen + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
 		LPBYTE pd = static_cast<LPBYTE>(malloc(nWideLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nWideLen;
-		std::memcpy(pd + sizeof(uint32_t) * 2, ps, nWideLen);
+		std::memcpy(pd + sizeof(uint32_t) * 2, ps, nTextLen * sizeof(wchar_t));
 		return pd;
 	}
 

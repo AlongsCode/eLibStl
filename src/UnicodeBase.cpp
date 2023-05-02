@@ -9,6 +9,14 @@ static ARG_INFO Args[] =
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
 		/*state*/   NULL,
+	},{
+		/*name*/    "是否包含结束符",
+		/*explain*/ ("默认包含结束符"),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
@@ -33,7 +41,7 @@ EXTERN_C void Fn_L(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 	LPBYTE ret = nullptr;
 	if (convresult == widesize)
 	{
-		ret = elibstl::clone_textw(resultstring);
+		ret = elibstl::clone_textw(resultstring, static_cast<bool>(elibstl::args_to_data<BOOL>(pArgInf, 1).value_or(TRUE)));
 	}
 	delete[] resultstring;
 	pRetData->m_pBin = ret;
@@ -50,6 +58,6 @@ FucInfo L = { {
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/1,
+		/*ArgCount*/2,
 		/*arg lp*/  &Args[0],
 	} ,Fn_L ,"Fn_L" };
