@@ -8,6 +8,9 @@
 #define IDC_BT_OK		202
 #define IDC_BT_CANCEL	203
 
+
+
+
 //有写地方需要使用到，所以先定义
 HMODULE g_elibstl_hModule = NULL;
 
@@ -130,7 +133,7 @@ struct ESTLPRIV_INPUTBOXCTX
 	BOOL bOK;
 };
 static ATOM s_atomInputBox = 0;
-static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)
+static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	HWND hwndEDIT = GetDlgItem(hwndDlg, 1001);
 	switch (uMsg)
@@ -154,7 +157,7 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 			size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
 			if (nLen > 0)
 			{
-				wchar_t* Editstr = new wchar_t[nLen + 1] { 0 };
+				wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
 				GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
 				std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
 				*result = std::wstring(Editstr);
@@ -168,7 +171,7 @@ static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPA
 		size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
 		if (nLen > 0)
 		{
-			wchar_t* Editstr = new wchar_t[nLen + 1] { 0 };
+			wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
 			GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
 			std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
 			*result = std::wstring(Editstr);

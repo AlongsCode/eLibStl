@@ -177,6 +177,8 @@ network_post/*网页访问*/\
 ,Fn_EditCopy/*编辑框.复制*/\
 ,Fn_EditSelAll/*编辑框.全选*/\
 ,eto_wstring/*到文本W*/\
+,e_malloc/*内存申请*/\
+,e_free/*内存释放*/\
 
 
 

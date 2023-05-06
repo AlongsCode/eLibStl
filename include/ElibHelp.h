@@ -5,7 +5,7 @@
 #include<string>
 #include <tuple>
 #include"..\resource.h"
-
+#include<assert.h>
 #include"Tace.hpp"
 
 #define ESTL_NAMESPACE_BEGIN namespace elibstl {
@@ -16,6 +16,7 @@
 #else
 #define eStlInline inline
 #endif
+
 
 #define MAKEINTATOMW(i)  (PWSTR)((ULONG_PTR)((WORD)(i)))
 

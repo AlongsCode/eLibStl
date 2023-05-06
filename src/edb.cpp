@@ -75,7 +75,7 @@ typedef struct _ColumnInfo//字段信息
 #include <chrono>
 #include <ctime>
 #include <set>
-#include <filesystem>
+//#include <filesystem>
 #include <map>
 #include <unordered_set>
 #pragma pack(1)//边界对齐
@@ -190,25 +190,69 @@ bool is_vaild_name(const std::string& text) {
 
 
 
-/*修改文件拓展名*/
+
 std::string rename_file_ext(const std::string& filename, const std::string& extensionname) {
+	std::string::size_type dot_pos = filename.find_last_of('.');
 
-	std::filesystem::path filepath(filename);
-	std::string suffix = extensionname;
-	if (extensionname[0] != '.') {
-		suffix = "." + suffix;
+	if (dot_pos == std::string::npos) {
+		// 文件名没有扩展名
+		return filename + extensionname;
 	}
-	filepath.replace_extension(suffix);
-	return filepath.string();
+	else {
+		// 使用 substr() 函数从文件名中提取扩展名
+		std::string base = filename.substr(0, dot_pos);
+		return base + extensionname;
+	}
 }
+//#ifdef _WIN32
+//#include"shlwapi.h"
+//#pragma comment(lib,"shlwapi.lib") 
+//std::string refilename(const std::string& Filename, const std::string& extensionname) {
+//	char NewPath[MAX_PATH]{ 0 };
+//	strcpy(NewPath, Filename.c_str());
+//	std::string suffix = PathFindExtensionA(extensionname.c_str());
+//	if (suffix.size() > 1)
+//	{
+//		if (PathRenameExtensionA(NewPath, suffix.c_str())) {
+//			return NewPath;
+//		};
+//		return NewPath;
+//	}
+//	return NewPath;
+//}
+//#else
+///*易语言用不了文件系统,而且win平台确实winapi更快一点*/
+//std::string rename_file_ext(const std::string& filename, const std::string& extensionname) {
+//
+//	std::filesystem::path filepath(filename);
+//	std::string suffix = extensionname;
+//	if (extensionname[0] != '.') {
+//		suffix = "." + suffix;
+//	}
+//	filepath.replace_extension(suffix);
+//	return filepath.string();
+//}
+//#endif // _WIN32
+
+
 //仅获取文件名
-std::string get_file_name_unext(const std::string& file_path) {
-	std::filesystem::path file(file_path);
-	std::string file_name = file.stem().string();
-	return file_name;
-}
+//std::string get_file_name_unext(const std::string& file_path) {
+//	std::filesystem::path file(file_path);
+//	std::string file_name = file.stem().string();
+//	return file_name;
+//}
 
-
+/*修改文件拓展名*/
+//std::string rename_file_ext(const std::string& filename, const std::string& extensionname) {
+//
+//	std::filesystem::path filepath(filename);
+//	std::string suffix = extensionname;
+//	if (extensionname[0] != '.') {
+//		suffix = "." + suffix;
+//	}
+//	filepath.replace_extension(suffix);
+//	return filepath.string();
+//}
 #pragma endregion
 
 
@@ -675,7 +719,7 @@ public:
 		m_cur_off = 1;
 		m_fileName = filename;
 	};
-	~Edbs() { if (m_file.is_open())m_file.close(); };
+	~Edbs() { close(); };
 public:
 	static int create_edbs(const std::string& nfilename, const std::vector< ColumnInfo>& columns) {
 
@@ -1440,7 +1484,7 @@ FucInfo e_lib_CreateEbds = { {
 		/*ccname*/  ("创建EDBS"),
 		/*egname*/  ("create_edbs"),
 		/*explain*/ ("创建易语言数据库文件,此创建的有可能不兼容原版命令，但是原版创建的一定兼容新版命令"),
-		/*category*/2,
+		/*category*/14,
 		/*state*/   NULL,
 		/*ret*/     SDT_BOOL,
 		/*reserved*/NULL,
