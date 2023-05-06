@@ -474,7 +474,7 @@ EXTERN_C void Fn_estl_network_post(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 		elibstl::args_to_sdata(pArgInf, 3),
 		pArgInf[4].m_ppText,
 		elibstl::args_to_sdata(pArgInf, 5),
-		pArgInf[4].m_ppText,
+		pArgInf[6].m_ppText,
 		elibstl::args_to_data<BOOL>(pArgInf, 7),
 		elibstl::arg_to_vdata(pArgInf, 8),
 		elibstl::args_to_sdata(pArgInf, 9),
