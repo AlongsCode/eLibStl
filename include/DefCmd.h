@@ -179,7 +179,8 @@ network_post/*网页访问*/\
 ,eto_wstring/*到文本W*/\
 ,e_malloc/*内存申请*/\
 ,e_free/*内存释放*/\
-
+,clearConsole/*清空控制台*/\
+, e_WriteMem/*写入内存*/\
 
 
 
