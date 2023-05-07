@@ -86,6 +86,7 @@
     <ClCompile Include="src\kill_proc.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
+    <ClCompile Include="src\memwrite.cpp" />
     <ClCompile Include="src\message_box.cpp" />
     <ClCompile Include="src\message_box_ex.cpp" />
     <ClCompile Include="src\network_post.cpp" />

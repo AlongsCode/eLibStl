@@ -401,6 +401,9 @@
     <ClCompile Include="src\prevent_duplicate_execution.cpp">
       <Filter>源文件\实现\全局命令\进程线程携程\进程类</Filter>
     </ClCompile>
+    <ClCompile Include="src\memwrite.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">
