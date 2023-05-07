@@ -63,6 +63,7 @@
     <ClCompile Include="src\EditBoxW.cpp" />
     <ClCompile Include="src\Elibdef.cpp" />
     <ClCompile Include="src\e_fnBrowseForFolder.cpp" />
+    <ClCompile Include="src\free.cpp" />
     <ClCompile Include="src\free_console.cpp" />
     <ClCompile Include="src\GetConutEx.cpp" />
     <ClCompile Include="src\get_clipboard_text.cpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="src\Is_64_bit.cpp" />
     <ClCompile Include="src\is_login_net.cpp" />
     <ClCompile Include="src\kill_proc.cpp" />
+    <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
     <ClCompile Include="src\message_box.cpp" />
     <ClCompile Include="src\message_box_ex.cpp" />
@@ -111,6 +113,7 @@
     <ClCompile Include="src\tohalf.cpp" />
     <ClCompile Include="src\tolower.cpp" />
     <ClCompile Include="src\toupper.cpp" />
+    <ClCompile Include="src\to_string.cpp" />
     <ClCompile Include="src\Trim.cpp" />
     <ClCompile Include="src\UnicodeBase.cpp" />
     <ClCompile Include="src\rndEx.cpp" />
@@ -242,7 +245,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Lib|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>G:\IDE\E语言\e\lib\</OutDir>
+    <OutDir>E:\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -250,7 +253,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_exe|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>G:\IDE\E语言\e\lib\</OutDir>
+    <OutDir>E:\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>

@@ -25,12 +25,6 @@
     <Filter Include="源文件\资源文件">
       <UniqueIdentifier>{e0569e42-c333-45f0-8d00-716272d0f0f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\实现\全局命令\文本">
-      <UniqueIdentifier>{7346b8ae-2f96-497c-9091-904eec66c5f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\实现\全局命令\算数">
-      <UniqueIdentifier>{9d2d7a63-bb5a-44d4-a21d-07d8f4066277}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\实现\全局命令\操作系统">
       <UniqueIdentifier>{97c9b339-1e2f-498b-88d7-f408db18e043}</UniqueIdentifier>
     </Filter>
@@ -67,9 +61,6 @@
     <Filter Include="源文件\组件\通用型\媒体播放">
       <UniqueIdentifier>{4691a7aa-bce6-4ec3-b1fa-27debf983305}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\实现\全局命令\流程控制">
-      <UniqueIdentifier>{e19928b1-fc12-4f5c-b26d-7aa4fbf21537}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine">
       <UniqueIdentifier>{a2d4a048-773f-4310-8cbb-bbfe73f86c24}</UniqueIdentifier>
     </Filter>
@@ -90,6 +81,15 @@
     </Filter>
     <Filter Include="源文件\组件\通用型\edb">
       <UniqueIdentifier>{22bd8156-f4f6-4b52-b118-9e310e17ec2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\文本操作">
+      <UniqueIdentifier>{7346b8ae-2f96-497c-9091-904eec66c5f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\算数运算">
+      <UniqueIdentifier>{9d2d7a63-bb5a-44d4-a21d-07d8f4066277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\内存操作">
+      <UniqueIdentifier>{ffa7435c-877c-49f4-9f8e-f4023cca4529}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -156,22 +156,22 @@
       <Filter>头文件\elibhelp</Filter>
     </ClCompile>
     <ClCompile Include="src\FindText.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\GetTextLenth.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\UnicodeBase.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\rndEx.cpp">
-      <Filter>源文件\实现\全局命令\算数</Filter>
+      <Filter>源文件\实现\全局命令\算数运算</Filter>
     </ClCompile>
     <ClCompile Include="src\rtoa.cpp">
-      <Filter>源文件\实现\全局命令\算数</Filter>
+      <Filter>源文件\实现\全局命令\算数运算</Filter>
     </ClCompile>
     <ClCompile Include="src\Prime.cpp">
-      <Filter>源文件\实现\全局命令\算数</Filter>
+      <Filter>源文件\实现\全局命令\算数运算</Filter>
     </ClCompile>
     <ClCompile Include="src\message_box.cpp">
       <Filter>源文件\实现\全局命令\操作系统</Filter>
@@ -186,31 +186,31 @@
       <Filter>源文件\实现\全局命令\操作系统</Filter>
     </ClCompile>
     <ClCompile Include="src\toupper.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\tolower.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\tofull.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\tohalf.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\InStrRev.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\split.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\wchar_code.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\Trim.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\gettextpos.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\open_console.cpp">
       <Filter>源文件\实现\全局命令\控制台</Filter>
@@ -348,10 +348,10 @@
       <Filter>源文件\实现\全局命令\网络通信</Filter>
     </ClCompile>
     <ClCompile Include="src\capitalize_first_letter.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\replace_substring.cpp">
-      <Filter>源文件\实现\全局命令\文本</Filter>
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\ansiwindow_to_unicodewindow.cpp">
       <Filter>源文件\实现\全局命令\窗口操作</Filter>
@@ -382,6 +382,15 @@
     </ClCompile>
     <ClCompile Include="src\edb.cpp">
       <Filter>源文件\组件\通用型\edb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\to_string.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\free.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\malloc.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

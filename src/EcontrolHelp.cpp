@@ -516,22 +516,22 @@ SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWO
 		memcpy(&m_Info0, pAllData, sizeof(ECTRLINFO));
 		BYTE* p = (BYTE*)pAllData + sizeof(ECTRLINFO) + m_Info0.cbPic;
 
-		m_Info0.pszTextW = NULL;
+		m_pszTextW = NULL;
 		if (m_Info0.cchText)
 		{
-			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, (PCWSTR)p, m_Info0.cchText);
-			m_Info0.pszTextA = elibstl::W2A(m_Info0.pszTextW);
+			elibstl::DupStringForNewDeleteW(m_pszTextW, (PCWSTR)p, m_Info0.cchText);
+			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		else
-			m_Info0.pszTextA = NULL;
+			m_pszTextA = NULL;
 	}
 	else
 	{
-		m_Info0.pszTextW = NULL;
-		m_Info0.pszTextA = NULL;
+		m_pszTextW = NULL;
+		m_pszTextA = NULL;
 	}
 
-	m_Info0.pPicData = NULL;
+	m_pPicData = NULL;
 	m_Info0.iVer = DATA_VER_BASE_1;
 
 	if (pAllData)
@@ -564,9 +564,9 @@ void CCtrlBase::SetPic(void* pPic, int cbSize)
 	{
 		if (m_bInDesignMode)
 		{
-			delete[] m_Info0.pPicData;
-			m_Info0.pPicData = new BYTE[cbSize];
-			memcpy(m_Info0.pPicData, pPic, cbSize);
+			delete[] m_pPicData;
+			m_pPicData = new BYTE[cbSize];
+			memcpy(m_pPicData, pPic, cbSize);
 		}
 		m_hBitmap = elibstl::make_hbit((BYTE*)pPic, cbSize);
 		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)m_hBitmap);
@@ -575,8 +575,8 @@ void CCtrlBase::SetPic(void* pPic, int cbSize)
 	{
 		if (m_bInDesignMode)
 		{
-			delete[] m_Info0.pPicData;
-			m_Info0.pPicData = NULL;
+			delete[] m_pPicData;
+			m_pPicData = NULL;
 		}
 		m_hBitmap = NULL;
 		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, NULL);
@@ -605,7 +605,7 @@ HGLOBAL CCtrlBase::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
 	memcpy(p, &m_Info0, sizeof(ECTRLINFO));
 	// Í¼Æ¬
 	p += sizeof(ECTRLINFO);
-	memcpy(p, m_Info0.pPicData, m_Info0.cbPic);
+	memcpy(p, m_pPicData, m_Info0.cbPic);
 	// ÎÄ±¾
 	p += m_Info0.cbPic;
 	memcpy(p, pszText, cbText);

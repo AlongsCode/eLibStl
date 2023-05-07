@@ -1,5 +1,9 @@
+/*
+* 2023.5.7
+* FIXME：输入模式中的输入日期时间未实现
+*/
+
 #include "EcontrolHelp.h"
-#include <Richedit.h>
 
 #pragma warning(disable:4996)
 
@@ -38,9 +42,9 @@ struct EEDITDATA
 	int iSelPos;			// 起始选择位置
 	int iSelNum;			// 被选择字符数
 	int cchCueBanner;		// 提示文本长度，仅保存信息时有效
-	PWSTR pszCueBanner;		// 提示文本，没有获取长度的接口，这里就固定为260个字符（含终止NULL）
 	BOOL bCueBannerShowAlways;// 总是显示提示文本，即使编辑框具有焦点
 	BOOL bNoAutoSetRect;	// 是否禁止控件内部设置格式矩形（单行时）
+	BOOL bAutoWrap;			// 自动换行
 };
 
 class CEdit :public elibstl::CCtrlBase
@@ -52,13 +56,29 @@ private:
 	HBRUSH m_hbrEditBK = NULL;
 	PWSTR m_pszSelText = NULL;
 
+	int m_cyText = 0;// 文本高度
+	RECT m_rcMargins{};// 四边框尺寸
+
+	PWSTR m_pszCueBanner = NULL;// 提示文本，没有获取长度的接口，这里就固定为260个字符（含终止NULL）
+
+	void UpdateTextInfo()
+	{
+		HFONT hFont = (HFONT)SendMessageW(m_hWnd, WM_GETFONT, 0, 0);
+		HDC hDC = GetDC(m_hWnd);
+		SelectObject(hDC, hFont);
+		TEXTMETRICW tm;
+		GetTextMetricsW(hDC, &tm);
+		m_cyText = tm.tmHeight;
+		ReleaseDC(m_hWnd, hDC);
+	}
+
 	eStlInline void OnChange()
 	{
 		EVENT_NOTIFY2 evt(m_dwWinFormID, m_dwUnitID, 0);
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
 	}
 
-	SUBCLASS_PARENT_FNHEAD
+	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch(uMsg)
 		{
@@ -92,26 +112,269 @@ private:
 			break;
 		}
 
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	SUBCLASS_CTRL_FNHEAD
+	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		auto p = (CEdit*)dwRefData;
 		switch (uMsg)
 		{
+		case WM_CHAR:
+		{
+			elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+			if (p->m_Info.iInputMode > 2)
+			{
+				if (GetKeyState(VK_CONTROL) & 0x8000 || GetKeyState(VK_MENU) & 0x8000)
+					break;
+
+				if (wParam == VK_BACK ||
+					wParam == VK_RETURN)
+					break;
+			}
+
+			switch (p->m_Info.iInputMode)
+			{
+			case 3:// 整数文本
+			case 6:// 输入短整数
+			case 7:// 输入整数
+			case 8:// 输入长整数
+				if ((wParam >= L'0' && wParam <= L'9') ||
+					wParam == L'-')
+					break;
+				else
+					return 0;
+			case 4:// 小数文本
+			case 9:// 输入小数
+			case 10:// 输入双精度小数
+				if ((wParam >= L'0' && wParam <= L'9') ||
+					wParam == L'-' ||
+					wParam == L'.' ||
+					wParam == L'e' ||
+					wParam == L'E')
+					break;
+				else
+					return 0;
+			case 5:// 输入字节
+				if ((wParam >= L'0' && wParam <= L'9'))
+					break;
+				else
+					return 0;
+			}
+		}
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+
+		case WM_KILLFOCUS:
+		{
+#define BUFSIZE_EDITVALUE 36
+			WCHAR szValue[BUFSIZE_EDITVALUE]{};
+			LONGLONG llValue;
+			double lfValue;
+
+			PWSTR pszText;
+			int cchText;
+
+			PCWSTR pszCorrectValue = NULL;
+			switch (p->m_Info.iInputMode)
+			{
+			case 5:// 输入字节
+				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
+				llValue = _wtoi64(szValue);
+				if (llValue < 0ll)
+					pszCorrectValue = L"0";
+				else if (llValue > 255ll)
+					pszCorrectValue = L"255";
+				else
+					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
+				break;
+			case 6:// 输入短整数
+				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
+				llValue = _wtoi64(szValue);
+				if (llValue < -32768ll)
+					pszCorrectValue = L"-32768";
+				else if (llValue > 32767ll)
+					pszCorrectValue = L"32767";
+				else
+					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
+				break;
+			case 7:// 输入整数
+				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
+				llValue = _wtoi64(szValue);
+				if (llValue < -2147483648ll)
+					pszCorrectValue = L"-2147483648";
+				else if (llValue > 2147483647ll)
+					pszCorrectValue = L"2147483647";
+				else
+					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
+				break;
+			case 8:// 输入长整数
+				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
+				llValue = _wtoi64(szValue);
+				if (errno == ERANGE)
+				{
+					if (llValue == _I64_MIN)
+						pszCorrectValue = L"-9223372036854775808";
+					else if (llValue == _I64_MAX)
+						pszCorrectValue = L"9223372036854775807";
+				}
+				else
+					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
+				break;
+			case 9:// 输入小数
+			{
+				cchText = GetWindowTextLengthW(hWnd);
+				if (!cchText)
+					break;
+				pszText = new WCHAR[cchText + 1];
+				GetWindowTextW(hWnd, pszText, cchText + 1);
+				lfValue = _wtof(pszText);
+				if (lfValue < -3.402823466e38)// 实际上正负值中间是有空隙的，不做判断了。。。
+					SetWindowTextW(hWnd, L"-3.402823466e38");
+				else if (lfValue < 3.402823466e38)
+					SetWindowTextW(hWnd, L"3.402823466e38");
+				else
+					SetWindowTextW(hWnd, std::to_wstring(lfValue).c_str());
+				delete[] pszText;
+			}
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+
+			case 10:// 输入双精度小数
+			{
+				cchText = GetWindowTextLengthW(hWnd);
+				if (!cchText)
+					break;
+				pszText = new WCHAR[cchText + 1];
+				GetWindowTextW(hWnd, pszText, cchText + 1);
+				lfValue = _wtof(pszText);
+				if (*(ULONGLONG*)&lfValue == 0xFFF0000000000000)
+					SetWindowTextW(hWnd, L"-1.79769313486231570E+308");
+				else if (*(ULONGLONG*)&lfValue == 0x7FF0000000000000)
+					SetWindowTextW(hWnd, L"1.79769313486231570E+308");
+				else
+					SetWindowTextW(hWnd, std::to_wstring(lfValue).c_str());
+				delete[] pszText;
+			}
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+
+			case 11:// 输入日期时间
+				break;
+			}
+
+			if (pszCorrectValue)
+				SetWindowTextW(hWnd, pszCorrectValue);
+#undef BUFSIZE_EDITVALUE
+		}
+		break;
+
 		case WM_DESTROY:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
-			SUBCLASS_RET_DEFPROC;
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
+
+		case WM_NCCALCSIZE:
+		{
+			if (!p->GetMultiLine())
+			{
+				LRESULT lResult;
+				if (wParam)
+				{
+					auto pnccsp = (NCCALCSIZE_PARAMS*)lParam;
+					p->m_rcMargins = pnccsp->rgrc[0];// 保存非客户区尺寸
+					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// call默认过程，计算标准边框尺寸
+					// 保存边框尺寸
+					p->m_rcMargins.left = pnccsp->rgrc[0].left - p->m_rcMargins.left;
+					p->m_rcMargins.top = pnccsp->rgrc[0].top - p->m_rcMargins.top;
+					p->m_rcMargins.right -= pnccsp->rgrc[0].right;
+					p->m_rcMargins.bottom -= pnccsp->rgrc[0].bottom;
+					// 上下留空
+					pnccsp->rgrc[0].top += ((pnccsp->rgrc[0].bottom - pnccsp->rgrc[0].top - p->m_cyText) / 2);
+					pnccsp->rgrc[0].bottom = pnccsp->rgrc[0].top + p->m_cyText;
+				}
+				else
+				{
+					auto prc = (RECT*)lParam;
+					p->m_rcMargins = *prc;// 保存非客户区尺寸
+					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// call默认过程，计算标准边框尺寸
+					// 保存边框尺寸
+					p->m_rcMargins.left = prc->left - p->m_rcMargins.left;
+					p->m_rcMargins.top = prc->top - p->m_rcMargins.top;
+					p->m_rcMargins.right -= prc->right;
+					p->m_rcMargins.bottom -= prc->bottom;
+					// 上下留空
+					prc->top += ((prc->bottom - prc->top - p->m_cyText) / 2);
+					prc->bottom = prc->top + p->m_cyText;
+				}
+				return lResult;
+			}
+		}
+		break;
+
+		case WM_NCPAINT:
+		{
+			DefSubclassProc(hWnd, uMsg, wParam, lParam);// 画默认边框
+			if (p->GetMultiLine())
+				return 0;
+
+			RECT rcWnd, rcText;
+			HDC hDC = GetWindowDC(hWnd);
+			// 取非客户区矩形
+			GetWindowRect(hWnd, &rcWnd);
+			rcWnd.right -= rcWnd.left;
+			rcWnd.bottom -= rcWnd.top;
+			rcWnd.left = 0;
+			rcWnd.top = 0;
+			// 制文本矩形
+			rcText.left = 0;
+			rcText.top = (rcWnd.bottom - p->m_cyText) / 2;
+			rcText.right = rcWnd.right;
+			rcText.bottom = rcText.top + p->m_cyText;
+			// 非客户区矩形减掉边框
+			rcWnd.left += p->m_rcMargins.left;
+			rcWnd.top += p->m_rcMargins.top;
+			rcWnd.right -= p->m_rcMargins.right;
+			rcWnd.bottom -= p->m_rcMargins.bottom;
+			// 异或合并，剪辑
+			HRGN hRgnBK = CreateRectRgnIndirect(&rcWnd);
+			HRGN hRgnText = CreateRectRgnIndirect(&rcText);
+			CombineRgn(hRgnBK, hRgnBK, hRgnText, RGN_XOR);
+			SelectClipRgn(hDC, hRgnBK);
+			DeleteObject(hRgnBK);
+			DeleteObject(hRgnText);
+			// 填充背景
+			FillRect(hDC, &rcWnd, p->m_hbrEditBK);
+			ReleaseDC(hWnd, hDC);
+		}
+		return 0;
+
+		case WM_SETFONT:
+		{
+			auto lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
+			if (!p->GetMultiLine())
+			{
+				p->UpdateTextInfo();
+				p->FrameChanged();
+			}
+			return lResult;
+		}
+
+		case WM_NCHITTEST:
+		{
+			auto lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
+			if (!p->GetMultiLine())
+			{
+				if (lResult == HTNOWHERE)// 修复一下NC命中测试，不然设计器里点到边上的时候选不上控件
+					lResult = HTBORDER;
+			}
+			return lResult;
+		}
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
 	CEdit() = delete;
@@ -124,21 +387,21 @@ public:
 			BYTE* p = (BYTE*)pAllData + cbBaseData;
 			memcpy(&m_Info, p, sizeof(EEDITDATA));
 
-			m_Info.pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
-			*m_Info.pszCueBanner = L'\0';
+			m_pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
+			*m_pszCueBanner = L'\0';
 
 			p += sizeof(EEDITDATA);
 			if (m_Info.cchCueBanner)
 			{
-				memcpy(m_Info.pszCueBanner, p, m_Info.cchCueBanner * sizeof(WCHAR));
-				*(m_Info.pszCueBanner + m_Info.cchCueBanner) = L'\0';
+				memcpy(m_pszCueBanner, p, m_Info.cchCueBanner * sizeof(WCHAR));
+				*(m_pszCueBanner + m_Info.cchCueBanner) = L'\0';
 			}
 		}
 		else
 		{
 			m_Info0.iFrame = 1;
-			m_Info.pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
-			*m_Info.pszCueBanner = L'\0';
+			m_pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
+			*m_pszCueBanner = L'\0';
 			m_Info.crTextBK = 0x00FFFFFF;
 			m_Info.crBK = 0x00FFFFFF;
 			m_Info.bHideSel = TRUE;
@@ -146,12 +409,16 @@ public:
 
 		m_Info.iVer = DATA_VER_EDIT_1;
 
-		DWORD dwEDStyle = (m_Info.bMultiLine ? (ES_MULTILINE | ES_AUTOVSCROLL) : (ES_AUTOHSCROLL));
+		DWORD dwEDStyle;
+		if (m_Info.bMultiLine)
+			dwEDStyle = ES_MULTILINE | ES_AUTOVSCROLL | (m_Info.bAutoWrap ? ES_AUTOHSCROLL : 0);
+		else
+			dwEDStyle = ES_AUTOHSCROLL;
 
-		m_hWnd = CreateWindowExW(0, WC_EDITW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | dwEDStyle,
+		m_hWnd = CreateWindowExW(0, WC_EDITW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | dwEDStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
-
 		m_SM.OnCtrlCreate(this);
+		m_hParent = hParent;
 
 		InitBase0(pAllData);
 		SetClr(0, m_Info.crText);
@@ -159,7 +426,7 @@ public:
 		SetClr(2, m_Info.crBK);
 		SetHideSel(m_Info.bHideSel);
 		SetMaxLen(m_Info.iMaxLen);
-		SetMultiLine(m_Info.bMultiLine);
+		// SetMultiLine(m_Info.bMultiLine);// 这个函数仅仅在必要时重新核算非客户区，没有做其他实质性工作
 		SetScrollBar(m_Info.iScrollBar);
 		SetAlign(m_Info.iAlign);
 		SetInputMode(m_Info.iInputMode);
@@ -168,18 +435,16 @@ public:
 		SetTransformMode(m_Info.iTransformMode);
 		SetSelPos(m_Info.iSelPos);
 		SetSelNum(m_Info.iSelNum);
-		SetCueBannerNoCopy(m_Info.pszCueBanner);
-
+		SetCueBannerNoCopy(m_pszCueBanner);
+		UpdateTextInfo();
 		FrameChanged();
-
-		ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 	}
 
 	~CEdit()
 	{
 		DeleteObject(m_hbrEditBK);
 		delete[] m_pszSelText;
-		delete[] m_Info.pszCueBanner;
+		delete[] m_pszCueBanner;
 	}
 
 	eStlInline void SetClr(int iType, COLORREF cr)
@@ -193,6 +458,7 @@ public:
 				DeleteObject(m_hbrEditBK);
 			m_hbrEditBK = CreateSolidBrush(cr);
 			m_Info.crBK = cr;
+			SendMessageW(m_hWnd, WM_NCPAINT, 0, 0);
 			break;
 		}
 		Redraw();
@@ -233,7 +499,10 @@ public:
 
 	eStlInline void SetMultiLine(BOOL bMultiLine)
 	{
+		BOOL bOld = m_Info.bMultiLine;
 		m_Info.bMultiLine = bMultiLine;// 不需要修改风格，因为控件要重新创建
+		if (!bOld && bMultiLine)
+			FrameChanged();
 	}
 
 	eStlInline BOOL GetMultiLine()
@@ -241,7 +510,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bMultiLine;
 		else
-			return !!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & ES_MULTILINE);
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), ES_MULTILINE);
 	}
 
 	void SetScrollBar(int i)
@@ -274,8 +543,8 @@ public:
 			return m_Info.iScrollBar;
 		else
 		{
-			BOOL bVSB = GetWindowLongPtrW(m_hWnd, GWL_STYLE) & WS_VSCROLL;
-			BOOL bHSB = GetWindowLongPtrW(m_hWnd, GWL_STYLE) & WS_HSCROLL;
+			BOOL bVSB = elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), WS_VSCROLL);
+			BOOL bHSB = elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), WS_HSCROLL);
 			if (bVSB)
 				if (bHSB)
 					return 3;
@@ -307,12 +576,13 @@ public:
 	eStlInline void SetInputMode(int iInputMode)
 	{
 		m_Info.iInputMode = iInputMode;
+
+		elibstl::ModifyWindowStyle(m_hWnd, ((iInputMode == 1) ? ES_READONLY : 0), ES_READONLY);
+
 		if (iInputMode == 2)// 密码输入
 			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, L'*', 0);
 		else
 			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, 0, 0);
-
-		elibstl::ModifyWindowStyle(m_hWnd, ((iInputMode == 1) ? ES_READONLY : 0), ES_READONLY);
 	}
 
 	eStlInline int GetInputMode()
@@ -333,7 +603,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.chMask;
 		else
-			return SendMessageW(m_hWnd, EM_GETPASSWORDCHAR, 0, 0);
+			return (WCHAR)SendMessageW(m_hWnd, EM_GETPASSWORDCHAR, 0, 0);
 	}
 
 	void SetTransformMode(int iTransformMode)
@@ -451,34 +721,45 @@ public:
 	{
 		if (!psz)
 		{
-			*m_Info.pszCueBanner = L'\0';
+			*m_pszCueBanner = L'\0';
 			SetCueBannerNoCopy(NULL);
 			return;
 		}
 
-		wcsncpy(m_Info.pszCueBanner, psz, ED_CUEBANNER_MAXLEN - 1);
-		*(m_Info.pszCueBanner + ED_CUEBANNER_MAXLEN - 1) = L'\0';
-		SetCueBannerNoCopy(m_Info.pszCueBanner);
+		wcsncpy(m_pszCueBanner, psz, ED_CUEBANNER_MAXLEN - 1);
+		*(m_pszCueBanner + ED_CUEBANNER_MAXLEN - 1) = L'\0';
+		SetCueBannerNoCopy(m_pszCueBanner);
 	}
 
 	eStlInline PCWSTR GetCueBanner(SIZE_T* pcb = NULL)
 	{
 		if (!m_bInDesignMode)
-			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_Info.pszCueBanner, ED_CUEBANNER_MAXLEN);
+			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, ED_CUEBANNER_MAXLEN);
 		if (pcb)
-			*pcb = wcslen(m_Info.pszCueBanner);
-		return m_Info.pszCueBanner;
+			*pcb = wcslen(m_pszCueBanner);
+		return m_pszCueBanner;
 	}
 
 	void SetCueBannerShowAlways(BOOL b)
 	{
 		m_Info.bCueBannerShowAlways = b;
-		SetCueBannerNoCopy(m_Info.pszCueBanner);
+		SetCueBannerNoCopy(m_pszCueBanner);
 	}
 
 	eStlInline BOOL GetCueBannerShowAlways()
 	{
 		return m_Info.bCueBannerShowAlways;
+	}
+
+	BOOL SetAutoWrap(BOOL bAutoWrap)
+	{
+		m_Info.bAutoWrap = bAutoWrap;
+		return GetMultiLine();
+	}
+
+	eStlInline BOOL GetAutoWrap()
+	{
+		return m_Info.bAutoWrap;
 	}
 
 	eStlInline HGLOBAL FlattenInfo() override
@@ -509,7 +790,7 @@ public:
 		memcpy(p, &m_Info, sizeof(EEDITDATA));
 		// 提示文本
 		p += sizeof(EEDITDATA);
-		memcpy(p, m_Info.pszCueBanner, cbCueBanner);
+		memcpy(p, m_pszCueBanner, cbCueBanner);
 		// 
 		GlobalUnlock(hGlobal);
 	Fail:
@@ -587,6 +868,8 @@ public:
 		case 19:// 总是显示提示文本
 			p->SetCueBannerShowAlways(pPropertyVaule->m_bool);
 			break;
+		case 20:// 自动换行
+			return p->SetAutoWrap(pPropertyVaule->m_bool);
 		}
 
 		return FALSE;
@@ -641,7 +924,8 @@ public:
 			pPropertyVaule->m_int = p->GetInputMode();
 			break;
 		case 13:// 密码遮盖字符
-			//pPropertyVaule->m_int = p->
+			pPropertyVaule->m_data.m_pData = (BYTE*)&p->m_Info.chMask;
+			pPropertyVaule->m_data.m_nDataSize = 1;
 			break;
 		case 14:// 转换方式
 			pPropertyVaule->m_int = p->GetTransformMode();
@@ -660,6 +944,9 @@ public:
 			break;
 		case 19:// 总是显示提示文本
 			pPropertyVaule->m_bool = p->GetCueBannerShowAlways();
+			break;
+		case 20:// 自动换行
+			pPropertyVaule->m_bool = p->GetAutoWrap();
 			break;
 		}
 
@@ -708,6 +995,20 @@ public:
 		}
 		return FALSE;
 	}
+
+	static BOOL WINAPI EPropUpdateUI(HUNIT hUnit, INT nPropertyIndex)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+		switch (nPropertyIndex)
+		{
+		case 13:// 密码遮盖字符
+			return p->m_Info.iInputMode == 2;
+		case 20:// 自动换行
+			return p->GetMultiLine();
+		}
+
+		return TRUE;
+	}
 };
 SUBCLASS_MGR_INIT(CEdit, SCID_EDITPARENT, SCID_EDIT)
 
@@ -725,6 +1026,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 		return (PFN_INTERFACE)CEdit::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CEdit::EInputW;
+	case ITF_PROPERTY_UPDATE_UI:
+		return (PFN_INTERFACE)CEdit::EPropUpdateUI;
 	}
 	return NULL;
 }
@@ -753,13 +1056,14 @@ static UNIT_PROPERTY s_Member_Edit[] =
 	/*012*/  {"输入方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), 
 					"通常\0""只读\0""密码\0""整数文本\0""小数文本\0""输入字节\0""输入短整数\0""输入整数\0""输入长整数\0""输入小数\0"
 					"输入双精度小数\0""输入日期时间\0""\0"},
-	/*013*/		{"密码遮盖字符W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*013*/		{"密码遮盖字符W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
 	/*014*/  {"转换方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""大写到小写\0""小写到大写\0""\0"},
 	/*015*/  {"起始选择位置", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
 	/*016*/  {"被选择字符数", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*017*/  {"被选择文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*017*/  {"被选择文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_CANNOT_INIT, NULL},
 	/*018*/  {"提示文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 	/*019*/  {"总是显示提示文本", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*020*/  {"自动换行", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 ///////////////////////////////////方法
 static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175 };
@@ -786,7 +1090,7 @@ static ARG_INFO s_ArgsAddText[] =
 	}
 };
 FucInfo Fn_EditAddText = { {
-		/*ccname*/  ("加入文本W"),
+		/*ccname*/  ("加入文本"),
 		/*egname*/  ("AddTextW"),
 		/*explain*/ ("将指定文本加入到编辑框内容的尾部"),
 		/*category*/-1,

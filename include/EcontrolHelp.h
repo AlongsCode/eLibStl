@@ -274,6 +274,12 @@ public:
 	}
 };
 
+
+eStlInline BOOL IsBitExist(DWORD dw1, DWORD dw2)
+{
+	return ((dw1 & dw2) == dw2);
+}
+
 eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, int idx = GWL_STYLE, BOOL bAutoMaskNew = FALSE)
 {
 	if (bAutoMaskNew)
@@ -291,7 +297,7 @@ eStlInline int ESTLPRIV_MultiSelectWndStyle___(HWND hWnd, int idx, int cStyle,..
 	va_start(Args, cStyle);
 	for (int i = 0; i < cStyle; ++i)
 	{
-		if (GetWindowLongPtrW(hWnd, idx) & va_arg_idx(Args, i, DWORD))
+		if (IsBitExist(GetWindowLongPtrW(hWnd, idx), va_arg_idx(Args, i, DWORD)))
 		{
 			va_end(Args);
 			return i;
@@ -340,10 +346,7 @@ struct ECTRLINFO
 
 	LOGFONTA Font;			// 字体
 	int cchText;			// 文本长度，仅用于保存信息
-	PSTR pszTextA;			// 标题A
-	PWSTR pszTextW;			// 标题W
 	int cbPic;				// 图片字节流长度
-	void* pPicData;			// 图片数据
 	int iFrame;				// 边框
 };
 
@@ -360,12 +363,13 @@ protected:
 	HWND m_hWnd = NULL;
 	HWND m_hParent = NULL;
 	BOOL m_bParentChanged = FALSE;
-	// 位图句柄
-	HBITMAP m_hBitmap = NULL;
-	// 字体句柄
-	HFONT m_hFont = NULL;
-	// 信息
-	ECTRLINFO m_Info0{};
+	HBITMAP m_hBitmap = NULL;// 位图句柄
+	HFONT m_hFont = NULL;// 字体句柄
+	ECTRLINFO m_Info0{};// 信息
+
+	PSTR m_pszTextA = NULL;// 标题A
+	PWSTR m_pszTextW = NULL;// 标题W
+	void* m_pPicData = NULL;// 图片数据
 
 	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID);
 
@@ -377,9 +381,9 @@ public:
 	{
 		DeleteObject(m_hFont);
 		DeleteObject(m_hBitmap);
-		delete[] m_Info0.pszTextA;
-		delete[] m_Info0.pszTextW;
-		delete[] m_Info0.pPicData;
+		delete[] m_pszTextA;
+		delete[] m_pszTextW;
+		delete[] m_pPicData;
 	}
 
 	/// <summary>
@@ -391,12 +395,12 @@ public:
 	{
 		if (m_bInDesignMode)
 		{
-			elibstl::DupStringForNewDeleteA(m_Info0.pszTextA, pszText);
-			delete[] m_Info0.pszTextW;
+			elibstl::DupStringForNewDeleteA(m_pszTextA, pszText);
+			delete[] m_pszTextW;
 			if (pszText)
-				m_Info0.pszTextW = elibstl::A2W(pszText);
+				m_pszTextW = elibstl::A2W(pszText);
 			else
-				m_Info0.pszTextW = NULL;
+				m_pszTextW = NULL;
 		}
 		return SetWindowTextA(m_hWnd, pszText);
 	}
@@ -410,12 +414,12 @@ public:
 	{
 		if (m_bInDesignMode)
 		{
-			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, pszText);
-			delete[] m_Info0.pszTextA;
+			elibstl::DupStringForNewDeleteW(m_pszTextW, pszText);
+			delete[] m_pszTextA;
 			if (pszText)
-				m_Info0.pszTextA = elibstl::W2A(pszText);
+				m_pszTextA = elibstl::W2A(pszText);
 			else
-				m_Info0.pszTextA = NULL;
+				m_pszTextA = NULL;
 		}
 		return SetWindowTextW(m_hWnd, pszText);
 	}
@@ -430,13 +434,13 @@ public:
 	{
 		if (m_bInDesignMode)
 		{
-			delete[] m_Info0.pszTextW;
-			m_Info0.pszTextW = pszText;
-			delete[] m_Info0.pszTextA;
+			delete[] m_pszTextW;
+			m_pszTextW = pszText;
+			delete[] m_pszTextA;
 			if (pszText)
-				m_Info0.pszTextA = elibstl::W2A(pszText);
+				m_pszTextA = elibstl::W2A(pszText);
 			else
-				m_Info0.pszTextA = NULL;
+				m_pszTextA = NULL;
 		}
 		return SetWindowTextW(m_hWnd, pszText);
 	}
@@ -453,9 +457,9 @@ public:
 			int cch = GetWindowTextLengthW(m_hWnd);
 			if (cch)
 			{
-				delete[] m_Info0.pszTextW;
-				m_Info0.pszTextW = new WCHAR[cch + 1];
-				GetWindowTextW(m_hWnd, m_Info0.pszTextW, cch + 1);
+				delete[] m_pszTextW;
+				m_pszTextW = new WCHAR[cch + 1];
+				GetWindowTextW(m_hWnd, m_pszTextW, cch + 1);
 				if (pcb)
 					*pcb = (cch + 1) * sizeof(WCHAR);
 			}
@@ -467,15 +471,15 @@ public:
 		else
 			if (pcb)
 			{
-				if (!m_Info0.pszTextW)
+				if (!m_pszTextW)
 					*pcb = 0u;
 				else
-					*pcb = (wcslen(m_Info0.pszTextW) + 1) * sizeof(WCHAR);
+					*pcb = (wcslen(m_pszTextW) + 1) * sizeof(WCHAR);
 			}
 			
 				
 
-		return m_Info0.pszTextW;
+		return m_pszTextW;
 	}
 
 	/// <summary>
@@ -490,13 +494,13 @@ public:
 			int cch = GetWindowTextLengthA(m_hWnd);
 			if (cch)
 			{
-				delete[] m_Info0.pszTextA;
-				m_Info0.pszTextA = new CHAR[cch + 1];
-				GetWindowTextA(m_hWnd, m_Info0.pszTextA, cch + 1);
+				delete[] m_pszTextA;
+				m_pszTextA = new CHAR[cch + 1];
+				GetWindowTextA(m_hWnd, m_pszTextA, cch + 1);
 			}
 		}
 
-		return m_Info0.pszTextA;
+		return m_pszTextA;
 	}
 
 	/// <summary>
@@ -517,14 +521,14 @@ public:
 		if (!m_bInDesignMode)
 		{
 			auto&& x = elibstl::GetDataFromHBIT(m_hBitmap);
-			delete[] m_Info0.pPicData;
+			delete[] m_pPicData;
 			m_Info0.cbPic = x.size();
-			m_Info0.pPicData = new BYTE[m_Info0.cbPic];
-			memcpy(m_Info0.pPicData, x.data(), m_Info0.cbPic);
+			m_pPicData = new BYTE[m_Info0.cbPic];
+			memcpy(m_pPicData, x.data(), m_Info0.cbPic);
 		}
 
 		*pcb = m_Info0.cbPic;
-		return (BYTE*)m_Info0.pPicData;
+		return (BYTE*)m_pPicData;
 	}
 
 	/// <summary>
@@ -629,16 +633,6 @@ public:
 };
 ESTL_NAMESPACE_END
 
-struct EFONTDATA
-{
-	HFONT m_hFont;
-	LOGFONTA m_data;
-	EFONTDATA()
-	{
-		memset(this, 0, sizeof(EFONTDATA));
-	}
-};
-
 // 创建控件接口参数定义
 #define STD_ECTRL_CREATE_ARGS \
 	LPVOID pAllData, int cbData, DWORD dwStyle, int x, int y, int cx, int cy, \
@@ -663,14 +657,6 @@ struct EFONTDATA
 	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
 	std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \
 	elibstl::CSubclassMgr<Class> Class::m_SM{ m_ParentSCInfo,m_CtrlSCInfo,ParentSubclassProc,CtrlSubclassProc,uIDParent,uIDCtrl };
-// 父窗口子类化过程函数头
-#define SUBCLASS_PARENT_FNHEAD \
-	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-// 控件子类化过程函数头
-#define SUBCLASS_CTRL_FNHEAD \
-	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-#define SUBCLASS_RET_DEFPROC \
-	return DefSubclassProc(hWnd, uMsg, wParam, lParam)
 // 检查父窗口是否改变，放在WM_SHOWWINDOW下，控件在容器中时，创建参数中的父窗口句柄实际上是顶级窗口句柄，WM_SHOWWINDOW前会被改为容器窗口
 #define CHECK_PARENT_CHANGE \
 	if (!p->m_bParentChanged) \

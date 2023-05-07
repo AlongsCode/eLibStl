@@ -120,7 +120,7 @@ replace_substring_w,/*取CPU当前使用率*/\
 get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
-,s_Fn_BtnGetIdealSize/*按钮.取理想尺寸*/\
+,Fn_BtnGetIdealSize/*按钮.取理想尺寸*/\
 ,EUpDown_GetHwnd/*调节器取组件句柄*/\
 ,e_debugput/*调试*/\
 ,e_CallEfun/*执行函数*/\
@@ -179,6 +179,11 @@ network_post/*网页访问*/\
 ,eto_wstring/*到文本W*/\
 ,e_malloc/*内存申请*/\
 ,e_free/*内存释放*/\
+
+
+
+
+
 
 
 

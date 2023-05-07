@@ -3,15 +3,14 @@
 static ARG_INFO Args[] =
 {
 	{
-			"内存指针",
-			"",
-			0,
-			0,
-			SDT_INT,
-			0,
-			NULL,
-		}
-
+		"内存指针",
+		"",
+		0,
+		0,
+		SDT_INT,
+		0,
+		NULL,
+	}
 };
 EXTERN_C void Fn_e_free(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {

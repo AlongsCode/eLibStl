@@ -1,3 +1,7 @@
+/*
+* 2023.5.7
+* FIXME：按钮的图像列表相关功能没有封装
+*/
 #include"EcontrolHelp.h"
 
 #include <unordered_map>
@@ -128,7 +132,6 @@ struct EBUTTONDATA_CMDLINK
 	int iVer;				// 版本
 
 	int cchNote;			// 注释文本长度，仅用于保存信息
-	PWSTR pszNote;			// 注释文本
 	BOOL bShieldIcon;		// 是否盾牌图标
 	int iDef;				// 默认
 };
@@ -187,7 +190,7 @@ public:
 		DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
 		if (bShowTextAndImage)
 			dwStyle &= (~(BS_BITMAP));
-		else if (m_Info0.pPicData && m_Info0.cbPic)
+		else if (m_pPicData && m_Info0.cbPic)
 			dwStyle |= BS_BITMAP;
 		SetWindowLongPtrW(m_hWnd, GWL_STYLE, dwStyle);
 	}
@@ -317,7 +320,7 @@ private:
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
 	}
 
-	SUBCLASS_PARENT_FNHEAD
+	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch (uMsg)
 		{
@@ -340,10 +343,10 @@ private:
 			break;
 		}
 
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	SUBCLASS_CTRL_FNHEAD
+	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		HWND hh = GetParent(hWnd);
 		auto p = (CPushButton*)dwRefData;
@@ -352,7 +355,7 @@ private:
 		case WM_DESTROY:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
-			SUBCLASS_RET_DEFPROC;
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
@@ -360,25 +363,26 @@ private:
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
 	CPushButton() = delete;
 	CPushButton(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
-		if (!m_Info0.pszTextW)
+		if (!m_pszTextW)
 		{
-			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, L"按钮W");
-			m_Info0.pszTextA = elibstl::W2A(m_Info0.pszTextW);
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"按钮W");
+			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 
 		if (pAllData)
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_PUSHBTN));
 		m_InfoEx.iVer = DATA_VER_BTN_PUSHBTN_1;
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | BS_PUSHBUTTON,
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_PUSHBUTTON,
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
@@ -386,9 +390,6 @@ public:
 		SetDef(m_InfoEx.iDef);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
-		m_SM.OnCtrlCreate(this);
-		HWND h = GetParent(m_hWnd);
-		h = NULL;
 	}
 
 	/// <summary>
@@ -407,7 +408,8 @@ public:
 			dwStyle |= (m_InfoEx.iDef ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON);
 			break;
 		case 1:
-			dwStyle |= (m_InfoEx.iDef ? BS_DEFSPLITBUTTON : BS_SPLITBUTTON);
+			if (!m_bInDesignMode)
+				dwStyle |= (m_InfoEx.iDef ? BS_DEFSPLITBUTTON : BS_SPLITBUTTON);
 			break;
 		}
 
@@ -565,7 +567,7 @@ private:
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
 	}
 
-	SUBCLASS_PARENT_FNHEAD
+	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch (uMsg)
 		{
@@ -579,10 +581,10 @@ private:
 			break;
 		}
 
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	SUBCLASS_CTRL_FNHEAD
+	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		auto p = (CCheckButton*)dwRefData;
 		switch (uMsg)
@@ -590,7 +592,7 @@ private:
 		case WM_DESTROY:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
-			SUBCLASS_RET_DEFPROC;
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 		case WM_NCCALCSIZE:
 			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
@@ -601,17 +603,17 @@ private:
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
 	CCheckButton() = delete;
 	CCheckButton(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
-		if (!m_Info0.pszTextW)
+		if (!m_pszTextW)
 		{
-			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, L"选择框W");
-			m_Info0.pszTextA = elibstl::W2A(m_Info0.pszTextW);
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"选择框W");
+			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 
 		if (pAllData)
@@ -620,8 +622,10 @@ public:
 			m_Info.algH = 0;
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE | BS_AUTORADIOBUTTON,
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON,
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+		m_SM.OnCtrlCreate(this);
+		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
@@ -632,7 +636,6 @@ public:
 		SetLeftText(m_InfoEx.bLeftText);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
-		m_SM.OnCtrlCreate(this);
 	}
 
 	eStlInline HGLOBAL FlattenInfo() override
@@ -706,7 +709,7 @@ public:
 		if (m_bInDesignMode)
 			return m_InfoEx.bPushLike;
 		else
-			return !!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & BS_PUSHLIKE);
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_PUSHLIKE);
 	}
 
 	eStlInline void SetFlat(BOOL bFlat)
@@ -721,7 +724,7 @@ public:
 		if (m_bInDesignMode)
 			return m_InfoEx.bFlat;
 		else
-			return !!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & BS_FLAT);
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_FLAT);
 	}
 
 	eStlInline void SetLeftText(BOOL bLeftText)
@@ -736,7 +739,7 @@ public:
 		if (m_bInDesignMode)
 			return m_InfoEx.bLeftText;
 		else
-			return !!(GetWindowLongPtrW(m_hWnd, GWL_STYLE) & BS_LEFTTEXT);
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_LEFTTEXT);
 	}
 
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
@@ -847,6 +850,7 @@ class CCommandLink :public CButton
 	SUBCLASS_MGR_DECL(CCommandLink)
 private:
 	EBUTTONDATA_CMDLINK m_InfoEx{};
+	PWSTR m_pszNote;// 注释文本
 
 	/// <summary>
 	/// 被单击
@@ -857,7 +861,7 @@ private:
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
 	}
 
-	SUBCLASS_PARENT_FNHEAD
+	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch (uMsg)
 		{
@@ -871,10 +875,10 @@ private:
 			break;
 		}
 
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	SUBCLASS_CTRL_FNHEAD
+	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		auto p = (CCommandLink*)dwRefData;
 		switch (uMsg)
@@ -882,7 +886,7 @@ private:
 		case WM_DESTROY:
 			m_SM.OnCtrlDestroy(p);
 			delete p;
-			SUBCLASS_RET_DEFPROC;
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
@@ -890,45 +894,46 @@ private:
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
-		SUBCLASS_RET_DEFPROC;
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
 	CCommandLink() = delete;
 	CCommandLink(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
-		if (!m_Info0.pszTextW)
+		if (!m_pszTextW)
 		{
-			elibstl::DupStringForNewDeleteW(m_Info0.pszTextW, L"命令链接");
-			m_Info0.pszTextA = elibstl::W2A(m_Info0.pszTextW);
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"命令链接");
+			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 
 		if (pAllData)
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CMDLINK));
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
-		m_InfoEx.pszNote = NULL;
+		m_pszNote = NULL;
 		if (m_InfoEx.cchNote)
 		{
-			elibstl::DupStringForNewDeleteW(m_InfoEx.pszNote, 
+			elibstl::DupStringForNewDeleteW(m_pszNote, 
 				(PCWSTR)((BYTE*)pAllData + cbBaseData + sizeof(EBUTTONDATA_CMDLINK)), m_InfoEx.cchNote);
 		}
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_Info0.pszTextW, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE |
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS |
 			(m_bInDesignMode ? BS_PUSHBUTTON : BS_COMMANDLINK),
 			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
-		
+		m_SM.OnCtrlCreate(this);
+		m_hParent = hParent;
+
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
 		SetShieldIcon(m_InfoEx.bShieldIcon);
-		//SetNote(m_InfoEx.pszNote);
+		SetNote(m_pszNote);
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
 		Redraw();
-		m_SM.OnCtrlCreate(this);
 	}
 
 	~CCommandLink()
 	{
-		delete[] m_InfoEx.pszNote;
+		delete[] m_pszNote;
 	}
 
 	/// <summary>
@@ -941,11 +946,11 @@ public:
 		if (m_bInDesignMode)
 		{
 			if (pszText)
-				elibstl::DupStringForNewDeleteW(m_InfoEx.pszNote, pszText);
+				elibstl::DupStringForNewDeleteW(m_pszNote, pszText);
 			else
 			{
-				delete[] m_InfoEx.pszNote;
-				m_InfoEx.pszNote = NULL;
+				delete[] m_pszNote;
+				m_pszNote = NULL;
 			}
 			return TRUE;
 		}
@@ -957,8 +962,8 @@ public:
 	{
 		if (m_bInDesignMode)
 		{
-			delete[] m_InfoEx.pszNote;
-			m_InfoEx.pszNote = pszText;
+			delete[] m_pszNote;
+			m_pszNote = pszText;
 			return TRUE;
 		}
 		else
@@ -975,17 +980,17 @@ public:
 		if (!m_bInDesignMode)
 		{
 			int cch = SendMessageW(m_hWnd, BCM_GETNOTELENGTH, 0, 0);
-			delete[] m_InfoEx.pszNote;
+			delete[] m_pszNote;
 			if (cch)
 			{
-				m_InfoEx.pszNote = new WCHAR[cch + 1];
-				SendMessageW(m_hWnd, BCM_GETNOTE, cch + 1, (LPARAM)m_InfoEx.pszNote);
+				m_pszNote = new WCHAR[cch + 1];
+				SendMessageW(m_hWnd, BCM_GETNOTE, cch + 1, (LPARAM)m_pszNote);
 			}
 			else
-				m_InfoEx.pszNote = NULL;
+				m_pszNote = NULL;
 		}
 
-		return m_InfoEx.pszNote;
+		return m_pszNote;
 	}
 
 	eStlInline void SetShieldIcon(BOOL bShieldIcon)
@@ -1032,7 +1037,7 @@ public:
 		SIZE_T cbData = sizeof(EBUTTONDATA_CMDLINK);
 		if (GetNote())
 		{
-			m_InfoEx.cchNote = wcslen(m_InfoEx.pszNote);
+			m_InfoEx.cchNote = wcslen(m_pszNote);
 			cbData += (m_InfoEx.cchNote * sizeof(WCHAR));
 		}
 		else
@@ -1048,8 +1053,8 @@ public:
 		memcpy(p, &m_InfoEx, sizeof(EBUTTONDATA_CMDLINK));
 		// 注释文本
 		p += sizeof(EBUTTONDATA_CMDLINK);
-		if (m_InfoEx.pszNote)
-			memcpy(p, m_InfoEx.pszNote, m_InfoEx.cchNote * sizeof(WCHAR));
+		if (m_pszNote)
+			memcpy(p, m_pszNote, m_InfoEx.cchNote * sizeof(WCHAR));
 		GlobalUnlock(hGlobal);
 	Fail:
 		return hGlobal;
@@ -1143,6 +1148,20 @@ public:
 		}
 		return FALSE;
 	}
+
+	static BOOL WINAPI EPropUpdateUI(HUNIT hUnit, INT nPropertyIndex)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+		switch (nPropertyIndex)
+		{
+		case 1:// 是否同时显示图片和文本
+		case 4:// 横向对齐方式
+		case 5:// 纵向对齐方式
+			return FALSE;
+		}
+
+		return TRUE;
+	}
 };
 SUBCLASS_MGR_INIT(CCommandLink, SCID_CMDLINKPARENT, SCID_CMDLINK)
 
@@ -1159,7 +1178,7 @@ static UNIT_PROPERTY s_Member_PushBtn[] =
 
 	BTN_COMM_PROP,
 	/*007*/ {"默认", "Def", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "通常\0""默认\0""\0"},
-	/*008*/ {"类型", "Type", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "普通按钮\0""拆分按钮\0""\0"},
+	/*008*/ {"类型", "Type", "无法预览。该属性需要在清单中指定Comctl6.0", UD_PICK_INT, _PROP_OS(__OS_WIN), "普通按钮\0""拆分按钮\0""\0"},
 };
 ///////////////////////////////选择框
 static EVENT_INFO2 s_Event_CheckBtn[] =
@@ -1196,7 +1215,7 @@ static UNIT_PROPERTY s_Member_CmdLink[] =
 /////////////////////////////方法
 static int s_Cmd_PushBtn[] = { 120 };
 
-EXTERN_C void libstl_BtnGetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+EXTERN_C void libstl_Button_GetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	SIZE size{ *pArgInf[1].m_pInt,0 };
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
@@ -1213,7 +1232,7 @@ Fail:
 	return;
 }
 
-static ARG_INFO s_Args_BtnGetIdealSize[] =
+static ARG_INFO s_Args_GetIdealSize[] =
 {
 	{
 		/*name*/    "宽度",
@@ -1235,7 +1254,7 @@ static ARG_INFO s_Args_BtnGetIdealSize[] =
 	}
 };
 
-FucInfo s_Fn_BtnGetIdealSize = { {
+FucInfo Fn_BtnGetIdealSize = { {
 		/*ccname*/  ("取理想尺寸"),
 		/*egname*/  ("GetIdealSize"),
 		/*explain*/ ("取按钮理想尺寸。本命令需要在清单中指定Comctl6.0"),
@@ -1246,9 +1265,9 @@ FucInfo s_Fn_BtnGetIdealSize = { {
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/ARRAYSIZE(s_Args_BtnGetIdealSize),
-		/*arg lp*/  s_Args_BtnGetIdealSize,
-	} ,libstl_BtnGetIdealSize ,"libstl_BtnGetIdealSize" };
+		/*ArgCount*/ARRAYSIZE(s_Args_GetIdealSize),
+		/*arg lp*/  s_Args_GetIdealSize,
+	} ,libstl_Button_GetIdealSize ,"libstl_Button_GetIdealSize" };
 /////////////////////////////取接口
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
 {
@@ -1300,6 +1319,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CommandLink(INT nInterfaceNO)
 		return (PFN_INTERFACE)CCommandLink::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CCommandLink::EInputW;
+	case ITF_PROPERTY_UPDATE_UI:
+		return (PFN_INTERFACE)CCommandLink::EPropUpdateUI;
 	}
 	return NULL;
 }

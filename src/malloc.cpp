@@ -3,24 +3,26 @@
 static ARG_INFO Args[] =
 {
 	{
-			"申请长度",
-			"",
-			0,
-			0,
-			SDT_INT,
-			0,
-			NULL,
-		} ,{
-			"是否初始化为零",
-			"",
-			0,
-			0,
-			SDT_BOOL,
-			0,
-			AS_DEFAULT_VALUE_IS_EMPTY,
-		}
+		"申请长度",
+		"",
+		0,
+		0,
+		SDT_INT,
+		0,
+		NULL,
+	},
+	{
+		"是否初始化为零",
+		"",
+		0,
+		0,
+		SDT_BOOL,
+		0,
+		AS_DEFAULT_VALUE_IS_EMPTY,
+	}
 
 };
+
 EXTERN_C void Fn_e_malloc(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	pRetData->m_int = 0;
