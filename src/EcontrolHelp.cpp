@@ -8,6 +8,7 @@
 #define IDC_BT_OK		202
 #define IDC_BT_CANCEL	203
 
+#define DEF_SIZE(height,width) static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2){switch (nMsg){case NU_GET_CREATE_SIZE_IN_DESIGNER:{*((intptr_t*)dwParam1) = height;*((intptr_t*)dwParam2) = width;}return TRUE;}return FALSE;}
 
 
 

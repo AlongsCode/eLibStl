@@ -50,6 +50,7 @@
     <ClCompile Include="src\call_lib_e_fun.cpp" />
     <ClCompile Include="src\capitalize_first_letter.cpp" />
     <ClCompile Include="src\check_port.cpp" />
+    <ClCompile Include="src\clean_console.cpp" />
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
@@ -237,7 +238,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Lib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>E:\e\lib\</OutDir>
+    <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -245,7 +246,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Lib|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>E:\e\lib\</OutDir>
+    <OutDir>G:\IDE\E语言\e\lib</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -280,7 +281,7 @@
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static|Win32'">
-    <OutDir>E:\e\lib\</OutDir>
+    <OutDir>$(SolutionDir)out\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
