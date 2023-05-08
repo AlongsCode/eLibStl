@@ -2,7 +2,6 @@
 * 2023.5.7
 * FIXME：输入模式中的输入日期时间未实现
 */
-
 #include "EcontrolHelp.h"
 
 #pragma warning(disable:4996)
@@ -101,8 +100,8 @@ private:
 
 		case WM_COMMAND:
 		{
-			if (m_CtrlSCInfo.count((HWND)lParam))
-				if (HIWORD(wParam) == EN_CHANGE)
+			if (HIWORD(wParam) == EN_CHANGE)
+				if (m_CtrlSCInfo.count((HWND)lParam))
 					m_CtrlSCInfo[(HWND)lParam]->OnChange();
 		}
 		break;

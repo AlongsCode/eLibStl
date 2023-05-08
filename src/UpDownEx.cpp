@@ -1,638 +1,623 @@
 #include"EcontrolHelp.h"
 #include<Richedit.h>
 #pragma warning(disable:4996)
-//static INT s_cmd[] = { 0 };
 
-static EVENT_ARG_INFO2  s_event_arg = { "按钮值", "如果按下的是调节器的向上箭头按钮，参数值为 1，否则为 -1", 0, SDT_INT };
+#define SCID_UPDOWN			20230507'01u
+#define SCID_UPDOWNPARENT	20230507'02u
 
-
-
-static EVENT_INFO2 s_event[] =
+// 调节器
+/*
+* 版本1数据布局
+*/
+#define DATA_VER_UPDOWN_1 1
+struct EUPDOWNDATA
 {
-	/*000*/ {"调节钮被按下", "当调节钮被按下时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 1, &s_event_arg, _SDT_NULL},
-};
-static UNIT_PROPERTY s_member[] =
-{
-	// FIXED_WIN_UNIT_PROPERTY,    // 必须加上此宏, 或者直接展开, 这里就展开
-	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
 
-	/*000*/ {"左边", "left", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*001*/ {"顶边", "top", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*002*/ {"宽度", "width", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*003*/ {"高度", "height", NULL, UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*004*/ {"标记", "tag", NULL, UD_TEXT, _PROP_OS(OS_ALL), NULL},
-	/*005*/ {"可视", "visible", NULL, UD_BOOL, _PROP_OS(OS_ALL), NULL},
-	/*006*/ {"禁止", "disable", NULL, UD_BOOL, _PROP_OS(OS_ALL), NULL},
-	/*007*/ {"鼠标指针", "MousePointer", NULL, UD_CURSOR, _PROP_OS(OS_ALL), NULL},
-
-	// 以上属性是易语言需要的默认属性, 每个组件都必须有, 但是可以手动隐藏
-	// 以下属性是组件自身带的, 这些不是强制需要的
-	// 这些属性在易语言的回调里是从0开始的, 所以, 这些序号也从0开始
-	/*000*/  {"自动模式","SpinMod", "自动调节器不再接受回调函数,他由系统控制。对于绑定组件的文本进行数值'+','-' 操作",  UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*001*/  {"调节器下限", "SpinMin", "设置调节器下限", UD_INT, _PROP_OS(OS_ALL) | UW_HAS_INDENT, NULL},
-	/*002*/  {"调节器上限", "SpinMax", "设置调节器上限", UD_INT, _PROP_OS(OS_ALL) | UW_HAS_INDENT, NULL},
-	/*003*/  {"方向", "SpinDirection", "设置调节器方向", UD_PICK_INT, _PROP_OS(OS_ALL),  "纵向\0""横向\0""\0"},
-	/*004*/  {"绑定组件", "BindHwnd", "欲绑定的可编辑文本组件或对话框句柄", UD_INT, _PROP_OS(OS_ALL) | UW_CANNOT_INIT, NULL},
+	int iDirection;			// 方向
+	int iMin;				// 最小位置
+	int iMax;				// 最大位置
+	int iPos;				// 位置
+	BOOL bAutoBuddy;		// 自动选择伙伴
+	int iBuddyAlign;		// 伙伴窗口定位方式
+	int iValueBase;			// 数值进制
+	BOOL bHousands;			// 是否插入千分符
+	BOOL bArrowKeys;		// 是否由上下箭头控制
+	BOOL bHotTrack;			// 是否热点跟踪
 };
 
-
-typedef struct _EBinWindowData
+class CUpDown :public elibstl::CCtrlBase
 {
-	HWND m_hWnd;
-	RECT m_Rect;
-	_EBinWindowData() {
-		memset(this, 0, sizeof(*this));
-	}
-}BINDWINDOWDATA, * LPBINDWINDOWDATA;
-
-typedef struct _eUpDowndata {
-	bool m_Auto;
-	int m_min;
-	int m_max;
-	bool m_IsHorizontal;
-	BINDWINDOWDATA m_win_data;
-	_eUpDowndata() {
-		memset(this, 0, sizeof(*this));
-	}
-}EUODOWNDATA, * LPEUODOWNDATA;
-
-class eUpDown
-{
-public:
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-		eUpDown* pEUpDown = (eUpDown*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-		if (!pEUpDown)
-		{
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-		WNDPROC oldproc = pEUpDown->GetOldProc();
-		if (oldproc == NULL)
-		{
-			oldproc = DefWindowProc;
-		}
-
-		switch (message)
-		{
-		case WM_SIZE://容器窗口被改变时改变按钮大小
-		{
-			int width = LOWORD(lParam);
-			int height = HIWORD(lParam);
-			pEUpDown->SetPos(width, height);
-			break;
-		}
-		case WM_NOTIFY: {
-			LPNMHDR lpnmhdr = (LPNMHDR)lParam;
-			// 检查消息类型
-			switch (lpnmhdr->code)
-			{
-			case UDN_DELTAPOS:
-			{
-				//接受到调节器按下
-				NMUPDOWN nID = *(NMUPDOWN*)lParam;
-				pEUpDown->OnDeltaPos(nID.iDelta);
-				//这里你可以通过 nID 来知道是哪一个按下
-				break;
-			}
-			}
-			//return TRUE;
-			break;
-		}
-		case WM_DESTROY: {
-
-			pEUpDown->~eUpDown();
-			return FALSE;
-		}
-		default:
-			break;
-		}
-		return oldproc(hWnd, message, wParam, lParam);
-	};
-	static LRESULT CALLBACK WndCProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-		eUpDown* pEUpDown = (eUpDown*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-		if (!pEUpDown)
-		{
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
-		}
-		WNDPROC oldproc = pEUpDown->GetCOldProc();
-		if (oldproc == NULL)
-		{
-			oldproc = DefWindowProc;
-		}
-
-		bool is_continue = elibstl::SendToParentsHwnd(pEUpDown->GetID(), pEUpDown->GetUID(), uMsg, wParam, lParam);
-		if (!is_continue)
-		{
-			return 0;
-		}
-		return oldproc(hWnd, uMsg, wParam, lParam);
-	};
+	SUBCLASS_MGR_DECL(CUpDown)
 private:
-	//容器句柄，和调节器句柄
-	HWND m_hWnd, m_hParentWnd;
-	//容器旧过程
-	WNDPROC m_oldProc, m_ColdProc;;
-	//绑定窗口的数据
-	BINDWINDOWDATA m_BindWinow;
-	INT m_dwWinFormID, m_dwUnitID;
-public:
-	~eUpDown() {
-		if (m_hWnd)
-		{
-			::DestroyWindow(m_hWnd);
-			m_hWnd = nullptr;
-		}
-		if (m_hParentWnd)
-		{
-			::SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)m_oldProc);
-			::DestroyWindow(m_hParentWnd);
-		}
+	EUPDOWNDATA m_Info{};
 
-	}
-	eUpDown(
-		LPBYTE pAllPropertyData,
-		INT nAllPropertyDataSize,
-		DWORD dwStyle,
-		int x,
-		int y,
-		int cx,
-		int cy,
-		HWND hParent,
-		UINT nId,
-		DWORD dwWinFormID,
-		DWORD dwUnitID
-	) :
-		m_BindWinow({}),
-		m_hWnd(nullptr),
-		m_hParentWnd(nullptr),
-		m_oldProc(nullptr),
-		m_dwWinFormID(dwWinFormID), m_dwUnitID(dwUnitID),
-		m_ColdProc(NULL)
+	BOOL OnDeltaPos(int iPos, int iDelta)
 	{
+		EVENT_NOTIFY Event(m_dwWinFormID, m_dwUnitID, 0);
+		Event.m_nArgCount = 2;
+		Event.m_nArgValue[0] = iPos;
+		Event.m_nArgValue[1] = iDelta;
+		elibstl::NotifySys(NRS_EVENT_NOTIFY, (DWORD)&Event, 0);
+		return (BOOL)Event.m_nRetVal || !Event.m_blHasRetVal;
+	}
 
-		//创建容器
-		m_hParentWnd = CreateWindowExW(0, L"Static", 0, dwStyle | WS_VISIBLE | WS_CHILDWINDOW | WS_CLIPSIBLINGS, x, y, cx, cy, hParent, (HMENU)nId, GetModuleHandle(0), 0);
-		//创建调节器
-
-		dwStyle |= WS_CHILD | UDS_ARROWKEYS | WS_VISIBLE;
-		BOOL HasData = FALSE;
-		if (pAllPropertyData && nAllPropertyDataSize == sizeof(EUODOWNDATA))
+	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+	{
+		switch (uMsg)
 		{
-			HasData = TRUE;
-			LPEUODOWNDATA nData = reinterpret_cast<LPEUODOWNDATA>(pAllPropertyData);
-			if (nData->m_IsHorizontal)
-			{
-				dwStyle |= UDS_HORZ;
-			}
-			if (nData->m_Auto)
-			{
-				dwStyle |= UDS_SETBUDDYINT;
-			}
-
-		}
-		m_hWnd = CreateWindowExW(0,
-			UPDOWN_CLASS,
-			L"",
-			dwStyle,
-			0,
-			0,
-			0,
-			0,
-			m_hParentWnd,
-			(HMENU)nId,
-			GetModuleHandle(0),
-			NULL
-		);
-
-		if (HasData)
+		case WM_NOTIFY:
 		{
-			LPEUODOWNDATA nData = reinterpret_cast<LPEUODOWNDATA>(pAllPropertyData);
-			SetUpDownMax(nData->m_max);
-			SetUpDownMin(nData->m_min);
-			SetUpDownAuto(nData->m_Auto);
-			if (nData->m_win_data.m_hWnd)
+#pragma warning(push)
+#pragma warning(disable:26454)// 算术溢出
+			if (((NMHDR*)lParam)->code == UDN_DELTAPOS)
 			{
-				BindHwnd(nData->m_win_data.m_hWnd);
+				auto pnmud = (NMUPDOWN*)lParam;
+				if (m_CtrlSCInfo.count(pnmud->hdr.hwndFrom))
+					return !(m_CtrlSCInfo[pnmud->hdr.hwndFrom]->OnDeltaPos(pnmud->iPos, pnmud->iDelta));
 			}
+#pragma warning(pop)
 		}
-		else
+		break;
+
+		case WM_DESTROY:
+			m_SM.OnParentDestroy(hWnd);
+			break;
+		}
+
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+	}
+
+	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+	{
+		auto p = (CUpDown*)dwRefData;
+		switch (uMsg)
 		{
-			SetUpDownMax(100);
-			SetUpDownMin(0);
+		case WM_DESTROY:
+			m_SM.OnCtrlDestroy(p);
+			delete p;
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
+		case WM_SHOWWINDOW:
+			CHECK_PARENT_CHANGE;
+			break;
 		}
-		//绑定容器句柄和对象
-		SetWindowLongPtrW(m_hParentWnd, GWL_USERDATA, (LONG_PTR)this);
-		//绑定容器回调函数
-		m_oldProc = (WNDPROC)SetWindowLongW(m_hParentWnd, GWL_WNDPROC, (LONG_PTR)WndProc);
-		//子类化组件
-		SetWindowLongPtrW(m_hWnd, GWL_USERDATA, (LONG_PTR)this);
-		//记录原始回调
-		m_ColdProc = (WNDPROC)SetWindowLongW(m_hWnd, GWL_WNDPROC, (LONG_PTR)WndCProc);
-		SetPos(cx, cy);
 
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
-	DWORD GetID() const {
-
-		return m_dwWinFormID;
-	}
-	DWORD GetUID() const {
-
-		return m_dwUnitID;
-	}
-	WNDPROC GetCOldProc() const {
-		if (!m_hWnd)
-		{
-			return 0;
-		}
-		if (m_ColdProc <= 0)
-		{
-			return 0;
-		}
-		return m_ColdProc;
-	}
-	//按下回调
-	void OnDeltaPos(int nID)
+	CUpDown() = delete;
+	CUpDown(STD_ECTRL_CREATE_ARGS)
 	{
-		EVENT_NOTIFY event(m_dwWinFormID, m_dwUnitID, 0);
-		event.m_nArgCount = 1;  // 一个参数。  
-		event.m_nArgValue[0] = nID;
-		elibstl::NotifySys(NRS_EVENT_NOTIFY, (DWORD) & event, 0);
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
 
-
-	}
-	//设置自动,自动和绑定窗口必须同时，否则不会执行
-	void SetUpDownAuto(bool nIsAuto) {
-		if (!m_hParentWnd || !m_hWnd)
+		if (pAllData)
 		{
-			return;
-		}
-		DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-		if (nIsAuto)
-		{
-			dwStyle |= UDS_SETBUDDYINT;
+			memcpy(&m_Info, (BYTE*)pAllData + cbBaseData, sizeof(EUPDOWNDATA));
 		}
 		else
 		{
-			dwStyle &= ~UDS_SETBUDDYINT;
+			m_Info.bHousands = TRUE;
 		}
-		SetWindowLong(m_hWnd, GWL_STYLE, dwStyle);
-	}
-	//取自动
-	bool GetUpDownAuto() {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return 0;
-		}
-		DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-		return (dwStyle & UDS_SETBUDDYINT) != 0;
+		m_Info.iVer = DATA_VER_UPDOWN_1;
 
+		DWORD dwUDStyle = UDS_SETBUDDYINT |
+			elibstl::MultiSelect<DWORD>(m_Info.iBuddyAlign, 0, UDS_ALIGNLEFT | WS_VISIBLE, UDS_ALIGNRIGHT | WS_VISIBLE);
+		if (m_Info.bAutoBuddy)
+			dwUDStyle |= UDS_AUTOBUDDY;
+		if (m_Info.iDirection)
+			dwUDStyle |= UDS_HORZ;
+		if (m_Info.bArrowKeys)
+			dwUDStyle |= UDS_ARROWKEYS;
+		if (m_Info.bHotTrack)
+			dwUDStyle |= UDS_HOTTRACK;
+
+		m_hWnd = CreateWindowExW(0, UPDOWN_CLASSW, NULL, WS_CLIPSIBLINGS | WS_CHILD | dwUDStyle,
+			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+		m_SM.OnCtrlCreate(this);
+		m_hParent = hParent;
+		// SetDirection(m_Info.iDirection);
+		SetMin(m_Info.iMin);
+		SetMax(m_Info.iMax);
+		SetAutoBuddy(m_Info.bAutoBuddy);
+		// SetBuddyAlign(m_Info.iBuddyAlign);
+		SetBase(m_Info.iValueBase);
+		SetHousands(m_Info.bHousands);
+		// SetArrowKeys(m_Info.bArrowKeys);
+		// SetHotTrack(m_Info.bHotTrack);
+		SetPos(m_Info.iPos);// 不知道为什么，设置了伙伴窗口之后这个不管用
+		InitBase0(pAllData);
 	}
-	//容器大小被改变时请调用此函数
-	BOOL SetPos(int width, int height) {
-		if (!m_hWnd || !m_hParentWnd)
-		{
-			return FALSE;
-		}
-		return SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER | SWP_NOMOVE);
-	}
-	//取容器句柄
-	HWND GetContainerHwnd() {
-		return m_hParentWnd;
-	}
-	//取调节器句柄
-	HWND GetUpDownHwnd() {
-		if (!m_hParentWnd)
-		{
-			return 0;
-		}
-		return m_hWnd;
-	}
-	//取窗口原过程
-	WNDPROC GetOldProc() {
-		if (!m_hParentWnd)
-		{
-			return nullptr;
-		}
-		if (m_oldProc < 0)
-		{
-			return nullptr;
-		}
-		return m_oldProc;
-	}
-	//取调节器上限
-	int GetUpDownMax() {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return 0;
-		}
-		int nMax;
-		SendMessageW(m_hWnd, UDM_GETRANGE32, NULL, reinterpret_cast<LPARAM>(&nMax));
-		return nMax;
-	}
-	//取调节器下限
-	int GetUpDownMin() {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return 0;
-		}
-		int nMin;
-		SendMessageW(m_hWnd, UDM_GETRANGE32, reinterpret_cast<WPARAM>(&nMin), NULL);
-		return nMin;
-	}
-	//置调节器上限
-	bool SetUpDownMax(int nMax) {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return false;
-		}
-		return SendMessageW(m_hWnd, UDM_SETRANGE32, GetUpDownMin(), nMax);
-	}
-	//置调节器下限
-	bool SetUpDownMin(int nMin) {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return false;
-		}
-		return SendMessageW(m_hWnd, UDM_SETRANGE32, nMin, GetUpDownMax());
-	}
-	//设置调节器横向
-	void SetDirection(bool isHorizontal)
+
+	void SetDirection(int iDirection)
 	{
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return;
-		}
-		DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-		if (isHorizontal)
-			dwStyle |= UDS_HORZ;
+		m_Info.iDirection = iDirection;
+		if (iDirection)
+			elibstl::ModifyWindowStyle(m_hWnd, UDS_HORZ, UDS_HORZ);
 		else
-			dwStyle &= ~UDS_HORZ;
-		SetWindowLong(m_hWnd, GWL_STYLE, dwStyle);
-		RECT rect = { 0,0,100,100 };
-		InvalidateRect(m_hWnd, &rect, TRUE);
+			elibstl::ModifyWindowStyle(m_hWnd, 0, UDS_HORZ);
 	}
-	//取调节器是否横向
-	bool IsHorizontal()
+
+	eStlInline int GetDirection()
 	{
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return false;
-		}
-		DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
-		return (dwStyle & UDS_HORZ) != 0;
+		if (m_bInDesignMode)
+			return m_Info.iDirection;
+		else
+			return (int)elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_HORZ);
 	}
-	//绑定窗口
-	void BindHwnd(HWND nContorl) {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return;
-		}
-		if (nContorl == 0)//如果输入为0则取消绑定
-		{
-			memset(&m_BindWinow, 0, sizeof(_EBinWindowData));
-			SendMessage(m_hWnd, UDM_SETBUDDY, 0, 0);
-		}
-		if (!IsWindow(nContorl))
-		{
-			return;
-		}
-		m_BindWinow.m_hWnd = nContorl;
-		GetWindowRect(m_hWnd, &m_BindWinow.m_Rect);
-		SendMessage(m_hWnd, UDM_SETBUDDY, reinterpret_cast <WPARAM>(m_BindWinow.m_hWnd), 0);
+
+	eStlInline void SetMin(int iMin)
+	{
+		m_Info.iMin = iMin;
+		int iMax;
+		SendMessageW(m_hWnd, UDM_GETRANGE32, NULL, (LPARAM)&iMax);
+		SendMessageW(m_hWnd, UDM_SETRANGE32, iMin, iMax);
 	}
-	//取绑定的窗口
-	HWND GetBindHwnd() {
-		if (!m_hParentWnd || !m_hWnd)
-		{
-			return 0;
-		}
-		return m_BindWinow.m_hWnd;
+
+	eStlInline void SetMax(int iMax)
+	{
+		m_Info.iMax = iMax;
+		int iMin;
+		SendMessageW(m_hWnd, UDM_GETRANGE32, (WPARAM)&iMin, NULL);
+		SendMessageW(m_hWnd, UDM_SETRANGE32, iMin, iMax);
 	}
-	//取绑定的窗口数据
-	BINDWINDOWDATA GetBindHwndData() {
-		if (!m_hParentWnd || !m_hWnd)
+
+	eStlInline void GetRange(int* piMin = NULL, int* piMax = NULL)
+	{
+		if (m_bInDesignMode)
 		{
-			return {};
+			if (piMin)
+				*piMin = m_Info.iMin;
+			if (piMax)
+				*piMax = m_Info.iMax;
 		}
-		return m_BindWinow;
+		else
+			SendMessageW(m_hWnd, UDM_GETRANGE32, (WPARAM)piMin, (LPARAM)piMax);
+	}
+
+	eStlInline void SetPos(int iPos)
+	{
+		m_Info.iPos = iPos;
+		SendMessageW(m_hWnd, UDM_SETPOS, 0, iPos);
+	}
+
+	eStlInline int GetPos()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iPos;
+		else
+			return SendMessageW(m_hWnd, UDM_GETPOS32, 0, NULL);
+	}
+
+	eStlInline void SetAutoBuddy(BOOL bAutoBuddy)
+	{
+		m_Info.bAutoBuddy = bAutoBuddy;
+		elibstl::ModifyWindowStyle(m_hWnd, (bAutoBuddy ? UDS_AUTOBUDDY : 0), UDS_AUTOBUDDY);
+	}
+
+	eStlInline BOOL GetAutoBuddy()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bAutoBuddy;
+		else
+			elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_AUTOBUDDY);
+	}
+
+	eStlInline void SetBuddy(HWND hBuddy)
+	{
+		SendMessageW(m_hWnd, UDM_SETBUDDY, (WPARAM)hBuddy, 0);
+	}
+
+	eStlInline HWND GetBuddy()
+	{
+		return (HWND)SendMessageW(m_hWnd, UDM_GETBUDDY, 0, 0);
+	}
+
+	eStlInline void SetBuddyAlign(int iAlign)
+	{
+		m_Info.iBuddyAlign = iAlign;
+		elibstl::ModifyWindowStyle(
+			m_hWnd,
+			elibstl::MultiSelect<DWORD>(iAlign, 0, UDS_ALIGNLEFT, UDS_ALIGNRIGHT),
+			UDS_ALIGNLEFT | UDS_ALIGNRIGHT);
+	}
+
+	eStlInline int GetBuddyAlign()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iBuddyAlign;
+		else
+		{
+			int i = MultiSelectWndStyle(m_hWnd, UDS_ALIGNLEFT, UDS_ALIGNRIGHT);
+			if (i >= 0)
+				return i + 1;
+			else
+				return 0;
+		}
+	}
+
+	eStlInline void SetBase(int iBase)
+	{
+		m_Info.iValueBase = iBase;
+		SendMessageW(m_hWnd, UDM_SETBASE, (iBase ? 16 : 10), 0);
+	}
+
+	eStlInline int GetBase()
+	{
+		if (m_bInDesignMode)
+			return m_Info.iValueBase;
+		else
+			return (int)(SendMessageW(m_hWnd, UDM_GETBASE, 0, 0) == 16);
+	}
+
+	eStlInline void SetHousands(BOOL bHousands)
+	{
+		m_Info.bHousands = bHousands;
+		elibstl::ModifyWindowStyle(m_hWnd, (bHousands ? 0 : UDS_NOTHOUSANDS), UDS_NOTHOUSANDS);
+	}
+
+	eStlInline BOOL GetHousands()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bHousands;
+		else
+			return !elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_NOTHOUSANDS);
+	}
+
+	eStlInline void SetArrowKeys(BOOL bArrowKeys)
+	{
+		m_Info.bArrowKeys = bArrowKeys;
+	}
+
+	eStlInline BOOL GetArrowKeys()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bArrowKeys;
+		else
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_ARROWKEYS);
+	}
+
+	eStlInline void SetHotTrack(BOOL bHotTrack)
+	{
+		m_Info.bHotTrack = bHotTrack;
+	}
+
+	eStlInline BOOL GetHotTrack()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bHotTrack;
+		else
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_HOTTRACK);
+	}
+
+	HGLOBAL FlattenInfo() override
+	{
+		BYTE* p;
+		SIZE_T cbBaseData;
+		auto hGlobal = FlattenInfoBase0(sizeof(EUPDOWNDATA), &cbBaseData);
+		if (!hGlobal)
+			goto Fail;
+		p = (BYTE*)GlobalLock(hGlobal);
+		if (!p)
+			goto Fail;
+		// 结构
+		p += cbBaseData;
+		memcpy(p, &m_Info, sizeof(EUPDOWNDATA));
+	Fail:
+		return hGlobal;
+	}
+
+	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
+	{
+		auto pButton = new CUpDown(STD_ECTRL_CREATE_REAL_ARGS);
+		return elibstl::make_cwnd(pButton->GetHWND());
+	}
+
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+
+		switch (nPropertyIndex)
+		{
+		case 0:// 方向
+			p->SetDirection(pPropertyVaule->m_int);
+			break;
+		case 1:// 最小位置
+			p->SetMin(pPropertyVaule->m_int);
+			break;
+		case 2:// 最大位置
+			p->SetMax(pPropertyVaule->m_int);
+			break;
+		case 3:// 位置
+			p->SetPos(pPropertyVaule->m_int);
+			break;
+		case 4:// 自动选择伙伴窗口
+			p->SetAutoBuddy(pPropertyVaule->m_bool);
+			break;
+		case 5:// 伙伴窗口
+			p->SetBuddy((HWND)pPropertyVaule->m_int);
+			break;
+		case 6:// 伙伴窗口定位方式
+			p->SetBuddyAlign(pPropertyVaule->m_int);
+			break;
+		case 7:// 数值进制
+			p->SetBase(pPropertyVaule->m_int);
+			break;
+		case 8:// 是否插入千分符
+			p->SetHousands(pPropertyVaule->m_bool);
+			break;
+		case 9:// 是否由上下箭头控制
+			p->SetArrowKeys(pPropertyVaule->m_bool);
+			return TRUE;
+		case 10:// 是否热点跟踪
+			p->SetHotTrack(pPropertyVaule->m_bool);
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	static HGLOBAL WINAPI EGetAlldata(HUNIT hUnit)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+		return p->FlattenInfo();
+	}
+
+	static BOOL WINAPI EGetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
+	{
+		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
+
+		switch (nPropertyIndex)
+		{
+		case 0:// 方向
+			pPropertyVaule->m_int = p->GetDirection();
+			break;
+		case 1:// 最小位置
+			p->GetRange(&pPropertyVaule->m_int);
+			break;
+		case 2:// 最大位置
+			p->GetRange(NULL, &pPropertyVaule->m_int);
+			break;
+		case 3:// 位置
+			pPropertyVaule->m_int = p->GetPos();
+			break;
+		case 4:// 自动选择伙伴窗口
+			pPropertyVaule->m_bool = p->GetAutoBuddy();
+			break;
+		case 5:// 伙伴窗口
+			pPropertyVaule->m_int = (int)p->GetBuddy();
+			break;
+		case 6:// 伙伴窗口定位方式
+			pPropertyVaule->m_int = p->GetBuddyAlign();
+			break;
+		case 7:// 数值进制
+			pPropertyVaule->m_int = p->GetBase();
+			break;
+		case 8:// 是否插入千分符
+			pPropertyVaule->m_bool = p->GetHousands();
+			break;
+		case 9:// 是否由上下箭头控制
+			pPropertyVaule->m_bool = p->GetArrowKeys();
+			break;
+		case 10:// 是否热点跟踪
+			pPropertyVaule->m_bool = p->GetHotTrack();
+			break;
+		}
+
+		return TRUE;
 	}
 };
-
-
-#pragma region 易语言接口函数
-
-#pragma endregion
-
-static BOOL WINAPI Change(HUNIT hUnit, INT nPropertyIndex,  // 被修改的属性索引
-	UNIT_PROPERTY_VALUE* pPropertyVaule, // 用作修改的相应属性数据
-	LPTSTR* ppszTipText) {  //目前尚未使用
-
-
-	eUpDown* pEupDown = elibstl::get_obj_from_hunit<eUpDown*>(hUnit);
-	if (!pEupDown)
-	{
-		return false;
-	}
-	switch (nPropertyIndex)
-	{
-	case 0:
-		pEupDown->SetUpDownAuto(pPropertyVaule->m_bool);
-		return TRUE;
-	case 1:
-		pEupDown->SetUpDownMin(pPropertyVaule->m_int);
-		return TRUE;
-	case 2:
-		pEupDown->SetUpDownMax(pPropertyVaule->m_int);
-		return TRUE;
-	case 3:
-		pEupDown->SetDirection(pPropertyVaule->m_int);
-		return TRUE;
-	case 4:
-	{
-		pEupDown->BindHwnd(reinterpret_cast<HWND>(pPropertyVaule->m_int));
-		return TRUE;
-	}
-	default:
-
-		break;
-	}
-	return FALSE;
-}
-static BOOL WINAPI GetData(HUNIT hUnit, INT nPropertyIndex, PUNIT_PROPERTY_VALUE pPropertyVaule)
-{
-	eUpDown* pEupDown = elibstl::get_obj_from_hunit<eUpDown*>(hUnit);
-	if (!pEupDown)
-	{
-		return false;
-	}
-	switch (nPropertyIndex)
-	{
-	case 0:
-	{
-		pPropertyVaule->m_bool = pEupDown->GetUpDownAuto();
-		break;
-	}
-	case 1:
-		pPropertyVaule->m_int = pEupDown->GetUpDownMin();
-
-		break;
-	case 2:
-		pPropertyVaule->m_int = pEupDown->GetUpDownMax();
-		break;
-	case 3:
-	{
-		pPropertyVaule->m_int = pEupDown->IsHorizontal();
-		break;
-	}
-	case 4:
-	{
-		pPropertyVaule->m_int = reinterpret_cast<INT>(pEupDown->GetBindHwnd());
-		break;
-	}
-
-	default:
-
-		return false;
-	}
-	return false;
-}
-static HGLOBAL WINAPI GetAlldata(HUNIT hUnit)
-{
-	eUpDown* pEupDown = elibstl::get_obj_from_hunit<eUpDown*>(hUnit);
-	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, sizeof(EUODOWNDATA));
-	EUODOWNDATA temp;
-	temp.m_Auto = pEupDown->GetUpDownAuto();
-	temp.m_IsHorizontal = pEupDown->IsHorizontal();
-	temp.m_max = pEupDown->GetUpDownMax();
-	temp.m_min = pEupDown->GetUpDownMin();
-	temp.m_win_data = pEupDown->GetBindHwndData();
-	if (hGlobal)
-	{
-		PVOID pGlobal = ::GlobalLock(hGlobal);
-		if (pGlobal)
-		{
-			memcpy(pGlobal, &temp, sizeof(EUODOWNDATA));
-			::GlobalUnlock(hGlobal);
-		}
-	}
-	return  hGlobal;
-}
-static HUNIT WINAPI Create(
-	LPBYTE pAllPropertyData,            //   指向本窗口单元的已有属性数据, 由本窗口单元的ITF_GET_PROPERTY_DATA接口产生, 如果没有数据则为NULL
-	INT nAllPropertyDataSize,           //   提供pAllPropertyData所指向数据的尺寸, 如果没有则为0
-	DWORD dwStyle,                      //   预先设置的窗口风格
-	HWND hParentWnd,                    //   父窗口句柄
-	UINT uID,                           //   在父窗口中的ID
-	HMENU hMenu,                        //   未使用
-	INT x, INT y, INT cx, INT cy,       //   指定位置及尺寸
-	DWORD dwWinFormID, DWORD dwUnitID,  //   本窗口单元所在窗口及本身的ID, 用作通知到系统
-	HWND hDesignWnd,                    //   如果blInDesignMode为真, 则hDesignWnd提供所设计窗口的窗口句柄
-	BOOL blInDesignMode                 //   说明是否被易语言IDE调用以进行可视化设计, 运行时为假
-)
-{
-	eUpDown* pUpDown = new eUpDown(pAllPropertyData, nAllPropertyDataSize, dwStyle, x, y, cx, cy, hParentWnd, uID, dwWinFormID, dwUnitID);
-	return elibstl::make_cwnd(pUpDown->GetContainerHwnd());
-}
-static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
-{
-	switch (nMsg)
-	{
-	case NU_GET_CREATE_SIZE_IN_DESIGNER:
-	{
-		*((int*)dwParam1) = 17;
-		*((int*)dwParam2) = 110;
-	}
-	return TRUE;
-	}
-	return FALSE;
-}
-
+SUBCLASS_MGR_INIT(CUpDown, SCID_UPDOWNPARENT, SCID_UPDOWN)
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
 	case ITF_CREATE_UNIT:
-	{
-		// 创建组件
-		return (PFN_INTERFACE)Create;
-	}
+		return (PFN_INTERFACE)CUpDown::ECreate;
 	case ITF_NOTIFY_PROPERTY_CHANGED:
-	{
-		// 通知某属性数据被用户修改
-		return (PFN_INTERFACE)Change;
-	}
+		return (PFN_INTERFACE)CUpDown::EChange;
 	case ITF_GET_ALL_PROPERTY_DATA:
-	{
-		// 取全部属性数据
-		return (PFN_INTERFACE)GetAlldata;
-	}
+		return (PFN_INTERFACE)CUpDown::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
-	{
-		// 取某属性数据
-		return (PFN_INTERFACE)GetData;
-	}
-	case ITF_GET_NOTIFY_RECEIVER:
-	{
-		// 取组件的附加通知接收者(PFN_ON_NOTIFY_UNIT)
-		return (PFN_INTERFACE)DefSize;
-	}
-	default:
-		return NULL;
+		return (PFN_INTERFACE)CUpDown::EGetData;
 	}
 	return NULL;
 }
 
 
+static EVENT_ARG_INFO2 s_Event_Arg[] =
+{
+	{"当前位置", "", 0, SDT_INT},
+	{"建议改变的值", "", 0, SDT_INT},
+};
+static EVENT_INFO2 s_Event_UpDown[] =
+{
+	/*000*/ {"调节钮被按下", "当调节钮被按下时触发。返回真允许位置更改，返回假禁止位置更改", _EVENT_OS(OS_ALL) | EV_IS_VER2, 
+			ARRAYSIZE(s_Event_Arg), s_Event_Arg, SDT_BOOL},
+};
+
+static UNIT_PROPERTY s_Member_UpDown[] =
+{
+	FIXED_WIN_UNIT_PROPERTY,
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
+
+	/*000*/  {"方向", "Direction", "", UD_PICK_INT, _PROP_OS(OS_ALL),  "纵向\0""横向\0""\0"},
+	/*001*/  {"最小位置", "Min", "", UD_INT, _PROP_OS(OS_ALL), NULL},
+	/*002*/  {"最大位置", "Max", "", UD_INT, _PROP_OS(OS_ALL), NULL},
+	/*003*/  {"位置", "Pos", "若设置了伙伴窗口，则必须在设置之后使用代码赋值", UD_INT, _PROP_OS(OS_ALL), NULL},
+	/*004*/  {"自动选择伙伴窗口", "BuddyAlign", "是否自动选择调节器Z序之上的第一个窗口为伙伴窗口", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*005*/  {"伙伴窗口", "BuddyWindow", "", UD_INT, _PROP_OS(OS_ALL) | UW_CANNOT_INIT, NULL},
+	/*006*/  {"伙伴窗口定位方式", "BuddyAlign", "", UD_PICK_INT, _PROP_OS(OS_ALL), "无\0""左边\0""右边\0""\0"},
+	/*007*/  {"数值进制", "Base", "", UD_PICK_INT, _PROP_OS(OS_ALL), "十进制\0""十六进制\0""\0"},
+	/*008*/  {"是否插入千分符", "Housands", "", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*009*/  {"是否由上下箭头键控制", "ArrowKeys", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*010*/  {"是否热点跟踪", "HotTrack", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+};
 
 
-static INT s_cmd[] = { 121 };
-
-
-namespace elibstl {
-
-	LIB_DATA_TYPE_INFO UpDown = {
-		"调节器",//中文名称
-		"UpDown",//英文名称
-		"类似编辑的调节器，具有更多的功能和拓展性",//说明
-		sizeof(s_cmd) / sizeof(INT),//命令数量
-		s_cmd,//在全局函数中对应的索引
-		_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-		IDB_UPDOWN_EX,//资源ID
-		sizeof(s_event) / sizeof(s_event[0]),
-		s_event,//事件
-		sizeof(s_member) / sizeof(s_member[0]),//属性数
-		s_member,//属性指针
-		libstl_GetInterface_UpDown,//组件交互子程序
-		NULL,//成员数量
-		NULL//成员数据数组
-	};
-}
-
-
-EXTERN_C void Fn_EUpDown_GetHwnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+static INT s_Cmd_UpDown[] = { 121,179 };
+EXTERN_C void libstl_UpDown_SetAccel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	eUpDown* pEUpDown = (eUpDown*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
+	int cAccel = elibstl::get_array_count(pArgInf[1].m_pAryData);
+	if (cAccel != elibstl::get_array_count(pArgInf[2].m_pAryData))
+	{
+		pRetData->m_bool = FALSE;
+		return;
+	}
 
-	pRetData->m_int = reinterpret_cast<INT>(pEUpDown->GetUpDownHwnd());
+	if (cAccel)
+	{
+		int* pSec = (int*)elibstl::get_array_data_base(pArgInf[1].m_pAryData);
+		int* pInc = (int*)elibstl::get_array_data_base(pArgInf[2].m_pAryData);
+		auto puda = new UDACCEL[cAccel];
+		for (int i = 0; i < cAccel; ++i)
+		{
+			puda[i].nSec = pSec[i];
+			puda[i].nInc = pInc[i];
+		}
+		pRetData->m_bool = (BOOL)SendMessageW(hWnd, UDM_SETACCEL, cAccel, (LPARAM)puda);
+		delete[] puda;
+	}
+	else
+	{
+		pRetData->m_bool = (BOOL)SendMessageW(hWnd, UDM_SETACCEL, 0, 0);
+	}
 }
-
-
-FucInfo EUpDown_GetHwnd = { {
-		/*ccname*/  ("取组件句柄"),
-		/*egname*/  ("GetHwnd"),
-		/*explain*/ ("取窗口句柄获取的为容器句柄,此命令为取出调节器组件的句柄。"),
-		/*category*/-1,
-		/*state*/   NULL,
-		/*ret*/     SDT_INT,
-		/*reserved*/NULL,
-		/*level*/   LVL_HIGH,
+static ARG_INFO s_ArgsSetAccel[] =
+{
+	{
+		/*name*/    "秒数",
+		/*explain*/ "必须按从小到大的顺序排列",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/0,
-		/*arg lp*/  0,
-	} ,Fn_EUpDown_GetHwnd ,"Fn_EUpDown_GetHwnd" };
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_ARRAY_DATA,
+	},
+	{
+		/*name*/    "增量",
+		/*explain*/ "成员数必须与参数一相同，且成员须一一对应",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_ARRAY_DATA,
+	}
+};
+FucInfo Fn_UpDownSetAccel = { {
+		/*ccname*/  "置加速度",
+		/*egname*/  "SetAccel",
+		/*explain*/ "设置按住调节钮后经过指定秒数后的增量",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetAccel),
+		/*arg lp*/  s_ArgsSetAccel,
+	} , libstl_UpDown_SetAccel ,"libstl_UpDown_SetAccel" };
 
+EXTERN_C void libstl_UpDown_GetAccel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	elibstl::free(*pArgInf[2].m_ppAryData);
+	elibstl::free(*pArgInf[3].m_ppAryData);
 
+	int cAccel = SendMessageW(hWnd, UDM_GETACCEL, 0, NULL);
+	if (!cAccel)
+	{
+		*pArgInf[2].m_ppAryData = NULL;
+		*pArgInf[3].m_ppAryData = NULL;
+		pRetData->m_int = 0;
+		return;
+	}
+	int cNeedAccel;
+	if (pArgInf[1].m_dtDataType == _SDT_NULL)
+		cNeedAccel = cAccel;
+	else if (pArgInf[1].m_int <= 0 || pArgInf[1].m_int > cAccel)
+		cNeedAccel = cAccel;
+	else
+		cNeedAccel = pArgInf[1].m_int;
+
+	*pArgInf[2].m_ppAryData = elibstl::malloc_array<int>(cNeedAccel);
+	*pArgInf[3].m_ppAryData = elibstl::malloc_array<int>(cNeedAccel);
+	int* pSec = (int*)elibstl::get_array_data_base(*pArgInf[2].m_ppAryData);
+	int* pInc = (int*)elibstl::get_array_data_base(*pArgInf[3].m_ppAryData);
+	auto puda = new UDACCEL[cNeedAccel];
+	SendMessageW(hWnd, UDM_GETACCEL, cAccel, (LPARAM)puda);
+	for (int i = 0; i < cNeedAccel; ++i)
+	{
+		pSec[i] = puda[i].nSec;
+		pInc[i] = puda[i].nInc;
+	}
+	delete[] puda;
+	pRetData->m_int = cAccel;
+}
+static ARG_INFO s_ArgsGetAccel[] =
+{
+	{
+		/*name*/    "加速度数量",
+		/*explain*/ "若该参数为空或小于等于0或大于实际加速度数量，则返回所有加速度。",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "接收秒数变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR_ARRAY,
+	},
+	{
+		/*name*/    "接收增量变量",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_RECEIVE_VAR_ARRAY,
+	}
+};
+FucInfo Fn_UpDownGetAccel = { {
+		/*ccname*/  "取加速度",
+		/*egname*/  "GetAccel",
+		/*explain*/ "返回控件实际拥有的加速度数量",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetAccel),
+		/*arg lp*/  s_ArgsGetAccel,
+	} , libstl_UpDown_GetAccel ,"libstl_UpDown_GetAccel" };
+
+ESTL_NAMESPACE_BEGIN
+LIB_DATA_TYPE_INFO UpDown = {
+	"调节器Ex",//中文名称
+	"UpDown",//英文名称
+	"",//说明
+	ARRAYSIZE(s_Cmd_UpDown),//命令数量
+	s_Cmd_UpDown,//在全局函数中对应的索引
+	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
+	IDB_UPDOWN_EX,//资源ID
+	ARRAYSIZE(s_Event_UpDown),
+	s_Event_UpDown,//事件
+	ARRAYSIZE(s_Member_UpDown),//属性数
+	s_Member_UpDown,//属性指针
+	libstl_GetInterface_UpDown,//组件交互子程序
+	NULL,//成员数量
+	NULL//成员数据数组
+};
+ESTL_NAMESPACE_END

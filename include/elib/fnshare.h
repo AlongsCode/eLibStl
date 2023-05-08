@@ -344,6 +344,13 @@ namespace elibstl
 	{
 		return reinterpret_cast<INT*>(static_cast<char*>(pBase) + dimension * sizeof(INT))[0];
 	}
+	inline BYTE* get_array_data_base(void* pBase, int iDimension = 1)
+	{
+		if (pBase)
+			return reinterpret_cast<BYTE*>(static_cast<BYTE*>(pBase) + (iDimension + 1) * sizeof(INT));
+		else
+			return NULL;
+	}
 	template <typename T>
 	void* create_array(void* data, size_t size)
 	{

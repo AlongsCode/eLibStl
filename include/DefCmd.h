@@ -121,7 +121,7 @@ get_cpu_id,/*获取CPU序列号*/\
 network_post/*网页访问*/\
 ,capitalize_first_letter/*首字母大写*/\
 ,Fn_BtnGetIdealSize/*按钮.取理想尺寸*/\
-,EUpDown_GetHwnd/*调节器取组件句柄*/\
+,Fn_UpDownSetAccel/*调节器.置加速度*/\
 ,e_debugput/*调试*/\
 ,e_CallEfun/*执行函数*/\
 ,_e_delay/*延迟Ex*/\
@@ -179,7 +179,7 @@ network_post/*网页访问*/\
 ,eto_wstring/*到文本W*/\
 ,e_malloc/*内存申请*/\
 ,e_free/*内存释放*/\
-
+,Fn_UpDownGetAccel/*调节器.取加速度*/\
 
 
 

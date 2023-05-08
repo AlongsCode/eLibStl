@@ -332,9 +332,12 @@ private:
 		case WM_NOTIFY:
 		{
 			auto p = (NMHDR*)lParam;
+#pragma warning(push)
+#pragma warning(disable:26454)// ËãÊõÒç³ö
 			if (p->code == BCN_DROPDOWN)
 				if (m_CtrlSCInfo.count(p->hwndFrom))
-					m_CtrlSCInfo[p->hwndFrom]->OnDropDownClick();
+					m_CtrlSCInfo[p->hwndFrom]->OnDropDownClick();¡¢
+#pragma warning(pop)
 		}
 		break;
 
@@ -348,7 +351,6 @@ private:
 
 	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
-		HWND hh = GetParent(hWnd);
 		auto p = (CPushButton*)dwRefData;
 		switch (uMsg)
 		{
