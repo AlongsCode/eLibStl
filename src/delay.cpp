@@ -27,7 +27,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_e_delay(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	if (pArgInf[0].m_int <= 0) return;
-	auto iEnd = ::GetTickCount64() + pArgInf[0].m_int;
+	auto iEnd = ::GetTickCount64() + pArgInf[0].m_int64;
 	while (1)
 	{
 		elibstl::NotifySys(NRS_DO_EVENTS, 0, 0);

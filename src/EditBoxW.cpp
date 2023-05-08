@@ -79,7 +79,7 @@ private:
 
 	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
-		switch(uMsg)
+		switch (uMsg)
 		{
 		case WM_CTLCOLOREDIT:
 		{
@@ -801,7 +801,19 @@ public:
 		auto pButton = new CEdit(STD_ECTRL_CREATE_REAL_ARGS);
 		return elibstl::make_cwnd(pButton->GetHWND());
 	}
-
+	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 20;
+		}
+		return TRUE;
+		}
+		return FALSE;
+	}
 	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
@@ -957,7 +969,7 @@ public:
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 		PWSTR psz;
 		*pblModified = FALSE;
-		switch(nPropertyIndex)
+		switch (nPropertyIndex)
 		{
 		case 1:// 内容W
 		{
@@ -1027,6 +1039,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 		return (PFN_INTERFACE)CEdit::EInputW;
 	case ITF_PROPERTY_UPDATE_UI:
 		return (PFN_INTERFACE)CEdit::EPropUpdateUI;
+	case ITF_GET_NOTIFY_RECEIVER:
+		return (PFN_INTERFACE)CEdit::DefSize;
 	}
 	return NULL;
 }
@@ -1052,7 +1066,7 @@ static UNIT_PROPERTY s_Member_Edit[] =
 	/*009*/  {"是否允许多行", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 	/*010*/  {"滚动条", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""横向滚动条\0""纵向滚动条\0""横向及纵向滚动条\0""\0"},
 	/*011*/  {"对齐方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左对齐\0""居中\0""右对齐\0""\0"},
-	/*012*/  {"输入方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), 
+	/*012*/  {"输入方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN),
 					"通常\0""只读\0""密码\0""整数文本\0""小数文本\0""输入字节\0""输入短整数\0""输入整数\0""输入长整数\0""输入小数\0"
 					"输入双精度小数\0""输入日期时间\0""\0"},
 	/*013*/		{"密码遮盖字符W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
@@ -1070,7 +1084,7 @@ static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,1
 EXTERN_C void libstl_Edit_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	for (int i = 1; i <= nArgCount-1; ++i)
+	for (int i = 1; i <= nArgCount - 1; ++i)
 	{
 		SendMessageW(hWnd, EM_SETSEL, -2, -1);
 		SendMessageW(hWnd, EM_REPLACESEL, FALSE, (LPARAM)pArgInf[i].m_pBin + 8);
@@ -1112,7 +1126,7 @@ EXTERN_C void libstl_Edit_CharFromPos(PMDATA_INF pRetData, INT nArgCount, PMDATA
 		pRetData->m_int = -1;
 	else
 		pRetData->m_int = usPos;
-	if(pArgInf[3].m_pInt)
+	if (pArgInf[3].m_pInt)
 	{
 		usPos = HIWORD(dwRet);
 		if (usPos == 65535)
@@ -1797,8 +1811,8 @@ FucInfo Fn_EditSetModify = { {
 EXTERN_C void libstl_Edit_SetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	if (pArgInf[1].m_dtDataType == _SDT_NULL&& pArgInf[2].m_dtDataType == _SDT_NULL&& 
-		pArgInf[3].m_dtDataType == _SDT_NULL&& pArgInf[4].m_dtDataType == _SDT_NULL)
+	if (pArgInf[1].m_dtDataType == _SDT_NULL && pArgInf[2].m_dtDataType == _SDT_NULL &&
+		pArgInf[3].m_dtDataType == _SDT_NULL && pArgInf[4].m_dtDataType == _SDT_NULL)
 	{
 		SendMessageW(hWnd, EM_SETRECT, 0, NULL);
 		return;

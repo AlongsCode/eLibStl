@@ -6,6 +6,7 @@
 
 #include <unordered_map>
 
+
 #pragma warning(disable:4996)
 
 #define SCID_PUSHBTN		20230425'01u
@@ -494,7 +495,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_SETPROP
+			BTN_COMM_SETPROP
 
 		case 7:// 默认
 			p->SetDef(pPropertyVaule->m_int);
@@ -520,7 +521,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_GETPROP
+			BTN_COMM_GETPROP
 
 		case 7:// 默认
 			pPropertyVaule->m_int = p->GetDef();
@@ -532,6 +533,19 @@ public:
 		}
 
 		return TRUE;
+	}
+	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 32;
+		}
+		return TRUE;
+		}
+		return FALSE;
 	}
 
 	static BOOL WINAPI EInputW(HUNIT hUnit, INT nPropertyIndex, BOOL* pblModified, LPVOID pResultExtraData)
@@ -743,7 +757,19 @@ public:
 		else
 			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_LEFTTEXT);
 	}
-
+	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 24;
+		}
+		return TRUE;
+		}
+		return FALSE;
+	}
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
 		auto pButton = new CCheckButton(STD_ECTRL_CREATE_REAL_ARGS);
@@ -756,7 +782,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_SETPROP
+			BTN_COMM_SETPROP
 
 		case 7:// 类型
 			p->SetType(pPropertyVaule->m_int);
@@ -798,7 +824,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_GETPROP
+			BTN_COMM_GETPROP
 
 		case 7:// 类型
 			pPropertyVaule->m_int = p->GetType();
@@ -915,7 +941,7 @@ public:
 		m_pszNote = NULL;
 		if (m_InfoEx.cchNote)
 		{
-			elibstl::DupStringForNewDeleteW(m_pszNote, 
+			elibstl::DupStringForNewDeleteW(m_pszNote,
 				(PCWSTR)((BYTE*)pAllData + cbBaseData + sizeof(EBUTTONDATA_CMDLINK)), m_InfoEx.cchNote);
 		}
 
@@ -1080,7 +1106,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_SETPROP
+			BTN_COMM_SETPROP
 
 		case 7:// 注释文本
 			p->SetNote((PCWSTR)pPropertyVaule->m_data.m_pData);
@@ -1106,7 +1132,7 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		BTN_COMM_GETPROP
+			BTN_COMM_GETPROP
 
 		case 7:// 注释文本
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetNote();
@@ -1163,6 +1189,19 @@ public:
 		}
 
 		return TRUE;
+	}
+	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 110;
+			*((int*)dwParam2) = 45;
+		}
+		return TRUE;
+		}
+		return FALSE;
 	}
 };
 SUBCLASS_MGR_INIT(CCommandLink, SCID_CMDLINKPARENT, SCID_CMDLINK)
@@ -1223,7 +1262,7 @@ EXTERN_C void libstl_Button_GetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMD
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	if (!hWnd)
 		goto Fail;
-	if(!SendMessageW(hWnd, BCM_GETIDEALSIZE, 0, (LPARAM)&size))
+	if (!SendMessageW(hWnd, BCM_GETIDEALSIZE, 0, (LPARAM)&size))
 		goto Fail;
 	*pArgInf[1].m_pInt = size.cx;
 	*pArgInf[2].m_pInt = size.cy;
@@ -1285,6 +1324,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
 		return (PFN_INTERFACE)CPushButton::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CPushButton::EInputW;
+	case ITF_GET_NOTIFY_RECEIVER:
+		return (PFN_INTERFACE)CPushButton::DefSize;
 	}
 	return NULL;
 }
@@ -1303,6 +1344,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CheckButtonW(INT nInterfaceNO)
 		return (PFN_INTERFACE)CCheckButton::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CCheckButton::EInputW;
+	case ITF_GET_NOTIFY_RECEIVER:
+		return (PFN_INTERFACE)CCheckButton::DefSize;
 	}
 	return NULL;
 }
@@ -1323,6 +1366,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CommandLink(INT nInterfaceNO)
 		return (PFN_INTERFACE)CCommandLink::EInputW;
 	case ITF_PROPERTY_UPDATE_UI:
 		return (PFN_INTERFACE)CCommandLink::EPropUpdateUI;
+	case ITF_GET_NOTIFY_RECEIVER:
+		return (PFN_INTERFACE)CCommandLink::DefSize;
 	}
 	return NULL;
 }

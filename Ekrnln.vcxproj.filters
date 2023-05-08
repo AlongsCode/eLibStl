@@ -91,6 +91,12 @@
     <Filter Include="源文件\实现\全局命令\内存操作">
       <UniqueIdentifier>{ffa7435c-877c-49f4-9f8e-f4023cca4529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\进程线程携程\线程类">
+      <UniqueIdentifier>{41443718-16d3-4a26-a1e1-78cf61bd0736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\进程线程携程\进程类">
+      <UniqueIdentifier>{7e19edaa-72eb-45c8-81a8-e803ea405c2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -281,29 +287,11 @@
     <ClCompile Include="src\get_special_folder_path.cpp">
       <Filter>源文件\实现\全局命令\环境存取</Filter>
     </ClCompile>
-    <ClCompile Include="src\prevent_duplicate_execution.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
-    <ClCompile Include="src\atomic_increment.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
-    <ClCompile Include="src\atomic_exchange.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
-    <ClCompile Include="src\atomic_decrement.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
-    <ClCompile Include="src\atomic_addition.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
-    </ClCompile>
     <ClCompile Include="src\free_console.cpp">
       <Filter>源文件\实现\全局命令\控制台</Filter>
     </ClCompile>
     <ClCompile Include="src\get_ip_this_w.cpp">
       <Filter>源文件\实现\全局命令\网络通信</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kill_proc.cpp">
-      <Filter>源文件\实现\全局命令\进程线程携程</Filter>
     </ClCompile>
     <ClCompile Include="src\Is_64_bit.cpp">
       <Filter>源文件\实现\全局命令\操作系统</Filter>
@@ -390,6 +378,30 @@
       <Filter>源文件\实现\全局命令\内存操作</Filter>
     </ClCompile>
     <ClCompile Include="src\malloc.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\clean_console.cpp">
+      <Filter>源文件\实现\全局命令\控制台</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_addition.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\线程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_decrement.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\线程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_exchange.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\线程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atomic_increment.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\线程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kill_proc.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\进程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prevent_duplicate_execution.cpp">
+      <Filter>源文件\实现\全局命令\进程线程携程\进程类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memwrite.cpp">
       <Filter>源文件\实现\全局命令\内存操作</Filter>
     </ClCompile>
   </ItemGroup>
