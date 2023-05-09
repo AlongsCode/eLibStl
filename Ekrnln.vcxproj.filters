@@ -429,6 +429,5 @@
     <Image Include="res\ObjUpDown_Ex.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
-    <Image Include="res\updown_e.bmp" />
   </ItemGroup>
 </Project>
