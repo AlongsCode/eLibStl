@@ -142,15 +142,15 @@ network_post/*网页访问*/\
 ,edbs_read/*读*/\
 ,edbs_write/*写*/\
 , edbs_close/*关闭*/\
-,edbs_next\
-,edbs_previous\
-,edbs_clean\
-,edbs_begin\
-,edbs_commit\
-,edbs_get_current\
-,edbs_get_column_name\
-,edbs_get_column_num\
-,edbs_set_column_name\
+,edbs_next/*EDB.下一行*/\
+,edbs_previous/*EDB.上一行*/\
+,edbs_clean/*EDB.清空*/\
+,edbs_begin/*EDB.开启事务*/\
+,edbs_commit/*EDB.提交事务*/\
+,edbs_get_current/*EDB.当前行*/\
+,edbs_get_column_name/*EDB.字段名*/\
+,edbs_get_column_num/*EDB.字段数*/\
+,edbs_set_column_name/*EDB.置字段名*/\
 ,Fn_EditCanUndo/*编辑框.是否可撤销*/\
 ,Fn_EditEmptyUndoBuf/*编辑框.清空撤销队列*/\
 ,Fn_EditGetFirstLine/*编辑框.取第一可见行*/\

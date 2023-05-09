@@ -1,5 +1,5 @@
-#include "include/EcontrolHelp.h"
-#include "include/elib/krnllib.h"
+#include "EcontrolHelp.h"
+#include "elib\krnllib.h"
 
 class CMenu
 {

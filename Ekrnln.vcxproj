@@ -152,7 +152,6 @@
     <ResourceCompile Include="Ekrnln.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\ObjButton_W.bmp" />
     <Image Include="res\ObjCheckButton_W.bmp" />
     <Image Include="res\ObjClinet_Ex.bmp" />

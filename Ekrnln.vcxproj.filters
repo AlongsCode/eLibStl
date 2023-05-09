@@ -432,7 +432,6 @@
     <Image Include="res\ObjCheckButton_W.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
-    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\ObjComLinkButton_W.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
