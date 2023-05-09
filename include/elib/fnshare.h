@@ -16,7 +16,12 @@ namespace elibstl
 
 
 
-
+	struct ebin
+	{
+		std::uint32_t m_check;//恒为1
+		size_t m_size;//长度
+		std::uint8_t* m_data;//字节集指针
+	};
 
 
 

@@ -58,7 +58,11 @@ IDB_CLINET_EX           BITMAP                  "res\\ObjClinet_Ex.bmp"
 
 IDB_SERVER_EX           BITMAP                  "res\\ObjServer_Ex.bmp"
 
-IDB_UPDOWN_EX           BITMAP                  "res\\updown_e.bmp"
+IDB_UPDOWN_EX           BITMAP                  "res\\ObjUpDown_Ex.bmp"
+
+IDB_CHECKBUTTON_W       BITMAP                  "res\\ObjCheckButton_W.bmp"
+
+IDB_COMLINKBUTTON_W     BITMAP                  "res\\ObjComLinkButton_W.bmp"
 
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////

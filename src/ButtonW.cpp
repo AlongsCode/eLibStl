@@ -793,7 +793,7 @@ public:
 	Fail:
 		return hGlobal;
 	}
-	
+
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
 		auto pButton = new CCheckButton(STD_ECTRL_CREATE_REAL_ARGS);
@@ -1432,7 +1432,7 @@ LIB_DATA_TYPE_INFO CtButtonW =
 	ARRAYSIZE(s_Cmd_PushBtn),
 	s_Cmd_PushBtn,
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	103,				//资源ID
+	IDB_BUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_PushBtn),
 	s_Event_PushBtn,
 	ARRAYSIZE(s_Member_PushBtn),
@@ -1450,7 +1450,7 @@ LIB_DATA_TYPE_INFO CtCheckButtonW =
 	0,					//命令数量
 	0,					//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	103,				//资源ID
+	IDB_CHECKBUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_CheckBtn),
 	s_Event_CheckBtn,
 	ARRAYSIZE(s_Member_CheckBtn),
@@ -1468,7 +1468,7 @@ LIB_DATA_TYPE_INFO CtCommandLink =
 	0,					//命令数量
 	0,					//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	103,				//资源ID
+	IDB_COMLINKBUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_CmdLink),
 	s_Event_CmdLink,
 	ARRAYSIZE(s_Member_CmdLink),
