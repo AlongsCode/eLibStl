@@ -820,6 +820,9 @@ typedef struct
 	// 1、当用作传入参数时,如果该参数具有 AS_RECEIVE_VAR_OR_ARRAY 或AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
 	// 2、当用作传递参数数据时,如果为空白数据,则为 _SDT_NULL 。
 	DATA_TYPE m_dtDataType;
+
+
+
 } MDATA_INF;
 typedef MDATA_INF* PMDATA_INF;
 

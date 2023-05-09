@@ -8,6 +8,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<optional>
 #include<vector>
 #include<string>
+#include<map>
 namespace elibstl
 {
 	/*易库通信,调用易库命令等*/
@@ -118,6 +119,8 @@ namespace elibstl
 			return std::wstring_view();
 		}
 	}
+
+
 
 	inline HBITMAP make_hbit(LPBYTE pData, size_t nSize) {
 		return	(HBITMAP)NotifySys(NAS_GET_HBITMAP, (DWORD)pData, nSize);
@@ -295,7 +298,25 @@ namespace elibstl
 			*pnElementCount = nElementCount;
 		return reinterpret_cast<T>(pn_data + count);
 	}
+	template <typename T>
+	inline T get_array_element_inf(void* pAryData, size_t* pnElementCount)
+	{
+		if (pnElementCount != nullptr) *pnElementCount = 0;
+		if (pAryData == nullptr) return nullptr;
 
+		auto pn_data = static_cast<int*>(pAryData);
+		int count = *pn_data++; //获取维数
+
+		size_t nElementCount = 1; //数组元素数量
+		for (auto it = pn_data; it != pn_data + count; ++it)
+		{
+			nElementCount *= *it;
+		}
+
+		if (pnElementCount != nullptr)
+			*pnElementCount = nElementCount;
+		return reinterpret_cast<T>(pn_data + count);
+	}
 	template <typename T>
 	inline std::vector <T> get_array_element_inf(PMDATA_INF pAryData)
 	{
@@ -372,5 +393,338 @@ namespace elibstl
 		memcpy(p + 2, data, sizeof(T) * size);
 		return p;
 	}
+
+
+
+
+
+
+
+
+
+	/*参数类辅助函数*/
+
+//是否为数组
+	inline bool is_array(const MDATA_INF& pArgInf) {
+		return	(pArgInf.m_dtDataType & DT_IS_ARY) == DT_IS_ARY;
+	}
+	//移除数组标志
+	inline void remove_array_flags(PMDATA_INF pArgInf) {
+		pArgInf->m_dtDataType &= ~DT_IS_ARY;
+	}
+	// 添加数组标志
+	inline void add_array_flags(PMDATA_INF pArgInf) {
+		pArgInf->m_dtDataType |= DT_IS_ARY;
+	}
+	//取基础类型长度
+	inline size_t get_esys_datatype_size(DATA_TYPE pArgInf)
+	{
+		static  const std::map<DATA_TYPE, size_t> dataSizes = {
+			{SDT_BYTE, sizeof(BYTE)},
+			{SDT_SHORT, sizeof(SHORT)},
+			{SDT_BOOL, sizeof(BOOL)},
+			{SDT_INT, sizeof(INT)},
+			{SDT_FLOAT, sizeof(FLOAT)},
+			{SDT_SUB_PTR, sizeof(DWORD)},
+			{SDT_TEXT, sizeof(DWORD)},
+			{SDT_BIN, sizeof(DWORD)},
+			{SDT_INT64, sizeof(INT64)},
+			{SDT_DOUBLE, sizeof(DOUBLE)},
+			{SDT_DATE_TIME, sizeof(DATE)}
+		};
+		auto iter = dataSizes.find(pArgInf);
+		if (iter != dataSizes.end()) {
+			return iter->second;
+		}
+		return 0u;
+	}
+	//参数到文本,此代码会将易基本类型格式化为文本例如整形105会变为"105"
+	inline std::wstring arg_to_wstring(MDATA_INF pArgInf) {
+		if (is_array(pArgInf))//是数组
+		{
+			remove_array_flags(&pArgInf); //去除数组标志
+
+			auto szData = get_esys_datatype_size(pArgInf.m_dtDataType);
+
+			wchar_t* ret = nullptr;
+
+			if (szData != 0) {
+				auto array_to_string = [](void* pArry, size_t szData) -> wchar_t* {
+					size_t dwSize;
+
+					auto pText = elibstl::get_array_element_inf<wchar_t*>(pArry, &dwSize);
+
+					if (dwSize == 0)
+						return nullptr;
+
+					//最大肯能存在的unicode字符数
+					auto nMax = (dwSize * szData) / sizeof(wchar_t);
+
+					size_t nLen = 0;
+
+					while (nLen < nMax && pText[nLen] != L'\0')
+						nLen++;
+
+
+					if (nLen == 0)
+						return nullptr;
+
+					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::malloc((nLen + 1) * sizeof(wchar_t)));
+
+					memcpy(pNewText, pText, nLen * sizeof(wchar_t));
+
+					pNewText[nLen] = L'\0';
+
+					return pNewText;
+				};
+				ret = array_to_string(pArgInf.m_pAryData, szData);
+			}
+			//无论是否转换成功都将添加回数组标志
+			//pArgInf.add_array_flags();非拷贝取消
+
+			if (ret)
+				return ret;
+			else
+				return {};
+		}
+		else
+		{
+			std::wstring str;
+
+			if (pArgInf.m_dtDataType == SDT_TEXT) {
+				if (pArgInf.m_pText && *pArgInf.m_pText != '\0') {
+					int widesize = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, NULL, 0);
+					if (GetLastError() == ERROR_NO_UNICODE_TRANSLATION)
+					{
+						return {};
+					}
+					if (widesize == 0)
+					{
+						return {};
+					}
+					wchar_t* resultstring = new wchar_t[widesize];
+					int convresult = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, resultstring, widesize);
+					if (convresult != widesize)
+					{
+						return {};
+					}
+					str = resultstring;
+					delete[] resultstring;
+				}
+			}
+			//整数值类型
+			else if (pArgInf.m_dtDataType == SDT_BYTE || pArgInf.m_dtDataType == SDT_SHORT || pArgInf.m_dtDataType == SDT_INT ||
+				pArgInf.m_dtDataType == SDT_SUB_PTR) {
+				intptr_t nVal = 0;
+				if (pArgInf.m_dtDataType == SDT_BYTE)
+					nVal = pArgInf.m_byte;
+				else if (pArgInf.m_dtDataType == SDT_SHORT)
+					nVal = pArgInf.m_short;
+				else if (pArgInf.m_dtDataType == SDT_INT)
+					nVal = pArgInf.m_int;
+				else if (pArgInf.m_dtDataType == SDT_SUB_PTR)
+					nVal = pArgInf.m_int;
+				return  std::to_wstring(nVal);
+			}
+			else if (pArgInf.m_dtDataType == SDT_INT64) {
+				return  std::to_wstring(pArgInf.m_int64);
+			}
+			else if (pArgInf.m_dtDataType == SDT_FLOAT) {
+				str = std::to_wstring(pArgInf.m_float);
+				str = str.substr(0, str.find_last_not_of(L'0') + 1);
+				if (str.back() == L'.')
+					str.pop_back();
+			}
+			else if (pArgInf.m_dtDataType == SDT_DOUBLE) {
+				str = std::to_wstring(pArgInf.m_double);
+				str = str.substr(0, str.find_last_not_of(L'0') + 1);
+				if (str.back() == L'.')
+					str.pop_back();
+
+			}
+			else if (pArgInf.m_dtDataType == SDT_BOOL) {
+				if (pArgInf.m_bool)
+					return  L"真";
+				else
+					return  L"假";
+
+			}
+			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
+				if (pArgInf.m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
+					//无需对原始指针操作的情况下映射为string_view
+					return std::wstring(reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
+				}
+			}
+			else if (pArgInf.m_dtDataType == SDT_DATE_TIME) {
+
+				wchar_t temp[MAX_PATH]{ 0 };
+				SYSTEMTIME st = { 0 };
+				VariantTimeToSystemTime(pArgInf.m_double, &st);
+				wchar_t strFormat[128]{ 0 };
+				wcscpy_s(strFormat, L"%d年%d月%d日");
+				//格式化时间部分
+				wchar_t strFormatTime[128]{ 0 };
+				if (st.wSecond)
+					wcscpy_s(strFormatTime, L"%d时%d分%d秒");
+				else if (st.wMinute && st.wSecond == 0)
+					wcscpy_s(strFormatTime, L"%d时%d分");
+				else if (st.wHour && st.wMinute == 0 && st.wSecond == 0)
+					wcscpy_s(strFormatTime, L"%d时");
+				else
+					strFormatTime[0] = L'\0';
+				wcscat_s(strFormat, strFormatTime);
+				wsprintfW(temp, strFormat, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+				return temp;
+
+			}
+			return str;
+		}
+
+	}
+
+	inline std::wstring arg_to_wstring(PMDATA_INF ArgInf, size_t index) {
+		auto pArgInf = ArgInf[index];
+		if (is_array(pArgInf))//是数组
+		{
+			remove_array_flags(&pArgInf); //去除数组标志
+
+			auto szData = get_esys_datatype_size(pArgInf.m_dtDataType);
+
+			wchar_t* ret = nullptr;
+
+			if (szData != 0) {
+				auto array_to_string = [](void* pArry, size_t szData) -> wchar_t* {
+					size_t dwSize;
+
+					auto pText = elibstl::get_array_element_inf<wchar_t*>(pArry, &dwSize);
+
+					if (dwSize == 0)
+						return nullptr;
+
+					//最大肯能存在的unicode字符数
+					auto nMax = (dwSize * szData) / sizeof(wchar_t);
+
+					size_t nLen = 0;
+
+					while (nLen < nMax && pText[nLen] != L'\0')
+						nLen++;
+
+
+					if (nLen == 0)
+						return nullptr;
+
+					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::malloc((nLen + 1) * sizeof(wchar_t)));
+
+					memcpy(pNewText, pText, nLen * sizeof(wchar_t));
+
+					pNewText[nLen] = L'\0';
+
+					return pNewText;
+				};
+				ret = array_to_string(pArgInf.m_pAryData, szData);
+			}
+			//无论是否转换成功都将添加回数组标志
+			//pArgInf.add_array_flags();非拷贝取消
+
+			if (ret)
+				return ret;
+			else
+				return {};
+		}
+		else
+		{
+			std::wstring str;
+
+			if (pArgInf.m_dtDataType == SDT_TEXT) {
+				if (pArgInf.m_pText && *pArgInf.m_pText != '\0') {
+					int widesize = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, NULL, 0);
+					if (GetLastError() == ERROR_NO_UNICODE_TRANSLATION)
+					{
+						return {};
+					}
+					if (widesize == 0)
+					{
+						return {};
+					}
+					wchar_t* resultstring = new wchar_t[widesize];
+					int convresult = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, resultstring, widesize);
+					if (convresult != widesize)
+					{
+						return {};
+					}
+					str = resultstring;
+					delete[] resultstring;
+				}
+			}
+			//整数值类型
+			else if (pArgInf.m_dtDataType == SDT_BYTE || pArgInf.m_dtDataType == SDT_SHORT || pArgInf.m_dtDataType == SDT_INT ||
+				pArgInf.m_dtDataType == SDT_SUB_PTR) {
+				intptr_t nVal = 0;
+				if (pArgInf.m_dtDataType == SDT_BYTE)
+					nVal = pArgInf.m_byte;
+				else if (pArgInf.m_dtDataType == SDT_SHORT)
+					nVal = pArgInf.m_short;
+				else if (pArgInf.m_dtDataType == SDT_INT)
+					nVal = pArgInf.m_int;
+				else if (pArgInf.m_dtDataType == SDT_SUB_PTR)
+					nVal = pArgInf.m_int;
+				return  std::to_wstring(nVal);
+			}
+			else if (pArgInf.m_dtDataType == SDT_INT64) {
+				return  std::to_wstring(pArgInf.m_int64);
+			}
+			else if (pArgInf.m_dtDataType == SDT_FLOAT) {
+				str = std::to_wstring(pArgInf.m_float);
+				str = str.substr(0, str.find_last_not_of(L'0') + 1);
+				if (str.back() == L'.')
+					str.pop_back();
+			}
+			else if (pArgInf.m_dtDataType == SDT_DOUBLE) {
+				str = std::to_wstring(pArgInf.m_double);
+				str = str.substr(0, str.find_last_not_of(L'0') + 1);
+				if (str.back() == L'.')
+					str.pop_back();
+
+			}
+			else if (pArgInf.m_dtDataType == SDT_BOOL) {
+				if (pArgInf.m_bool)
+					return  L"真";
+				else
+					return  L"假";
+
+			}
+			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
+				if (pArgInf.m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
+					//无需对原始指针操作的情况下映射为string_view
+					return std::wstring(reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
+				}
+			}
+			else if (pArgInf.m_dtDataType == SDT_DATE_TIME) {
+
+				wchar_t temp[MAX_PATH]{ 0 };
+				SYSTEMTIME st = { 0 };
+				VariantTimeToSystemTime(pArgInf.m_double, &st);
+				wchar_t strFormat[128]{ 0 };
+				wcscpy_s(strFormat, L"%d年%d月%d日");
+				//格式化时间部分
+				wchar_t strFormatTime[128]{ 0 };
+				if (st.wSecond)
+					wcscpy_s(strFormatTime, L"%d时%d分%d秒");
+				else if (st.wMinute && st.wSecond == 0)
+					wcscpy_s(strFormatTime, L"%d时%d分");
+				else if (st.wHour && st.wMinute == 0 && st.wSecond == 0)
+					wcscpy_s(strFormatTime, L"%d时");
+				else
+					strFormatTime[0] = L'\0';
+				wcscat_s(strFormat, strFormatTime);
+				wsprintfW(temp, strFormat, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+				return temp;
+
+			}
+			return str;
+		}
+
+	}
+
 #pragma endregion
 }

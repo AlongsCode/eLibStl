@@ -182,7 +182,7 @@ network_post/*网页访问*/\
 ,clearConsole/*清空控制台*/\
 ,e_WriteMem/*写入内存*/\
 ,Fn_UpDownGetAccel/*调节器.取加速度*/\
-
+,g_trim_leading_zeros/*删文本左侧无效零*/\
 
 
 

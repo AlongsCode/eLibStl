@@ -13,18 +13,18 @@ static ARG_INFO Args[] =
 		/*explain*/ ("以较小字体显示在主指令下方"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/    AS_RECEIVE_ALL_TYPE_DATA,
 	},
 	{
 		/*name*/    "提示标题",
 		/*explain*/ ("用于显示的主指令"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "按钮",
@@ -40,9 +40,9 @@ static ARG_INFO Args[] =
 		/*explain*/ ("窗口显示的标题"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "父窗口",
@@ -96,10 +96,10 @@ namespace elibstl {
 EXTERN_C void Fn_TaskDialogW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	const PWSTR icon[] = { nullptr,TD_ERROR_ICON,TD_INFORMATION_ICON,TD_SHIELD_ICON,TD_WARNING_ICON , MAKEINTRESOURCEW(-8),MAKEINTRESOURCEW(-7) };
-	const std::wstring_view&
-		lpContent = elibstl::args_to_wsdata(pArgInf, 0),
-		lpTitle = elibstl::args_to_wsdata(pArgInf, 1),
-		lpWindowTitle = elibstl::args_to_wsdata(pArgInf, 3);
+	const auto
+		lpContent = elibstl::arg_to_wstring(pArgInf, 0),
+		lpTitle = elibstl::arg_to_wstring(pArgInf, 1),
+		lpWindowTitle = elibstl::arg_to_wstring(pArgInf, 3);
 	auto hwndParent = elibstl::args_to_data<INT>(pArgInf, 4),
 		standardButtons = elibstl::args_to_data<INT>(pArgInf, 2),
 		inicon = elibstl::args_to_data<INT>(pArgInf, 5);
@@ -134,7 +134,7 @@ EXTERN_C void Fn_TaskDialogW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 	//	}
 	//}
 	int buttonPressed;
-	TaskDialog(reinterpret_cast<HWND>(hwndParent.has_value() ? hwndParent.value() : 0), NULL, !lpWindowTitle.empty() ? std::wstring(lpWindowTitle).c_str() : L"提示", std::wstring(lpTitle).c_str(), std::wstring(lpContent).c_str(), standardButtons.has_value() ? standardButtons.value() : TDCBF_OK_BUTTON, boxicon, &buttonPressed);
+	TaskDialog(reinterpret_cast<HWND>(hwndParent.has_value() ? hwndParent.value() : 0), NULL, !lpWindowTitle.empty() ? lpWindowTitle.c_str() : L"提示", lpTitle.c_str(), lpContent.c_str(), standardButtons.has_value() ? standardButtons.value() : TDCBF_OK_BUTTON, boxicon, &buttonPressed);
 	switch (buttonPressed) {
 	case IDOK:
 		pRetData->m_int = TDCBF_OK_BUTTON;
@@ -161,7 +161,7 @@ EXTERN_C void Fn_TaskDialogW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 }
 
 FucInfo task_dialog_w = { {
-		/*ccname*/  ("高级信息框W"),
+		/*ccname*/  ("高级信息框"),
 		/*egname*/  ("TaskDialog"),
 		/*explain*/ ("函数调用失败返回-1,如果成功，返回枚举常量:高级信息框按钮::"),
 		/*category*/3,

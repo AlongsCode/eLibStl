@@ -135,7 +135,7 @@ public:
 		m_Info.iDirection = iDirection;
 	}
 
-	eStlInline int GetDirection()
+	eStlInline int GetDirection()const
 	{
 		if (m_bInDesignMode)
 			return m_Info.iDirection;
@@ -191,12 +191,12 @@ public:
 		m_Info.bAutoBuddy = bAutoBuddy;
 	}
 
-	eStlInline BOOL GetAutoBuddy()
+	eStlInline BOOL GetAutoBuddy() const
 	{
 		if (m_bInDesignMode)
 			return m_Info.bAutoBuddy;
 		else
-			elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_AUTOBUDDY);
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), UDS_AUTOBUDDY);
 	}
 
 	eStlInline void SetBuddy(HWND hBuddy)
@@ -204,7 +204,7 @@ public:
 		SendMessageW(m_hWnd, UDM_SETBUDDY, (WPARAM)hBuddy, 0);
 	}
 
-	eStlInline HWND GetBuddy()
+	eStlInline HWND GetBuddy()const
 	{
 		return (HWND)SendMessageW(m_hWnd, UDM_GETBUDDY, 0, 0);
 	}
@@ -445,7 +445,7 @@ static EVENT_ARG_INFO2 s_Event_Arg[] =
 };
 static EVENT_INFO2 s_Event_UpDown[] =
 {
-	/*000*/ {"调节钮被按下", "当调节钮被按下时触发。返回真允许位置更改，返回假禁止位置更改", _EVENT_OS(OS_ALL) | EV_IS_VER2, 
+	/*000*/ {"调节钮被按下", "当调节钮被按下时触发。返回真允许位置更改，返回假禁止位置更改", _EVENT_OS(OS_ALL) | EV_IS_VER2,
 			ARRAYSIZE(s_Event_Arg), s_Event_Arg, SDT_BOOL},
 };
 

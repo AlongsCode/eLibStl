@@ -120,6 +120,7 @@
     <ClCompile Include="src\get_console_locale.cpp" />
     <ClCompile Include="src\set_env.cpp" />
     <ClCompile Include="src\split.cpp" />
+    <ClCompile Include="src\Text Manipulation\trim_leading_zeros.cpp" />
     <ClCompile Include="src\tofull.cpp" />
     <ClCompile Include="src\tohalf.cpp" />
     <ClCompile Include="src\tolower.cpp" />

@@ -8,10 +8,12 @@
 #include<assert.h>
 #include"Tace.hpp"
 
+
 #define ESTL_NAMESPACE_BEGIN namespace elibstl {
 #define ESTL_NAMESPACE_END }
 
 #ifdef _MSC_VER
+#pragma warning(disable: 4996)
 #define eStlInline __forceinline
 #else
 #define eStlInline inline

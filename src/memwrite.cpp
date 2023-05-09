@@ -35,7 +35,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	unsigned char* pData = nullptr;
-	intptr_t dwLen;
+	size_t dwLen;
 	if ((pArgInf[0].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
 	{
 		pArgInf[0].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
@@ -75,38 +75,8 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 
 		}
 		else {
-			auto  GetSysDataTypeDataSize = [](DATA_TYPE dtSysDataType)
-			{
-				switch (dtSysDataType)
-				{
-				case SDT_BYTE:
-					return sizeof(BYTE);
-				case SDT_SHORT:
-					return sizeof(SHORT);
-				case SDT_BOOL:
-					return sizeof(BOOL);
-				case SDT_INT:
-					return sizeof(INT);
-				case SDT_FLOAT:
-					return sizeof(FLOAT);
-				case SDT_SUB_PTR:    // 记录子程序代码的地址指针
-					return sizeof(DWORD);
-				case SDT_TEXT:    // 文本型和字节集型为一个指针,因此为四个字节.
-				case SDT_BIN:
-					return sizeof(DWORD);
-				case SDT_INT64:
-					return sizeof(INT64);
-				case SDT_DOUBLE:
-					return sizeof(DOUBLE);
-				case SDT_DATE_TIME:
-					return sizeof(DATE);
-				default:
-					return 0u;
-				}
 
-				return 0u;
-			};
-			dwLen = GetSysDataTypeDataSize(pArgInf[0].m_dtDataType);
+			dwLen = elibstl::get_esys_datatype_size(pArgInf[0].m_dtDataType);
 			if (dwLen == 0)//不支持的数据类型
 				return;
 			pData = (unsigned char*)&pArgInf[0].m_int;
@@ -115,7 +85,7 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 	}
 	if (pArgInf[2].m_dtDataType != _SDT_NULL && pArgInf[2].m_int > 0)
 	{
-		if (pArgInf[2].m_int < dwLen)
+		if (static_cast<size_t>(pArgInf[2].m_int) < dwLen)
 			dwLen = pArgInf[2].m_int;
 	}
 	memcpy(pArgInf[1].m_pCompoundData, pData, dwLen);

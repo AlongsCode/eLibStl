@@ -65,6 +65,7 @@ public:
 			};
 		}
 		if (errorCode != 0) {
+			m_MediaAlias.clear();
 			return false;
 		}
 		return true;
@@ -84,7 +85,7 @@ public:
 		wstring internalCommand;
 		if (IsWindow(m_winHwnd))
 		{
-			command = L"window " + m_MediaAlias + L" handle " + to_wstring((int)m_winHwnd);
+			command = L"window " + m_MediaAlias + L" handle " + to_wstring((size_t)m_winHwnd);
 			error = mciSendStringW(command.c_str(), NULL, 0, NULL) == 0;
 		}
 		if (position == -1)
