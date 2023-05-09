@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="include\ElibHelp.cpp" />
     <ClCompile Include="include\elib\fnshare.cpp" />
+    <ClCompile Include="MenuEx.cpp" />
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
     <ClCompile Include="openlib\MiniCo\coroutine.c" />

@@ -404,6 +404,9 @@
     <ClCompile Include="src\memwrite.cpp">
       <Filter>源文件\实现\全局命令\内存操作</Filter>
     </ClCompile>
+    <ClCompile Include="MenuEx.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

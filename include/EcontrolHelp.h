@@ -330,6 +330,52 @@ eStlInline int ESTLPRIV_MultiSelectEqual___(T ii, int cItem, ...)
 void SetFrameType(HWND hWnd, int iFrame);
 int GetFrameType(HWND hWnd);
 
+class CCtrlWnd
+{
+protected:
+	HWND m_hWnd = NULL;
+	HWND m_hParent = NULL;
+	BOOL m_bParentChanged = FALSE;
+
+public:
+	CCtrlWnd() = default;
+	virtual ~CCtrlWnd() {}
+
+	/// <summary>
+	/// 重画
+	/// </summary>
+	eStlInline void Redraw()
+	{
+		InvalidateRect(m_hWnd, NULL, TRUE);
+		UpdateWindow(m_hWnd);
+	}
+
+	/// <summary>
+	/// 强制重新核算非客户区
+	/// </summary>
+	eStlInline void FrameChanged()
+	{
+		SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+	}
+
+	/// <summary>
+	/// 取窗口句柄
+	/// </summary>
+	/// <returns>窗口句柄</returns>
+	eStlInline HWND GetHWND() const
+	{
+		return m_hWnd;
+	}
+
+	/// <summary>
+	/// 取首次创建父窗口
+	/// </summary>
+	eStlInline HWND GetHParent() const
+	{
+		return m_hParent;
+	}
+};
+
 // 控件基础数据
 /*
 * 版本1数据布局：
@@ -337,7 +383,6 @@ int GetFrameType(HWND hWnd);
 * 图片
 * 文本
 */
-
 #define DATA_VER_BASE_1	1
 struct ECTRLINFO
 {
@@ -349,20 +394,16 @@ struct ECTRLINFO
 	int cbPic;				// 图片字节流长度
 	int iFrame;				// 边框
 };
-
 // 控件基类
 // 请勿直接实例化此类
-class CCtrlBase
+class CCtrlBase :public CCtrlWnd
 {
 protected:
 	// 易系统相关
 	DWORD m_dwWinFormID = 0;
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
-	// 窗口句柄
-	HWND m_hWnd = NULL;
-	HWND m_hParent = NULL;
-	BOOL m_bParentChanged = FALSE;
+
 	HBITMAP m_hBitmap = NULL;// 位图句柄
 	HFONT m_hFont = NULL;// 字体句柄
 	ECTRLINFO m_Info0{};// 信息
@@ -375,9 +416,8 @@ protected:
 
 	void InitBase0(PCVOID pAllData);
 public:
-	CCtrlBase() {}
-
-	virtual ~CCtrlBase()
+	CCtrlBase() = default;
+	~CCtrlBase()
 	{
 		DeleteObject(m_hFont);
 		DeleteObject(m_hBitmap);
@@ -596,40 +636,75 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual HGLOBAL FlattenInfo() { assert(FALSE); return NULL; }
+};
+
+// 简单控件基础数据
+/*
+* 版本1数据布局：
+* ECTRLINFOSMP结构
+*/
+#define DATA_VER_BASE_SIMPLE_1	1
+struct ECTRLINFOSMP
+{
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
+
+	int iFrame;				// 边框
+};
+// 简单控件基类
+// 请勿直接实例化此类
+class CCtrlBaseSimple :public CCtrlWnd
+{
+protected:
+	// 易系统相关
+	DWORD m_dwWinFormID = 0;
+	DWORD m_dwUnitID = 0;
+	BOOL m_bInDesignMode = FALSE;
+
+	ECTRLINFOSMP m_Info0{};// 信息
+
+	CCtrlBaseSimple() = default;
+	~CCtrlBaseSimple() = default;
+
+	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID);
 
 	/// <summary>
-	/// 重画
+	/// 平面化基类数据。
+	/// 扩展数据应在其后附加
 	/// </summary>
-	eStlInline void Redraw()
+	/// <returns></returns>
+	HGLOBAL FlattenInfoBase0(SIZE_T cbExtra = 0u, SIZE_T* pcbBaseData = NULL);
+
+	/// <summary>
+	/// 置边框
+	/// </summary>
+	/// <param name="iFrame">边框</param>
+	eStlInline void SetFrame(int iFrame)
 	{
-		InvalidateRect(m_hWnd, NULL, TRUE);
-		UpdateWindow(m_hWnd);
+		m_Info0.iFrame = iFrame;
+		elibstl::SetFrameType(m_hWnd, iFrame);
+		FrameChanged();
 	}
 
 	/// <summary>
-	/// 强制重新核算非客户区
+	/// 取边框
 	/// </summary>
-	eStlInline void FrameChanged()
+	/// <returns>边框</returns>
+	eStlInline int GetFrame() const
 	{
-		SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		if (m_bInDesignMode)
+			return m_Info0.iFrame;
+		else
+			return elibstl::GetFrameType(m_hWnd);
 	}
 
 	/// <summary>
-	/// 取窗口句柄
+	/// 平面化数据。
+	/// 用于向易语言返回所有属性。
+	/// 内存布局参见文件首部数据版本定义处
 	/// </summary>
-	/// <returns>窗口句柄</returns>
-	eStlInline HWND GetHWND() const
-	{
-		return m_hWnd;
-	}
-
-	/// <summary>
-	/// 取首次创建父窗口
-	/// </summary>
-	eStlInline HWND GetHParent() const
-	{
-		return m_hParent;
-	}
+	/// <returns></returns>
+	virtual HGLOBAL FlattenInfo() { assert(FALSE); return NULL; }
 };
 ESTL_NAMESPACE_END
 

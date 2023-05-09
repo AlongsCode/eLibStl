@@ -1,5 +1,5 @@
 #include"EcontrolHelp.h"
-#include<Richedit.h>
+
 #pragma warning(disable:4996)
 
 #define SCID_UPDOWN			20230507'01u
@@ -27,13 +27,13 @@ struct EUPDOWNDATA
 	BOOL bHotTrack;			// 是否热点跟踪
 };
 
-class CUpDown :public elibstl::CCtrlBase
+class CUpDown :public elibstl::CCtrlBaseSimple
 {
 	SUBCLASS_MGR_DECL(CUpDown)
 private:
 	EUPDOWNDATA m_Info{};
 
-	BOOL OnDeltaPos(int iPos, int iDelta)
+	eStlInline BOOL OnDeltaPos(int iPos, int iDelta)
 	{
 		EVENT_NOTIFY Event(m_dwWinFormID, m_dwUnitID, 0);
 		Event.m_nArgCount = 2;
@@ -99,6 +99,7 @@ public:
 		else
 		{
 			m_Info.bHousands = TRUE;
+			m_Info.iMax = 100;
 		}
 		m_Info.iVer = DATA_VER_UPDOWN_1;
 
@@ -127,16 +128,11 @@ public:
 		// SetArrowKeys(m_Info.bArrowKeys);
 		// SetHotTrack(m_Info.bHotTrack);
 		SetPos(m_Info.iPos);// 不知道为什么，设置了伙伴窗口之后这个不管用
-		InitBase0(pAllData);
 	}
 
-	void SetDirection(int iDirection)
+	eStlInline void SetDirection(int iDirection)
 	{
 		m_Info.iDirection = iDirection;
-		if (iDirection)
-			elibstl::ModifyWindowStyle(m_hWnd, UDS_HORZ, UDS_HORZ);
-		else
-			elibstl::ModifyWindowStyle(m_hWnd, 0, UDS_HORZ);
 	}
 
 	eStlInline int GetDirection()
@@ -193,7 +189,6 @@ public:
 	eStlInline void SetAutoBuddy(BOOL bAutoBuddy)
 	{
 		m_Info.bAutoBuddy = bAutoBuddy;
-		elibstl::ModifyWindowStyle(m_hWnd, (bAutoBuddy ? UDS_AUTOBUDDY : 0), UDS_AUTOBUDDY);
 	}
 
 	eStlInline BOOL GetAutoBuddy()
@@ -322,7 +317,7 @@ public:
 		{
 		case 0:// 方向
 			p->SetDirection(pPropertyVaule->m_int);
-			break;
+			return TRUE;
 		case 1:// 最小位置
 			p->SetMin(pPropertyVaule->m_int);
 			break;
@@ -334,19 +329,19 @@ public:
 			break;
 		case 4:// 自动选择伙伴窗口
 			p->SetAutoBuddy(pPropertyVaule->m_bool);
-			break;
+			return TRUE;
 		case 5:// 伙伴窗口
 			p->SetBuddy((HWND)pPropertyVaule->m_int);
 			break;
 		case 6:// 伙伴窗口定位方式
 			p->SetBuddyAlign(pPropertyVaule->m_int);
-			break;
+			return TRUE;
 		case 7:// 数值进制
 			p->SetBase(pPropertyVaule->m_int);
 			break;
 		case 8:// 是否插入千分符
 			p->SetHousands(pPropertyVaule->m_bool);
-			break;
+			return TRUE;
 		case 9:// 是否由上下箭头控制
 			p->SetArrowKeys(pPropertyVaule->m_bool);
 			return TRUE;
@@ -407,6 +402,20 @@ public:
 
 		return TRUE;
 	}
+
+	static INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 18;
+			*((int*)dwParam2) = 80;
+		}
+		return TRUE;
+		}
+		return FALSE;
+	}
 };
 SUBCLASS_MGR_INIT(CUpDown, SCID_UPDOWNPARENT, SCID_UPDOWN)
 
@@ -422,6 +431,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 		return (PFN_INTERFACE)CUpDown::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
 		return (PFN_INTERFACE)CUpDown::EGetData;
+	case ITF_GET_NOTIFY_RECEIVER:
+		return (PFN_INTERFACE)CUpDown::ENotify;
 	}
 	return NULL;
 }
@@ -443,21 +454,21 @@ static UNIT_PROPERTY s_Member_UpDown[] =
 	FIXED_WIN_UNIT_PROPERTY,
 	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
-	/*000*/  {"方向", "Direction", "", UD_PICK_INT, _PROP_OS(OS_ALL),  "纵向\0""横向\0""\0"},
+	/*000*/  {"方向", "Direction", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_PICK_INT, _PROP_OS(OS_ALL),  "纵向\0""横向\0""\0"},
 	/*001*/  {"最小位置", "Min", "", UD_INT, _PROP_OS(OS_ALL), NULL},
 	/*002*/  {"最大位置", "Max", "", UD_INT, _PROP_OS(OS_ALL), NULL},
 	/*003*/  {"位置", "Pos", "若设置了伙伴窗口，则必须在设置之后使用代码赋值", UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*004*/  {"自动选择伙伴窗口", "BuddyAlign", "是否自动选择调节器Z序之上的第一个窗口为伙伴窗口", UD_BOOL, _PROP_OS(OS_ALL), NULL},
-	/*005*/  {"伙伴窗口", "BuddyWindow", "", UD_INT, _PROP_OS(OS_ALL) | UW_CANNOT_INIT, NULL},
-	/*006*/  {"伙伴窗口定位方式", "BuddyAlign", "", UD_PICK_INT, _PROP_OS(OS_ALL), "无\0""左边\0""右边\0""\0"},
+	/*004*/  {"自动选择伙伴窗口", "BuddyAlign", "是否自动选择调节器Z序之上的第一个窗口为伙伴窗口。该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*005*/  {"伙伴窗口", "BuddyWindow", "调节器位置将反映在伙伴窗口的标题上", UD_INT, _PROP_OS(OS_ALL) | UW_CANNOT_INIT, NULL},
+	/*006*/  {"伙伴窗口定位方式", "BuddyAlign", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_PICK_INT, _PROP_OS(OS_ALL), "无\0""左边\0""右边\0""\0"},
 	/*007*/  {"数值进制", "Base", "", UD_PICK_INT, _PROP_OS(OS_ALL), "十进制\0""十六进制\0""\0"},
-	/*008*/  {"是否插入千分符", "Housands", "", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*008*/  {"是否插入千分符", "Housands", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
 	/*009*/  {"是否由上下箭头键控制", "ArrowKeys", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
 	/*010*/  {"是否热点跟踪", "HotTrack", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
 };
 
 
-static INT s_Cmd_UpDown[] = { 121,179 };
+static INT s_Cmd_UpDown[] = { 121,181 };
 EXTERN_C void libstl_UpDown_SetAccel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
@@ -607,7 +618,7 @@ ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO UpDown = {
 	"调节器Ex",//中文名称
 	"UpDown",//英文名称
-	"",//说明
+	"本控件有诸多属性改变后需要重新创建控件，应尽量在设计时确定属性值",//说明
 	ARRAYSIZE(s_Cmd_UpDown),//命令数量
 	s_Cmd_UpDown,//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志

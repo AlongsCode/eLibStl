@@ -618,4 +618,45 @@ FailLock:
 FailAlloc:
 	return NULL;
 }
+
+SIZE_T CCtrlBaseSimple::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
+{
+	m_bInDesignMode = bInDesignMode;
+	m_dwWinFormID = dwWinFormID;
+	m_dwUnitID = dwUnitID;
+
+	if (pAllData)
+	{
+		memcpy(&m_Info0, pAllData, sizeof(ECTRLINFOSMP));
+	}
+
+	m_Info0.iVer = DATA_VER_BASE_SIMPLE_1;
+
+	if (pAllData)
+		return sizeof(ECTRLINFOSMP);
+	else
+		return 0;
+}
+
+HGLOBAL CCtrlBaseSimple::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
+{
+	BYTE* p;
+	if (pcbBaseData)
+		*pcbBaseData = sizeof(ECTRLINFOSMP);
+	HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(ECTRLINFOSMP) + cbExtra);
+	if (!hGlobal)
+		goto FailAlloc;
+	p = (BYTE*)GlobalLock(hGlobal);
+	if (!p)
+		goto FailLock;
+	// ½á¹¹
+	memcpy(p, &m_Info0, sizeof(ECTRLINFOSMP));
+
+	GlobalUnlock(hGlobal);
+	return hGlobal;
+FailLock:
+	GlobalFree(hGlobal);
+FailAlloc:
+	return NULL;
+}
 ESTL_NAMESPACE_END

@@ -31,6 +31,11 @@ namespace elibstl
 		return reinterpret_cast<T*&>(pArgInf[0].m_ppCompoundData[0]);
 	}
 	template <typename T>
+	auto args_to_obj_noref(PMDATA_INF pArgInf)
+	{
+		return reinterpret_cast<T*>(pArgInf[0].m_ppCompoundData[0]);
+	}
+	template <typename T>
 	std::optional<T> args_to_data(PMDATA_INF pArgInf, int index)
 	{
 		if (!(std::is_same<T, BYTE>::value ||

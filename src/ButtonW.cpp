@@ -4,9 +4,6 @@
 */
 #include"EcontrolHelp.h"
 
-#include <unordered_map>
-
-
 #pragma warning(disable:4996)
 
 #define SCID_PUSHBTN		20230425'01u
@@ -17,7 +14,7 @@
 #define SCID_CMDLINKPARENT	20230425'06u
 
 #define BTN_COMM_PROP \
-	/*000*/{"图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL}, \
+	/*000*/{ "图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL}, \
 	/*001*/{ "是否同时显示图片和文本", "IsShowPicAndText", "无法预览，需要通用组件库6.0", UD_BOOL, _PROP_OS(__OS_WIN), NULL }, \
 	/*002*/{ "标题", "Text", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_TEXT, _PROP_OS(__OS_WIN), NULL }, \
 	/*003*/{ "标题W", "TextW", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL }, \
@@ -258,6 +255,13 @@ public:
 				return MultiSelectWndStyle(m_hWnd, BS_TOP, BS_VCENTER, BS_BOTTOM);
 	}
 
+	/// <summary>
+	/// 置图片。
+	/// 特定于按钮，不应使用基类方法
+	/// </summary>
+	/// <param name="pPic">图片字节流指针</param>
+	/// <param name="cbSize">字节流长度</param>
+	/// <returns></returns>
 	eStlInline void SetPicBtn(void* pPic, int cbSize)
 	{
 		if (cbSize)
@@ -337,7 +341,7 @@ private:
 #pragma warning(disable:26454)// 算术溢出
 			if (p->code == BCN_DROPDOWN)
 				if (m_CtrlSCInfo.count(p->hwndFrom))
-					m_CtrlSCInfo[p->hwndFrom]->OnDropDownClick();、
+					m_CtrlSCInfo[p->hwndFrom]->OnDropDownClick();
 #pragma warning(pop)
 		}
 		break;
@@ -461,12 +465,6 @@ public:
 		return m_InfoEx.iDef;
 	}
 
-	/// <summary>
-	/// 平面化数据。
-	/// 用于向易语言获取所有属性提供数据。
-	/// 内存布局参见文件首部数据版本定义处
-	/// </summary>
-	/// <returns></returns>
 	eStlInline HGLOBAL FlattenInfo() override
 	{
 		BYTE* p;
@@ -534,19 +532,6 @@ public:
 
 		return TRUE;
 	}
-	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
-	{
-		switch (nMsg)
-		{
-		case NU_GET_CREATE_SIZE_IN_DESIGNER:
-		{
-			*((int*)dwParam1) = 80;
-			*((int*)dwParam2) = 32;
-		}
-		return TRUE;
-		}
-		return FALSE;
-	}
 
 	static BOOL WINAPI EInputW(HUNIT hUnit, INT nPropertyIndex, BOOL* pblModified, LPVOID pResultExtraData)
 	{
@@ -561,6 +546,20 @@ public:
 				p->SetTextNoCopyW(psz);
 				*pblModified = TRUE;
 			}
+		}
+		return FALSE;
+	}
+
+	static INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 32;
+		}
+		return TRUE;
 		}
 		return FALSE;
 	}
@@ -654,6 +653,131 @@ public:
 		Redraw();
 	}
 
+	/// <summary>
+	/// 置类型
+	/// </summary>
+	/// <param name="iType">类型</param>
+	void SetType(int iType)
+	{
+		m_InfoEx.iType = iType;
+		elibstl::ModifyWindowStyle(
+			m_hWnd,
+			elibstl::MultiSelect<DWORD>(iType, BS_AUTORADIOBUTTON, BS_AUTOCHECKBOX, BS_AUTO3STATE),
+			BS_AUTORADIOBUTTON | BS_AUTOCHECKBOX | BS_AUTO3STATE);
+		Redraw();
+	}
+
+	/// <summary>
+	/// 取类型
+	/// </summary>
+	int GetType()
+	{
+		if (m_bInDesignMode)
+			return m_InfoEx.iType;
+		else
+		{
+			auto i = MultiSelectWndStyle(m_hWnd,
+				BS_AUTORADIOBUTTON | BS_RADIOBUTTON, BS_AUTOCHECKBOX | BS_CHECKBOX, BS_AUTO3STATE | BS_3STATE);
+			if (i < 0)
+				i = 0;
+			return i;
+		}
+	}
+
+	/// <summary>
+	/// 置检查框状态
+	/// </summary>
+	/// <param name="iState">状态</param>
+	eStlInline void SetCheckState(int iState)
+	{
+		m_InfoEx.iCheckState = iState;
+		SendMessageW(m_hWnd, BM_SETCHECK, elibstl::MultiSelect<DWORD>(iState, BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE), 0);
+	}
+
+	/// <summary>
+	/// 取检查框状态
+	/// </summary>
+	int GetCheckState()
+	{
+		if (m_bInDesignMode)
+			return m_InfoEx.iCheckState;
+		else
+		{
+			int i = MultiSelectEqual(SendMessageW(m_hWnd, BM_GETCHECK, 0, 0), BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE);
+			if (i < 0)
+				i = 0;
+			return i;
+		}
+	}
+
+	/// <summary>
+	/// 置按钮形式
+	/// </summary>
+	/// <param name="bPushLike">是否为按钮形式</param>
+	eStlInline void SetPushLike(BOOL bPushLike)
+	{
+		m_InfoEx.bPushLike = bPushLike;
+		elibstl::ModifyWindowStyle(m_hWnd, bPushLike ? BS_PUSHLIKE : 0, BS_PUSHLIKE);
+		Redraw();
+	}
+
+	/// <summary>
+	/// 取按钮形式
+	/// </summary>
+	/// <returns></returns>
+	eStlInline BOOL GetPushLike()
+	{
+		if (m_bInDesignMode)
+			return m_InfoEx.bPushLike;
+		else
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_PUSHLIKE);
+	}
+
+	/// <summary>
+	/// 置平面形式
+	/// </summary>
+	/// <param name="bFlat">是否为平面形式</param>
+	eStlInline void SetFlat(BOOL bFlat)
+	{
+		m_InfoEx.bFlat = bFlat;
+		elibstl::ModifyWindowStyle(m_hWnd, bFlat ? BS_FLAT : 0, BS_FLAT);
+		Redraw();
+	}
+
+	/// <summary>
+	/// 取平面形式
+	/// </summary>
+	eStlInline BOOL GetFlat()
+	{
+		if (m_bInDesignMode)
+			return m_InfoEx.bFlat;
+		else
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_FLAT);
+	}
+
+	/// <summary>
+	/// 置文本居左
+	/// </summary>
+	/// <param name="bLeftText">是否文本居左</param>
+	eStlInline void SetLeftText(BOOL bLeftText)
+	{
+		m_InfoEx.bLeftText = bLeftText;
+		elibstl::ModifyWindowStyle(m_hWnd, bLeftText ? BS_LEFTTEXT : 0, BS_LEFTTEXT);
+		Redraw();
+	}
+
+	/// <summary>
+	/// 取文本居左
+	/// </summary>
+	/// <returns></returns>
+	eStlInline BOOL GetLeftText()
+	{
+		if (m_bInDesignMode)
+			return m_InfoEx.bLeftText;
+		else
+			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_LEFTTEXT);
+	}
+
 	eStlInline HGLOBAL FlattenInfo() override
 	{
 		BYTE* p;
@@ -669,107 +793,7 @@ public:
 	Fail:
 		return hGlobal;
 	}
-
-	void SetType(int iType)
-	{
-		m_InfoEx.iType = iType;
-		elibstl::ModifyWindowStyle(
-			m_hWnd,
-			elibstl::MultiSelect<DWORD>(iType, BS_AUTORADIOBUTTON, BS_AUTOCHECKBOX, BS_AUTO3STATE),
-			BS_AUTORADIOBUTTON | BS_AUTOCHECKBOX | BS_AUTO3STATE);
-		Redraw();
-	}
-
-	int GetType()
-	{
-		if (m_bInDesignMode)
-			return m_InfoEx.iType;
-		else
-		{
-			auto i = MultiSelectWndStyle(m_hWnd,
-				BS_AUTORADIOBUTTON | BS_RADIOBUTTON, BS_AUTOCHECKBOX | BS_CHECKBOX, BS_AUTO3STATE | BS_3STATE);
-			if (i < 0)
-				i = 0;
-			return i;
-		}
-	}
-
-	eStlInline void SetCheckState(int iState)
-	{
-		m_InfoEx.iCheckState = iState;
-		SendMessageW(m_hWnd, BM_SETCHECK, elibstl::MultiSelect<DWORD>(iState, BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE), 0);
-	}
-
-	int GetCheckState()
-	{
-		if (m_bInDesignMode)
-			return m_InfoEx.iCheckState;
-		else
-		{
-			int i = MultiSelectEqual(SendMessageW(m_hWnd, BM_GETCHECK, 0, 0), BST_UNCHECKED, BST_CHECKED, BST_INDETERMINATE);
-			if (i < 0)
-				i = 0;
-			return i;
-		}
-	}
-
-	eStlInline void SetPushLike(BOOL bPushLike)
-	{
-		m_InfoEx.bPushLike = bPushLike;
-		elibstl::ModifyWindowStyle(m_hWnd, bPushLike ? BS_PUSHLIKE : 0, BS_PUSHLIKE);
-		Redraw();
-	}
-
-	eStlInline BOOL GetPushLike()
-	{
-		if (m_bInDesignMode)
-			return m_InfoEx.bPushLike;
-		else
-			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_PUSHLIKE);
-	}
-
-	eStlInline void SetFlat(BOOL bFlat)
-	{
-		m_InfoEx.bFlat = bFlat;
-		elibstl::ModifyWindowStyle(m_hWnd, bFlat ? BS_FLAT : 0, BS_FLAT);
-		Redraw();
-	}
-
-	eStlInline BOOL GetFlat()
-	{
-		if (m_bInDesignMode)
-			return m_InfoEx.bFlat;
-		else
-			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_FLAT);
-	}
-
-	eStlInline void SetLeftText(BOOL bLeftText)
-	{
-		m_InfoEx.bLeftText = bLeftText;
-		elibstl::ModifyWindowStyle(m_hWnd, bLeftText ? BS_LEFTTEXT : 0, BS_LEFTTEXT);
-		Redraw();
-	}
-
-	eStlInline BOOL GetLeftText()
-	{
-		if (m_bInDesignMode)
-			return m_InfoEx.bLeftText;
-		else
-			return elibstl::IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), BS_LEFTTEXT);
-	}
-	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
-	{
-		switch (nMsg)
-		{
-		case NU_GET_CREATE_SIZE_IN_DESIGNER:
-		{
-			*((int*)dwParam1) = 80;
-			*((int*)dwParam2) = 24;
-		}
-		return TRUE;
-		}
-		return FALSE;
-	}
+	
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
 		auto pButton = new CCheckButton(STD_ECTRL_CREATE_REAL_ARGS);
@@ -866,6 +890,20 @@ public:
 				p->SetTextNoCopyW(psz);
 				*pblModified = TRUE;
 			}
+		}
+		return FALSE;
+	}
+
+	static INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 24;
+		}
+		return TRUE;
 		}
 		return FALSE;
 	}
@@ -986,6 +1024,12 @@ public:
 			return SendMessageW(m_hWnd, BCM_SETNOTE, 0, (LPARAM)pszText);
 	}
 
+	/// <summary>
+	/// 置注释文本。
+	/// 本方法不复制内存
+	/// </summary>
+	/// <param name="pszText">文本指针，必须由new/delete[]管理</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetNoteNoCopy(PWSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -1021,12 +1065,20 @@ public:
 		return m_pszNote;
 	}
 
+	/// <summary>
+	/// 置盾牌图标
+	/// </summary>
+	/// <param name="bShieldIcon">是否为盾牌图标</param>
 	eStlInline void SetShieldIcon(BOOL bShieldIcon)
 	{
 		m_InfoEx.bShieldIcon = bShieldIcon;
 		SendMessageW(m_hWnd, BCM_SETSHIELD, 0, bShieldIcon);
 	}
 
+	/// <summary>
+	/// 取盾牌图标
+	/// </summary>
+	/// <returns></returns>
 	eStlInline BOOL GetShieldIcon()
 	{
 		return m_InfoEx.bShieldIcon;// 这个东西只能置不能取.....把记录的值返回回去吧
@@ -1106,13 +1158,19 @@ public:
 
 		switch (nPropertyIndex)
 		{
-			BTN_COMM_SETPROP
-
-		case 7:// 注释文本
+		case 0:/*图片*/
+			p->SetPicBtn(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 1:/*标题*/
+			p->SetTextA(pPropertyVaule->m_szText);
+			break;
+		case 2:/*标题W*/
+			p->SetTextW((PCWSTR)pPropertyVaule->m_data.m_pData);
+			break;
+		case 3:// 注释文本
 			p->SetNote((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-
-		case 8:// 是否盾牌图标
+		case 4:// 是否盾牌图标
 			p->SetShieldIcon(pPropertyVaule->m_bool);
 			break;
 		}
@@ -1132,13 +1190,19 @@ public:
 
 		switch (nPropertyIndex)
 		{
-			BTN_COMM_GETPROP
-
-		case 7:// 注释文本
+		case 0:/*图片*/
+			pPropertyVaule->m_data.m_pData = p->GetPic(&pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 1:/*标题*/
+			pPropertyVaule->m_szText = p->GetTextA();
+			break;
+		case 2:/*标题W*/
+			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
+			break;
+		case 3:// 注释文本
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetNote();
 			break;
-
-		case 8:// 是否盾牌图标
+		case 4:// 是否盾牌图标
 			pPropertyVaule->m_bool = p->GetShieldIcon();
 			break;
 		}
@@ -1152,7 +1216,7 @@ public:
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
-		case 3:
+		case 2:// 标题W
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetTextW()))
@@ -1163,7 +1227,7 @@ public:
 		}
 		return FALSE;
 
-		case 7:
+		case 3:// 注释文本
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetNote()))
@@ -1177,27 +1241,14 @@ public:
 		return FALSE;
 	}
 
-	static BOOL WINAPI EPropUpdateUI(HUNIT hUnit, INT nPropertyIndex)
-	{
-		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
-		switch (nPropertyIndex)
-		{
-		case 1:// 是否同时显示图片和文本
-		case 4:// 横向对齐方式
-		case 5:// 纵向对齐方式
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	static INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2)
 	{
 		switch (nMsg)
 		{
 		case NU_GET_CREATE_SIZE_IN_DESIGNER:
 		{
-			*((int*)dwParam1) = 110;
-			*((int*)dwParam2) = 45;
+			*((int*)dwParam1) = 200;
+			*((int*)dwParam2) = 80;
 		}
 		return TRUE;
 		}
@@ -1249,9 +1300,11 @@ static UNIT_PROPERTY s_Member_CmdLink[] =
 	FIXED_WIN_UNIT_PROPERTY,
 	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
-	BTN_COMM_PROP,
-	/*007*/ {"注释文本", "Note", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*008*/ {"是否为盾牌图标", "IsShieldIcon", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
+	/*000*/ {"图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
+	/*001*/ {"标题","Text","",UD_TEXT,_PROP_OS(__OS_WIN),NULL },
+	/*002*/ {"标题W","TextW","",UD_CUSTOMIZE,_PROP_OS(__OS_WIN),NULL },
+	/*003*/ {"注释文本","Note","",UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*004*/ {"是否为盾牌图标", "IsShieldIcon", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
 };
 /////////////////////////////方法
 static int s_Cmd_PushBtn[] = { 120 };
@@ -1325,7 +1378,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CPushButton::EInputW;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CPushButton::DefSize;
+		return (PFN_INTERFACE)CPushButton::ENotify;
 	}
 	return NULL;
 }
@@ -1345,7 +1398,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CheckButtonW(INT nInterfaceNO)
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CCheckButton::EInputW;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CCheckButton::DefSize;
+		return (PFN_INTERFACE)CCheckButton::ENotify;
 	}
 	return NULL;
 }
@@ -1364,10 +1417,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CommandLink(INT nInterfaceNO)
 		return (PFN_INTERFACE)CCommandLink::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
 		return (PFN_INTERFACE)CCommandLink::EInputW;
-	case ITF_PROPERTY_UPDATE_UI:
-		return (PFN_INTERFACE)CCommandLink::EPropUpdateUI;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CCommandLink::DefSize;
+		return (PFN_INTERFACE)CCommandLink::ENotify;
 	}
 	return NULL;
 }

@@ -801,19 +801,7 @@ public:
 		auto pButton = new CEdit(STD_ECTRL_CREATE_REAL_ARGS);
 		return elibstl::make_cwnd(pButton->GetHWND());
 	}
-	static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2)
-	{
-		switch (nMsg)
-		{
-		case NU_GET_CREATE_SIZE_IN_DESIGNER:
-		{
-			*((int*)dwParam1) = 80;
-			*((int*)dwParam2) = 20;
-		}
-		return TRUE;
-		}
-		return FALSE;
-	}
+	
 	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
@@ -1020,6 +1008,20 @@ public:
 
 		return TRUE;
 	}
+
+	static INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2)
+	{
+		switch (nMsg)
+		{
+		case NU_GET_CREATE_SIZE_IN_DESIGNER:
+		{
+			*((int*)dwParam1) = 80;
+			*((int*)dwParam2) = 20;
+		}
+		return TRUE;
+		}
+		return FALSE;
+	}
 };
 SUBCLASS_MGR_INIT(CEdit, SCID_EDITPARENT, SCID_EDIT)
 
@@ -1040,7 +1042,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 	case ITF_PROPERTY_UPDATE_UI:
 		return (PFN_INTERFACE)CEdit::EPropUpdateUI;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CEdit::DefSize;
+		return (PFN_INTERFACE)CEdit::ENotify;
 	}
 	return NULL;
 }
