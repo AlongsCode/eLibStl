@@ -14,7 +14,7 @@
 <br>
 编译出来的测试exe程序路径`ESTL_DBG_EXE_PATH___`
 <br>
-易语言lib目录路径`ESTL_DBG_ELIB_PATH___`
+易语言lib目录路径,请以"\"结尾尽量减少警告,`ESTL_DBG_ELIB_PATH___`
 
 
 ## 代码编写规范
