@@ -214,7 +214,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 		}
 		oss << s;
 	}
-	//oss.seekp(-1, std::ios::end);
+	oss.seekp(-1, std::ios::end);
 	oss << "} | ";
 }
 

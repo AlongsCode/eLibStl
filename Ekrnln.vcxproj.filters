@@ -410,6 +410,12 @@
     <ClCompile Include="src\Text Manipulation\trim_leading_zeros.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
+    <ClCompile Include="src\Text Manipulation\extract_shortest_matching_text.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text Manipulation\count_occurrences.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

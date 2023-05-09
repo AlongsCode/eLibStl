@@ -28,7 +28,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/    AS_RECEIVE_ALL_TYPE_DATA,
+		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "父窗口",
@@ -78,7 +78,7 @@ EXTERN_C void Fn_MessageBoxW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 }
 
 FucInfo message_box_w = { {
-		/*ccname*/  ("信息框Ex"),
+		/*ccname*/  ("信息框W"),
 		/*egname*/  (""),
 		/*explain*/ ("支持unicode的信息框,以及延迟时间"),
 		/*category*/3,
