@@ -120,6 +120,8 @@
     <ClCompile Include="src\get_console_locale.cpp" />
     <ClCompile Include="src\set_env.cpp" />
     <ClCompile Include="src\split.cpp" />
+    <ClCompile Include="src\Text Manipulation\byte_array_to_string.cpp" />
+    <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp" />
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp" />
     <ClCompile Include="src\Text Manipulation\extract_shortest_matching_text.cpp" />
     <ClCompile Include="src\Text Manipulation\trim_leading_zeros.cpp" />
@@ -309,7 +311,7 @@
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <TargetName>libstl</TargetName>
+    <TargetName>libstl_static</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
