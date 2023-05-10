@@ -184,9 +184,9 @@ network_post/*网页访问*/\
 ,Fn_UpDownGetAccel/*调节器.取加速度*/\
 ,g_trim_leading_zeros/*删文本左侧无效零*/\
 ,g_extract_shortest_matching_text/*取中间文本*/\
-
-
-
+, g_byte_array_to_string/*字节集到十进制文本A*/\
+, g_byte_array_to_wstring/*字节集到十进制文本W*/\
+,g_concatenate_wstrings/*拼接文本W*/
 
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 

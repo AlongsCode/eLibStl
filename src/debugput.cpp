@@ -18,6 +18,37 @@ static ARG_INFO Args[] =
 
 
 
+template <typename T>
+inline std::basic_string<T> ByteArrayToString(const std::vector<unsigned char>& byteVector) {
+	if (byteVector.empty()) {
+		return std::basic_string<T>();
+	}
+
+	const size_t length = byteVector.size();
+	std::vector<T> buffer(length * 4 + sizeof("{}"));
+
+	size_t bufferIndex = 0;
+	buffer[bufferIndex++] = '{';
+
+	for (const auto byte : byteVector) {
+		auto hundreds = byte / 100;
+		auto tens = byte % 100 / 10;
+		auto ones = byte % 10;
+
+		if (hundreds > 0) {
+			buffer[bufferIndex++] = hundreds + T('0');
+			buffer[bufferIndex++] = tens + T('0');
+		}
+		else if (tens > 0) {
+			buffer[bufferIndex++] = tens + T('0');
+		}
+		buffer[bufferIndex++] = ones + T('0');
+		buffer[bufferIndex++] = ',';
+	}
+	buffer[bufferIndex - 1] = '}';
+
+	return std::basic_string<T>(buffer.data(), bufferIndex);
+}
 
 
 /*兼容易语言原版*/
@@ -60,24 +91,27 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 		const char* pText = param->m_pText;
 		if (pText == nullptr || *pText == '\0')
 		{
-			oss << "空文本:“” | ";
+			oss << "[空文本] | ";
 		}
 		else
 		{
-			oss << "文本:" << strlen(pText) << "“" << pText << "” | ";
+			oss << "[文本:" << strlen(pText) << "] “" << pText << "” | ";
 		}
 		break;
 	}
 	case SDT_BIN:
 	{
 		const auto& bytes = elibstl::arg_to_vdata(param->m_pBin);
-		oss << "字节集:" << bytes.size() << "{";
-		for (const auto& b : bytes)
-		{
-			oss << static_cast<int>(b) << ",";
-		}
-		if (!bytes.empty()) { oss.seekp(-1, std::ios_base::end); }  // 去掉最后一个逗号
-		oss << "} | ";
+		oss << "[字节集:" << bytes.size() << "] " << ByteArrayToString<char>(bytes) << " | ";
+
+		//ByteArrayToString<char>(bytes);
+
+		//for (const auto& b : bytes)
+		//{
+		//	oss << static_cast<int>(b) << ",";
+		//}
+		//if (!bytes.empty()) { oss.seekp(-1, std::ios_base::end); }  // 去掉最后一个逗号
+		//oss << "} | ";
 		break;
 	}
 	case SDT_DATE_TIME:
@@ -127,13 +161,13 @@ inline int GetTypeSize(const int dtDataType) {
 static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 {
 	const int nDimension = elibstl::get_array_dimension(pParam->m_pAryData);
-	oss << nDimension << "维数组:";
+	oss << "[" << nDimension << "维数组:";
 	int nElementCount = elibstl::get_array_count(pParam->m_pAryData, 0);
 	for (int i = 0; i < nDimension; i++) {
 		oss << (i == 0 ? "" : "-") << elibstl::get_array_count(pParam->m_pAryData, i + 1);
 		nElementCount *= elibstl::get_array_count(pParam->m_pAryData, i + 1);
 	}
-	oss << "{";
+	oss << "] {";
 	const auto pStart = reinterpret_cast<const LPBYTE>(pParam->m_pAryData) + (nDimension + 1) * sizeof(INT);
 	const auto pEnd = pStart + nElementCount * GetTypeSize(pParam->m_dtDataType);
 	std::string s = ", ";
@@ -214,7 +248,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 		}
 		oss << s;
 	}
-	oss.seekp(-1, std::ios::end);
+	//oss.seekp(-1, std::ios::end);
 	oss << "} | ";
 }
 

@@ -416,6 +416,12 @@
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
+    <ClCompile Include="src\Text Manipulation\byte_array_to_string.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

@@ -17,12 +17,15 @@ namespace elibstl
 
 
 
-	struct ebin
-	{
-		std::uint32_t m_check;//恒为1
-		size_t m_size;//长度
-		std::uint8_t* m_data;//字节集指针
-	};
+	//struct ebin
+	//{
+	//	std::uint32_t m_check;//恒为1
+	//	size_t m_size;//长度
+	//	std::uint8_t m_data[0];//字节集指针
+	//	ebin() {
+	//		memset(this, 0, sizeof(*this));
+	//	}
+	//};
 
 
 
@@ -113,7 +116,7 @@ namespace elibstl
 	{
 		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
 			//无需对原始指针操作的情况下映射为string_view
-			return std::wstring_view(reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
+			return std::wstring_view(reinterpret_cast<wchar_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t) * 2));
 		}
 		else {
 			return std::wstring_view();
