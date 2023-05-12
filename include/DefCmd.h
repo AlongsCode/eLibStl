@@ -186,7 +186,8 @@ network_post/*网页访问*/\
 ,g_extract_shortest_matching_text/*取中间文本*/\
 , g_byte_array_to_string/*字节集到十进制文本A*/\
 , g_byte_array_to_wstring/*字节集到十进制文本W*/\
-,g_concatenate_wstrings/*拼接文本W*/
+,g_concatenate_wstrings/*拼接文本W*/\
+,g_is_inside_virtual_machine/*是否运行在虚拟机*/
 
 //,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 

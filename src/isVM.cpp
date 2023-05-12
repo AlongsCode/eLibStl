@@ -33,7 +33,7 @@ EXTERN_C void Fn_IsInsideVirtualMachine(PMDATA_INF pRetData, INT nArgCount, PMDA
 {
 	pRetData->m_bool = IsInsideVirtualMachine();
 }
-FucInfo e_Fn_IsInsideVirtualMachine = { {
+FucInfo g_is_inside_virtual_machine = { {
 		/*ccname*/  ("是否运行在虚拟机"),
 		/*egname*/  (""),
 		/*explain*/ ("检查是否运行在VirtualPC或VMware上"),
@@ -44,6 +44,6 @@ FucInfo e_Fn_IsInsideVirtualMachine = { {
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/0, 
+		/*ArgCount*/0,
 		/*arg lp*/  0,
 	} ,Fn_IsInsideVirtualMachine ,"Fn_IsInsideVirtualMachine" };
