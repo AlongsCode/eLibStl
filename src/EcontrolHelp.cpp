@@ -134,61 +134,61 @@ struct ESTLPRIV_INPUTBOXCTX
 	BOOL bOK;
 };
 static ATOM s_atomInputBox = 0;
-static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	HWND hwndEDIT = GetDlgItem(hwndDlg, 1001);
-	switch (uMsg)
-	{
-	case WM_INITDIALOG:
-	{
-		::SetWindowTextW(hwndDlg, L"请输入所需文本:");
-		::SetWindowLongPtrW(hwndDlg, GWLP_USERDATA, 0);
-		::SetWindowTextW(hwndEDIT, (LPCWSTR)lParam);
-	}
-
-	break;
-	case WM_COMMAND:
-	{
-		INT nID = wParam & 0xffff;
-		if (nID == IDCANCEL)
-			DestroyWindow(hwndDlg);
-		else if (nID == IDOK) {
-
-
-			size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
-			if (nLen > 0)
-			{
-				wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
-				GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
-				std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
-				*result = std::wstring(Editstr);
-				delete[]Editstr;
-			}
-			DestroyWindow(hwndDlg);
-		}
-	}
-	break;
-	case WM_CLOSE: {
-		size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
-		if (nLen > 0)
-		{
-			wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
-			GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
-			std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
-			*result = std::wstring(Editstr);
-			delete[]Editstr;
-		}
-		DestroyWindow(hwndDlg);
-		break;
-	}
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return FALSE;
-	}
-	return TRUE;
-}
+//static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+//{
+//	HWND hwndEDIT = GetDlgItem(hwndDlg, 1001);
+//	switch (uMsg)
+//	{
+//	case WM_INITDIALOG:
+//	{
+//		::SetWindowTextW(hwndDlg, L"请输入所需文本:");
+//		::SetWindowLongPtrW(hwndDlg, GWLP_USERDATA, 0);
+//		::SetWindowTextW(hwndEDIT, (LPCWSTR)lParam);
+//	}
+//
+//	break;
+//	case WM_COMMAND:
+//	{
+//		INT nID = wParam & 0xffff;
+//		if (nID == IDCANCEL)
+//			DestroyWindow(hwndDlg);
+//		else if (nID == IDOK) {
+//
+//
+//			size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
+//			if (nLen > 0)
+//			{
+//				wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
+//				GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
+//				std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
+//				*result = std::wstring(Editstr);
+//				delete[]Editstr;
+//			}
+//			DestroyWindow(hwndDlg);
+//		}
+//	}
+//	break;
+//	case WM_CLOSE: {
+//		size_t nLen = ::GetWindowTextLengthW(hwndEDIT);
+//		if (nLen > 0)
+//		{
+//			wchar_t* Editstr = new wchar_t[nLen + 1]{ 0 };
+//			GetWindowTextW(hwndEDIT, Editstr, nLen + 1);
+//			std::wstring* result = (std::wstring*)::GetWindowLongPtrW(hwndDlg, GWLP_USERDATA);
+//			*result = std::wstring(Editstr);
+//			delete[]Editstr;
+//		}
+//		DestroyWindow(hwndDlg);
+//		break;
+//	}
+//	case WM_DESTROY:
+//		PostQuitMessage(0);
+//		break;
+//	default:
+//		return FALSE;
+//	}
+//	return TRUE;
+//}
 static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	const int cyBtn = 36, cxBtn1 = 110, cxBtn2 = 90, sizePadding = 10;
@@ -400,36 +400,36 @@ BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 	return bOK;
 }
 
-std::wstring MyInputBox(const std::wstring& title)
-{
-	//对话框二进制模板，方便脱离MFC
-	const  BYTE MyInputBoxDialogTemplateData[] = {
-	0x01,0x00,0xFF,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x08,0xC8,0x80,
-	0x03,0x00,0x00,0x00,0x00,0x00,0x5F,0x01,0xE2,0x00,0x00,0x00,0x00,0x00,0xF7,0x8B,
-	0x93,0x8F,0x65,0x51,0x1A,0xFF,0x00,0x00,0x09,0x00,0x00,0x00,0x00,0x00,0x8B,0x5B,
-	0x53,0x4F,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x84,0x00,0x81,0x50,
-	0x05,0x00,0x03,0x00,0x53,0x01,0xC0,0x00,0xE9,0x03,0x00,0x00,0xFF,0xFF,0x81,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x01,0x50,
-	0x63,0x00,0xC7,0x00,0x37,0x00,0x13,0x00,0x01,0x00,0x00,0x00,0xFF,0xFF,0x80,0x00,
-	0x6E,0x78,0xA4,0x8B,0x93,0x8F,0x65,0x51,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x50,0xBB,0x00,0xC7,0x00,0x37,0x00,0x13,0x00,
-	0x02,0x00,0x00,0x00,0xFF,0xFF,0x80,0x00,0x05,0x6E,0x7A,0x7A,0x00,0x00,0x00,0x00
-	};
-	std::wstring result;
-	HWND hDlg = CreateDialogIndirectParamW(::GetModuleHandleW(NULL), (LPCDLGTEMPLATE)MyInputBoxDialogTemplateData, 0, (DLGPROC)MyInputBoxDlgProcW, (LPARAM)title.c_str());
-	::SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)&result);
-	//result = temp;
-	if (hDlg) {
-		ShowWindow(hDlg, SW_SHOW);
-		UpdateWindow(hDlg);
-		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-	return result;
-}
+//std::wstring MyInputBox(const std::wstring& title)
+//{
+//	//对话框二进制模板，方便脱离MFC
+//	const  BYTE MyInputBoxDialogTemplateData[] = {
+//	0x01,0x00,0xFF,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x08,0xC8,0x80,
+//	0x03,0x00,0x00,0x00,0x00,0x00,0x5F,0x01,0xE2,0x00,0x00,0x00,0x00,0x00,0xF7,0x8B,
+//	0x93,0x8F,0x65,0x51,0x1A,0xFF,0x00,0x00,0x09,0x00,0x00,0x00,0x00,0x00,0x8B,0x5B,
+//	0x53,0x4F,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x84,0x00,0x81,0x50,
+//	0x05,0x00,0x03,0x00,0x53,0x01,0xC0,0x00,0xE9,0x03,0x00,0x00,0xFF,0xFF,0x81,0x00,
+//	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x01,0x50,
+//	0x63,0x00,0xC7,0x00,0x37,0x00,0x13,0x00,0x01,0x00,0x00,0x00,0xFF,0xFF,0x80,0x00,
+//	0x6E,0x78,0xA4,0x8B,0x93,0x8F,0x65,0x51,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+//	0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x50,0xBB,0x00,0xC7,0x00,0x37,0x00,0x13,0x00,
+//	0x02,0x00,0x00,0x00,0xFF,0xFF,0x80,0x00,0x05,0x6E,0x7A,0x7A,0x00,0x00,0x00,0x00
+//	};
+//	std::wstring result;
+//	HWND hDlg = CreateDialogIndirectParamW(::GetModuleHandleW(NULL), (LPCDLGTEMPLATE)MyInputBoxDialogTemplateData, 0, (DLGPROC)MyInputBoxDlgProcW, (LPARAM)title.c_str());
+//	::SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)&result);
+//	//result = temp;
+//	if (hDlg) {
+//		ShowWindow(hDlg, SW_SHOW);
+//		UpdateWindow(hDlg);
+//		MSG msg;
+//		while (GetMessage(&msg, NULL, 0, 0)) {
+//			TranslateMessage(&msg);
+//			DispatchMessage(&msg);
+//		}
+//	}
+//	return result;
+//}
 
 int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc)
 {
@@ -505,6 +505,37 @@ int GetFrameType(HWND hWnd)
 	return 0;// 无边框
 }
 
+HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic)
+{
+	ULONG_PTR uToken;
+	GdiplusStartupInput gpsi{};
+	gpsi.GdiplusVersion = 1;
+	if (GdiplusStartup(&uToken, &gpsi, NULL) != Ok)
+		return NULL;
+	HBITMAP hbm;
+	GpBitmap* pBitmap;
+	IStream* pStream = SHCreateMemStream(pData, cbPic);
+	if (!pStream)
+		goto Fail;
+	if (GdipCreateBitmapFromStream(pStream, &pBitmap) != Ok)
+	{
+		pStream->Release();
+		goto Fail;
+	}
+	if (GdipCreateHBITMAPFromBitmap(pBitmap, &hbm, 0))
+	{
+		GdipDisposeImage(pBitmap);
+		pStream->Release();
+		goto Fail;
+	}
+	GdipDisposeImage(pBitmap);
+	pStream->Release();
+	GdiplusShutdown(uToken);
+	return hbm;
+Fail:
+	GdiplusShutdown(uToken);
+	return NULL;
+}
 
 SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
 {
@@ -558,8 +589,8 @@ void CCtrlBase::InitBase0(PCVOID pAllData)
 void CCtrlBase::SetPic(void* pPic, int cbSize)
 {
 	m_Info0.cbPic = cbSize;
-	if (m_hBitmap)
-		DeleteObject(m_hBitmap);
+	if (m_hbmPic)
+		DeleteObject(m_hbmPic);
 
 	if (cbSize)
 	{
@@ -569,8 +600,7 @@ void CCtrlBase::SetPic(void* pPic, int cbSize)
 			m_pPicData = new BYTE[cbSize];
 			memcpy(m_pPicData, pPic, cbSize);
 		}
-		m_hBitmap = elibstl::make_hbit((BYTE*)pPic, cbSize);
-		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)m_hBitmap);
+		m_hbmPic = elibstl::make_hbm_gp((BYTE*)pPic, cbSize);
 	}
 	else
 	{
@@ -579,8 +609,7 @@ void CCtrlBase::SetPic(void* pPic, int cbSize)
 			delete[] m_pPicData;
 			m_pPicData = NULL;
 		}
-		m_hBitmap = NULL;
-		SendMessageW(m_hWnd, BM_SETIMAGE, IMAGE_BITMAP, NULL);
+		m_hbmPic = NULL;
 	}
 }
 

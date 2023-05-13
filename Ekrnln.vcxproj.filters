@@ -141,6 +141,9 @@
     <ClInclude Include="openlib\MiniCo\coroutine.h">
       <Filter>源文件\实现\全局命令\进程线程携程\coroutine\mini_co</Filter>
     </ClInclude>
+    <ClInclude Include="include\GdiplusFlatDef.h">
+      <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\elib\fnshare.cpp">
@@ -421,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="LabelW.cpp">
+      <Filter>源文件\组件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

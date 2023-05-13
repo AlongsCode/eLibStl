@@ -5,6 +5,7 @@
 #define SCID_UPDOWN			20230507'01u
 #define SCID_UPDOWNPARENT	20230507'02u
 
+ESTL_NAMESPACE_BEGIN
 // 调节器
 /*
 * 版本1数据布局
@@ -115,7 +116,7 @@ public:
 			dwUDStyle |= UDS_HOTTRACK;
 
 		m_hWnd = CreateWindowExW(0, UPDOWN_CLASSW, NULL, WS_CLIPSIBLINGS | WS_CHILD | dwUDStyle,
-			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
 		// SetDirection(m_Info.iDirection);
@@ -418,25 +419,25 @@ public:
 	}
 };
 SUBCLASS_MGR_INIT(CUpDown, SCID_UPDOWNPARENT, SCID_UPDOWN)
+ESTL_NAMESPACE_END
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
 	case ITF_CREATE_UNIT:
-		return (PFN_INTERFACE)CUpDown::ECreate;
+		return (PFN_INTERFACE)elibstl::CUpDown::ECreate;
 	case ITF_NOTIFY_PROPERTY_CHANGED:
-		return (PFN_INTERFACE)CUpDown::EChange;
+		return (PFN_INTERFACE)elibstl::CUpDown::EChange;
 	case ITF_GET_ALL_PROPERTY_DATA:
-		return (PFN_INTERFACE)CUpDown::EGetAlldata;
+		return (PFN_INTERFACE)elibstl::CUpDown::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
-		return (PFN_INTERFACE)CUpDown::EGetData;
+		return (PFN_INTERFACE)elibstl::CUpDown::EGetData;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CUpDown::ENotify;
+		return (PFN_INTERFACE)elibstl::CUpDown::ENotify;
 	}
 	return NULL;
 }
-
 
 static EVENT_ARG_INFO2 s_Event_Arg[] =
 {
