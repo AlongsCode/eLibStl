@@ -396,8 +396,28 @@ namespace elibstl
 		memcpy(p + 2, data, sizeof(T) * size);
 		return p;
 	}
+	template <typename T>
+	void* create_array(const std::vector<T>& data) {
 
+		return create_array<T>(data.data(), data.size());
 
+	}
+	inline void* create_text_array(const std::vector<std::wstring>& data)
+	{
+		if (data.empty())
+			return empty_array();
+
+		const auto p = reinterpret_cast<size_t*>(malloc_array<LPBYTE>(data.size()));
+		std::vector<LPBYTE> ewstr(data.size());
+		size_t i = 0;
+		for (const auto& now : data)
+		{
+			ewstr[i] = clone_textw(now);
+			i++;
+		}
+		memcpy(p + 2, ewstr.data(), sizeof(LPBYTE) * ewstr.size());
+		return p;
+	}
 
 
 

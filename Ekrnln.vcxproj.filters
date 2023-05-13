@@ -97,6 +97,12 @@
     <Filter Include="源文件\实现\全局命令\进程线程携程\进程类">
       <UniqueIdentifier>{7e19edaa-72eb-45c8-81a8-e803ea405c2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\拼音处理">
+      <UniqueIdentifier>{d8b53ada-a564-498a-8791-8725bd43a772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\拼音处理\字典%28除拼音类外不可引用%29">
+      <UniqueIdentifier>{4c778a83-d6d1-4d4d-91a1-7fa9d0cf49ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -427,6 +433,12 @@
     </ClCompile>
     <ClCompile Include="src\LabelW.cpp">
       <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PinYin Manipulation\TransPingYin.h">
+      <Filter>源文件\实现\全局命令\拼音处理\字典%28除拼音类外不可引用%29</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PinYin Manipulation\PinYin.cpp">
+      <Filter>源文件\实现\全局命令\拼音处理</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

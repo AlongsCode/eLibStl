@@ -73,7 +73,7 @@ static LIB_INFO s_LibInfo =
 	/*m_nDataTypeCount*/       sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
 	/*g_DataType_web*/         g_DataType, // 本库中所有的自定义数据类型
 
-	/*m_nCategoryCount*/        15, // 全局命令类别数目, 可为0
+	/*m_nCategoryCount*/        16, // 全局命令类别数目, 可为0
 	/*m_szzCategory*/
 	"0000算术运算\0"
 	"0000文本操作\0"
@@ -90,6 +90,7 @@ static LIB_INFO s_LibInfo =
 	"0000常用对话框\0"
 	"0000数据库\0"
 	"0000内存操作\0"
+	"0000拼音处理\0"
 	"\0",
 
 	/*m_nCmdCount*/             0, // 本库中提供的所有命令(全局命令及对象命令)的数目, 可为0

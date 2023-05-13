@@ -103,7 +103,8 @@
     <ClCompile Include="src\normalization_path.cpp" />
     <ClCompile Include="src\OpenFileDialog.cpp" />
     <ClCompile Include="src\open_console.cpp" />
-    <ClCompile Include="src\PinYin Manipulation\TransPingYin.cpp" />
+    <ClCompile Include="src\PinYin Manipulation\PinYin.cpp" />
+    <ClCompile Include="src\PinYin Manipulation\TransPingYin.h" />
     <ClCompile Include="src\prevent_duplicate_execution.cpp" />
     <ClCompile Include="src\Prime.cpp" />
     <ClCompile Include="src\FindText.cpp" />

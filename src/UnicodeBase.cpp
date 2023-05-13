@@ -49,8 +49,8 @@ EXTERN_C void Fn_L(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 
 FucInfo L = { {
 		/*ccname*/  ("L"),
-		/*egname*/  (""),
-		/*explain*/ ("uncidoe文本"),
+		/*egname*/  ("L"),
+		/*explain*/ ("将文本转为unicode文本"),
 		/*category*/2,
 		/*state*/   NULL,
 		/*ret*/     SDT_BIN,

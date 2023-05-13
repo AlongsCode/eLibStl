@@ -187,11 +187,18 @@ network_post/*网页访问*/\
 , g_byte_array_to_string/*字节集到十进制文本A*/\
 , g_byte_array_to_wstring/*字节集到十进制文本W*/\
 ,g_concatenate_wstrings/*拼接文本W*/\
-,g_is_inside_virtual_machine/*是否运行在虚拟机*/
+,g_is_inside_virtual_machine/*是否运行在虚拟机*/\
+,g_get_all_py/*取所有发音W*/\
+,g_get_py_count/*取发音数量W*/\
+,g_get_py/*取拼音W*/\
+,g_get_py_sm/*取声母W*/\
+,g_get_py_ym/*取韵母W*/\
 
-//,ansiwindow_to_unicodewindow/*窗口unicode支持*/
 
 
+/*此下两个完全没必要*/
+/*,g_comp_py_code/*输入字比较W*/
+/*,g_comp_py/*发音比较W*/
 
 #pragma endregion
 
