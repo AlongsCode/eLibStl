@@ -11,6 +11,7 @@
 
 #define ED_CUEBANNER_MAXLEN 260
 
+ESTL_NAMESPACE_BEGIN
 // 编辑框
 /*
 * 版本1数据布局：
@@ -415,7 +416,7 @@ public:
 			dwEDStyle = ES_AUTOHSCROLL;
 
 		m_hWnd = CreateWindowExW(0, WC_EDITW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | dwEDStyle,
-			x, y, cx, cy, hParent, (HMENU)nID, GetModuleHandleW(NULL), NULL);
+			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
 
@@ -1024,25 +1025,26 @@ public:
 	}
 };
 SUBCLASS_MGR_INIT(CEdit, SCID_EDITPARENT, SCID_EDIT)
+ESTL_NAMESPACE_END
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
 	{
 	case ITF_CREATE_UNIT:
-		return (PFN_INTERFACE)CEdit::ECreate;
+		return (PFN_INTERFACE)elibstl::CEdit::ECreate;
 	case ITF_NOTIFY_PROPERTY_CHANGED:
-		return (PFN_INTERFACE)CEdit::EChange;
+		return (PFN_INTERFACE)elibstl::CEdit::EChange;
 	case ITF_GET_ALL_PROPERTY_DATA:
-		return (PFN_INTERFACE)CEdit::EGetAlldata;
+		return (PFN_INTERFACE)elibstl::CEdit::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
-		return (PFN_INTERFACE)CEdit::EGetData;
+		return (PFN_INTERFACE)elibstl::CEdit::EGetData;
 	case ITF_DLG_INIT_CUSTOMIZE_DATA:
-		return (PFN_INTERFACE)CEdit::EInputW;
+		return (PFN_INTERFACE)elibstl::CEdit::EInputW;
 	case ITF_PROPERTY_UPDATE_UI:
-		return (PFN_INTERFACE)CEdit::EPropUpdateUI;
+		return (PFN_INTERFACE)elibstl::CEdit::EPropUpdateUI;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)CEdit::ENotify;
+		return (PFN_INTERFACE)elibstl::CEdit::ENotify;
 	}
 	return NULL;
 }

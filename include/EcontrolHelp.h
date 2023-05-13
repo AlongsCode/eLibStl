@@ -1,8 +1,9 @@
 //组件库需用通用函数引入此头文件
 #include "ElibHelp.h"
+#include "GdiplusFlatDef.h"
 #include <CommCtrl.h>
-
 #include <unordered_map>
+#include <Shlwapi.h>
 
 ESTL_NAMESPACE_BEGIN
 
@@ -21,8 +22,6 @@ std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap);
 /// <param name="IsStrikeOut">是否删除线</param>
 /// <returns>成功返回字体句柄，失败返回NULL</returns>
 HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic = FALSE, BOOL bUnderline = FALSE, BOOL bStrikeOut = FALSE);
-
-std::wstring MyInputBox(const std::wstring& title);
 
 /// <summary>
 /// 发送通用事件。
@@ -146,6 +145,13 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 	return lf;
 }
 
+/// <summary>
+/// 输入框
+/// </summary>
+/// <param name="ppszInput">接收输入内容指针，需使用delete[]释放</param>
+/// <param name="pszInitContent">编辑框初始内容</param>
+/// <param name="pszCaption">标题</param>
+/// <returns>成功返回TRUE，失败返回FALSE</returns>
 BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent = NULL, PCWSTR pszCaption = L"请输入文本：");
 
 /// <summary>
@@ -166,9 +172,6 @@ private:
 	UINT_PTR m_uIDParent;
 	UINT_PTR m_uIDCtrl;
 public:
-	/// <summary>
-	/// 默认构造：弃置
-	/// </summary>
 	CSubclassMgr() = delete;
 
 	/// <summary>
@@ -191,13 +194,22 @@ public:
 	/// 控件已创建
 	/// </summary>
 	/// <param name="pClass">控件类</param>
-	void OnCtrlCreate(TC* pClass)
+	eStlInline void OnCtrlCreate(TC* pClass)
+	{
+		OnCtrlCreate2(pClass);
+		SetWindowSubclass(pClass->GetHWND(), m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
+	}
+
+	/// <summary>
+	/// 控件已创建。
+	/// 此方法不对控件进行子类化，可用于非标准控件
+	/// </summary>
+	/// <param name="pClass">控件类</param>
+	void OnCtrlCreate2(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
 		HWND hParent = GetParent(hWnd);
 		m_CtrlInfo[hWnd] = pClass;
-
-		auto b = SetWindowSubclass(hWnd, m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
 
 		if (!m_ParentInfo.count(hParent))
 		{
@@ -274,6 +286,65 @@ public:
 	}
 };
 
+/// <summary>
+/// 控件实用类：子类化管理器。
+/// 本类不执行父窗口子类化操作
+/// </summary>
+/// <typeparam name="TC">控件类，必须实现GetHWND()方法，返回控件窗口句柄</typeparam>
+template<class TC>
+class CSubclassMgrSimple
+{
+private:
+	using TCtrlInfo = std::unordered_map<HWND, TC*>;
+
+	TCtrlInfo& m_CtrlInfo;
+	SUBCLASSPROC m_pfnCtrlSubclass;
+	UINT_PTR m_uIDCtrl;
+public:
+	CSubclassMgrSimple() = delete;
+	/// <summary>
+	/// 构造
+	/// </summary>
+	/// <param name="CtrlInfo">控件到控件类哈希表</param>
+	/// <param name="pfnCtrlSubclass">控件子类化过程</param>
+	/// <param name="uIDCtrl">控件子类化ID</param>
+	CSubclassMgrSimple(TCtrlInfo& CtrlInfo, SUBCLASSPROC pfnCtrlSubclass, UINT_PTR uIDCtrl) :
+		m_CtrlInfo(CtrlInfo), m_pfnCtrlSubclass(pfnCtrlSubclass), m_uIDCtrl(uIDCtrl) {}
+
+	~CSubclassMgrSimple() = default;
+
+	/// <summary>
+	/// 控件已创建
+	/// </summary>
+	/// <param name="pClass">控件类</param>
+	eStlInline void OnCtrlCreate(TC* pClass)
+	{
+		OnCtrlCreate2(pClass);
+		SetWindowSubclass(pClass->GetHWND(), m_pfnCtrlSubclass, m_uIDCtrl, (DWORD_PTR)pClass);
+	}
+
+	/// <summary>
+	/// 控件已创建。
+	/// 此方法不对控件进行子类化，可用于非标准控件
+	/// </summary>
+	/// <param name="pClass">控件类</param>
+	eStlInline void OnCtrlCreate2(TC* pClass)
+	{
+		HWND hWnd = pClass->GetHWND();
+		m_CtrlInfo[hWnd] = pClass;
+	}
+
+	/// <summary>
+	/// 控件将被销毁
+	/// </summary>
+	/// <param name="pClass">控件类</param>
+	eStlInline void OnCtrlDestroy(TC* pClass)
+	{
+		HWND hWnd = pClass->GetHWND();
+		if (m_CtrlInfo.count(hWnd))
+			m_CtrlInfo.erase(hWnd);
+	}
+};
 
 eStlInline BOOL IsBitExist(DWORD dw1, DWORD dw2)
 {
@@ -329,6 +400,15 @@ eStlInline int ESTLPRIV_MultiSelectEqual___(T ii, int cItem, ...)
 
 void SetFrameType(HWND hWnd, int iFrame);
 int GetFrameType(HWND hWnd);
+
+/// <summary>
+/// 字节流到位图句柄。
+/// NAS_GET_HBITMAP有点问题，半透明像素都有色差，也没去细研究。。。。不知道吴涛在原版控件里是怎么写的
+/// </summary>
+/// <param name="pData">字节流</param>
+/// <param name="cbPic">长度</param>
+/// <returns>成功返回位图句柄，失败返回NULL</returns>
+HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic);
 
 class CCtrlWnd
 {
@@ -404,7 +484,7 @@ protected:
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
 
-	HBITMAP m_hBitmap = NULL;// 位图句柄
+	HBITMAP m_hbmPic = NULL;// 位图句柄
 	HFONT m_hFont = NULL;// 字体句柄
 	ECTRLINFO m_Info0{};// 信息
 
@@ -420,7 +500,7 @@ public:
 	~CCtrlBase()
 	{
 		DeleteObject(m_hFont);
-		DeleteObject(m_hBitmap);
+		DeleteObject(m_hbmPic);
 		delete[] m_pszTextA;
 		delete[] m_pszTextW;
 		delete[] m_pPicData;
@@ -560,7 +640,7 @@ public:
 	{
 		if (!m_bInDesignMode)
 		{
-			auto&& x = elibstl::GetDataFromHBIT(m_hBitmap);
+			auto&& x = elibstl::GetDataFromHBIT(m_hbmPic);
 			delete[] m_pPicData;
 			m_Info0.cbPic = x.size();
 			m_pPicData = new BYTE[m_Info0.cbPic];
@@ -732,6 +812,16 @@ ESTL_NAMESPACE_END
 	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
 	std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \
 	elibstl::CSubclassMgr<Class> Class::m_SM{ m_ParentSCInfo,m_CtrlSCInfo,ParentSubclassProc,CtrlSubclassProc,uIDParent,uIDCtrl };
+// 声明简单子类化管理器所需成员
+#define SUBCLASS_SMP_MGR_DECL(Class) \
+	public: \
+		static std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
+	private: \
+		static elibstl::CSubclassMgrSimple<Class> m_SM;
+// 初始化简单子类化管理器所需成员
+#define SUBCLASS_SMP_MGR_INIT(Class, uIDCtrl) \
+	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
+	elibstl::CSubclassMgrSimple<Class> Class::m_SM{ m_CtrlSCInfo,CtrlSubclassProc,uIDCtrl };
 // 检查父窗口是否改变，放在WM_SHOWWINDOW下，控件在容器中时，创建参数中的父窗口句柄实际上是顶级窗口句柄，WM_SHOWWINDOW前会被改为容器窗口
 #define CHECK_PARENT_CHANGE \
 	if (!p->m_bParentChanged) \

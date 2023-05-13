@@ -92,6 +92,7 @@
     <ClCompile Include="src\Is_64_bit.cpp" />
     <ClCompile Include="src\is_login_net.cpp" />
     <ClCompile Include="src\kill_proc.cpp" />
+    <ClCompile Include="src\LabelW.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
     <ClCompile Include="src\memwrite.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="include\elib\mtypes.h" />
     <ClInclude Include="include\elib\PublicIDEFunctions.h" />
     <ClInclude Include="include\elib\untshare.h" />
+    <ClInclude Include="include\GdiplusFlatDef.h" />
     <ClInclude Include="include\Tace.hpp" />
     <ClInclude Include="openlib\ETCP\etcpapi.h" />
     <ClInclude Include="openlib\MiniCo\coroutine.h" />

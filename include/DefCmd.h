@@ -213,6 +213,9 @@ hCoroutine,/*协程调度器*/\
 edbs_ex,/*edbs*/\
 CtCheckButtonW,/*选择框*/\
 CtCommandLink/*命令链接*/\
+,CtLabelW/*标签W*/\
+
+
+
 
 #pragma endregion
-

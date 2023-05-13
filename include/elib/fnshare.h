@@ -125,7 +125,7 @@ namespace elibstl
 
 
 
-	inline HBITMAP make_hbit(LPBYTE pData, size_t nSize) {
+	inline HBITMAP make_hbm(LPBYTE pData, size_t nSize) {
 		return	(HBITMAP)NotifySys(NAS_GET_HBITMAP, (DWORD)pData, nSize);
 	}
 	inline HUNIT make_cwnd(HWND hWnd) {
