@@ -425,7 +425,7 @@
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
-    <ClCompile Include="LabelW.cpp">
+    <ClCompile Include="src\LabelW.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
   </ItemGroup>
