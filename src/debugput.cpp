@@ -160,14 +160,25 @@ inline int GetTypeSize(const int dtDataType) {
 
 static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 {
+
 	const int nDimension = elibstl::get_array_dimension(pParam->m_pAryData);
 	oss << "[" << nDimension << "维数组:";
-	int nElementCount = elibstl::get_array_count(pParam->m_pAryData, 0);
+	int nElementCount = 0;
 	for (int i = 0; i < nDimension; i++) {
 		oss << (i == 0 ? "" : "-") << elibstl::get_array_count(pParam->m_pAryData, i + 1);
-		nElementCount *= elibstl::get_array_count(pParam->m_pAryData, i + 1);
+		if (i == 0)
+		{
+			nElementCount = elibstl::get_array_count(pParam->m_pAryData, 1);
+		}
+		else
+		{
+			nElementCount *= elibstl::get_array_count(pParam->m_pAryData, i + 1);
+		}
+
+
 	}
 	oss << "] {";
+	MessageBoxA(0, oss.str().c_str(), 0, 0);
 	const auto pStart = reinterpret_cast<const LPBYTE>(pParam->m_pAryData) + (nDimension + 1) * sizeof(INT);
 	const auto pEnd = pStart + nElementCount * GetTypeSize(pParam->m_dtDataType);
 	std::string s = ", ";
@@ -216,7 +227,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 
 			if ((*(LPVOID*)p) == 0)
 			{
-				oss << "字节集:0{},";
+				oss << "字节集:0{}";
 				break;
 			}
 			std::vector<unsigned char> pBin = elibstl::arg_to_vdata((LPBYTE)(*(LPVOID*)p));
@@ -227,7 +238,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 				oss << ",";
 			}
 			oss.seekp(-1, std::ios_base::end); // 删除最后一个逗号
-			oss << "} ,";
+			oss << "} ";
 			break;
 		}
 		case SDT_DATE_TIME:
@@ -251,8 +262,6 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 	//oss.seekp(-1, std::ios::end);
 	oss << "} | ";
 }
-
-
 
 
 

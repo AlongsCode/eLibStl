@@ -440,6 +440,9 @@
     <ClCompile Include="src\PinYin Manipulation\PinYin.cpp">
       <Filter>源文件\实现\全局命令\拼音处理</Filter>
     </ClCompile>
+    <ClCompile Include="src\Code Debug\try_catch.cpp">
+      <Filter>源文件\实现\全局命令\代码调试</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

@@ -61,6 +61,7 @@
     <ClCompile Include="src\clean_console.cpp" />
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
+    <ClCompile Include="src\Code Debug\try_catch.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />

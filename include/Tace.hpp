@@ -4,6 +4,7 @@
 #include<windows.h>
 #include<string>
 #include<vector>
+
 inline std::wstring to_wstring(const std::string& str)
 {
 	int widesize = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
@@ -96,7 +97,7 @@ static void pt(std::wstring& str, std::wstring s)
 	str.append(s);
 	str.append(L"\" | ");
 }
-static void pt(std::wstring& str, std::vector<unsigned char> s)
+static void pt(std::wstring& str, const std::vector<unsigned char>& s)
 {
 	if (s.empty())
 	{
@@ -138,6 +139,11 @@ static void debug_put(T... args)
 	str.pop_back();
 	str.append(L"\r\n");
 	OutputDebugStringW(str.c_str());
+	//MDATA_INF RetData, ArgInf;
+	//ArgInf.m_dtDataType = SDT_TEXT;
+	//char* pDebugText = elibstl::clone_text(str.c_str());
+	//ArgInf.m_pText = pDebugText;
+	//elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
 };
 
 #else
