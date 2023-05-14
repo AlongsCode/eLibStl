@@ -1,12 +1,14 @@
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
-#define WCN_INTPUTBOX L"eLibStl.WndClass.InputBox"
+#define WCN_INTPUTBOX			L"eLibStl.WndClass.InputBox"
 
 #define IDC_ED_INPUT	101
 #define IDC_BT_READIN	201
 #define IDC_BT_OK		202
 #define IDC_BT_CANCEL	203
+
+#define PROP_INPUTBOXEDITWP		L"eLibStl.Prop.InputBox.Edit.Proc"
 
 #define DEF_SIZE(height,width) static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2){switch (nMsg){case NU_GET_CREATE_SIZE_IN_DESIGNER:{*((intptr_t*)dwParam1) = height;*((intptr_t*)dwParam2) = width;}return TRUE;}return FALSE;}
 
@@ -132,6 +134,8 @@ struct ESTLPRIV_INPUTBOXCTX
 	PWSTR* ppszInput;
 	HFONT hFont;
 	BOOL bOK;
+	BOOL bEMainWndInitEnabled;
+	HWND hwndEMain;
 };
 static ATOM s_atomInputBox = 0;
 //static BOOL CALLBACK MyInputBoxDlgProcW(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -189,6 +193,16 @@ static ATOM s_atomInputBox = 0;
 //	}
 //	return TRUE;
 //}
+
+static LRESULT CALLBACK WndProc_InputBoxEdit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (uMsg == WM_KEYDOWN)
+		if (wParam == 'A')
+			if (GetKeyState(VK_CONTROL) & 0x80000000)
+				SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + A全选
+
+	return CallWindowProcW((WNDPROC)GetPropW(hWnd, PROP_INPUTBOXEDITWP), hWnd, uMsg, wParam, lParam);
+}
 static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	const int cyBtn = 36, cxBtn1 = 110, cxBtn2 = 90, sizePadding = 10;
@@ -336,6 +350,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		HWND hCtrl;
 		hCtrl = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, p->pszInitContent, WS_CHILD | WS_VISIBLE | ES_MULTILINE,
 			sizePadding, sizePadding, 0, 0, hWnd, (HMENU)IDC_ED_INPUT, g_elibstl_hModule, NULL);
+		SetPropW(hCtrl, PROP_INPUTBOXEDITWP, (HANDLE)SetWindowLongPtrW(hCtrl, GWLP_WNDPROC, (LONG_PTR)WndProc_InputBoxEdit));
 		ShowScrollBar(hCtrl, SB_VERT, TRUE);
 		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
 		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"导入文本(&I)", WS_CHILD | WS_VISIBLE,
@@ -354,6 +369,9 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
 		DeleteObject(p->hFont);
+		if (p->bEMainWndInitEnabled)
+			EnableWindow(p->hwndEMain, TRUE);
+		SetForegroundWindow(p->hwndEMain);
 		PostQuitMessage(0);
 	}
 	return 0;
@@ -364,13 +382,14 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 {
+	HWND hwndEMain = (HWND)NotifySys(NES_GET_MAIN_HWND, 0, 0);
 	if (!s_atomInputBox)
 	{
 		WNDCLASSW wc{};
 		wc.lpszClassName = WCN_INTPUTBOX;
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-		wc.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+		wc.hIcon = (HICON)GetClassLongPtrW(hwndEMain, GCLP_HICON);
 		wc.style = CS_VREDRAW | CS_HREDRAW;
 		wc.hInstance = g_elibstl_hModule;
 		wc.lpfnWndProc = WndProc_InputBox;
@@ -382,10 +401,20 @@ BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 	ZeroMemory(pCtx, sizeof(ESTLPRIV_INPUTBOXCTX));
 	pCtx->pszInitContent = pszInitContent;
 	pCtx->ppszInput = ppszInput;
+	pCtx->bEMainWndInitEnabled = IsWindowEnabled(hwndEMain);
+	pCtx->hwndEMain = hwndEMain;
+
+	if (pCtx->bEMainWndInitEnabled)
+		EnableWindow(hwndEMain, FALSE);
 
 	const int cxInit = 560, cyInit = 500;
-	HWND hWnd = CreateWindowExW(0, MAKEINTATOMW(s_atomInputBox), pszCaption, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		CW_USEDEFAULT, SW_SHOW, cxInit, cyInit, NULL, NULL, g_elibstl_hModule, pCtx);
+	RECT rcEMain;
+	GetWindowRect(hwndEMain, &rcEMain);
+	rcEMain.left += ((rcEMain.right - rcEMain.left - cxInit) / 2);
+	rcEMain.top += ((rcEMain.bottom - rcEMain.top - cyInit) / 2);
+	HWND hWnd = CreateWindowExW(0, WCN_INTPUTBOX, pszCaption, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		rcEMain.left, rcEMain.top, cxInit, cyInit, NULL, NULL, g_elibstl_hModule, pCtx);
+	SetWindowLongPtrW(hWnd, GWLP_HWNDPARENT, (LONG_PTR)hwndEMain);
 	assert(hWnd);
 
 	MSG msg;
