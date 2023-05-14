@@ -28,6 +28,8 @@ struct ELABELDATA
 	int iEllipsisMode;		// 省略号模式
 	int iPrefixMode;		// 前缀模式
 	BOOL bFullWndPic;		// 底图尽量充满控件
+	BOOL bTransparent;		// 透明标签
+	int iMousePassingThrough;// 鼠标穿透
 };
 
 // 标签
@@ -49,15 +51,15 @@ private:
 	int m_cxBKPic = 0, m_cyBKPic = 0;// 底图大小
 
 	int m_cxPic = 0, m_cyPic = 0;// 图片大小
+	RECT m_rcPartPic{};
+	RECT m_rcPartText{};
 
 	BOOL m_bAllowRedraw = TRUE;
 
 	static ATOM m_atomLabel;// 标签类原子
 
-	void Update(BOOL bShowImmd = TRUE)
+	void Paint(HDC hDC)
 	{
-		if (!m_bAllowRedraw)
-			return;
 		BLENDFUNCTION bf;
 		bf.BlendOp = AC_SRC_OVER;
 		bf.BlendFlags = 0;
@@ -68,8 +70,13 @@ private:
 		//
 
 		// 画纯色背景
-		RECT rc = { 0,0,m_cxClient,m_cyClient };
-		FillRect(m_hCDC, &rc, (HBRUSH)GetStockObject(DC_BRUSH));
+		RECT rc{ 0,0,m_cxClient,m_cyClient };
+		if (!m_Info.bTransparent)
+			FillRect(hDC, &rc, (HBRUSH)GetStockObject(DC_BRUSH));
+		else
+			IntersectClipRect(hDC, 0, 0, m_cxClient, m_cyClient);
+		// 类样式带CS_PARENTDC速度会快一点，并且按理来说应该手动剪辑子窗口，但是为什么不剪辑也没事。。。反正这里就这么写了吧，按规定来
+		
 		// 画渐变背景或底图
 		if (m_Info.iGradientMode != 0)
 		{
@@ -153,7 +160,7 @@ private:
 				gr[0].LowerRight = 1;
 				gr[1].UpperLeft = 2;
 				gr[1].LowerRight = 3;
-				GdiGradientFill(m_hCDC, tv, ARRAYSIZE(tv), &gr, ARRAYSIZE(gr), uMode);
+				GdiGradientFill(hDC, tv, ARRAYSIZE(tv), &gr, ARRAYSIZE(gr), uMode);
 			}
 			else
 			{
@@ -257,7 +264,7 @@ private:
 					break;
 				}
 
-				GdiGradientFill(m_hCDC, tv, ARRAYSIZE(tv), gt, ARRAYSIZE(gt), GRADIENT_FILL_TRIANGLE);
+				GdiGradientFill(hDC, tv, ARRAYSIZE(tv), gt, ARRAYSIZE(gt), GRADIENT_FILL_TRIANGLE);
 			}
 		}
 		else if (m_hbmBK)
@@ -281,15 +288,15 @@ private:
 					else
 						cyRgn = m_cyClient;
 
-					GdiAlphaBlend(m_hCDC, 0, 0, cxRgn, cyRgn, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
+					GdiAlphaBlend(hDC, 0, 0, cxRgn, cyRgn, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				}
 				else
-					GdiAlphaBlend(m_hCDC, 0, 0, m_cxBKPic, m_cyBKPic, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
+					GdiAlphaBlend(hDC, 0, 0, m_cxBKPic, m_cyBKPic, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
 			case 1:// 平铺
 				for (int i = 0; i < (m_cxClient - 1) / m_cxBKPic + 1; ++i)
 					for (int j = 0; j < (m_cyClient - 1) / m_cyBKPic + 1; ++j)
-						GdiAlphaBlend(m_hCDC, i * m_cxBKPic, j * m_cyBKPic, m_cxBKPic, m_cyBKPic,
+						GdiAlphaBlend(hDC, i * m_cxBKPic, j * m_cyBKPic, m_cxBKPic, m_cyBKPic,
 							m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
 			case 2:// 居中
@@ -315,20 +322,34 @@ private:
 						y = 0;
 					}
 
-					GdiAlphaBlend(m_hCDC, x, y, cxRgn, cyRgn, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
+					GdiAlphaBlend(hDC, x, y, cxRgn, cyRgn, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				}
 				else
-					GdiAlphaBlend(m_hCDC, (m_cxClient - m_cxBKPic) / 2, (m_cyClient - m_cyBKPic) / 2, m_cxBKPic, m_cyBKPic,
+					GdiAlphaBlend(hDC, (m_cxClient - m_cxBKPic) / 2, (m_cyClient - m_cyBKPic) / 2, m_cxBKPic, m_cyBKPic,
 						m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
 			case 3:// 缩放
-				GdiAlphaBlend(m_hCDC, 0, 0, m_cxClient, m_cyClient, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
+				GdiAlphaBlend(hDC, 0, 0, m_cxClient, m_cyClient, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
 			}
 		}
 		//
 		// 画文本
 		//
+		UINT uDTFlags = DT_NOCLIP |
+			(m_Info.bAutoWrap ? DT_WORDBREAK : DT_SINGLELINE) |
+			elibstl::MultiSelect<UINT>(m_Info.iEllipsisMode, 0, DT_END_ELLIPSIS, DT_PATH_ELLIPSIS, DT_WORD_ELLIPSIS) |
+			elibstl::MultiSelect<UINT>(m_Info.iPrefixMode, 0, DT_NOPREFIX, DT_HIDEPREFIX, DT_PREFIXONLY);
+
+		SelectObject(m_hcdcHelper, m_hbmPic);
+		GdiAlphaBlend(hDC, m_rcPartPic.left, m_rcPartPic.top, m_cxPic, m_cyPic, m_hcdcHelper, 0, 0, m_cxPic, m_cyPic, bf);
+		rc = m_rcPartText;
+		DrawTextW(hDC, m_pszTextW, -1, &rc, uDTFlags);
+	}
+
+	void CalcPartsRect()
+	{
+		RECT rc{ 0,0,m_cxClient-m_cxPic,m_cyClient };
 		UINT uDTFlags = DT_NOCLIP | DT_CALCRECT |
 			elibstl::MultiSelect<UINT>(m_Info.iEllipsisMode, 0, DT_END_ELLIPSIS, DT_PATH_ELLIPSIS, DT_WORD_ELLIPSIS) |
 			elibstl::MultiSelect<UINT>(m_Info.iPrefixMode, 0, DT_NOPREFIX, DT_HIDEPREFIX, DT_PREFIXONLY);
@@ -389,39 +410,57 @@ private:
 			}
 		}
 		uDTFlags &= (~DT_CALCRECT);
-		int cxTotal = rc.right - rc.left + m_cxPic;
+		int cxText = rc.right - rc.left;
+		int cxTotal = cxText + m_cxPic;
 		switch (m_Info.iAlignH)
 		{
 		case 0:// 左边
 			uDTFlags |= DT_LEFT;
 			rc.left = m_cxPic;
-			rc.right = rc.left + cxTotal;
+			rc.right = rc.left + cxText;
 			xPic = 0;
 			break;
 		case 1:// 中间
 			rc.left = (m_cxClient - cxTotal) / 2 + m_cxPic;
-			rc.right = rc.left + cxTotal;
+			rc.right = rc.left + cxText;
 			xPic = rc.left - m_cxPic;
 			break;
 		case 2:// 右边
 			uDTFlags |= DT_RIGHT;
 			rc.right = m_cxClient - m_cxPic;
-			rc.left = 0;
+			rc.left = rc.right - cxText;
 			xPic = rc.right;
 			break;
 		default:
 			assert(FALSE);
 		}
 
-		SelectObject(m_hcdcHelper, m_hbmPic);
-		GdiAlphaBlend(m_hCDC, xPic, yPic, m_cxPic, m_cyPic, m_hcdcHelper, 0, 0, m_cxPic, m_cyPic, bf);
-		DrawTextW(m_hCDC, m_pszTextW, -1, &rc, uDTFlags);
+		m_rcPartPic.left = xPic;
+		m_rcPartPic.top = yPic;
+		m_rcPartPic.right = m_rcPartPic.left + m_cxPic;
+		m_rcPartPic.bottom = m_rcPartPic.top + m_cyPic;
 
-		if (bShowImmd)
+		m_rcPartText = rc;
+	}
+
+	void SetDCAttr(HDC hDC)
+	{
+		SaveDC(hDC);
+		///////////
+		SelectObject(hDC, m_hFont);
+		///////////
+		SetTextColor(hDC, m_Info.crText);
+		///////////
+		if (m_Info.crBK == CLR_DEFAULT)
+			m_Info.crBK = GetSysColor(COLOR_BTNFACE);
+		SetDCBrushColor(hDC, m_Info.crBK);
+		///////////
+		if (m_Info.crTextBK == CLR_DEFAULT)
+			SetBkMode(hDC, TRANSPARENT);
+		else
 		{
-			HDC hDC = GetDC(m_hWnd);
-			BitBlt(hDC, 0, 0, m_cxClient, m_cyClient, m_hCDC, 0, 0, SRCCOPY);
-			ReleaseDC(m_hWnd, hDC);
+			SetBkMode(hDC, OPAQUE);
+			SetBkColor(hDC, m_Info.crTextBK);
 		}
 	}
 
@@ -434,6 +473,35 @@ private:
 
 		switch (uMsg)
 		{
+		case WM_NCHITTEST:
+		{
+			if (p->m_Info.bTransparent)
+				switch (p->m_Info.iMousePassingThrough)
+				{
+				case 0:// 无
+					break;
+				case 1:// 穿透空白区域
+				{
+					POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+					ScreenToClient(hWnd, &pt);
+					if (!PtInRect(&p->m_rcPartPic, pt) && !PtInRect(&p->m_rcPartText, pt))
+						return HTTRANSPARENT;
+				}
+				break;
+				case 2:// 穿透整个控件
+					return HTTRANSPARENT;
+				}
+		}
+		break;
+
+		case WM_WINDOWPOSCHANGED:
+		{
+			LRESULT lResult = DefWindowProcW(hWnd, uMsg, wParam, lParam);
+			if (p->m_Info.bTransparent)
+				p->RedrawLabel();
+			return lResult;
+		}
+
 		case WM_SIZE:
 		{
 			p->m_cxClient = LOWORD(lParam);
@@ -444,8 +512,9 @@ private:
 			p->m_hBitmap = CreateCompatibleBitmap(hDC, p->m_cxClient, p->m_cyClient);
 			SelectObject(p->m_hCDC, p->m_hBitmap);
 			ReleaseDC(hWnd, hDC);
-
-			p->Update(FALSE);
+			p->CalcPartsRect();
+			if (!p->m_Info.bTransparent)
+				p->RedrawLabel();
 		}
 		return 0;
 
@@ -481,15 +550,25 @@ private:
 		{
 			PAINTSTRUCT ps;
 			BeginPaint(hWnd, &ps);
-			BitBlt(ps.hdc,
-				ps.rcPaint.left,
-				ps.rcPaint.top,
-				ps.rcPaint.right - ps.rcPaint.left,
-				ps.rcPaint.bottom - ps.rcPaint.top,
-				p->m_hCDC,
-				ps.rcPaint.left,
-				ps.rcPaint.top,
-				SRCCOPY);
+			if (p->m_Info.bTransparent)
+			{
+				p->SetDCAttr(ps.hdc);
+				p->Paint(ps.hdc);
+				RestoreDC(ps.hdc, -1);
+			}
+			else
+			{
+				p->Paint(p->m_hCDC);
+				BitBlt(ps.hdc,
+					ps.rcPaint.left,
+					ps.rcPaint.top,
+					ps.rcPaint.right - ps.rcPaint.left,
+					ps.rcPaint.bottom - ps.rcPaint.top,
+					p->m_hCDC,
+					ps.rcPaint.left,
+					ps.rcPaint.top,
+					SRCCOPY);
+			}
 			EndPaint(hWnd, &ps);
 		}
 		return 0;
@@ -497,7 +576,8 @@ private:
 		case WM_SETFONT:
 		{
 			SelectObject(p->m_hCDC, (HFONT)wParam);
-			p->Update();
+			p->CalcPartsRect();
+			p->RedrawLabel();
 		}
 		break;
 
@@ -516,9 +596,13 @@ private:
 					p->m_pszTextA = NULL;
 			}
 
-			p->Update();
+			p->CalcPartsRect();
+			p->RedrawLabel();
 			return lResult;
 		}
+
+		case WM_ERASEBKGND:
+			return TRUE;
 
 		case WM_SETREDRAW:
 			p->m_bAllowRedraw = wParam;
@@ -540,7 +624,7 @@ public:
 			wc.hInstance = g_elibstl_hModule;
 			wc.lpfnWndProc = WndProc;
 			wc.lpszClassName = WCN_LABELW;
-			wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+			wc.style = CS_DBLCLKS | CS_PARENTDC;
 			m_atomLabel = RegisterClassW(&wc);
 			if (!m_atomLabel)
 			{
@@ -575,7 +659,7 @@ public:
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 
-		m_hWnd = CreateWindowExW(0, WCN_LABELW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS,
+		m_hWnd = CreateWindowExW(m_Info.bTransparent ? WS_EX_TRANSPARENT : 0, WCN_LABELW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS,
 			x, y, cx, cy, hParent, (HMENU)nID, g_elibstl_hModule, this);
 		m_hParent = hParent;
 		m_SM.OnCtrlCreate2(this);
@@ -602,13 +686,30 @@ public:
 			m_cyPic = bitmap.bmHeight;
 		}
 		SendMessageW(m_hWnd, WM_SETREDRAW, TRUE, 0);
-		Update();
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	~CLabel()
 	{
 		delete[] m_pBKPicData;
 		DeleteObject(m_hbmBK);
+	}
+
+	void RedrawLabel()
+	{
+		if (m_Info.bTransparent)
+		{
+			RECT rc{ 0,0,m_cxClient,m_cyClient };
+			HWND hParent = GetParent(m_hWnd);
+			MapWindowPoints(m_hWnd, hParent, (POINT*)&rc, 2);
+			RedrawWindow(hParent, &rc, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+		}
+		else
+		{
+			InvalidateRect(m_hWnd, NULL, FALSE);
+			UpdateWindow(m_hWnd);
+		}
 	}
 
 	void SetBKPic(BYTE* pPic, SIZE_T cbSize)
@@ -640,7 +741,7 @@ public:
 			}
 			m_hbmBK = NULL;
 		}
-		Update();
+		RedrawLabel();
 	}
 
 	eStlInline BYTE* GetBKPic(int* pcbPic) const
@@ -665,12 +766,14 @@ public:
 			m_cxPic = 0;
 			m_cyPic = 0;
 		}
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	eStlInline void SetBKPicMode(int iBKPicMode)
 	{
 		m_Info.iBKPicMode = iBKPicMode;
-		Update();
+		RedrawLabel();
 	}
 
 	eStlInline int GetBKPicMode() const
@@ -684,7 +787,8 @@ public:
 			m_Info.iAlignH = iAlign;
 		else
 			m_Info.iAlignV = iAlign;
-		Update();
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	eStlInline int GetAlign(BOOL bHAlign) const
@@ -698,7 +802,8 @@ public:
 	eStlInline void SetAutoWrap(BOOL bAutoWrap)
 	{
 		m_Info.bAutoWrap = bAutoWrap;
-		Update();
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	eStlInline BOOL GetAutoWrap() const
@@ -731,7 +836,7 @@ public:
 			}
 		}
 
-		Update();
+		RedrawLabel();
 	}
 
 	eStlInline COLORREF GetClr(int idx) const
@@ -749,7 +854,7 @@ public:
 	eStlInline void SetGradientMode(int iGradientMode)
 	{
 		m_Info.iGradientMode = iGradientMode;
-		Update();
+		RedrawLabel();
 	}
 
 	eStlInline int GetGradientMode() const
@@ -760,7 +865,7 @@ public:
 	eStlInline void SetGradientClr(int idx, COLORREF cr)
 	{
 		m_Info.crGradient[idx] = cr;
-		Update();
+		RedrawLabel();
 	}
 
 	eStlInline COLORREF GetGradientClr(int idx) const
@@ -771,7 +876,8 @@ public:
 	eStlInline void SetEllipsisMode(int iEllipsisMode)
 	{
 		m_Info.iEllipsisMode = iEllipsisMode;
-		Update();
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	eStlInline int GetEllipsisMode() const
@@ -782,7 +888,8 @@ public:
 	eStlInline void SetPrefixMode(int iPrefixMode)
 	{
 		m_Info.iPrefixMode = iPrefixMode;
-		Update();
+		CalcPartsRect();
+		RedrawLabel();
 	}
 
 	eStlInline int GetPrefixMode() const
@@ -793,12 +900,35 @@ public:
 	eStlInline void SetFullWndPic(BOOL bFullWndPic)
 	{
 		m_Info.bFullWndPic = bFullWndPic;
-		Update();
+		RedrawLabel();
 	}
 
-	eStlInline BOOL GetFullWndPic()
+	eStlInline BOOL GetFullWndPic() const
 	{
 		return m_Info.bFullWndPic;
+	}
+
+	eStlInline void SetTransparent(BOOL bTransparent)
+	{
+		m_Info.bTransparent = bTransparent;
+		elibstl::ModifyWindowStyle(m_hWnd, bTransparent ? WS_EX_TRANSPARENT : 0, WS_EX_TRANSPARENT, GWL_EXSTYLE);
+		RedrawLabel();
+	}
+
+	eStlInline BOOL GetTransparent() const
+	{
+		return m_Info.bTransparent;
+	}
+
+	eStlInline void SetMousePassingThrough(int iMousePassingThrough)
+	{
+		m_Info.iMousePassingThrough = iMousePassingThrough;
+		RedrawLabel();
+	}
+
+	eStlInline int GetMousePassingThrough() const
+	{
+		return m_Info.iMousePassingThrough;
 	}
 
 	HGLOBAL FlattenInfo() override
@@ -887,6 +1017,12 @@ public:
 		case 19:// 边框
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
+		case 20:// 透明标签
+			p->SetTransparent(pPropertyVaule->m_bool);
+			break;
+		case 21:// 透过鼠标
+			p->SetMousePassingThrough(pPropertyVaule->m_int);
+			break;
 		}
 
 		return FALSE;
@@ -957,6 +1093,12 @@ public:
 		case 19:// 边框
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
+		case 20:// 透明标签
+			pPropertyVaule->m_bool = p->GetTransparent();
+			break;
+		case 21:// 透过鼠标
+			pPropertyVaule->m_int = p->GetMousePassingThrough();
+			break;
 		}
 
 		return TRUE;
@@ -1023,6 +1165,8 @@ static UNIT_PROPERTY s_Member_LabelW[] =
 	/*017*/{ "前缀字符解释方式", "PrefixMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "常规\0""不解释前缀\0""隐藏下划线\0""只显示下划线\0""\0" },
 	/*018*/{ "底图尽量充满控件", "FullWndPic", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
 	/*019*/{ "边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
+	/*020*/{ "透明标签", "Transparent", "使标签背景透明，达到类似扩展界面支持库一中透明标签的效果。设置本模式后将忽略背景颜色属性，但渐变背景和底图依然有效。注意：频繁更新透明标签会影响程序的性能，若标签还设置了图片，则会有较明显的闪烁，应避免这种情况。", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
+	/*021*/{ "鼠标穿透方式", "MousePassingThroughMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "无\0""穿透空白区域\0""穿透整个控件\0""\0" },
 };
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)

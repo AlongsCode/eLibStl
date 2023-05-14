@@ -4,6 +4,7 @@
 #include <CommCtrl.h>
 #include <unordered_map>
 #include <Shlwapi.h>
+#include <windowsx.h>
 
 ESTL_NAMESPACE_BEGIN
 

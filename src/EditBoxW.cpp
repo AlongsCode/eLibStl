@@ -426,7 +426,7 @@ public:
 		SetClr(2, m_Info.crBK);
 		SetHideSel(m_Info.bHideSel);
 		SetMaxLen(m_Info.iMaxLen);
-		// SetMultiLine(m_Info.bMultiLine);// 这个函数仅仅在必要时重新核算非客户区，没有做其他实质性工作
+		// SetMultiLine(m_Info.bMultiLine);// 这个函数仅仅更新了m_Info，没有做其他实质性工作
 		SetScrollBar(m_Info.iScrollBar);
 		SetAlign(m_Info.iAlign);
 		SetInputMode(m_Info.iInputMode);
@@ -501,8 +501,6 @@ public:
 	{
 		BOOL bOld = m_Info.bMultiLine;
 		m_Info.bMultiLine = bMultiLine;// 不需要修改风格，因为控件要重新创建
-		if (!bOld && bMultiLine)
-			FrameChanged();
 	}
 
 	eStlInline BOOL GetMultiLine()
