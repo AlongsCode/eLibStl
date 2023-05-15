@@ -390,14 +390,14 @@ public:
 	CPushButton(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
-		if (!m_pszTextW)
+
+		if (pAllData)
+			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_PUSHBTN));
+		else
 		{
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"°´Å¥W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
-
-		if (pAllData)
-			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_PUSHBTN));
 		m_InfoEx.iVer = DATA_VER_BTN_PUSHBTN_1;
 
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_PUSHBUTTON,

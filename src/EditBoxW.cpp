@@ -247,9 +247,9 @@ private:
 				GetWindowTextW(hWnd, pszText, cchText + 1);
 				lfValue = _wtof(pszText);
 				if (*(ULONGLONG*)&lfValue == 0xFFF0000000000000)
-					SetWindowTextW(hWnd, L"-1.79769313486231570E+308");
+					SetWindowTextW(hWnd, L"-1.79769313486231570e308");
 				else if (*(ULONGLONG*)&lfValue == 0x7FF0000000000000)
-					SetWindowTextW(hWnd, L"1.79769313486231570E+308");
+					SetWindowTextW(hWnd, L"1.79769313486231570e308");
 				else
 					SetWindowTextW(hWnd, std::to_wstring(lfValue).c_str());
 				delete[] pszText;

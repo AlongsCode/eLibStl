@@ -51,16 +51,19 @@ private:
 	int m_cxBKPic = 0, m_cyBKPic = 0;// 底图大小
 
 	int m_cxPic = 0, m_cyPic = 0;// 图片大小
-	RECT m_rcPartPic{};
-	RECT m_rcPartText{};
-
-	BOOL m_bAllowRedraw = TRUE;
+	RECT m_rcPartPic{};// 缓存的图片矩形
+	RECT m_rcPartText{};// 缓存的文本矩形
 
 	static ATOM m_atomLabel;// 标签类原子
 
-	/*标签反馈事件*/
-
-	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam) {
+	/// <summary>
+	/// 标签反馈事件
+	/// </summary>
+	/// <param name="wParam"></param>
+	/// <param name="lParam"></param>
+	/// <returns></returns>
+	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam) 
+	{
 		EVENT_ARG_VALUE Arg1, Arg2;
 		Arg1.m_inf.m_int = static_cast<int>(wParam);
 		Arg1.m_inf.m_dtDataType = SDT_INT;
@@ -71,7 +74,7 @@ private:
 		event.m_nArgCount = 2;
 		event.m_arg[0] = Arg1;
 		event.m_arg[1] = Arg2;
-		;
+		
 		if (
 			(elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0) != 0)// 成功传递 
 			&&
@@ -82,6 +85,11 @@ private:
 			return FALSE;
 	}
 
+	/// <summary>
+	/// 绘制标签。
+	/// 若m_Info.bTransparent为TRUE，则自动设置剪辑DC至控件矩形
+	/// </summary>
+	/// <param name="hDC">目标DC，调用之前属性必须设置完毕</param>
 	void Paint(HDC hDC)
 	{
 		BLENDFUNCTION bf;
@@ -371,6 +379,9 @@ private:
 		DrawTextW(hDC, m_pszTextW, -1, &rc, uDTFlags);
 	}
 
+	/// <summary>
+	/// 计算部件矩形
+	/// </summary>
 	void CalcPartsRect()
 	{
 		RECT rc{ 0,0,m_cxClient - m_cxPic,m_cyClient };
@@ -467,6 +478,11 @@ private:
 		m_rcPartText = rc;
 	}
 
+	/// <summary>
+	/// 置外部DC属性。
+	/// 函数先使用SaveDC保存DC状态，然后根据控件属性设置DC
+	/// </summary>
+	/// <param name="hDC">目标DC</param>
 	void SetDCAttr(HDC hDC)
 	{
 		SaveDC(hDC);
@@ -491,6 +507,9 @@ private:
 	// 未用
 	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) { return 0; }
 
+	/// <summary>
+	/// 控件窗口过程
+	/// </summary>
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		auto p = (CLabel*)GetWindowLongPtrW(hWnd, 0);
@@ -629,10 +648,6 @@ private:
 
 		case WM_ERASEBKGND:
 			return TRUE;
-
-		case WM_SETREDRAW:
-			p->m_bAllowRedraw = wParam;
-			break;
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -671,20 +686,16 @@ public:
 		else
 		{
 			m_Info.iAlignV = 1;
-			m_Info.crBK = GetSysColor(COLOR_BTNFACE);
+			m_Info.crBK = CLR_DEFAULT;
 			m_Info.crTextBK = CLR_DEFAULT;
 			m_Info.crGradient[0] = 0x808080;
 			m_Info.crGradient[1] = 0xFFFFFF;
 			m_Info.crGradient[2] = 0x808080;
-		}
-		m_Info.iVer = DATA_VER_LABEL_1;
 
-		if (!m_pszTextW)
-		{
-			/*这里不应该再判断的，无论设计模式还是正常创建，为空可能是因为初始设置为空,除非pAllData为空，不然都应该置标题为空*/
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"标签W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
+		m_Info.iVer = DATA_VER_LABEL_1;
 
 		m_hWnd = CreateWindowExW(m_Info.bTransparent ? WS_EX_TRANSPARENT : 0, WCN_LABELW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS,
 			x, y, cx, cy, hParent, (HMENU)nID, g_elibstl_hModule, this);
@@ -723,6 +734,10 @@ public:
 		DeleteObject(m_hbmBK);
 	}
 
+	/// <summary>
+	/// 重画。
+	/// 不应使用基类的Redraw
+	/// </summary>
 	void RedrawLabel()
 	{
 		if (m_Info.bTransparent)
@@ -739,6 +754,11 @@ public:
 		}
 	}
 
+	/// <summary>
+	/// 置背景图片
+	/// </summary>
+	/// <param name="pPic">图片字节流</param>
+	/// <param name="cbSize">字节流长度</param>
 	void SetBKPic(BYTE* pPic, SIZE_T cbSize)
 	{
 		m_Info.cbBKPic = cbSize;
@@ -771,6 +791,11 @@ public:
 		RedrawLabel();
 	}
 
+	/// <summary>
+	/// 取背景图片
+	/// </summary>
+	/// <param name="pcbPic">接收图片数据长度</param>
+	/// <returns>图片数据，为对象内部所有，不可释放</returns>
 	eStlInline BYTE* GetBKPic(int* pcbPic) const
 	{
 		if (pcbPic)
@@ -778,6 +803,12 @@ public:
 		return m_pBKPicData;
 	}
 
+	/// <summary>
+	/// 置图片。
+	/// 不应使用基类的SetPic
+	/// </summary>
+	/// <param name="pPic">图片字节流</param>
+	/// <param name="cbSize">字节流长度</param>
 	eStlInline void SetPicLabel(BYTE* pPic, SIZE_T cbSize)
 	{
 		SetPic(pPic, cbSize);
@@ -797,17 +828,24 @@ public:
 		RedrawLabel();
 	}
 
+	/// <summary>
+	/// 置底图方式
+	/// </summary>
 	eStlInline void SetBKPicMode(int iBKPicMode)
 	{
 		m_Info.iBKPicMode = iBKPicMode;
 		RedrawLabel();
 	}
-
 	eStlInline int GetBKPicMode() const
 	{
 		return m_Info.iBKPicMode;
 	}
 
+	/// <summary>
+	/// 置对齐
+	/// </summary>
+	/// <param name="bHAlign">是否为横向对齐</param>
+	/// <param name="iAlign">对齐方式</param>
 	eStlInline void SetAlign(BOOL bHAlign, int iAlign)
 	{
 		if (bHAlign)
@@ -817,7 +855,6 @@ public:
 		CalcPartsRect();
 		RedrawLabel();
 	}
-
 	eStlInline int GetAlign(BOOL bHAlign) const
 	{
 		if (bHAlign)
@@ -826,18 +863,27 @@ public:
 			return m_Info.iAlignV;
 	}
 
+	/// <summary>
+	/// 置自动换行
+	/// </summary>
+	/// <param name="bAutoWrap"></param>
+	/// <returns></returns>
 	eStlInline void SetAutoWrap(BOOL bAutoWrap)
 	{
 		m_Info.bAutoWrap = bAutoWrap;
 		CalcPartsRect();
 		RedrawLabel();
 	}
-
 	eStlInline BOOL GetAutoWrap() const
 	{
 		return m_Info.bAutoWrap;
 	}
 
+	/// <summary>
+	/// 置颜色
+	/// </summary>
+	/// <param name="idx">0 = 文本颜色  1 = 背景  2 = 文本背景</param>
+	/// <param name="cr">颜色</param>
 	void SetClr(int idx, COLORREF cr)
 	{
 		switch (idx)
@@ -865,7 +911,6 @@ public:
 
 		RedrawLabel();
 	}
-
 	eStlInline COLORREF GetClr(int idx) const
 	{
 		switch (idx)
@@ -878,87 +923,107 @@ public:
 		return 0;
 	}
 
+	/// <summary>
+	/// 置渐变方式
+	/// </summary>
 	eStlInline void SetGradientMode(int iGradientMode)
 	{
 		m_Info.iGradientMode = iGradientMode;
 		RedrawLabel();
 	}
-
 	eStlInline int GetGradientMode() const
 	{
 		return m_Info.iGradientMode;
 	}
 
+	/// <summary>
+	/// 置渐变颜色
+	/// </summary>
 	eStlInline void SetGradientClr(int idx, COLORREF cr)
 	{
 		m_Info.crGradient[idx] = cr;
 		RedrawLabel();
 	}
-
 	eStlInline COLORREF GetGradientClr(int idx) const
 	{
 		return m_Info.crGradient[idx];
 	}
 
+	/// <summary>
+	/// 置省略号模式
+	/// </summary>
+	/// <param name="iEllipsisMode"></param>
+	/// <returns></returns>
 	eStlInline void SetEllipsisMode(int iEllipsisMode)
 	{
 		m_Info.iEllipsisMode = iEllipsisMode;
 		CalcPartsRect();
 		RedrawLabel();
 	}
-
 	eStlInline int GetEllipsisMode() const
 	{
 		return m_Info.iEllipsisMode;
 	}
 
+	/// <summary>
+	/// 置前缀解释模式
+	/// </summary>
+	/// <param name="iPrefixMode"></param>
+	/// <returns></returns>
 	eStlInline void SetPrefixMode(int iPrefixMode)
 	{
 		m_Info.iPrefixMode = iPrefixMode;
 		CalcPartsRect();
 		RedrawLabel();
 	}
-
 	eStlInline int GetPrefixMode() const
 	{
 		return m_Info.iPrefixMode;
 	}
 
+	/// <summary>
+	/// 置底图充满窗口
+	/// </summary>
 	eStlInline void SetFullWndPic(BOOL bFullWndPic)
 	{
 		m_Info.bFullWndPic = bFullWndPic;
 		RedrawLabel();
 	}
-
 	eStlInline BOOL GetFullWndPic() const
 	{
 		return m_Info.bFullWndPic;
 	}
 
+	/// <summary>
+	/// 置透明标签
+	/// </summary>
 	eStlInline void SetTransparent(BOOL bTransparent)
 	{
 		m_Info.bTransparent = bTransparent;
 		elibstl::ModifyWindowStyle(m_hWnd, bTransparent ? WS_EX_TRANSPARENT : 0, WS_EX_TRANSPARENT, GWL_EXSTYLE);
 		RedrawLabel();
 	}
-
 	eStlInline BOOL GetTransparent() const
 	{
 		return m_Info.bTransparent;
 	}
 
+	/// <summary>
+	/// 置鼠标穿透
+	/// </summary>
+	/// <param name="iMousePassingThrough"></param>
+	/// <returns></returns>
 	eStlInline void SetMousePassingThrough(int iMousePassingThrough)
 	{
 		m_Info.iMousePassingThrough = iMousePassingThrough;
 		RedrawLabel();
 	}
-
 	eStlInline int GetMousePassingThrough() const
 	{
 		return m_Info.iMousePassingThrough;
 	}
 
-	HGLOBAL FlattenInfo() override
+	eStlInline HGLOBAL FlattenInfo() override
 	{
 		BYTE* p;
 		SIZE_T cbBaseData;
@@ -1192,7 +1257,7 @@ static UNIT_PROPERTY s_Member_LabelW[] =
 	/*017*/{ "前缀字符解释方式", "PrefixMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "常规\0""不解释前缀\0""隐藏下划线\0""只显示下划线\0""\0" },
 	/*018*/{ "底图尽量充满控件", "FullWndPic", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
 	/*019*/{ "边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
-	/*020*/{ "透明标签", "Transparent", "使标签背景透明，达到类似扩展界面支持库一中透明标签的效果。设置本模式后将忽略背景颜色属性，但渐变背景和底图依然有效。注意：频繁更新透明标签会影响程序的性能，若标签还设置了图片，则会有较明显的闪烁，应避免这种情况。", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
+	/*020*/{ "透明标签", "Transparent", "使标签背景透明，达到类似扩展界面支持库一中透明标签的效果。设置本模式后将忽略背景颜色属性，但渐变背景和底图依然有效。注意：频繁更新透明标签会影响程序的性能，若标签还设置了图片，则会有较明显的闪烁，因此应避免频繁更新透明标签。", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
 	/*021*/{ "鼠标穿透方式", "MousePassingThroughMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "无\0""穿透空白区域\0""穿透整个控件\0""\0" },
 };
 
@@ -1216,10 +1281,8 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)
 	return NULL;
 }
 
-
 static EVENT_ARG_INFO2 s_EventArgInfo_Label_Feedback[] =
 {
-
 	 {"参数一", "调用反馈事件时传递来的第一个参数", 0, SDT_INT},
 	 {"参数二", "调用反馈事件时传递来的第而个参数", 0, SDT_INT},
 };
@@ -1228,6 +1291,7 @@ static EVENT_INFO2 s_Event_Label[] =
 	/*000*/ {"反馈事件", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, SDT_INT},
 };
 
+static int s_Fuc[] = { 193 };
 static ARG_INFO s_ArgsSendLabelMsg[] =
 {
 	{
@@ -1258,7 +1322,6 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
-
 EXTERN_C void libstl_Label_SendLabelMsg(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
@@ -1271,8 +1334,6 @@ EXTERN_C void libstl_Label_SendLabelMsg(PMDATA_INF pRetData, INT nArgCount, PMDA
 		pRetData->m_int = SendMessageW(hWnd, WM_EFEEDBACK, arg1, arg2);
 	else
 		PostMessageW(hWnd, WM_EFEEDBACK, arg1, arg2);
-
-
 }
 FucInfo Fn_SendLabelMsg = { {
 		/*ccname*/  "调用反馈事件",
@@ -1288,7 +1349,7 @@ FucInfo Fn_SendLabelMsg = { {
 		/*ArgCount*/ARRAYSIZE(s_ArgsSendLabelMsg),
 		/*arg lp*/  s_ArgsSendLabelMsg,
 	} , libstl_Label_SendLabelMsg ,"libstl_Label_SendLabelMsg" };
-static int s_Fuc[] = { 193, };
+
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtLabelW =
 {
