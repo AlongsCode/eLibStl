@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <Shlwapi.h>
 #include <windowsx.h>
+/*易定义的标签反馈事件*/
+#define WM_EFEEDBACK  32885
+
 
 ESTL_NAMESPACE_BEGIN
 
@@ -30,19 +33,19 @@ HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic
 /// </summary>
 eStlInline bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam) {
 
-	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE 
+	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE
 		&& uMsg <= WM_RBUTTONUP || uMsg >= WM_KEYDOWN && uMsg <= WM_CHAR)
 	{
 		//这几个事件全部转发给父组件
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
 		INT control_type = 0;
-		if (uMsg != WM_CHAR && uMsg != WM_SETFOCUS && uMsg != WM_KILLFOCUS) 
+		if (uMsg != WM_CHAR && uMsg != WM_SETFOCUS && uMsg != WM_KILLFOCUS)
 		{
-			if ((GetKeyState(VK_CONTROL) & 16384) != 0) 
+			if ((GetKeyState(VK_CONTROL) & 16384) != 0)
 				control_type = 1;
-			if ((GetKeyState(VK_SHIFT) & 16384) != 0) 
+			if ((GetKeyState(VK_SHIFT) & 16384) != 0)
 				control_type = control_type | 2;
-			if ((GetKeyState(VK_MENU) & 16384) != 0) 
+			if ((GetKeyState(VK_MENU) & 16384) != 0)
 				control_type = control_type | 4;
 		}
 
@@ -363,7 +366,7 @@ eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, in
 	return dwStyle;
 }
 
-eStlInline int ESTLPRIV_MultiSelectWndStyle___(HWND hWnd, int idx, int cStyle,...)
+eStlInline int ESTLPRIV_MultiSelectWndStyle___(HWND hWnd, int idx, int cStyle, ...)
 {
 	va_list Args;
 	va_start(Args, cStyle);
@@ -597,8 +600,8 @@ public:
 				else
 					*pcb = (wcslen(m_pszTextW) + 1) * sizeof(WCHAR);
 			}
-			
-				
+
+
 
 		return m_pszTextW;
 	}

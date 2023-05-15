@@ -58,6 +58,30 @@ private:
 
 	static ATOM m_atomLabel;// 标签类原子
 
+	/*标签反馈事件*/
+
+	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam) {
+		EVENT_ARG_VALUE Arg1, Arg2;
+		Arg1.m_inf.m_int = static_cast<int>(wParam);
+		Arg1.m_inf.m_dtDataType = SDT_INT;
+		Arg2.m_inf.m_int = static_cast<int>(lParam);
+		Arg2.m_inf.m_dtDataType = SDT_INT;
+
+		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
+		event.m_nArgCount = 2;
+		event.m_arg[0] = Arg1;
+		event.m_arg[1] = Arg2;
+		;
+		if (
+			(elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0) != 0)// 成功传递 
+			&&
+			event.m_blHasRetVal == TRUE//存在返回值
+			)
+			return event.m_infRetData.m_int;
+		else
+			return FALSE;
+	}
+
 	void Paint(HDC hDC)
 	{
 		BLENDFUNCTION bf;
@@ -76,7 +100,7 @@ private:
 		else
 			IntersectClipRect(hDC, 0, 0, m_cxClient, m_cyClient);
 		// 类样式带CS_PARENTDC速度会快一点，并且按理来说应该手动剪辑子窗口，但是为什么不剪辑也没事。。。反正这里就这么写了吧，按规定来
-		
+
 		// 画渐变背景或底图
 		if (m_Info.iGradientMode != 0)
 		{
@@ -349,7 +373,7 @@ private:
 
 	void CalcPartsRect()
 	{
-		RECT rc{ 0,0,m_cxClient-m_cxPic,m_cyClient };
+		RECT rc{ 0,0,m_cxClient - m_cxPic,m_cyClient };
 		UINT uDTFlags = DT_NOCLIP | DT_CALCRECT |
 			elibstl::MultiSelect<UINT>(m_Info.iEllipsisMode, 0, DT_END_ELLIPSIS, DT_PATH_ELLIPSIS, DT_WORD_ELLIPSIS) |
 			elibstl::MultiSelect<UINT>(m_Info.iPrefixMode, 0, DT_NOPREFIX, DT_HIDEPREFIX, DT_PREFIXONLY);
@@ -473,6 +497,8 @@ private:
 
 		switch (uMsg)
 		{
+		case WM_EFEEDBACK:
+			return 	p->OnFeedback(wParam, lParam);
 		case WM_NCHITTEST:
 		{
 			if (p->m_Info.bTransparent)
@@ -655,6 +681,7 @@ public:
 
 		if (!m_pszTextW)
 		{
+			/*这里不应该再判断的，无论设计模式还是正常创建，为空可能是因为初始设置为空,除非pAllData为空，不然都应该置标题为空*/
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"标签W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
@@ -1189,18 +1216,91 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)
 	return NULL;
 }
 
+
+static EVENT_ARG_INFO2 s_EventArgInfo_Label_Feedback[] =
+{
+
+	 {"参数一", "调用反馈事件时传递来的第一个参数", 0, SDT_INT},
+	 {"参数二", "调用反馈事件时传递来的第而个参数", 0, SDT_INT},
+};
+static EVENT_INFO2 s_Event_Label[] =
+{
+	/*000*/ {"反馈事件", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, SDT_INT},
+};
+
+static ARG_INFO s_ArgsSendLabelMsg[] =
+{
+	{
+		/*name*/    "参数一",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "参数二",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "事件传递方式”",
+		/*explain*/ "为真则采用发送方式传递事件消息，此时本命令将一直等待到“反馈事件”用户事件处理子程序处理完毕后才返回，为假则采用投递方式传递事件消息，此时本命令将直接返回且不等待用户事件处理子程序处理完毕（用户事件处理子程序将在空闲时被调用）。如果本参数被省略，默认采用发送方式传递事件",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+
+EXTERN_C void libstl_Label_SendLabelMsg(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+	auto arg1 = elibstl::args_to_data<int>(pArgInf, 1).value_or(0),
+		arg2 = elibstl::args_to_data<int>(pArgInf, 2).value_or(0);
+	auto bSend = elibstl::args_to_data<BOOL>(pArgInf, 3).value_or(TRUE);
+	pRetData->m_int = 0;
+	if (bSend)
+		pRetData->m_int = SendMessageW(hWnd, WM_EFEEDBACK, arg1, arg2);
+	else
+		PostMessageW(hWnd, WM_EFEEDBACK, arg1, arg2);
+
+
+}
+FucInfo Fn_SendLabelMsg = { {
+		/*ccname*/  "调用反馈事件",
+		/*egname*/  "SendLabelMsg",
+		/*explain*/ " 产生标签的反馈事件，以调用此标签的“反馈事件”用户事件处理子程序，可以用作在多线程处理中将控制权转移到程序主线程上去执行。返回用户事件处理子程序所返回的值，如果没有相应的事件处理子程序或采用投递方式传递事件消息，将返回零。",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSendLabelMsg),
+		/*arg lp*/  s_ArgsSendLabelMsg,
+	} , libstl_Label_SendLabelMsg ,"libstl_Label_SendLabelMsg" };
+static int s_Fuc[] = { 193, };
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtLabelW =
 {
 	"标签W",		//中文名称
 	"LabelW",	//英文名称
 	"",			//说明
-	0,			//命令数量
-	0,			//在全局函数中对应的索引
+	1,			//命令数量
+	s_Fuc,			//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
 	IDB_COMLINKBUTTON_W,//资源ID
-	0,
-	NULL,
+	1,
+	s_Event_Label,
 	ARRAYSIZE(s_Member_LabelW),
 	s_Member_LabelW,
 	libstl_GetInterface_LabelW,

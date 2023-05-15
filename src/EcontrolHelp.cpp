@@ -583,8 +583,12 @@ SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWO
 			elibstl::DupStringForNewDeleteW(m_pszTextW, (PCWSTR)p, m_Info0.cchText);
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
-		else
+		else {
+			/*有pAllData肯定有数据被改了，标题为空可能是用户修改了，否则创建的控件在构造函数时一定会设置默认标题了*/
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"");
 			m_pszTextA = NULL;
+		}
+
 	}
 	else
 	{
