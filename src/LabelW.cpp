@@ -1298,7 +1298,7 @@ LIB_DATA_TYPE_INFO CtLabelW =
 	1,			//命令数量
 	s_Fuc,			//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	IDB_COMLINKBUTTON_W,//资源ID
+	IDB_LABEL_W,//资源ID
 	1,
 	s_Event_Label,
 	ARRAYSIZE(s_Member_LabelW),

@@ -62,6 +62,7 @@
     <ClCompile Include="src\clear_folder.cpp" />
     <ClCompile Include="src\Clinet.cpp" />
     <ClCompile Include="src\Code Debug\try_catch.cpp" />
+    <ClCompile Include="src\Code Debug\UnicedeEdit.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />
@@ -166,6 +167,7 @@
     <Image Include="res\ObjCheckButton_W.bmp" />
     <Image Include="res\ObjClinet_Ex.bmp" />
     <Image Include="res\ObjComLinkButton_W.bmp" />
+    <Image Include="res\ObjLabel_W.bmp" />
     <Image Include="res\ObjServer_Ex.bmp" />
     <Image Include="res\ObjTextBox_W.bmp" />
     <Image Include="res\ObjUpDown_Ex.bmp" />

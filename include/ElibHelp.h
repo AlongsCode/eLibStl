@@ -34,6 +34,37 @@ eStlInline int ArgsNum(Args&&... args)
 
 #define ESTLVAL(...) ArgsNum(__VA_ARGS__), __VA_ARGS__
 
+
+eStlInline bool isUnicode(const unsigned char* data, size_t length) {
+	// 检查字节序标记 (BOM)
+	if (length >= 2 && data[0] == 0xFF && data[1] == 0xFE) {
+		// UTF-16LE 字节序，低位字节在前
+		return true;
+	}
+	else if (length >= 2 && data[0] == 0xFE && data[1] == 0xFF) {
+		// UTF-16BE 字节序，高位字节在前
+		return true;
+	}
+
+	// 检查字符对应的字节序列
+	for (size_t i = 0; i < length; i += 2) {
+		unsigned char highByte = data[i];
+		unsigned char lowByte = data[i + 1];
+
+		if ((highByte >= 0xD8 && highByte <= 0xDB) && (lowByte >= 0xDC && lowByte <= 0xDF)) {
+			// 高代理项和低代理项字节，合法的 UTF-16 编码
+			continue;
+		}
+
+		if ((highByte >= 0xD8 && highByte <= 0xDB) || (lowByte >= 0xDC && lowByte <= 0xDF)) {
+			// 高代理项或低代理项字节单独出现，非法的 UTF-16 编码
+			return false;
+		}
+	}
+
+	return true;
+}
+
 struct FucInfo
 {
 	CMD_INFO FucDef;

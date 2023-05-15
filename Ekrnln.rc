@@ -64,6 +64,8 @@ IDB_CHECKBUTTON_W       BITMAP                  "res\\ObjCheckButton_W.bmp"
 
 IDB_COMLINKBUTTON_W     BITMAP                  "res\\ObjComLinkButton_W.bmp"
 
+IDB_LABEL_W             BITMAP                  "res\\ObjLabel_W.bmp"
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
