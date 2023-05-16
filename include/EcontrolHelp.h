@@ -488,6 +488,8 @@ protected:
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
 
+	BOOL m_bGpDecodePicInDesignMode = FALSE;// 设计模式下是否用GDI+解码图片
+
 	HBITMAP m_hbmPic = NULL;// 位图句柄
 	HFONT m_hFont = NULL;// 字体句柄
 	ECTRLINFO m_Info0{};// 信息

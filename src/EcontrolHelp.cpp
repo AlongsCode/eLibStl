@@ -1,3 +1,8 @@
+/*
+* 2023.5.16
+* FIXME：输入框退出时会造成焦点错误（模态窗口应该怎么正确禁用父窗口？）
+*/
+
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
@@ -369,9 +374,9 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
 		DeleteObject(p->hFont);
-		if (p->bEMainWndInitEnabled)
-			EnableWindow(p->hwndEMain, TRUE);
-		SetForegroundWindow(p->hwndEMain);
+		//if (p->bEMainWndInitEnabled)
+		//	EnableWindow(p->hwndEMain, TRUE);
+		//SetFocus(p->hwndEMain);
 		PostQuitMessage(0);
 	}
 	return 0;
@@ -404,8 +409,8 @@ BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 	pCtx->bEMainWndInitEnabled = IsWindowEnabled(hwndEMain);
 	pCtx->hwndEMain = hwndEMain;
 
-	if (pCtx->bEMainWndInitEnabled)
-		EnableWindow(hwndEMain, FALSE);
+	//if (pCtx->bEMainWndInitEnabled)
+	//	EnableWindow(hwndEMain, FALSE);
 
 	const int cxInit = 560, cyInit = 500;
 	RECT rcEMain;
@@ -588,7 +593,6 @@ SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWO
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"");
 			m_pszTextA = NULL;
 		}
-
 	}
 	else
 	{
@@ -633,7 +637,10 @@ void CCtrlBase::SetPic(void* pPic, int cbSize)
 			m_pPicData = new BYTE[cbSize];
 			memcpy(m_pPicData, pPic, cbSize);
 		}
-		m_hbmPic = elibstl::make_hbm_gp((BYTE*)pPic, cbSize);
+		if (m_bInDesignMode && !m_bGpDecodePicInDesignMode)
+			m_hbmPic = elibstl::make_hbm((BYTE*)pPic, cbSize);
+		else
+			m_hbmPic = elibstl::make_hbm_gp((BYTE*)pPic, cbSize);
 	}
 	else
 	{

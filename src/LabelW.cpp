@@ -564,9 +564,7 @@ private:
 		return 0;
 
 		case WM_NCCREATE:
-			p = (CLabel*)((CREATESTRUCTW*)lParam)->lpCreateParams;
-			SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
-			p->m_hWnd = hWnd;
+			SetWindowLongPtrW(hWnd, 0, (LONG_PTR)((CREATESTRUCTW*)lParam)->lpCreateParams);
 			return TRUE;
 
 		case WM_CREATE:
@@ -659,6 +657,7 @@ public:
 	CLabel() = delete;
 	CLabel(STD_ECTRL_CREATE_ARGS)
 	{
+		m_bGpDecodePicInDesignMode = TRUE;
 		if (!m_atomLabel)
 		{
 			WNDCLASSW wc{};
@@ -742,6 +741,8 @@ public:
 	/// </summary>
 	void RedrawLabel()
 	{
+		if (!m_hWnd)
+			return;
 		if (m_Info.bTransparent)
 		{
 			RECT rc{ 0,0,m_cxClient,m_cyClient };

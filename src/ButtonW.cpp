@@ -197,12 +197,15 @@ public:
 	void SetTextImageShowing(BOOL bShowTextAndImage)
 	{
 		m_Info.bShowTextAndImage = bShowTextAndImage;
-		DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
-		if (bShowTextAndImage)
-			dwStyle &= (~(BS_BITMAP));
-		else if (m_pPicData && m_Info0.cbPic)
-			dwStyle |= BS_BITMAP;
-		SetWindowLongPtrW(m_hWnd, GWL_STYLE, dwStyle);
+		if (!m_bInDesignMode)
+		{
+			DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
+			if (bShowTextAndImage)
+				dwStyle &= (~(BS_BITMAP));
+			else if (m_pPicData && m_Info0.cbPic)
+				dwStyle |= BS_BITMAP;
+			SetWindowLongPtrW(m_hWnd, GWL_STYLE, dwStyle);
+		}
 	}
 
 	/// <summary>
