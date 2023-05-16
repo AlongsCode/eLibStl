@@ -564,7 +564,9 @@ private:
 		return 0;
 
 		case WM_NCCREATE:
-			SetWindowLongPtrW(hWnd, 0, (LONG_PTR)((CREATESTRUCTW*)lParam)->lpCreateParams);
+			p = (CLabel*)((CREATESTRUCTW*)lParam)->lpCreateParams;
+			SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
+			p->m_hWnd = hWnd;
 			return TRUE;
 
 		case WM_CREATE:
