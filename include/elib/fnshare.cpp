@@ -16,8 +16,7 @@ namespace elibstl
 		return ret;
 	}
 
-	/*unicodeµ÷ÊÔ¿ò*/
-	//void MakeDebugEdit();
+	void Edebug_init();
 
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2)
 	{
@@ -27,8 +26,9 @@ namespace elibstl
 		case NL_SYS_NOTIFY_FUNCTION:
 		{
 
-			//MakeDebugEdit();
+			Edebug_init();
 			s_pfnNotifySys = (PFN_NOTIFY_SYS)dwParam1;
+
 			break;
 		}
 		case NL_FREE_LIB_DATA:
