@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 			}
 };
 
-
+/*字节集转文本*/
 
 template <typename T>
 inline std::basic_string<T> ByteArrayToString(const std::vector<unsigned char>& byteVector) {
@@ -103,15 +103,6 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 	{
 		const auto& bytes = elibstl::arg_to_vdata(param->m_pBin);
 		oss << "[字节集:" << bytes.size() << "] " << ByteArrayToString<char>(bytes) << " | ";
-
-		//ByteArrayToString<char>(bytes);
-
-		//for (const auto& b : bytes)
-		//{
-		//	oss << static_cast<int>(b) << ",";
-		//}
-		//if (!bytes.empty()) { oss.seekp(-1, std::ios_base::end); }  // 去掉最后一个逗号
-		//oss << "} | ";
 		break;
 	}
 	case SDT_DATE_TIME:
@@ -320,8 +311,8 @@ FucInfo e_debugput = { {
 static ARG_INFO Args2[] =
 {
 		{
-		/*name*/	"欲输出图片",
-		/*explain*/	"字节流对象,易中没有HBITMAP，不考虑。",
+		/*name*/	"欲输出内容",
+		/*explain*/	"请确保对象正确。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
 		/*type*/	SDT_BIN,
@@ -331,17 +322,107 @@ static ARG_INFO Args2[] =
 };
 namespace elibstl {
 	void e_debugbox_putimg(unsigned char* pPicData, size_t cbSize);
+	void _w_e_debugbox_put(const std::wstring_view& wstr);
+}
+
+
+#pragma comment (lib,"Crypt32.lib")
+inline std::string StringToBase64(const std::vector<unsigned char>& image)
+{
+
+	std::string base64String;
+	DWORD base64Length = 0;
+
+	// 获取 Base64 编码后的字符串长度
+	if (::CryptBinaryToStringA(image.data(),
+		image.size(),
+		CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF,
+		nullptr, &base64Length)) {
+		base64String.resize(base64Length);
+
+		// 将二进制数据转换为 Base64 编码的字符串
+		if (::CryptBinaryToStringA(image.data(),
+			image.size(),
+			CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF,
+			&base64String[0], &base64Length)) {
+			return base64String;
+		}
+	}
+
+	// 失败时返回空字符串
+	return "";
+}
+
+#include <OleCtl.h>
+
+inline HBITMAP GetImageToBitmap(const BYTE* imageData, int imageSize)
+{
+	HBITMAP hBitmap = NULL;
+	if (imageSize > 0)
+	{
+		HGLOBAL hImageMemory = GlobalAlloc(GMEM_MOVEABLE, imageSize);
+		if (hImageMemory != NULL)
+		{
+			LPVOID pImageMemory = GlobalLock(hImageMemory);
+			memcpy(pImageMemory, imageData, imageSize);
+			GlobalUnlock(hImageMemory);
+
+			IStream* pIStream = NULL;
+			if (CreateStreamOnHGlobal(hImageMemory, FALSE, &pIStream) == S_OK && pIStream != NULL)
+			{
+				IPicture* pIPicture = NULL;
+				if (OleLoadPicture(pIStream, imageSize, FALSE, IID_IPicture, (LPVOID*)&pIPicture) == S_OK && pIPicture != NULL)
+				{
+					LONG_PTR pHandle = NULL;
+					if (pIPicture->get_Handle((OLE_HANDLE*)&pHandle) == S_OK && pHandle != NULL)
+					{
+						hBitmap = (HBITMAP)CopyImage((HBITMAP)pHandle, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG);
+					}
+					pIPicture->Release();
+				}
+				pIStream->Release();
+			}
+			GlobalFree(hImageMemory);
+		}
+	}
+	return hBitmap;
+}
+inline void SetImageToClipboard(const std::vector<unsigned char>& imageData)
+{
+	HBITMAP hBitmap = NULL;
+	// 将图片数据转换为位图
+	hBitmap = GetImageToBitmap(imageData.data(), imageData.size());
+	if (hBitmap == NULL)
+	{
+
+		hBitmap = elibstl::make_hbm(const_cast<unsigned char*>(imageData.data()), imageData.size());
+	}
+
+	// 将位图设置到剪贴板
+	if (hBitmap != NULL && OpenClipboard(NULL))
+	{
+		EmptyClipboard();
+		SetClipboardData(CF_BITMAP, hBitmap);
+		CloseClipboard();
+	}
 }
 EXTERN_C void Fn_debugput_img(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	for (int i = 0; i < nArgCount; i++)
 	{
 		auto data = elibstl::arg_to_vdata(pArgInf, i);
-		elibstl::e_debugbox_putimg(data.data(), data.size());
+
+		MDATA_INF RetData, ArgInf;
+		ArgInf.m_dtDataType = SDT_TEXT;
+		/*图片的话置剪辑板*/
+		char* pDebugText = elibstl::clone_text("[elbbstl::image]");
+		SetImageToClipboard(data);
+		ArgInf.m_pText = pDebugText;
+		elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
 	}
-
-
 }
+
+
 FucInfo e_debugput_img = { {
 		/*ccname*/  ("调试图片"),
 		/*egname*/  ("debugputimg"),
@@ -356,5 +437,52 @@ FucInfo e_debugput_img = { {
 		/*ArgCount*/1,
 		/*arg lp*/ Args2,
 	} ,Fn_debugput_img ,"Fn_debugput_img" };
+/*将宽字符转为对应的十六进制表示*/
+inline std::string UmakeA(const std::wstring_view& wstr)
+{
+	std::ostringstream oss;
 
+	for (const auto& ch : wstr)
+	{
+		int unicodeValue = static_cast<int>(ch);
+		oss << "\\u" << std::hex << std::setw(4) << std::setfill('0') << unicodeValue;
+	}
+
+	return oss.str();
+}
+
+
+
+
+EXTERN_C void Fn_debugput_w(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	for (int i = 0; i < nArgCount; i++)
+	{
+		auto data = elibstl::args_to_wsdata(pArgInf, i);
+		std::string str = "";
+
+		MDATA_INF RetData, ArgInf;
+		ArgInf.m_dtDataType = SDT_TEXT;
+
+		char* pDebugText = elibstl::clone_text("[unicode文本:" + std::to_string(data.size()) + " ] " + UmakeA(data));
+		ArgInf.m_pText = pDebugText;
+		elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
+	}
+
+
+}
+FucInfo e_debugput_w = { {
+		/*ccname*/  ("调试W"),
+		/*egname*/  ("_wdebugput"),
+		/*explain*/ ("仅用作调试输出宽字符,并不会对宽字符合法性进行检查"),
+		/*category*/11,
+		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ Args2,
+	} ,Fn_debugput_w ,"Fn_debugput_w" };
 

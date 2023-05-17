@@ -25,8 +25,10 @@ namespace elibstl
 		{
 		case NL_SYS_NOTIFY_FUNCTION:
 		{
-
+#ifndef __E_STATIC_LIB
+			/*∑¿÷π±‡“Îæ≤Ã¨ø‚ ±≥È»°¥À“≥¥˙¬Î*/
 			e_debugbox_init();
+#endif
 			s_pfnNotifySys = (PFN_NOTIFY_SYS)dwParam1;
 
 			break;

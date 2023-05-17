@@ -55,7 +55,7 @@ public:
 		else if (ileExtension == L"asf" || ileExtension == L"wma" || ileExtension == L"asx" || ileExtension == L"ivf" || ileExtension == L"lsf" || ileExtension == L"lsx" || ileExtension == L"p2v" || ileExtension == L"wax" || ileExtension == L"wvx" || ileExtension == L"wmx" || ileExtension == L"wmp") {
 			mediaType = L"MPEGvideo2";
 		}
-		MCIERROR errorCode = mciSendStringW((L"open " + fileName + L" type " + mediaType + L" alias " + m_MediaAlias + L" style child").c_str(), NULL, 0, hWnd);
+		MCIERROR errorCode = mciSendStringW((L"open \"" + fileName + L"\" type " + mediaType + L" alias " + m_MediaAlias + L" style child").c_str(), NULL, 0, hWnd);
 		m_isVideo = (ileExtension != L"mp3") && (ileExtension != L"wav") && (ileExtension != L"cda") && (ileExtension != L"mid");
 		if (m_isVideo && hWnd) {
 			wchar_t buf[64];

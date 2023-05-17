@@ -103,10 +103,7 @@
     <Filter Include="源文件\实现\全局命令\拼音处理\字典%28除拼音类外不可引用%29">
       <UniqueIdentifier>{4c778a83-d6d1-4d4d-91a1-7fa9d0cf49ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\功能">
-      <UniqueIdentifier>{c2b99d12-9b42-4482-ae07-4074f1290150}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\功能\unicode调试框">
+    <Filter Include="源文件\实现\全局命令\代码调试\unicode调试框">
       <UniqueIdentifier>{d1213135-db8d-44e6-b211-104337b9d388}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -450,7 +447,7 @@
       <Filter>源文件\实现\全局命令\代码调试</Filter>
     </ClCompile>
     <ClCompile Include="src\Code Debug\UnicedeEdit.cpp">
-      <Filter>源文件\功能\unicode调试框</Filter>
+      <Filter>源文件\实现\全局命令\代码调试\unicode调试框</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

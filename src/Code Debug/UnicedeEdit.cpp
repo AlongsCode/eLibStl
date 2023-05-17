@@ -1,12 +1,62 @@
 #include<windows.h>
 #include<CommCtrl.h>
 #include<Richedit.h>
+#include <OleIdl.h>
+#include <RichOle.h>
 #include<string>
 #include<vector>
+#include <sstream>
+#pragma comment (lib,"Crypt32.lib")
 #include"elib\fnshare.h"
+
+
 namespace elibstl {
+
+	/*对应的16进制转为unicode*/
+	inline std::wstring UmakeW(const std::wstring& str)
+	{
+		std::wstring wstr;
+
+		std::wstring hexValue;
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			if (str[i] == L'\\' && str[i + 1] == L'u')
+			{
+				hexValue = str.substr(i + 2, 4);
+				unsigned int unicodeValue = std::stoi(hexValue, nullptr, 16);
+				wstr += static_cast<wchar_t>(unicodeValue);
+				i += 5; // Skip the next 5 characters ('\uXXXX')
+			}
+			else
+			{
+				wstr += static_cast<wchar_t>(str[i]);
+			}
+		}
+
+		return wstr;
+	}
+
+	inline std::vector<unsigned char> Base64ToString(const std::wstring& base64String)
+	{
+		DWORD binaryLength = 0;
+
+		// 获取解码后的二进制数据长度
+		if (::CryptStringToBinaryW(base64String.c_str(), base64String.length(),
+			CRYPT_STRING_BASE64, nullptr, &binaryLength, nullptr, nullptr)) {
+			std::vector<unsigned char> binaryData(binaryLength);
+
+			// 将 Base64 编码的字符串解码为二进制数据
+			if (::CryptStringToBinaryW(base64String.c_str(), base64String.length(),
+				CRYPT_STRING_BASE64, binaryData.data(), &binaryLength, nullptr, nullptr)) {
+				return binaryData;
+			}
+		}
+
+		// 失败时返回空向量
+		return std::vector<unsigned char>();
+	}
+
 	/*易语言调试框*/
-	HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic);
 	class RichEdit
 	{
 	public:
@@ -19,12 +69,12 @@ namespace elibstl {
 			}
 			/*| ES_AUTOHSCROLL| WS_HSCROLL*/
 			DWORD dwDefStyle = ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL | WS_TABSTOP
-				| ES_NOHIDESEL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
-			dwStyle |= dwDefStyle;
-
+				| ES_NOHIDESEL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | EM_PASTESPECIAL;
+			//dwStyle |= dwDefStyle;
 			// 创建 RichEdit 控件
-			m_hWnd = CreateWindowExW(WS_EX_CLIENTEDGE, MSFTEDIT_CLASS, WindowName, dwStyle,
+			m_hWnd = CreateWindowExW(WS_EX_CLIENTEDGE, MSFTEDIT_CLASS, WindowName, dwDefStyle,
 				x, y, width, height, parentWnd, NULL, GetModuleHandle(NULL), NULL);
+			SendMessageW(m_hWnd, EM_SETOLECALLBACK, 0, (LPARAM)NULL);
 			if (!m_hWnd)
 			{
 				OutputDebugStringW(std::to_wstring(GetLastError()).c_str());
@@ -82,54 +132,16 @@ namespace elibstl {
 			SendMessageW(m_hWnd, EM_REPLACESEL, 0, reinterpret_cast<LPARAM>(text));
 		}
 		/*添加图片*/
-		void AppendImage(HBITMAP hBitmap)   const
+		void AppendImage()
 		{
-			// 将图片数据转换为富文本格式
-			FORMATETC format;
-			format.cfFormat = CF_BITMAP;
-			format.ptd = NULL;
-			format.dwAspect = DVASPECT_CONTENT;
-			format.lindex = -1;
-			format.tymed = TYMED_GDI;
+			if (!m_isInit || m_hWnd == NULL)
+				return;
+			// 在富文本框中插入剪贴板中的图像
+			SendMessageW(m_hWnd, WM_PASTE, 0, 0);
 
-			STGMEDIUM stg;
-			stg.tymed = TYMED_GDI;
-			stg.hBitmap = hBitmap;
-			stg.pUnkForRelease = NULL;
-
-			// 将图片数据插入到富文本框中
-			SendMessage(m_hWnd, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, SES_EMULATESYSEDIT);
-			SendMessage(m_hWnd, EM_SETSEL, -1, -1);
-			SendMessage(m_hWnd, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, 0);
-			SendMessage(m_hWnd, EM_REPLACESEL, TRUE, (LPARAM)&stg);
 		}
-		void AppendImage(const std::vector<unsigned char>& pPicData) const
-		{
-			// 将图像数据创建为 HBITMAP
-			HBITMAP hBitmap = elibstl::make_hbm_gp(const_cast<unsigned char*>(pPicData.data()), pPicData.size());
 
-			if (hBitmap != NULL)
-			{
-				// 调用 AppendImage 方法输出图片
-				AppendImage(hBitmap);
 
-				// 释放 HBITMAP
-				DeleteObject(hBitmap);
-			}
-		}
-		void AppendImage(unsigned char* pPicData, size_t cbSize) const
-		{
-			// 将图像数据创建为 HBITMAP
-			HBITMAP hBitmap = elibstl::make_hbm_gp(pPicData, cbSize);
-			if (hBitmap != NULL)
-			{
-				// 调用 AppendImage 方法输出图片
-				AppendImage(hBitmap);
-
-				// 释放 HBITMAP
-				DeleteObject(hBitmap);
-			}
-		}
 	private:
 		/*置选中区域格式*/
 		bool SetSelectionCharacterFormat(const CHARFORMAT2W& format)   const
@@ -249,6 +261,8 @@ namespace elibstl {
 				SetWindowLongPtrW(m_hDebugBox, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(m_WndOldProcDebugBox));
 				m_WndOldProcDebugBox = nullptr;
 			}
+			SetWindowTextA(m_hDebugBox, "");
+			ShowWindow(m_hDebugBox, SW_SHOW);
 		}
 
 		/*获取易语言IDE窗口句柄*/
@@ -378,9 +392,32 @@ namespace elibstl {
 				if (lParam == NULL)
 					break;
 				auto text = reinterpret_cast<const WCHAR*>(lParam);
-				if (text && wcslen(text))
+				if (text && wcslen(text))//继续判断
 				{
-					now->m_hRicEdit.AppendText(text);
+
+					auto  is_img = [](const wchar_t* str1) {
+
+						const wchar_t* img = L"* [elbbstl::image]";
+						while (*str1 && *img && (*str1 == *img)) {
+
+
+							++str1;
+							++img;
+						}
+
+						return (*img == L'\0'); // 判断是否 str2 已经遍历结束
+					};
+					if (is_img(text))
+					{
+						auto img = Base64ToString(std::wstring(text).substr(sizeof("* [elbbstl::image]") - sizeof('\0')));
+						now->m_hRicEdit.AppendText(L"* [图片:]");
+						now->m_hRicEdit.AppendImage();
+
+						now->m_hRicEdit.AppendText(L"\r\n");
+					}
+					else
+						now->m_hRicEdit.AppendText(UmakeW(text).c_str());
+
 				}
 
 
@@ -395,20 +432,13 @@ namespace elibstl {
 	};
 
 
-	static EDebugEdit& GetRichEdit() {
-		/*用于延迟初始化*/
+	EDebugEdit* GetRichEdit() {
+		/*用于延迟初始化,卸载时自动析构*/
 		static EDebugEdit instance;
-		return instance;
+		return &instance;
 
 	}
-	/*输出图片*/
-	void e_debugbox_putimg(unsigned char* pPicData, size_t cbSize) {
-		auto pbox = GetRichEdit();;
-		//
-		/*置图片*/
-		pbox.m_hRicEdit.AppendImage(pPicData, cbSize);
 
-	}
 	void e_debugbox_init() {
 		GetRichEdit();
 	}

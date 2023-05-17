@@ -195,6 +195,7 @@ network_post/*网页访问*/\
 ,g_get_py_ym/*取韵母W*/\
 ,Fn_SendLabelMsg/*调用标签反馈事件*/\
 ,e_debugput_img/*调试图片*/\
+,e_debugput_w/*调试宽字符*/
 
 
 /*此下两个完全没必要*/
