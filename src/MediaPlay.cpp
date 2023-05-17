@@ -28,7 +28,7 @@ public:
 	bool Open(const wstring& fileName, HWND hWnd = 0) {
 		if (!m_MediaAlias.empty())
 		{
-			return true;
+			return false;
 		}
 		m_MediaAlias = L"Media" + to_wstring(GetTickCount());
 		int dotIndex = fileName.rfind(L'.') + 1;
