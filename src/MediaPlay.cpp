@@ -277,7 +277,7 @@ public:
 	bool Close() {
 		if (m_MediaAlias.empty())
 		{
-			return 0;
+			return false;
 		}
 		std::wstring command = L"close " + m_MediaAlias;
 		if (mciSendStringW(command.c_str(), 0, 0, 0))
