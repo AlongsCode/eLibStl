@@ -2,9 +2,11 @@
 #include<CommCtrl.h>
 #include<Richedit.h>
 #include<string>
+#include<vector>
+#include"elib\fnshare.h"
 namespace elibstl {
 	/*易语言调试框*/
-
+	HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic);
 	class RichEdit
 	{
 	public:
@@ -15,8 +17,9 @@ namespace elibstl {
 				return;
 
 			}
-			DWORD dwDefStyle = ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | WS_VSCROLL | WS_TABSTOP
-				| WS_HSCROLL | ES_NOHIDESEL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
+			/*| ES_AUTOHSCROLL| WS_HSCROLL*/
+			DWORD dwDefStyle = ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL | WS_TABSTOP
+				| ES_NOHIDESEL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS;
 			dwStyle |= dwDefStyle;
 
 			// 创建 RichEdit 控件
@@ -31,7 +34,7 @@ namespace elibstl {
 			/*载入 2.0
 				NOTE:  MSFTEDIT.DLL only registers MSFTEDIT_CLASS.
 				*/
-			HMODULE hRichEditDLL = LoadLibrary(L"MSFTEDIT.DLL");
+			HMODULE hRichEditDLL = LoadLibraryW(L"MSFTEDIT.DLL");
 			if (hRichEditDLL != NULL)
 			{
 				m_isInit = true;
@@ -53,10 +56,12 @@ namespace elibstl {
 		{
 			SendMessageW(m_hWnd, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(text));
 		}
+		/*移动*/
 		void Move(int left, int top, int width, int height) const
 		{
 			MoveWindow(m_hWnd, left, top, width, height, TRUE);
 		}
+		/*获取文本*/
 		std::wstring GetText()  const
 		{
 			int length = GetWindowTextLengthW(m_hWnd) + 1;
@@ -64,83 +69,70 @@ namespace elibstl {
 			GetWindowTextW(m_hWnd, &buffer[0], length);
 			return buffer;
 		}
-
+		/*清空文本*/
 		void ClearText()  const
 		{
 			SetWindowTextW(m_hWnd, L"");
 		}
-		/**/
+		/*追加文本*/
 		void AppendText(const wchar_t* text) const
 		{
 			int length = GetWindowTextLengthW(m_hWnd);
 			SendMessageW(m_hWnd, EM_SETSEL, length, length);
 			SendMessageW(m_hWnd, EM_REPLACESEL, 0, reinterpret_cast<LPARAM>(text));
 		}
-
-
-		void AppendText(int codepage, const char* pstr, CHARFORMAT2W* characterFormat)
+		/*添加图片*/
+		void AppendImage(HBITMAP hBitmap)   const
 		{
+			// 将图片数据转换为富文本格式
+			FORMATETC format;
+			format.cfFormat = CF_BITMAP;
+			format.ptd = NULL;
+			format.dwAspect = DVASPECT_CONTENT;
+			format.lindex = -1;
+			format.tymed = TYMED_GDI;
 
-			HWND focus = GetFocus();
-			if (focus != m_hWnd)
+			STGMEDIUM stg;
+			stg.tymed = TYMED_GDI;
+			stg.hBitmap = hBitmap;
+			stg.pUnkForRelease = NULL;
+
+			// 将图片数据插入到富文本框中
+			SendMessage(m_hWnd, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, SES_EMULATESYSEDIT);
+			SendMessage(m_hWnd, EM_SETSEL, -1, -1);
+			SendMessage(m_hWnd, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, 0);
+			SendMessage(m_hWnd, EM_REPLACESEL, TRUE, (LPARAM)&stg);
+		}
+		void AppendImage(const std::vector<unsigned char>& pPicData) const
+		{
+			// 将图像数据创建为 HBITMAP
+			HBITMAP hBitmap = elibstl::make_hbm_gp(const_cast<unsigned char*>(pPicData.data()), pPicData.size());
+
+			if (hBitmap != NULL)
 			{
-				SetFocus(m_hWnd);
-			}
+				// 调用 AppendImage 方法输出图片
+				AppendImage(hBitmap);
 
-
-			typedef struct _settextex {
-				DWORD flags;
-				UINT  codepage;
-			} SETTEXTEX;
-			SETTEXTEX pSetTextEx{ ST_SELECTION ,codepage };
-
-			SendMessageW(m_hWnd, EM_SETSEL, -2, -1);
-			int old_pos = SendMessageW(m_hWnd, EM_GETSEL, 0, 0);
-			int  new_pos = -1;
-
-			SendMessageW(m_hWnd, EM_SETTEXTEX, reinterpret_cast<WPARAM>(&pSetTextEx), reinterpret_cast<LPARAM>(pstr));
-
-			if (characterFormat)
-			{
-				SetSelection(old_pos, new_pos);
-				SetSelectionCharacterFormat(*characterFormat);
-			}
-
-			if (focus != m_hWnd && focus != NULL)
-			{
-				SetFocus(focus);
+				// 释放 HBITMAP
+				DeleteObject(hBitmap);
 			}
 		}
-
-
-
-		void AppendText(int codepage, const char* pstr)
+		void AppendImage(unsigned char* pPicData, size_t cbSize) const
 		{
-
-			HWND focus = GetFocus();
-			if (focus != m_hWnd)
+			// 将图像数据创建为 HBITMAP
+			HBITMAP hBitmap = elibstl::make_hbm_gp(pPicData, cbSize);
+			if (hBitmap != NULL)
 			{
-				SetFocus(m_hWnd);
-			}
-			typedef struct _settextex {
-				DWORD flags;
-				UINT  codepage;
-			} SETTEXTEX;
-			SETTEXTEX pSetTextEx{ ST_SELECTION ,codepage };
+				// 调用 AppendImage 方法输出图片
+				AppendImage(hBitmap);
 
-			SendMessageW(m_hWnd, EM_SETSEL, -2, -1);
-			int old_pos = SendMessageW(m_hWnd, EM_GETSEL, 0, 0);
-			int  new_pos = -1;
-
-			SendMessageW(m_hWnd, EM_SETTEXTEX, reinterpret_cast<WPARAM>(&pSetTextEx), reinterpret_cast<LPARAM>(pstr));
-			if (focus != m_hWnd && focus != NULL)
-			{
-				SetFocus(focus);
+				// 释放 HBITMAP
+				DeleteObject(hBitmap);
 			}
 		}
 	private:
 		/*置选中区域格式*/
-		bool SetSelectionCharacterFormat(const CHARFORMAT2W& format)
+		bool SetSelectionCharacterFormat(const CHARFORMAT2W& format)   const
 		{
 			CHARFORMAT2W cf;
 			cf.cbSize = sizeof(CHARFORMAT2W);
@@ -161,7 +153,7 @@ namespace elibstl {
 			return SendMessageW(m_hWnd, EM_SETCHARFORMAT, SCF_SELECTION, reinterpret_cast<LPARAM>(&cf)) != 0;
 		}
 		/*置选中区域*/
-		bool SetSelection(int startPosition, int endPosition)
+		bool SetSelection(int startPosition, int endPosition)   const
 		{
 			CHARRANGE range;
 			range.cpMin = startPosition;
@@ -176,6 +168,7 @@ namespace elibstl {
 
 	class EDebugEdit
 	{
+	public:
 		RichEdit m_hRicEdit{};
 		/*易语言IDE句柄*/
 		HWND m_hEplIDE = NULL;
@@ -356,27 +349,8 @@ namespace elibstl {
 		/*选择夹回调*/
 		static LRESULT CALLBACK WndProcTab(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 			auto now = reinterpret_cast<EDebugEdit*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
-
 			if (!now)
 				return DefWindowProcW(hWnd, Msg, wParam, lParam);
-
-			//if (Msg == WM_NOTIFY) {
-			//	HWND hwndFrom = reinterpret_cast<LPNMHDR>(lParam)->hwndFrom;
-			//	/*如果来源对象为调试框的选项卡*/
-			//	if (hwndFrom == now->m_hTabControl) {
-			//		UINT code = reinterpret_cast<LPNMHDR>(lParam)->code;
-			//		if (code == TCN_SELCHANGE) {
-			//			auto currentTab = SendMessageW(hwndFrom, TCM_GETCURSEL, 0, 0);
-			//			if (currentTab != 1) {
-
-			//			}
-			//			else {
-
-			//			}
-			//		}
-			//	}
-			//}
-			/*任何情况下都不允许原版调试框显示*/
 			ShowWindow(now->m_hDebugBox, SW_HIDE);
 			return CallWindowProcW(now->m_WndOldProcTab, hWnd, Msg, wParam, lParam);
 
@@ -400,23 +374,13 @@ namespace elibstl {
 				}
 
 			}break;
-			case WM_SETTEXT: {
-				/*假设取到的全是ansi，因为易中的调试输出即为ansi*/
-				const char* text = reinterpret_cast<const char*>(lParam);
-				if (text && strlen(text))
-				{
-					now->m_hRicEdit.AppendText(936, "\n>>>>>>>  阻止清空  >>>>>>>  \n");
-				}
-
-			}break;
 			case EM_REPLACESEL: {
 				if (lParam == NULL)
 					break;
-				const char* text = reinterpret_cast<const char*>(lParam);
-				if (text && strlen(text))
+				auto text = reinterpret_cast<const WCHAR*>(lParam);
+				if (text && wcslen(text))
 				{
-					OutputDebugStringA(text);
-					now->m_hRicEdit.AppendText(936, text);
+					now->m_hRicEdit.AppendText(text);
 				}
 
 
@@ -431,100 +395,21 @@ namespace elibstl {
 	};
 
 
-
-
-
-	/*获取当前进程的易语言窗口句柄*/
-
-	/*获取debugput编辑框*/
-
-
-
-
-
-	//static LRESULT CALLBACK WndEditProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	//	/*转发给调试框W*/
-	//	SendMessageW(g_hDebugEditW, Msg, wParam, lParam);
-	//	return CallWindowProcA(g_Old_WndTab, hWnd, Msg, wParam, lParam);
-
-	//}
-	//void MakeDebugEdit() {
-	//	g_hDebugEdit = GetEdebugEdit();
-	//	if (g_hDebugEdit == NULL)
-	//	{
-	//		//MessageBoxW(0, L"无法获取调试编辑框句柄，Unicode调试框初始化失败！", L"标准模板库提示:", MB_ICONERROR);
-	//		return;
-	//	}
-	//	// 获取原版编辑框的文本长度
-	//	int textLength = GetWindowTextLengthW(g_hDebugEdit);
-	//	if (textLength == 0) {
-	//		return;
-	//	}
-	//	// 获取原版编辑框的文本内容
-	//	wchar_t* buffer = new wchar_t[textLength + 1];
-	//	GetWindowTextW(g_hDebugEdit, buffer, textLength + 1);
-	//	// 获取原版编辑框的位置和大小
-	//	RECT rect;
-	//	if (!GetWindowRect(g_hDebugEdit, &rect)) {
-	//		return;
-	//	}
-
-	//	int width = rect.right - rect.left;
-	//	int height = rect.bottom - rect.top;
-	//	int x = rect.left;
-	//	int y = rect.top;
-
-	//	// 获取原版编辑框的风格
-	//	LONG_PTR style = GetWindowLongPtrW(g_hDebugEdit, GWL_STYLE);
-	//	DWORD dwStyle = static_cast<DWORD>(style);
-
-	//	//获取原版选项卡的句柄
-	//	auto hParent = GetParent(g_hDebugEdit);
-
-	//	/*选择夹子类化*/
-	//	if (!g_Old_WndTab)
-	//	{
-
-	//		g_Old_WndTab = (WNDPROC)SetWindowLongPtrW(GetParent(hParent), GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WndProc));
-	//		if (g_Old_WndTab)
-	//		{
-	//			/*成功则将选项卡保存置全局变量*/
-	//			g_hPTab = hParent;
-	//		}
-
-	//	}
-
-	//	/*子类化原调试框*/
-	//	if (!g_Old_WndEdit)
-	//	{
-	//		g_Old_WndEdit = (WNDPROC)SetWindowLongPtrW(g_hDebugEdit, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WndEditProc));
-
-	//	}
-
-	//	// 创建新的Unicode编辑框
-	//	HWND hUnicodeEdit = CreateWindowExW(0, L"EDIT", buffer, dwStyle, x, y, width, height, hParent, NULL, NULL, NULL);
-	//	if (hUnicodeEdit == NULL) {
-	//		delete[] buffer;
-	//		return;
-	//	}
-	//	ShowWindow(g_hDebugEdit, SW_HIDE);
-
-	//	delete[] buffer;
-
-	//	return;
-	//}
-
-
-
-	EDebugEdit& GetRichEdit() {
+	static EDebugEdit& GetRichEdit() {
 		/*用于延迟初始化*/
 		static EDebugEdit instance;
 		return instance;
 
 	}
+	/*输出图片*/
+	void e_debugbox_putimg(unsigned char* pPicData, size_t cbSize) {
+		auto pbox = GetRichEdit();;
+		//
+		/*置图片*/
+		pbox.m_hRicEdit.AppendImage(pPicData, cbSize);
 
-
-	void Edebug_init() {
+	}
+	void e_debugbox_init() {
 		GetRichEdit();
 	}
 }

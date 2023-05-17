@@ -18,8 +18,13 @@
 HMODULE g_elibstl_hModule = NULL;
 
 ESTL_NAMESPACE_BEGIN
-std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
+void  GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 {
+	pData.clear();
+	if (hBitmap == NULL)
+	{
+		return;
+	}
 	HDC hdc;			//设备描述表
 	int ibits;
 	WORD wbitcount;     //当前显示分辨率下每个像素所占字节数
@@ -112,11 +117,9 @@ std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap)
 	//清除 
 	GlobalUnlock(hdib);
 	GlobalFree(hdib);
-	std::vector<unsigned char> result;
-	result.reserve(head.size() + body.size());
-	result.insert(result.end(), head.begin(), head.end());
-	result.insert(result.end(), body.begin(), body.end());
-	return result;
+	pData.reserve(head.size() + body.size());
+	pData.insert(pData.end(), head.begin(), head.end());
+	pData.insert(pData.end(), body.begin(), body.end());;
 }
 
 HFONT EzFont(PCWSTR pszFontName, int iPoint, int iWeight, BOOL bItalic, BOOL bUnderline, BOOL bStrikeOut)

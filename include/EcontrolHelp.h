@@ -11,7 +11,7 @@
 
 ESTL_NAMESPACE_BEGIN
 
-std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap);
+void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData);
 
 /// <summary>
 /// ´´½¨×ÖÌå¡£
@@ -697,7 +697,13 @@ public:
 	{
 		if (!m_bInDesignMode)
 		{
-			auto&& x = elibstl::GetDataFromHBIT(m_hbmPic);
+			std::vector<unsigned char> x;
+			elibstl::GetDataFromHBIT(m_hbmPic, x);
+			if (x.empty()) {
+				*pcb = 0;
+				return nullptr;
+			}
+
 			delete[] m_pPicData;
 			m_Info0.cbPic = x.size();
 			m_pPicData = new BYTE[m_Info0.cbPic];

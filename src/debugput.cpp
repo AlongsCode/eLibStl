@@ -178,7 +178,6 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 
 	}
 	oss << "] {";
-	MessageBoxA(0, oss.str().c_str(), 0, 0);
 	const auto pStart = reinterpret_cast<const LPBYTE>(pParam->m_pAryData) + (nDimension + 1) * sizeof(INT);
 	const auto pEnd = pStart + nElementCount * GetTypeSize(pParam->m_dtDataType);
 	std::string s = ", ";
@@ -313,4 +312,49 @@ FucInfo e_debugput = { {
 		/*ArgCount*/1,
 		/*arg lp*/  &Args[0],
 	} ,Fn_debugput ,"Fn_debugput" };
+
+
+
+
+
+static ARG_INFO Args2[] =
+{
+		{
+		/*name*/	"欲输出图片",
+		/*explain*/	"字节流对象,易中没有HBITMAP，不考虑。",
+		/*bmp inx*/	0,
+		/*bmp num*/	0,
+		/*type*/	SDT_BIN,
+		/*default*/	0,
+		/*state*/	NULL,
+			}
+};
+namespace elibstl {
+	void e_debugbox_putimg(unsigned char* pPicData, size_t cbSize);
+}
+EXTERN_C void Fn_debugput_img(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	for (int i = 0; i < nArgCount; i++)
+	{
+		auto data = elibstl::arg_to_vdata(pArgInf, i);
+		elibstl::e_debugbox_putimg(data.data(), data.size());
+	}
+
+
+}
+FucInfo e_debugput_img = { {
+		/*ccname*/  ("调试图片"),
+		/*egname*/  ("debugputimg"),
+		/*explain*/ ("调试输出字节流图片"),
+		/*category*/11,
+		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ Args2,
+	} ,Fn_debugput_img ,"Fn_debugput_img" };
+
 
