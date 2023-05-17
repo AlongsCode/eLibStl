@@ -1,8 +1,3 @@
-/*
-* 2023.5.16
-* FIXME：输入框退出时会造成焦点错误（模态窗口应该怎么正确禁用父窗口？）
-*/
-
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
@@ -321,7 +316,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			else
 				*(p->ppszInput) = NULL;
 
-			DestroyWindow(hWnd);
+			DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		}
 		return 0;
 
@@ -330,7 +325,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
 			p->bOK = FALSE;
 			*(p->ppszInput) = NULL;
-			DestroyWindow(hWnd);
+			DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		}
 		return 0;
 		}
@@ -342,7 +337,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
 		p->bOK = FALSE;
 		*(p->ppszInput) = NULL;
-		DestroyWindow(hWnd);
+		DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 	}
 	return 0;
 
@@ -374,9 +369,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (ESTLPRIV_INPUTBOXCTX*)GetWindowLongPtrW(hWnd, 0);
 		DeleteObject(p->hFont);
-		//if (p->bEMainWndInitEnabled)
-		//	EnableWindow(p->hwndEMain, TRUE);
-		//SetFocus(p->hwndEMain);
+		DlgModelOnDestroy(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		PostQuitMessage(0);
 	}
 	return 0;
@@ -406,11 +399,8 @@ BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 	ZeroMemory(pCtx, sizeof(ESTLPRIV_INPUTBOXCTX));
 	pCtx->pszInitContent = pszInitContent;
 	pCtx->ppszInput = ppszInput;
-	pCtx->bEMainWndInitEnabled = IsWindowEnabled(hwndEMain);
+	pCtx->bEMainWndInitEnabled = DlgPreModel(hwndEMain);
 	pCtx->hwndEMain = hwndEMain;
-
-	//if (pCtx->bEMainWndInitEnabled)
-	//	EnableWindow(hwndEMain, FALSE);
 
 	const int cxInit = 560, cyInit = 500;
 	RECT rcEMain;

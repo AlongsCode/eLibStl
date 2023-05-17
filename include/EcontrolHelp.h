@@ -28,6 +28,57 @@ std::vector<unsigned char> GetDataFromHBIT(HBITMAP hBitmap);
 HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic = FALSE, BOOL bUnderline = FALSE, BOOL bStrikeOut = FALSE);
 
 /// <summary>
+/// 模态对话框预处理。
+/// 此函数供模拟模态对话框使用。
+/// 禁用父窗口
+/// </summary>
+/// <param name="hParent">父窗口</param>
+/// <returns>返回父窗口在调用函数前是否启用，调用DlgEndModel时传递此值</returns>
+eStlInline BOOL DlgPreModel(HWND hParent)
+{
+	BOOL bEnabled = IsWindowEnabled(hParent);
+	if (bEnabled)
+		EnableWindow(hParent, FALSE);
+	return bEnabled;
+}
+
+/// <summary>
+/// 模态对话框结束。
+/// 此函数供模拟模态对话框使用，而不应直接使用DestroyWindow。
+/// 启用父窗口并使其获得焦点。注意：设置父窗口焦点是必要的，否则其他窗口将被设置焦点从而导致错乱
+/// </summary>
+/// <param name="hWnd">对话框窗口</param>
+/// <param name="hParent">父窗口</param>
+/// <param name="bParentShouldBeEnabled">DlgPreModel的返回值</param>
+eStlInline void DlgEndModel(HWND hWnd, HWND hParent, BOOL bParentShouldBeEnabled)
+{
+	if (bParentShouldBeEnabled)
+		EnableWindow(hParent, TRUE);
+	SetFocus(hParent);
+	DestroyWindow(hWnd);
+}
+
+/// <summary>
+/// 模态对话框将被销毁。
+/// 此函数供模拟模态对话框使用。
+/// 主要为了防止一些意外情况，使未通过DlgEndModel销毁的对话框的父窗口也能被解禁
+/// </summary>
+/// <param name="hWnd">对话框窗口</param>
+/// <param name="hParent">父窗口</param>
+/// <param name="bParentShouldBeEnabled">DlgPreModel的返回值</param>
+/// <returns>对话框未通过DlgEndModel销毁时返回TRUE，否则返回FALSE</returns>
+eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeEnabled)
+{
+	if (bParentShouldBeEnabled && !IsWindowEnabled(hParent))// 防止一些意外情况。。
+	{
+		EnableWindow(hParent, TRUE);
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+/// <summary>
 /// 发送通用事件。
 /// 向易语言通知控件通用事件的产生
 /// </summary>
