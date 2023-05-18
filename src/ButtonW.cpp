@@ -346,8 +346,9 @@ private:
 		switch (uMsg)
 		{
 		case WM_COMMAND:
-			if (m_CtrlSCInfo.count((HWND)lParam))
-				m_CtrlSCInfo[(HWND)lParam]->OnClick();
+			if (HIWORD(wParam) == BN_CLICKED)
+				if (m_CtrlSCInfo.count((HWND)lParam))
+					m_CtrlSCInfo[(HWND)lParam]->OnClick();
 			break;
 
 		case WM_NOTIFY:
@@ -603,8 +604,9 @@ private:
 		switch (uMsg)
 		{
 		case WM_COMMAND:
-			if (m_CtrlSCInfo.count((HWND)lParam))
-				m_CtrlSCInfo[(HWND)lParam]->OnClick();
+			if (HIWORD(wParam) == BN_CLICKED)
+				if (m_CtrlSCInfo.count((HWND)lParam))
+					m_CtrlSCInfo[(HWND)lParam]->OnClick();
 			break;
 
 		case WM_DESTROY:
@@ -948,8 +950,9 @@ private:
 		switch (uMsg)
 		{
 		case WM_COMMAND:
-			if (m_CtrlSCInfo.count((HWND)lParam))
-				m_CtrlSCInfo[(HWND)lParam]->OnClick();
+			if (HIWORD(wParam) == BN_CLICKED)
+				if (m_CtrlSCInfo.count((HWND)lParam))
+					m_CtrlSCInfo[(HWND)lParam]->OnClick();
 			break;
 
 		case WM_DESTROY:
