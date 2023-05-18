@@ -195,7 +195,14 @@ network_post/*网页访问*/\
 ,g_get_py_ym/*取韵母W*/\
 ,Fn_SendLabelMsg/*调用标签反馈事件*/\
 ,e_debugput_img/*调试图片*/\
-,e_debugput_w/*调试宽字符*/
+,e_debugput_w/*调试宽字符*/\
+,Fn_MenuConstructor\
+,Fn_MenuDestructor\
+,Fn_MenuCopy\
+,Fn_MenuAttach\
+
+
+
 
 
 /*此下两个完全没必要*/
@@ -223,6 +230,7 @@ edbs_ex,/*edbs*/\
 CtCheckButtonW,/*选择框*/\
 CtCommandLink/*命令链接*/\
 ,CtLabelW/*标签W*/\
+,ClMenu/*菜单*/\
 
 
 
