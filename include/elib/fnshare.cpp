@@ -15,9 +15,9 @@ namespace elibstl
 			ret = s_pfnNotifySys(nMsg, dwParam1, dwParam2);
 		return ret;
 	}
-
+#ifndef __E_STATIC_LIB
 	void e_debugbox_init();
-
+#endif
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2)
 	{
 		INT nRet = NR_OK;
