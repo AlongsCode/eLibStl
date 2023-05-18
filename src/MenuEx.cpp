@@ -97,11 +97,11 @@ EXTERN_C void libstl_MenuEx_Insert(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 	auto p = elibstl::args_to_obj_noref<CMenu>(pArgInf);
 
 
-	MENUITEMINFOW mii;
-	mii.cbSize = sizeof(mii);
+	//MENUITEMINFOW mii;
+	//mii.cbSize = sizeof(mii);
 
 
-	InsertMenuItemW(p->m_hMenu, pArgInf[2].m_int, pArgInf[3].m_bool,)
+	//InsertMenuItemW(p->m_hMenu, pArgInf[2].m_int, pArgInf[3].m_bool,)
 
 
 }
