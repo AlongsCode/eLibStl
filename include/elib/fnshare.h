@@ -122,9 +122,15 @@ namespace elibstl
 			return std::wstring_view();
 		}
 	}
-
-
-
+	inline PCWSTR args_to_pszw(PMDATA_INF pArgInf, int idx)
+	{
+		if (pArgInf[idx].m_dtDataType == _SDT_NULL)
+			return NULL;
+		else if (reinterpret_cast<INT*>(pArgInf[idx].m_pBin + sizeof(INT))[0])
+			return reinterpret_cast<PCWSTR>(pArgInf[idx].m_pBin + 8);
+		else
+			return NULL;
+	}
 	inline HBITMAP make_hbm(LPBYTE pData, size_t nSize) {
 		return	(HBITMAP)NotifySys(NAS_GET_HBITMAP, (DWORD)pData, nSize);
 	}
@@ -362,7 +368,14 @@ namespace elibstl
 		*reinterpret_cast<LPINT>(p + 4) = nCount;
 		return p;
 	}
-
+	inline LPBYTE malloc_wstring(int cch)
+	{
+		int cb = sizeof(WCHAR) * (cch + 1);
+		const auto p = static_cast<LPBYTE>(malloc(cb + 8));
+		*reinterpret_cast<LPINT>(p) = 1;
+		*reinterpret_cast<LPINT>(p + 4) = cb;
+		return p;
+	}
 	inline void* empty_array() {
 		const auto p = static_cast<LPBYTE>(malloc(sizeof(int) * 2));
 		*reinterpret_cast<LPINT>(p) = 1;

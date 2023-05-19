@@ -196,10 +196,31 @@ network_post/*网页访问*/\
 ,Fn_SendLabelMsg/*调用标签反馈事件*/\
 ,e_debugput_img/*调试图片*/\
 ,e_debugput_w/*调试宽字符*/\
-,Fn_MenuConstructor\
-,Fn_MenuDestructor\
-,Fn_MenuCopy\
-,Fn_MenuAttach\
+,Fn_MenuConstructor/*菜单.构造*/\
+,Fn_MenuDestructor/*菜单.析构*/\
+,Fn_MenuCopy/*菜单.复制*/\
+,Fn_MenuAttach/*菜单.依附句柄*/\
+,Fn_MenuInsertItem/*菜单.插入项目*/\
+,Fn_MenuDetach/*菜单.拆离句柄*/\
+,Fn_MenuSetDelFlag/*菜单.置回收标志*/\
+,Fn_MenuCreatePopupMenu/*菜单.创建弹出式菜单*/\
+,Fn_MenuGetCurrentMenu/*菜单.取当前菜单*/\
+,Fn_MenuDeleteItem/*菜单.删除项目*/\
+,Fn_MenuGetCount/*菜单.取项目数*/\
+,Fn_MenuGetCaption/*菜单.取标题*/\
+,Fn_MenuSetCheck/*菜单.置选中状态*/\
+,Fn_MenuGetCheck/*菜单.取选中状态*/\
+,Fn_MenuSetRadioCheck/*菜单.置单选状态*/\
+,Fn_MenuGetRadioCheck/*菜单.取单选状态*/\
+,Fn_MenuSetDefault/*菜单.置默认状态*/\
+,Fn_MenuGetDefault/*菜单.取默认状态*/\
+,Fn_MenuSetDisable/*菜单.置禁止状态*/\
+,Fn_MenuGetDisable/*菜单.取禁止状态*/\
+
+
+
+
+
 
 
 

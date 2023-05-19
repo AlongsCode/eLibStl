@@ -1,3 +1,8 @@
+/*
+* 2023.5.19
+* FIXME：Unicode调试框已暂时弃用，可能要重新设计结构（439行）
+*/
+
 #include<windows.h>
 #include<CommCtrl.h>
 #include<Richedit.h>
@@ -431,15 +436,15 @@ namespace elibstl {
 		}
 	};
 
-
 	EDebugEdit* GetRichEdit() {
 		/*用于延迟初始化,卸载时自动析构*/
-		static EDebugEdit instance;
-		return &instance;
-
+		//static EDebugEdit instance;
+		//return &instance;
+		return NULL;
 	}
 
 	void e_debugbox_init() {
+		return;
 		GetRichEdit();
 	}
 }

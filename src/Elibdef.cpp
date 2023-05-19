@@ -68,7 +68,7 @@ static LIB_INFO s_LibInfo =
 	/*m_szFax*/                 "", // 传真
 	/*m_szEmail*/               "", // 邮箱
 	/*m_szHomePage*/            "", // 主页
-	/*m_szOther*/               "", // 其他信息
+	/*m_szOther*/               "开发测试群：761463364", // 其他信息
 
 	/*m_nDataTypeCount*/       sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
 	/*g_DataType_web*/         g_DataType, // 本库中所有的自定义数据类型

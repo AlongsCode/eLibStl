@@ -71,6 +71,7 @@ struct FucInfo
 	PFN_EXECUTE_CMD pFuc;
 	const char* FucName;
 };
+#define ESTLFNAME(s) s,#s
 
 extern HMODULE g_elibstl_hModule;
 
