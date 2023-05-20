@@ -449,6 +449,9 @@
     <ClCompile Include="src\Code Debug\UnicedeEdit.cpp">
       <Filter>源文件\实现\全局命令\代码调试\unicode调试框</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputBox.cpp">
+      <Filter>源文件\实现\全局命令\对话框类</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

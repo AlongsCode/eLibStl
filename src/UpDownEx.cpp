@@ -459,7 +459,7 @@ static UNIT_PROPERTY s_Member_UpDown[] =
 	/*001*/  {"最小位置", "Min", "", UD_INT, _PROP_OS(OS_ALL), NULL},
 	/*002*/  {"最大位置", "Max", "", UD_INT, _PROP_OS(OS_ALL), NULL},
 	/*003*/  {"位置", "Pos", "若设置了伙伴窗口，则必须在设置之后使用代码赋值", UD_INT, _PROP_OS(OS_ALL), NULL},
-	/*004*/  {"自动选择伙伴窗口", "BuddyAlign", "是否自动选择调节器Z序之上的第一个窗口为伙伴窗口。该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
+	/*004*/  {"自动选择伙伴窗口", "AutoBuddy", "是否自动选择调节器Z序之上的第一个窗口为伙伴窗口。该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_BOOL, _PROP_OS(OS_ALL), NULL},
 	/*005*/  {"伙伴窗口", "BuddyWindow", "调节器位置将反映在伙伴窗口的标题上", UD_INT, _PROP_OS(OS_ALL) | UW_CANNOT_INIT, NULL},
 	/*006*/  {"伙伴窗口定位方式", "BuddyAlign", "该属性改变后控件将重新创建，伙伴窗口需要重新设置（如果有）", UD_PICK_INT, _PROP_OS(OS_ALL), "无\0""左边\0""右边\0""\0"},
 	/*007*/  {"数值进制", "Base", "", UD_PICK_INT, _PROP_OS(OS_ALL), "十进制\0""十六进制\0""\0"},

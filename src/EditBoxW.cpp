@@ -1063,22 +1063,22 @@ static UNIT_PROPERTY s_Member_Edit[] =
 	/*004*/  {"文本背景颜色", "TextBKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
 	/*005*/  {"编辑框背景颜色", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
 	/*006*/  {"字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
-	/*007*/  {"隐藏选择", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*008*/  {"最大允许长度", "", "0为不限制", UD_INT, _PROP_OS(__OS_WIN),  NULL},
-	/*009*/  {"是否允许多行", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*010*/  {"滚动条", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""横向滚动条\0""纵向滚动条\0""横向及纵向滚动条\0""\0"},
-	/*011*/  {"对齐方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左对齐\0""居中\0""右对齐\0""\0"},
-	/*012*/  {"输入方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN),
+	/*007*/  {"隐藏选择", "HideSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*008*/  {"最大允许长度", "MaxLen", "0为不限制", UD_INT, _PROP_OS(__OS_WIN),  NULL},
+	/*009*/  {"是否允许多行", "MultiLine", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*010*/  {"滚动条", "ScrollBar", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""横向滚动条\0""纵向滚动条\0""横向及纵向滚动条\0""\0"},
+	/*011*/  {"对齐方式", "Align", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左对齐\0""居中\0""右对齐\0""\0"},
+	/*012*/  {"输入方式", "InputMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),
 					"通常\0""只读\0""密码\0""整数文本\0""小数文本\0""输入字节\0""输入短整数\0""输入整数\0""输入长整数\0""输入小数\0"
 					"输入双精度小数\0""输入日期时间\0""\0"},
-	/*013*/		{"密码遮盖字符W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
-	/*014*/  {"转换方式", "", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""大写到小写\0""小写到大写\0""\0"},
-	/*015*/  {"起始选择位置", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*016*/  {"被选择字符数", "", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*017*/  {"被选择文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_CANNOT_INIT, NULL},
-	/*018*/  {"提示文本W", "", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*019*/  {"总是显示提示文本", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*020*/  {"自动换行", "", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*013*/		{"密码遮盖字符W", "PasswordChar", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
+	/*014*/  {"转换方式", "TransformMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""大写到小写\0""小写到大写\0""\0"},
+	/*015*/  {"起始选择位置", "SelStart", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*016*/  {"被选择字符数", "SelCount", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*017*/  {"被选择文本W", "SelText", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_CANNOT_INIT, NULL},
+	/*018*/  {"提示文本W", "CueBanner", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*019*/  {"总是显示提示文本", "AlwaysCueBanner", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*020*/  {"自动换行", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 ///////////////////////////////////方法
 static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175 };
@@ -1934,21 +1934,8 @@ EXTERN_C void libstl_Edit_SetBallloonTip(PMDATA_INF pRetData, INT nArgCount, PMD
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	EDITBALLOONTIP ebt;
 	ebt.cbStruct = sizeof(EDITBALLOONTIP);
-
-	if (pArgInf[1].m_dtDataType == _SDT_NULL)
-		ebt.pszTitle = NULL;
-	else if (!elibstl::get_array_count(pArgInf[1].m_pBin))
-		ebt.pszTitle = NULL;
-	else
-		ebt.pszTitle = (PCWSTR)(pArgInf[1].m_pBin + 8);
-
-	if (pArgInf[2].m_dtDataType == _SDT_NULL)
-		ebt.pszText = NULL;
-	else if (!elibstl::get_array_count(pArgInf[2].m_pBin))
-		ebt.pszText = NULL;
-	else
-		ebt.pszText = (PCWSTR)(pArgInf[2].m_pBin + 8);
-
+	ebt.pszTitle = elibstl::args_to_pszw(pArgInf, 1);
+	ebt.pszText = elibstl::args_to_pszw(pArgInf, 2);
 	ebt.ttiIcon = pArgInf[3].m_int;
 
 	pRetData->m_bool = SendMessageW(hWnd, EM_SHOWBALLOONTIP, 0, (LPARAM)&ebt);

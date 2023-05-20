@@ -216,7 +216,16 @@ network_post/*网页访问*/\
 ,Fn_MenuGetDefault/*菜单.取默认状态*/\
 ,Fn_MenuSetDisable/*菜单.置禁止状态*/\
 ,Fn_MenuGetDisable/*菜单.取禁止状态*/\
-
+,Fn_MenuSetHilite/*菜单.置高亮状态*/\
+,Fn_MenuGetHilite/*菜单.取高亮状态*/\
+,Fn_MenuTrackPopupMenu/*菜单.弹出跟踪式菜单*/\
+,Fn_MenuSetCaption/*菜单.置标题*/\
+,Fn_MenuCreateMenu/*菜单.创建水平菜单*/\
+,Fn_MenuSetMenu/*菜单.置窗口菜单*/\
+,Fn_MenuGetMenu/*菜单.取窗口菜单*/\
+,Fn_MenuReset/*菜单.重置*/\
+,Fn_MenuSetEventReceiver/*菜单.置事件接收器*/\
+,Fn_InputBox/*输入框*/\
 
 
 
