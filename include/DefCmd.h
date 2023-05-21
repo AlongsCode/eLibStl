@@ -226,8 +226,13 @@ network_post/*网页访问*/\
 ,Fn_MenuReset/*菜单.重置*/\
 ,Fn_MenuSetEventReceiver/*菜单.置事件接收器*/\
 ,Fn_InputBox/*输入框*/\
-
-
+,Fn_memfile_structure/*内存文件.构造*/\
+,Fn_memfile_copy/*内存文件.复制*/\
+,Fn_memfile_destruct/*内存文件.析构*/\
+,Fn_memfile_get_size/*内存文件.取长度*/\
+,Fn_memfile_seek_begin/*内存文件.移到文件首*/\
+,Fn_memfile_seek_end/*内存文件.移到文件尾*/\
+,Fn_memfile_write/*内存文件.写入*/
 
 
 
@@ -262,6 +267,7 @@ CtCommandLink/*命令链接*/\
 ,CtLabelW/*标签W*/\
 ,ClMenu/*菜单*/\
 ,CtListBoxW/*列表框*/\
+,Obj_EMemFile
 
 
 

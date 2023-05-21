@@ -67,6 +67,7 @@
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\EplObj Class\memfile.cpp" />
     <ClCompile Include="src\e_call.cpp" />
     <ClCompile Include="src\e_coroutine.cpp" />
     <ClCompile Include="src\create_dir.cpp" />
