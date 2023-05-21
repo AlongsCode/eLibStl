@@ -347,7 +347,7 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 	case SDT_TEXT:
 		if (pArgInf[1].m_ppText)
 		{
-			elibstl::free(*(pArgInf[1].m_ppText));
+			elibstl::efree(*(pArgInf[1].m_ppText));
 			*(pArgInf[1].m_ppText) =
 				elibstl::clone_text(reinterpret_cast<char*>(lpart));
 		}
@@ -358,7 +358,7 @@ EXTERN_C void Fn_CallEfun(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 		//易语言IDE禁止被取地址的子程序存在字节集参数但是，因为指针获取方式不一定通过易语言的代码，所以还是加上了
 		if (pArgInf[1].m_ppBin)
 		{
-			elibstl::free(*(pArgInf[1].m_ppBin));
+			elibstl::efree(*(pArgInf[1].m_ppBin));
 			*(pArgInf[1].m_ppBin) = elibstl::clone_bin(
 				reinterpret_cast<unsigned char*>(lpart), *(reinterpret_cast<std::uint32_t*>(lpart) - 1));
 		}

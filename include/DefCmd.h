@@ -261,6 +261,7 @@ CtCheckButtonW,/*选择框*/\
 CtCommandLink/*命令链接*/\
 ,CtLabelW/*标签W*/\
 ,ClMenu/*菜单*/\
+,CtListBoxW/*列表框*/\
 
 
 

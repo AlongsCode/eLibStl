@@ -306,8 +306,8 @@ public:
 
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
-		auto pButton = new CUpDown(STD_ECTRL_CREATE_REAL_ARGS);
-		return elibstl::make_cwnd(pButton->GetHWND());
+		auto p = new CUpDown(STD_ECTRL_CREATE_REAL_ARGS);
+		return elibstl::make_cwnd(p->GetHWND());
 	}
 
 	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
@@ -537,8 +537,8 @@ FucInfo Fn_UpDownSetAccel = { {
 EXTERN_C void libstl_UpDown_GetAccel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	elibstl::free(*pArgInf[2].m_ppAryData);
-	elibstl::free(*pArgInf[3].m_ppAryData);
+	elibstl::efree(*pArgInf[2].m_ppAryData);
+	elibstl::efree(*pArgInf[3].m_ppAryData);
 
 	int cAccel = SendMessageW(hWnd, UDM_GETACCEL, 0, NULL);
 	if (!cAccel)

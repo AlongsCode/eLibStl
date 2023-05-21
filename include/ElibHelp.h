@@ -19,12 +19,24 @@
 #define eStlInline inline
 #endif
 
-
 #define MAKEINTATOMW(i)  (PWSTR)((ULONG_PTR)((WORD)(i)))
+#define va_arg_idx(ap, idx, t) (*(t*)((ap)+_INTSIZEOF(t)*(idx)))
+
+struct FucInfo
+{
+	CMD_INFO FucDef;
+	PFN_EXECUTE_CMD pFuc;
+	const char* FucName;
+};
+#define ESTLFNAME(s) s,#s
+
+extern HMODULE g_elibstl_hModule;
+
+ESTL_NAMESPACE_BEGIN
 
 typedef LPCVOID PCVOID;
-
-#define va_arg_idx(ap, idx, t) (*(t*)((ap)+_INTSIZEOF(t)*(idx)))
+typedef LPCBYTE PCBYTE;
+typedef UINT BITBOOL;
 
 template<class... Args>
 eStlInline int ArgsNum(Args&&... args)
@@ -33,7 +45,6 @@ eStlInline int ArgsNum(Args&&... args)
 }
 
 #define ESTLVAL(...) ArgsNum(__VA_ARGS__), __VA_ARGS__
-
 
 eStlInline bool isUnicode(const unsigned char* data, size_t length) {
 	// 检查字节序标记 (BOM)
@@ -65,17 +76,6 @@ eStlInline bool isUnicode(const unsigned char* data, size_t length) {
 	return true;
 }
 
-struct FucInfo
-{
-	CMD_INFO FucDef;
-	PFN_EXECUTE_CMD pFuc;
-	const char* FucName;
-};
-#define ESTLFNAME(s) s,#s
-
-extern HMODULE g_elibstl_hModule;
-
-ESTL_NAMESPACE_BEGIN
 /// <summary>
 /// Unicode到ANSI，使用默认代码页
 /// </summary>
@@ -108,5 +108,27 @@ eStlInline T MultiSelect(int n, ...)
 	T Ret = va_arg_idx(Args, n, T);
 	va_end(Args);
 	return Ret;
+}
+
+eStlInline BOOL IsFILETIMEZero(const FILETIME* pft)
+{
+	// 不能将FILETIME*转换为ULONGLONG*，因为可能有对齐错误
+	ULARGE_INTEGER ull;
+	ull.HighPart = pft->dwHighDateTime;
+	ull.LowPart = pft->dwLowDateTime;
+	return ull.QuadPart == 0;
+}
+
+eStlInline BOOL operator==(const FILETIME& ft1, const FILETIME& ft2)
+{
+	return CompareFileTime(&ft1, &ft2) == 0;
+}
+eStlInline BOOL operator>(const FILETIME& ft1, const FILETIME& ft2)
+{
+	return CompareFileTime(&ft1, &ft2) == 1;
+}
+eStlInline BOOL operator<(const FILETIME& ft1, const FILETIME& ft2)
+{
+	return CompareFileTime(&ft1, &ft2) == -1;
 }
 ESTL_NAMESPACE_END

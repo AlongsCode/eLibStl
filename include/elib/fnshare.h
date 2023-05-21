@@ -159,14 +159,15 @@ namespace elibstl
 	}
 
 	// 从易语言里申请内存, 单位为字节
-	inline void* malloc(int size)
+	// 函数命名不要与CRT冲突！
+	inline void* ealloc(int size)
 	{
 		void* pMem = (void*)NotifySys(NRS_MALLOC, size, 0);
 		memset(pMem, 0, size);
 		return (void*)pMem;
 	}
 
-	inline void free(void* p)
+	inline void efree(void* p)
 	{
 		NotifySys(NRS_MFREE, reinterpret_cast<DWORD>(p), 0);
 	}
@@ -178,7 +179,7 @@ namespace elibstl
 			return nullptr;
 		std::string_view s(ps);
 		const INT nTextLen = s.length();
-		char* pd = static_cast<char*>(malloc(nTextLen + 1));
+		char* pd = static_cast<char*>(ealloc(nTextLen + 1));
 		std::copy(s.begin(), s.end(), pd);
 		pd[nTextLen] = '\0';
 		return pd;
@@ -186,7 +187,7 @@ namespace elibstl
 	inline char* clone_text(const std::string& s)
 	{
 		const INT nTextLen = s.length();
-		char* pd = static_cast<char*>(malloc(nTextLen + 1));
+		char* pd = static_cast<char*>(ealloc(nTextLen + 1));
 		std::copy(s.begin(), s.end(), pd);
 		pd[nTextLen] = '\0';
 		return pd;
@@ -197,7 +198,7 @@ namespace elibstl
 	{
 		const INT nTextLen = s.length();
 		const INT nAnsiLen = WideCharToMultiByte(CP_ACP, 0, s.data(), nTextLen, nullptr, 0, nullptr, nullptr);
-		char* pd = static_cast<char*>(malloc(nAnsiLen + 1));
+		char* pd = static_cast<char*>(ealloc(nAnsiLen + 1));
 		WideCharToMultiByte(CP_ACP, 0, s.data(), nTextLen, pd, nAnsiLen + 1, nullptr, nullptr);
 		return pd;
 	}
@@ -205,7 +206,7 @@ namespace elibstl
 	{
 		if (nTextLen <= 0)
 			return nullptr;
-		char* pd = static_cast<char*>(malloc(nTextLen + 1));
+		char* pd = static_cast<char*>(ealloc(nTextLen + 1));
 		//空指针检查在这
 		std::copy(ps, ps + nTextLen, pd);
 		pd[nTextLen] = '\0';
@@ -217,7 +218,7 @@ namespace elibstl
 		if (nDataSize == 0)
 			return nullptr;
 
-		LPBYTE pd = static_cast<LPBYTE>(malloc(sizeof(std::uint32_t) * 2 + nDataSize));
+		LPBYTE pd = static_cast<LPBYTE>(ealloc(sizeof(std::uint32_t) * 2 + nDataSize));
 		std::copy(pData, pData + nDataSize, pd + sizeof(std::uint32_t) * 2);
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(std::uint32_t)) = nDataSize;
@@ -228,7 +229,7 @@ namespace elibstl
 		if (s.empty())
 			return nullptr;
 		const INT nLen = (s.length() + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
-		LPBYTE pd = static_cast<LPBYTE>(malloc(nLen + sizeof(uint32_t) * 2));
+		LPBYTE pd = static_cast<LPBYTE>(ealloc(nLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nLen;
 		std::memcpy(pd + sizeof(uint32_t) * 2, s.data(), s.length() * sizeof(wchar_t));
@@ -239,7 +240,7 @@ namespace elibstl
 		if (s.empty())
 			return nullptr;
 		const INT nLen = (s.length() + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
-		LPBYTE pd = static_cast<LPBYTE>(malloc(nLen + sizeof(uint32_t) * 2));
+		LPBYTE pd = static_cast<LPBYTE>(ealloc(nLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nLen;
 		std::memcpy(pd + sizeof(uint32_t) * 2, s.data(), s.length() * sizeof(wchar_t));
@@ -251,7 +252,7 @@ namespace elibstl
 			return nullptr;
 		const INT nTextLen = static_cast<INT>(wcslen(ps) + (bTerminator ? 1 : 0));
 		const INT nWideLen = nTextLen * sizeof(wchar_t);
-		LPBYTE pd = static_cast<LPBYTE>(malloc(nWideLen + sizeof(uint32_t) * 2));
+		LPBYTE pd = static_cast<LPBYTE>(ealloc(nWideLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nWideLen;
 		std::memcpy(pd + sizeof(uint32_t) * 2, ps, wcslen(ps) * sizeof(wchar_t));
@@ -262,7 +263,7 @@ namespace elibstl
 		if (ps == nullptr || *ps == '\0' || nTextLen == 0)
 			return nullptr;
 		const INT nWideLen = (nTextLen + (bTerminator ? 1 : 0)) * sizeof(wchar_t);
-		LPBYTE pd = static_cast<LPBYTE>(malloc(nWideLen + sizeof(uint32_t) * 2));
+		LPBYTE pd = static_cast<LPBYTE>(ealloc(nWideLen + sizeof(uint32_t) * 2));
 		*reinterpret_cast<std::uint32_t*>(pd) = 1;
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(uint32_t)) = nWideLen;
 		std::memcpy(pd + sizeof(uint32_t) * 2, ps, nTextLen * sizeof(wchar_t));
@@ -363,7 +364,7 @@ namespace elibstl
 	template <typename T>
 	LPBYTE malloc_array(int nCount)
 	{
-		const auto p = static_cast<LPBYTE>(malloc(sizeof(T) * nCount + 8));
+		const auto p = static_cast<LPBYTE>(ealloc(sizeof(T) * nCount + 8));
 		*reinterpret_cast<LPINT>(p) = 1;
 		*reinterpret_cast<LPINT>(p + 4) = nCount;
 		return p;
@@ -371,13 +372,13 @@ namespace elibstl
 	inline LPBYTE malloc_wstring(int cch)
 	{
 		int cb = sizeof(WCHAR) * (cch + 1);
-		const auto p = static_cast<LPBYTE>(malloc(cb + 8));
+		const auto p = static_cast<LPBYTE>(ealloc(cb + 8));
 		*reinterpret_cast<LPINT>(p) = 1;
 		*reinterpret_cast<LPINT>(p + 4) = cb;
 		return p;
 	}
 	inline void* empty_array() {
-		const auto p = static_cast<LPBYTE>(malloc(sizeof(int) * 2));
+		const auto p = static_cast<LPBYTE>(ealloc(sizeof(int) * 2));
 		*reinterpret_cast<LPINT>(p) = 1;
 		*reinterpret_cast<LPINT>(p + 4) = 0;
 		return p;
@@ -505,7 +506,7 @@ namespace elibstl
 					if (nLen == 0)
 						return nullptr;
 
-					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::malloc((nLen + 1) * sizeof(wchar_t)));
+					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::ealloc((nLen + 1) * sizeof(wchar_t)));
 
 					memcpy(pNewText, pText, nLen * sizeof(wchar_t));
 
@@ -649,7 +650,7 @@ namespace elibstl
 					if (nLen == 0)
 						return nullptr;
 
-					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::malloc((nLen + 1) * sizeof(wchar_t)));
+					wchar_t* pNewText = reinterpret_cast<wchar_t*>(elibstl::ealloc((nLen + 1) * sizeof(wchar_t)));
 
 					memcpy(pNewText, pText, nLen * sizeof(wchar_t));
 

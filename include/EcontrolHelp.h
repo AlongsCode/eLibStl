@@ -10,6 +10,17 @@
 
 
 ESTL_NAMESPACE_BEGIN
+eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALSE)
+{
+	EnumChildWindows(hWnd,
+		[](HWND hWnd, LPARAM lParam)->BOOL
+		{
+			SendMessageW(hWnd, WM_SETFONT, lParam, FALSE);
+			return TRUE;
+		}, (LPARAM)hFont);
+	if (bRedraw)
+		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
 
 void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData);
 
@@ -78,91 +89,47 @@ eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeE
 		return FALSE;
 }
 
+struct EDLGCTX_BASE
+{
+	HWND hwndEMain;
+	BOOL bEMainWndInitEnabled;
+	HFONT hFont;
+	BOOL bOK;
+};
+
+template<class T>
+T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
+{
+	HWND hwndEMain = (HWND)NotifySys(NES_GET_MAIN_HWND, 0, 0);
+	if (!*pAtom)
+	{
+		WNDCLASSW wc{};
+		wc.lpszClassName = pszWndClass;
+		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
+		wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+		wc.hIcon = (HICON)GetClassLongPtrW(hwndEMain, GCLP_HICON);
+		wc.style = CS_VREDRAW | CS_HREDRAW;
+		wc.hInstance = g_elibstl_hModule;
+		wc.lpfnWndProc = pfnWndProc;
+		wc.cbWndExtra = sizeof(void*);
+		*pAtom = RegisterClassW(&wc);
+	}
+
+	auto pCtx = new T;
+	ZeroMemory(pCtx, sizeof(T));
+	pCtx->bEMainWndInitEnabled = DlgPreModel(hwndEMain);
+	pCtx->hwndEMain = hwndEMain;
+
+	return pCtx;
+}
+
+void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx);
+
 /// <summary>
 /// 发送通用事件。
 /// 向易语言通知控件通用事件的产生
 /// </summary>
-eStlInline bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam) {
-
-	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE
-		&& uMsg <= WM_RBUTTONUP || uMsg >= WM_KEYDOWN && uMsg <= WM_CHAR)
-	{
-		//这几个事件全部转发给父组件
-		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
-		INT control_type = 0;
-		if (uMsg != WM_CHAR && uMsg != WM_SETFOCUS && uMsg != WM_KILLFOCUS)
-		{
-			if ((GetKeyState(VK_CONTROL) & 16384) != 0)
-				control_type = 1;
-			if ((GetKeyState(VK_SHIFT) & 16384) != 0)
-				control_type = control_type | 2;
-			if ((GetKeyState(VK_MENU) & 16384) != 0)
-				control_type = control_type | 4;
-		}
-
-		if (uMsg >= WM_MOUSEMOVE && uMsg <= WM_RBUTTONUP)
-		{
-			if (uMsg == WM_MOUSEMOVE)
-				event.m_nEventIndex = -6;
-			else
-				event.m_nEventIndex = 512 - uMsg;
-			event.m_nArgCount = 3;
-			event.m_arg[0].m_inf.m_int = lParam & 65535;
-			event.m_arg[1].m_inf.m_int = lParam >> 16;
-			event.m_arg[2].m_inf.m_int = control_type;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			return true;
-		}
-
-		switch (uMsg)
-		{
-		case WM_SETFOCUS: {
-			event.m_nEventIndex = -uMsg;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}
-		case WM_KILLFOCUS: {
-			event.m_nEventIndex = -uMsg;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}
-		case WM_KEYDOWN: {
-			event.m_nEventIndex = (247 - uMsg);
-			event.m_nArgCount = 2;
-			event.m_arg[0].m_inf.m_int = wParam;
-			event.m_arg[1].m_inf.m_int = control_type;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}
-		case WM_KEYUP: {
-			event.m_nEventIndex = (247 - uMsg);
-			event.m_nArgCount = 2;
-			event.m_arg[0].m_inf.m_int = wParam;
-			event.m_arg[1].m_inf.m_int = control_type;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}
-		case WM_CHAR: {
-			event.m_nEventIndex = -11;
-			event.m_nArgCount = 1;
-			event.m_arg[0].m_inf.m_int = wParam;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}case WM_MOUSELAST: {
-			event.m_nEventIndex = 12;
-			event.m_nArgCount = 2;
-			event.m_arg[0].m_inf.m_int = (wParam >> 16) > 0 ? 1 : -1;
-			event.m_arg[1].m_inf.m_int = control_type;
-			elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0);
-			break;
-		}
-		default:
-			break;
-		}
-	}
-
-	return true;
-}
+bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam);
 
 /// <summary>
 /// 克隆Unicode字符串。
@@ -183,6 +150,8 @@ int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = 0);
 /// <param name="cchSrc">字符数</param>
 /// <returns>复制的字符数</returns>
 int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc = 0);
+
+void DupStreamForNewDelete(BYTE* pDst, PCBYTE pSrc, SIZE_T cbSrc);
 
 /// <summary>
 /// 取默认字体
@@ -526,7 +495,7 @@ struct ECTRLINFO
 
 	LOGFONTA Font;			// 字体
 	int cchText;			// 文本长度，仅用于保存信息
-	int cbPic;				// 图片字节流长度
+	SIZE_T cbPic;			// 图片字节流长度
 	int iFrame;				// 边框
 };
 // 控件基类

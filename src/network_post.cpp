@@ -429,7 +429,7 @@ web_visit(
 
 	if (pRetHead)
 	{
-		elibstl::free(*pRetHead);
+		elibstl::efree(*pRetHead);
 		*pRetHead = elibstl::clone_text(ret_header);
 
 	}
@@ -456,7 +456,7 @@ web_visit(
 			}
 		}
 		temp_cookies = temp_cookies.substr(0, temp_cookies.size() - 2);
-		elibstl::free(*pRetCookies);
+		elibstl::efree(*pRetCookies);
 		*pRetCookies = elibstl::clone_text(temp_cookies);
 	}
 	return elibstl::clone_bin(pageContent.data(), pageContent.size());

@@ -96,6 +96,7 @@
     <ClCompile Include="src\is_login_net.cpp" />
     <ClCompile Include="src\kill_proc.cpp" />
     <ClCompile Include="src\LabelW.cpp" />
+    <ClCompile Include="src\ListBoxW.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
     <ClCompile Include="src\memwrite.cpp" />

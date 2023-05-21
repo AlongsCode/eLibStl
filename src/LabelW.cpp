@@ -1050,8 +1050,8 @@ public:
 
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
-		auto pButton = new CLabel(STD_ECTRL_CREATE_REAL_ARGS);
-		return elibstl::make_cwnd(pButton->GetHWND());
+		auto p = new CLabel(STD_ECTRL_CREATE_REAL_ARGS);
+		return elibstl::make_cwnd(p->GetHWND());
 	}
 
 	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
