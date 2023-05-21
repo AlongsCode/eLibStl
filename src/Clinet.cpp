@@ -299,8 +299,9 @@ EXTERN_C void Fn_Clinet_GetData(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eClinet* pClinet = (eClinet*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	vector<unsigned char> tempdata = pClinet->get_data();
-	pRetData->m_pBin = elibstl::clone_bin(tempdata.data(), tempdata.size());
+	size_t size = 0;
+	auto tempdata = pClinet->get_data(&size);
+	pRetData->m_pBin = elibstl::clone_bin(tempdata, size);
 }
 
 FucInfo Clinet_GetData = { {
