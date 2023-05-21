@@ -76,6 +76,7 @@ namespace elibstl
 			return {};
 		}
 		return reinterpret_cast<T>(pArgInf[index].m_pCompoundData);
+
 	}
 	inline std::vector<unsigned char> arg_to_vdata(PMDATA_INF pArgInf, int index) {
 		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) >= 2) {
@@ -475,8 +476,46 @@ namespace elibstl
 		}
 		return 0u;
 	}
+	/*请确保不为空*/
+	inline bool wstring_to_arg(PMDATA_INF pArgInf, const std::wstring& str) {
+
+		switch (pArgInf->m_dtDataType)
+		{
+		case SDT_TEXT:
+			efree(*pArgInf->m_ppText);
+			*pArgInf->m_ppText = clone_text(str);
+			break;
+		case SDT_BIN:
+			efree(*pArgInf->m_ppBin);
+			*pArgInf->m_ppBin = clone_textw(str);
+			break;
+		case SDT_BYTE:
+			*pArgInf->m_pByte = (BYTE)_wtoi(str.c_str());
+			break;
+		case SDT_SHORT:
+			*pArgInf->m_pShort = (SHORT)_wtoi(str.c_str());
+			break;
+		case SDT_INT:
+			*pArgInf->m_pInt = _wtoi(str.c_str());
+			break;
+		case SDT_INT64:
+			*pArgInf->m_pInt64 = _wtoi64(str.c_str());
+			break;
+		case SDT_FLOAT:
+			*pArgInf->m_pFloat = (FLOAT)_wtof(str.c_str());
+			break;
+		case SDT_DOUBLE:
+			*pArgInf->m_pDouble = _wtof(str.c_str());
+			break;
+		default:
+			return false;
+		}
+		return true;
+	}
+
 	//参数到文本,此代码会将易基本类型格式化为文本例如整形105会变为"105"
 	inline std::wstring arg_to_wstring(MDATA_INF pArgInf) {
+
 		if (is_array(pArgInf))//是数组
 		{
 			remove_array_flags(&pArgInf); //去除数组标志
