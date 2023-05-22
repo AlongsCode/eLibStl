@@ -93,6 +93,7 @@ public:
 		SetWindowSubclass(hWnd, MenuWndSubclassProc, SCID_MENU, (DWORD_PTR)this);
 		m_hWnd = hWnd;
 		m_pProc = pProc;
+		return FALSE;
 	}
 };
 ESTL_NAMESPACE_END
@@ -368,7 +369,7 @@ EXTERN_C void libstl_MenuEx_CreatePopupMenu(PMDATA_INF pRetData, INT nArgCount, 
 	auto p = elibstl::args_to_obj_noref<elibstl::CMenu>(pArgInf);
 
 	HMENU hMenu = CreatePopupMenu();
-	if(pArgInf[1].m_bool)
+	if (pArgInf[1].m_bool)
 		p->Attach(hMenu);
 	pRetData->m_int = (int)hMenu;
 }

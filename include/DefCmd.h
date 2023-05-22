@@ -232,7 +232,11 @@ network_post/*网页访问*/\
 ,Fn_memfile_get_size/*内存文件.取长度*/\
 ,Fn_memfile_seek_begin/*内存文件.移到文件首*/\
 ,Fn_memfile_seek_end/*内存文件.移到文件尾*/\
-,Fn_memfile_write/*内存文件.写入*/
+,Fn_memfile_write/*内存文件.写*/\
+,Fn_memfile_read/*内存文件.读*/\
+,Fn_memfile_write_mem/*内存文件.写入字节集*/\
+,Fn_memfile_seek/*内存文件.移动读写位置*/\
+,Fn_memfile_get_off_set/*内存文件.取读写位置*/
 
 
 

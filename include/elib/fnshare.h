@@ -17,17 +17,21 @@ namespace elibstl
 
 
 
-	//struct ebin
-	//{
-	//	std::uint32_t m_check;//恒为1
-	//	size_t m_size;//长度
-	//	std::uint8_t m_data[0];//字节集指针
-	//	ebin() {
-	//		memset(this, 0, sizeof(*this));
-	//	}
-	//};
+	struct ebin
+	{
+#pragma warning(disable:4200)
+		std::uint32_t m_check;//恒为1
+		size_t m_size;//长度
+		std::uint8_t m_data[0];//字节集指针
+		ebin() {
+			m_check = 1;
+			m_size = 0;
+		}
+	};
 
-
+	inline auto& args_to_ebin(PMDATA_INF pArgInf, size_t index) {
+		return *reinterpret_cast<ebin*>(pArgInf[index].m_pBin);
+	}
 
 
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);
@@ -45,7 +49,7 @@ namespace elibstl
 		return reinterpret_cast<T*>(pArgInf[0].m_ppCompoundData[0]);
 	}
 	template <typename T>
-	std::optional<T> args_to_data(PMDATA_INF pArgInf, int index)
+	std::optional<T> args_to_data(PMDATA_INF pArgInf, size_t index)
 	{
 		if (!(std::is_same<T, BYTE>::value ||
 			std::is_same<T, SHORT>::value ||

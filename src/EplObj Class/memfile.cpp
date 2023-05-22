@@ -16,7 +16,7 @@ enum class file_off_set
 {
 	begin = 1,
 	end,
-	now
+	current
 };
 
 
@@ -48,7 +48,7 @@ public:
 	bool insert(std::vector<unsigned char> data);
 
 	// 移动读写位置
-	bool seek(long offset, file_off_set origin = file_off_set::now);
+	bool seek(long offset, file_off_set origin = file_off_set::current);
 
 	// 移动到文件开头
 	void seek_begin();
@@ -179,7 +179,7 @@ bool EMemFile::seek(long offset, file_off_set origin)
 	case file_off_set::begin:
 		new_off_set = offset;
 		break;
-	case file_off_set::now:
+	case file_off_set::current:
 		new_off_set = m_offset + offset;
 		break;
 	case file_off_set::end:
@@ -236,6 +236,7 @@ size_t EMemFile::get_size() const
 // 获取当前读写位置
 size_t EMemFile::get_off_set() const
 {
+
 	return m_offset;
 }
 
@@ -268,7 +269,7 @@ FucInfo Fn_memfile_structure = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
-	} ,elibstl_memfile_structure ,"elibstl_memfile_structure" };
+	}  ,ESTLFNAME(elibstl_memfile_structure) };
 
 //复制
 EXTERN_C void fn_memfile_copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -290,7 +291,7 @@ FucInfo Fn_memfile_copy = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
-	} ,fn_memfile_copy ,"fn_memfile_copy" };
+	} ,ESTLFNAME(fn_memfile_copy) };
 
 //析构
 EXTERN_C void fn_memfile_des(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -316,7 +317,7 @@ FucInfo Fn_memfile_destruct = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
-	} ,fn_memfile_des ,"fn_memfile_des" };
+	}  ,ESTLFNAME(fn_memfile_des) };
 
 
 
@@ -339,7 +340,7 @@ FucInfo Fn_memfile_get_size = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  0,
-	} ,fn_memfile_get_size ,"fn_memfile_get_size" };
+	} ,ESTLFNAME(fn_memfile_get_size) };
 
 
 EXTERN_C void elibstl_memfile_seek_begin(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -361,7 +362,7 @@ FucInfo Fn_memfile_seek_begin = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  0,
-	} ,elibstl_memfile_seek_begin ,"elibstl_memfile_seek_begin" };
+	} ,ESTLFNAME(elibstl_memfile_seek_begin) };
 
 EXTERN_C void elibstl_memfile_seek_end(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
@@ -382,11 +383,11 @@ FucInfo Fn_memfile_seek_end = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  0,
-	} ,elibstl_memfile_seek_end ,"elibstl_memfile_seek_end" };
+	} ,ESTLFNAME(elibstl_memfile_seek_end) };
 static ARG_INFO Args[] =
 {
 		{
-		/*name*/	"欲输出值",
+		/*name*/	"欲写入值",
 		/*explain*/	"对于非“文本型”参数，将自动转换为文本。本参数可接受任意基本类型，但不接受数组以及自定义数据类型。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
@@ -398,9 +399,6 @@ static ARG_INFO Args[] =
 EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
-	//内存文件
-
-	//BOOL bRet = TRUE;
 	for (INT i = 1; i < nArgCount; i++)
 	{
 
@@ -519,10 +517,13 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 
 }
 
+
+
+
 FucInfo Fn_memfile_write = { {
-		/*ccname*/  "写入",
-		/*egname*/  "此代码会将字节集视为宽文本，请传递标准附带结束符的宽文本，如需写入字节集请使用写入字节集",
-		/*explain*/ NULL,
+		/*ccname*/  "写",
+		/*egname*/  NULL,
+		/*explain*/ "此代码会将字节集视为宽文本，请传递标准附带结束符的宽文本，如需写入字节集请使用写入字节集",
 		/*category*/ -1,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | _CMD_OS(__OS_WIN) ,
 		/*ret*/ _SDT_NULL,
@@ -530,11 +531,154 @@ FucInfo Fn_memfile_write = { {
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/sizeof(Args) / sizeof(Args[0]),
+		/*ArgCount*/ARRAYSIZE(Args),
 		/*arg lp*/  Args,
-	} ,elibstl_memfile_write ,"elibstl_memfile_write" };
+	} ,ESTLFNAME(elibstl_memfile_write) };
 
-static INT s_dtCmdIndexcommobj_memfile_ex[] = { 226,227,228,229 ,230,231,232 };
+static ARG_INFO Args_mem[] =
+{
+		{
+		/*name*/	"欲写入的二进制数据",
+		/*explain*/	"",
+		/*bmp inx*/	0,
+		/*bmp num*/	0,
+		/*type*/	SDT_BIN,
+		/*default*/	0,
+		/*state*/	0,
+			}
+};
+EXTERN_C void elibstl_memfile_write_mem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
+	for (INT i = 1; i < nArgCount; i++)
+	{
+		auto& pData = elibstl::args_to_ebin(pArgInf, i);
+		pMemFile->write(pData.m_data, pData.m_size);
+	}
+}
+
+
+
+
+FucInfo Fn_memfile_write_mem = { {
+		/*ccname*/  "写入字节集",
+		/*egname*/  NULL,
+		/*explain*/ "此代码会将二进制数据完整准确写入",
+		/*category*/ -1,
+		/*state*/    CT_ALLOW_APPEND_NEW_ARG | _CMD_OS(__OS_WIN) ,
+		/*ret*/ _SDT_NULL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(Args_mem),
+		/*arg lp*/  Args_mem,
+	} ,ESTLFNAME(elibstl_memfile_write_mem) };
+
+static ARG_INFO args_read[] =
+{
+		{
+		/*name*/	"欲读入长度",
+		/*explain*/	"实际长度等于取决于文件长度。",
+		/*bmp inx*/	0,
+		/*bmp num*/	0,
+		/*type*/	SDT_INT,
+		/*default*/	0,
+		/*state*/	NULL,
+			}
+};
+EXTERN_C void elibstl_memfile_read(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
+	std::vector<unsigned char> pData;
+	pMemFile->read(pArgInf->m_int, pData);
+	pRetData->m_pBin = elibstl::clone_bin(pData.data(), pData.size());
+}
+
+FucInfo Fn_memfile_read = { {
+		/*ccname*/  "读",
+		/*egname*/ NULL,
+		/*explain*/  "如果所读取长度大于文件长度则会截断",
+		/*category*/ -1,
+		/*state*/     _CMD_OS(__OS_WIN) ,
+		/*ret*/SDT_BIN,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(args_read),
+		/*arg lp*/  args_read,
+	} ,ESTLFNAME(elibstl_memfile_read) };
+
+
+
+
+static ARG_INFO args_seek[] =
+{
+		{
+		/*name*/	"起始移动位置",
+		/*explain*/	"1、#文件首； 2、#文件尾； 3、#现行位置。",
+		/*bmp inx*/	0,
+		/*bmp num*/	0,
+		/*type*/	SDT_INT,
+		/*default*/	3,
+		/*state*/	AS_HAS_DEFAULT_VALUE,
+			},{
+				/*name*/	"移动距离",
+				/*explain*/	"实际长度等于取决于文件长度。",
+				/*bmp inx*/	0,
+				/*bmp num*/	0,
+				/*type*/	SDT_INT,
+				/*default*/	0,
+				/*state*/	NULL,
+					}
+};
+EXTERN_C void elibstl_memfile_seek(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
+	if (pArgInf[1].m_int < 1 || pArgInf[1].m_int > 3)
+	{
+		pArgInf[1].m_int = 3;
+	}
+	pRetData->m_bool = pMemFile->seek(pArgInf[2].m_int, static_cast<file_off_set>(pArgInf[1].m_int));
+}
+
+FucInfo Fn_memfile_seek = { {
+		/*ccname*/  "移动读写位置",
+		/*egname*/ NULL,
+		/*explain*/  " 在被打开的文件中，设置下一个读或写操作的位置",
+		/*category*/ -1,
+		/*state*/     _CMD_OS(__OS_WIN) ,
+		/*ret*/SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(args_seek),
+		/*arg lp*/  args_seek,
+	} ,ESTLFNAME(elibstl_memfile_seek) };
+
+EXTERN_C void elibstl_memfile_get_off_set(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
+	pRetData->m_int = pMemFile->get_off_set();
+}
+
+FucInfo Fn_memfile_get_off_set = { {
+		/*ccname*/  "取读写位置",
+		/*egname*/ NULL,
+		/*explain*/  " 在被打开的文件中，设置下一个读或写操作的位置",
+		/*category*/ -1,
+		/*state*/     _CMD_OS(__OS_WIN) ,
+		/*ret*/SDT_INT,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  0,
+	} ,ESTLFNAME(elibstl_memfile_get_off_set) };
+static INT s_dtCmdIndexcommobj_memfile_ex[] = { 226,227,228,229 ,230,231,232 ,233 ,234 ,235 ,236 };
 namespace elibstl {
 
 
