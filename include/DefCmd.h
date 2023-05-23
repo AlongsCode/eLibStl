@@ -271,7 +271,8 @@ CtCommandLink/*命令链接*/\
 ,CtLabelW/*标签W*/\
 ,ClMenu/*菜单*/\
 ,CtListBoxW/*列表框*/\
-,Obj_EMemFile
+,Obj_EMemFile/*内存文件*/\
+,CtScintilla
 
 
 
