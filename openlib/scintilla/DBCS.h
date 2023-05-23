@@ -8,7 +8,7 @@
 #ifndef DBCS_H
 #define DBCS_H
 
-namespace Scintilla::Internal {
+namespace Scintilla {
 
 constexpr bool IsDBCSCodePage(int codePage) noexcept {
 	return codePage == 932
@@ -19,7 +19,6 @@ constexpr bool IsDBCSCodePage(int codePage) noexcept {
 }
 
 bool DBCSIsLeadByte(int codePage, char ch) noexcept;
-bool IsDBCSValidSingleByte(int codePage, int ch) noexcept;
 
 }
 

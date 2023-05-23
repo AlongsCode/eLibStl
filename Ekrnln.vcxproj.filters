@@ -109,8 +109,8 @@
     <Filter Include="源文件\openlib">
       <UniqueIdentifier>{655e0a69-ba73-475f-b22e-2695c1e757d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\openlib\Scintilla">
-      <UniqueIdentifier>{4ff1091e-4b01-4da4-8662-5a461479506d}</UniqueIdentifier>
+    <Filter Include="源文件\openlib\scintilla">
+      <UniqueIdentifier>{66554c70-d2b9-423e-874b-2e5e96e8039d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,134 +159,176 @@
     <ClInclude Include="include\GdiplusFlatDef.h">
       <Filter>头文件\elibhelp</Filter>
     </ClInclude>
+    <ClInclude Include="openlib\scintilla\Accessor.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
     <ClInclude Include="openlib\scintilla\AutoComplete.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\CallTip.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\CaseConvert.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\CaseFolder.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\Catalogue.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\CatalogueModules.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\CellBuffer.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
-    <ClInclude Include="openlib\scintilla\ChangeHistory.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClInclude Include="openlib\scintilla\CharacterCategory.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
-    <ClInclude Include="openlib\scintilla\CharacterCategoryMap.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
-    </ClInclude>
-    <ClInclude Include="openlib\scintilla\CharacterType.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClInclude Include="openlib\scintilla\CharacterSet.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\CharClassify.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\ContractionState.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\DBCS.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
-    </ClInclude>
-    <ClInclude Include="openlib\scintilla\Debugging.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Decoration.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\DefaultLexer.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Document.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\EditModel.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Editor.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\EditView.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\ElapsedPeriod.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
-    <ClInclude Include="openlib\scintilla\Geometry.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClInclude Include="openlib\scintilla\ExternalLexer.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\FontQuality.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\HanjaDic.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Indicator.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\IntegerRectangle.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\KeyMap.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\LexAccessor.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\LexerBase.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\LexerModule.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\LexerNoExceptions.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\LexerSimple.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\LineMarker.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\MarginView.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\OptionSet.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Partitioning.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\PerLine.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
-    </ClInclude>
-    <ClInclude Include="openlib\scintilla\Platform.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\PlatWin.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Position.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\PositionCache.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\PropSetSimple.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\RESearch.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\RunStyles.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\ScintillaBase.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\ScintillaWin.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Selection.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\SparseState.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\SparseVector.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\SplitVector.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\StringCopy.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\Style.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\StyleContext.h">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\scintilla\SubStyles.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\UniConversion.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\UniqueString.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\ViewStyle.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
-    <ClInclude Include="openlib\scintilla\WinTypes.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClInclude Include="openlib\scintilla\WordList.h">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
     <ClInclude Include="openlib\scintilla\XPM.h">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -596,113 +638,140 @@
     <ClCompile Include="src\EplObj Control\Scintilla.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
+    <ClCompile Include="openlib\scintilla\Accessor.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
     <ClCompile Include="openlib\scintilla\AutoComplete.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\CallTip.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\CaseConvert.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\CaseFolder.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\Catalogue.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\CellBuffer.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
-    <ClCompile Include="openlib\scintilla\ChangeHistory.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClCompile Include="openlib\scintilla\CharacterCategory.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
-    <ClCompile Include="openlib\scintilla\CharacterCategoryMap.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
-    </ClCompile>
-    <ClCompile Include="openlib\scintilla\CharacterType.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClCompile Include="openlib\scintilla\CharacterSet.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\CharClassify.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\ContractionState.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\DBCS.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Decoration.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\DefaultLexer.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Document.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\EditModel.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Editor.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\EditView.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
-    <ClCompile Include="openlib\scintilla\Geometry.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+    <ClCompile Include="openlib\scintilla\ExternalLexer.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\HanjaDic.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Indicator.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\KeyMap.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\LexerBase.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\LexerModule.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\LexerNoExceptions.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\LexerSimple.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\LineMarker.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\MarginView.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\PerLine.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\PlatWin.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\PositionCache.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\PropSetSimple.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\RESearch.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\RunStyles.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\ScintillaBase.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\ScintillaDLL.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\ScintillaWin.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Selection.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\Style.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\StyleContext.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\UniConversion.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\UniqueString.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\ViewStyle.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\scintilla\WordList.cxx">
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
     <ClCompile Include="openlib\scintilla\XPM.cxx">
-      <Filter>源文件\openlib\Scintilla</Filter>
+      <Filter>源文件\openlib\scintilla</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -735,10 +804,5 @@
     <Image Include="res\ObjLabel_W.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="openlib\scintilla\SciTE.properties">
-      <Filter>源文件\openlib\Scintilla</Filter>
-    </None>
   </ItemGroup>
 </Project>

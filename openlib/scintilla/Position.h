@@ -19,7 +19,7 @@ namespace Sci {
 typedef ptrdiff_t Position;
 typedef ptrdiff_t Line;
 
-inline constexpr Position invalidPosition = -1;
+const Position invalidPosition = -1;
 
 }
 

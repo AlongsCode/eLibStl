@@ -8,11 +8,11 @@
 #ifndef MARGINVIEW_H
 #define MARGINVIEW_H
 
-namespace Scintilla::Internal {
+namespace Scintilla {
 
-void DrawWrapMarker(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourRGBA wrapColour);
+void DrawWrapMarker(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourDesired wrapColour);
 
-typedef void (*DrawWrapMarkerFn)(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourRGBA wrapColour);
+typedef void (*DrawWrapMarkerFn)(Surface *surface, PRectangle rcPlace, bool isEndMarker, ColourDesired wrapColour);
 
 /**
 * MarginView draws the margins.
@@ -34,10 +34,9 @@ public:
 
 	MarginView() noexcept;
 
-	void DropGraphics() noexcept;
-	void RefreshPixMaps(Surface *surfaceWindow, const ViewStyle &vsDraw);
-	void PaintOneMargin(Surface *surface, PRectangle rc, PRectangle rcOneMargin, const MarginStyle &marginStyle,
-		const EditModel &model, const ViewStyle &vs) const;
+	void DropGraphics(bool freeObjects);
+	void AllocateGraphics(const ViewStyle &vsDraw);
+	void RefreshPixMaps(Surface *surfaceWindow, WindowID wid, const ViewStyle &vsDraw);
 	void PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc, PRectangle rcMargin,
 		const EditModel &model, const ViewStyle &vs);
 };

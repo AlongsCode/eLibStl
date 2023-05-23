@@ -8,14 +8,14 @@
 #ifndef INDICATOR_H
 #define INDICATOR_H
 
-namespace Scintilla::Internal {
+namespace Scintilla {
 
 struct StyleAndColour {
-	Scintilla::IndicatorStyle style;
-	ColourRGBA fore;
-	StyleAndColour() noexcept : style(Scintilla::IndicatorStyle::Plain), fore(0, 0, 0) {
+	int style;
+	ColourDesired fore;
+	StyleAndColour() noexcept : style(INDIC_PLAIN), fore(0, 0, 0) {
 	}
-	StyleAndColour(Scintilla::IndicatorStyle style_, ColourRGBA fore_ = ColourRGBA(0, 0, 0)) noexcept : style(style_), fore(fore_) {
+	StyleAndColour(int style_, ColourDesired fore_ = ColourDesired(0, 0, 0)) noexcept : style(style_), fore(fore_) {
 	}
 	bool operator==(const StyleAndColour &other) const noexcept {
 		return (style == other.style) && (fore == other.fore);
@@ -32,24 +32,23 @@ public:
 	bool under;
 	int fillAlpha;
 	int outlineAlpha;
-	Scintilla::IndicFlag attributes;
-	XYPOSITION strokeWidth = 1.0f;
-	Indicator() noexcept : under(false), fillAlpha(30), outlineAlpha(50), attributes(Scintilla::IndicFlag::None) {
+	int attributes;
+	Indicator() noexcept : under(false), fillAlpha(30), outlineAlpha(50), attributes(0) {
 	}
-	Indicator(Scintilla::IndicatorStyle style_, ColourRGBA fore_= ColourRGBA(0,0,0), bool under_=false, int fillAlpha_=30, int outlineAlpha_=50) noexcept :
-		sacNormal(style_, fore_), sacHover(style_, fore_), under(under_), fillAlpha(fillAlpha_), outlineAlpha(outlineAlpha_), attributes(Scintilla::IndicFlag::None) {
+	Indicator(int style_, ColourDesired fore_=ColourDesired(0,0,0), bool under_=false, int fillAlpha_=30, int outlineAlpha_=50) noexcept :
+		sacNormal(style_, fore_), sacHover(style_, fore_), under(under_), fillAlpha(fillAlpha_), outlineAlpha(outlineAlpha_), attributes(0) {
 	}
 	void Draw(Surface *surface, const PRectangle &rc, const PRectangle &rcLine, const PRectangle &rcCharacter, State drawState, int value) const;
 	bool IsDynamic() const noexcept {
 		return !(sacNormal == sacHover);
 	}
 	bool OverridesTextFore() const noexcept {
-		return sacNormal.style == Scintilla::IndicatorStyle::TextFore || sacHover.style == Scintilla::IndicatorStyle::TextFore;
+		return sacNormal.style == INDIC_TEXTFORE || sacHover.style == INDIC_TEXTFORE;
 	}
-	Scintilla::IndicFlag Flags() const noexcept {
+	int Flags() const noexcept {
 		return attributes;
 	}
-	void SetFlags(Scintilla::IndicFlag attributes_) noexcept;
+	void SetFlags(int attributes_) noexcept;
 };
 
 }

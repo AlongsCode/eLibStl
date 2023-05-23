@@ -13,7 +13,9 @@
 
 #include "UniConversion.h"
 
-namespace Scintilla::Internal {
+using namespace Scintilla;
+
+namespace Scintilla {
 
 size_t UTF8Length(std::wstring_view wsv) noexcept {
 	size_t len = 0;
@@ -358,8 +360,8 @@ int UTF8Classify(const unsigned char *us, size_t len) noexcept {
 	return UTF8MaskInvalid | 1;
 }
 
-int UTF8DrawBytes(const char *s, size_t len) noexcept {
-	const int utf8StatusNext = UTF8Classify(reinterpret_cast<const unsigned char *>(s), len);
+int UTF8DrawBytes(const unsigned char *us, int len) noexcept {
+	const int utf8StatusNext = UTF8Classify(us, len);
 	return (utf8StatusNext & UTF8MaskInvalid) ? 1 : (utf8StatusNext & UTF8MaskWidth);
 }
 

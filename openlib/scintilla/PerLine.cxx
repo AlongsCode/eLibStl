@@ -13,25 +13,25 @@
 #include <string_view>
 #include <vector>
 #include <forward_list>
-#include <optional>
 #include <algorithm>
 #include <memory>
 
-#include "ScintillaTypes.h"
-
-#include "Debugging.h"
-#include "Geometry.h"
 #include "Platform.h"
 
+#include "Scintilla.h"
 #include "Position.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
 #include "CellBuffer.h"
 #include "PerLine.h"
 
-using namespace Scintilla::Internal;
+using namespace Scintilla;
 
 MarkerHandleSet::MarkerHandleSet() {
+}
+
+MarkerHandleSet::~MarkerHandleSet() {
+	mhList.clear();
 }
 
 bool MarkerHandleSet::Empty() const noexcept {
@@ -89,13 +89,16 @@ void MarkerHandleSet::CombineWith(MarkerHandleSet *other) noexcept {
 	mhList.splice_after(mhList.before_begin(), other->mhList);
 }
 
+LineMarkers::~LineMarkers() {
+}
+
 void LineMarkers::Init() {
 	markers.DeleteAll();
 }
 
 void LineMarkers::InsertLine(Sci::Line line) {
 	if (markers.Length()) {
-		markers.Insert(line, nullptr);
+		markers.Insert(line, 0);
 	}
 }
 
@@ -212,20 +215,23 @@ void LineMarkers::DeleteMarkFromHandle(int markerHandle) {
 	}
 }
 
+LineLevels::~LineLevels() {
+}
+
 void LineLevels::Init() {
 	levels.DeleteAll();
 }
 
 void LineLevels::InsertLine(Sci::Line line) {
 	if (levels.Length()) {
-		const int level = (line < levels.Length()) ? levels[line] : static_cast<int>(Scintilla::FoldLevel::Base);
+		const int level = (line < levels.Length()) ? levels[line] : SC_FOLDLEVELBASE;
 		levels.Insert(line, level);
 	}
 }
 
 void LineLevels::InsertLines(Sci::Line line, Sci::Line lines) {
 	if (levels.Length()) {
-		const int level = (line < levels.Length()) ? levels[line] : static_cast<int>(Scintilla::FoldLevel::Base);
+		const int level = (line < levels.Length()) ? levels[line] : SC_FOLDLEVELBASE;
 		levels.InsertValue(line, lines, level);
 	}
 }
@@ -234,17 +240,17 @@ void LineLevels::RemoveLine(Sci::Line line) {
 	if (levels.Length()) {
 		// Move up following lines but merge header flag from this line
 		// to line before to avoid a temporary disappearance causing expansion.
-		int firstHeader = levels[line] & static_cast<int>(Scintilla::FoldLevel::HeaderFlag);
+		int firstHeader = levels[line] & SC_FOLDLEVELHEADERFLAG;
 		levels.Delete(line);
 		if (line == levels.Length()-1) // Last line loses the header flag
-			levels[line-1] &= ~static_cast<int>(Scintilla::FoldLevel::HeaderFlag);
+			levels[line-1] &= ~SC_FOLDLEVELHEADERFLAG;
 		else if (line > 0)
 			levels[line-1] |= firstHeader;
 	}
 }
 
 void LineLevels::ExpandLevels(Sci::Line sizeNew) {
-	levels.InsertValue(levels.Length(), sizeNew - levels.Length(), static_cast<int>(Scintilla::FoldLevel::Base));
+	levels.InsertValue(levels.Length(), sizeNew - levels.Length(), SC_FOLDLEVELBASE);
 }
 
 void LineLevels::ClearLevels() {
@@ -252,40 +258,28 @@ void LineLevels::ClearLevels() {
 }
 
 int LineLevels::SetLevel(Sci::Line line, int level, Sci::Line lines) {
-	int prev = level;
+	int prev = 0;
 	if ((line >= 0) && (line < lines)) {
 		if (!levels.Length()) {
 			ExpandLevels(lines + 1);
 		}
 		prev = levels[line];
-		levels[line] = level;
+		if (prev != level) {
+			levels[line] = level;
+		}
 	}
 	return prev;
 }
 
 int LineLevels::GetLevel(Sci::Line line) const noexcept {
-	if ((line >= 0) && (line < levels.Length())) {
+	if (levels.Length() && (line >= 0) && (line < levels.Length())) {
 		return levels[line];
+	} else {
+		return SC_FOLDLEVELBASE;
 	}
-	return static_cast<int>(Scintilla::FoldLevel::Base);
 }
 
-Scintilla::FoldLevel LineLevels::GetFoldLevel(Sci::Line line) const noexcept {
-	if ((line >= 0) && (line < levels.Length())) {
-		return static_cast<FoldLevel>(levels[line]);
-	}
-	return Scintilla::FoldLevel::Base;
-}
-
-Sci::Line LineLevels::GetFoldParent(Sci::Line line) const noexcept {
-	const FoldLevel level = LevelNumberPart(GetFoldLevel(line));
-	for (Sci::Line lineLook = line - 1; lineLook >= 0; lineLook--) {
-		const FoldLevel levelTry = GetFoldLevel(lineLook);
-		if (LevelIsHeader(levelTry) && LevelNumberPart(levelTry) < level) {
-			return lineLook;
-		}
-	}
-	return -1;
+LineState::~LineState() {
 }
 
 void LineState::Init() {
@@ -314,13 +308,10 @@ void LineState::RemoveLine(Sci::Line line) {
 	}
 }
 
-int LineState::SetLineState(Sci::Line line, int state, Sci::Line lines) {
-	int stateOld = state;
-	if ((line >= 0) && (line < lines)) {
-		lineStates.EnsureLength(lines + 1);
-		stateOld = lineStates[line];
-		lineStates[line] = state;
-	}
+int LineState::SetLineState(Sci::Line line, int state) {
+	lineStates.EnsureLength(line + 1);
+	const int stateOld = lineStates[line];
+	lineStates[line] = state;
 	return stateOld;
 }
 
@@ -359,8 +350,7 @@ std::unique_ptr<char[]>AllocateAnnotation(size_t length, int style) {
 
 }
 
-bool LineAnnotation::Empty() const noexcept {
-	return annotations.Length() == 0;
+LineAnnotation::~LineAnnotation() {
 }
 
 void LineAnnotation::Init() {
@@ -481,6 +471,9 @@ int LineAnnotation::Lines(Sci::Line line) const noexcept {
 		return reinterpret_cast<AnnotationHeader *>(annotations[line].get())->lines;
 	else
 		return 0;
+}
+
+LineTabstops::~LineTabstops() {
 }
 
 void LineTabstops::Init() {

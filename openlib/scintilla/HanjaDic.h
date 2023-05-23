@@ -9,11 +9,11 @@
 #ifndef HANJADIC_H
 #define HANJADIC_H
 
-namespace Scintilla::Internal {
+namespace Scintilla {
 
 namespace HanjaDict {
 
-bool GetHangulOfHanja(std::wstring &inout) noexcept;
+int GetHangulOfHanja(wchar_t *inout);
 
 }
 

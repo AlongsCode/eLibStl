@@ -15,23 +15,17 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <optional>
 #include <algorithm>
 #include <memory>
 
-#include "ScintillaTypes.h"
-#include "ScintillaMessages.h"
-
-#include "Debugging.h"
-#include "Geometry.h"
 #include "Platform.h"
 
-#include "CharacterType.h"
+#include "Scintilla.h"
+#include "CharacterSet.h"
 #include "Position.h"
 #include "AutoComplete.h"
 
 using namespace Scintilla;
-using namespace Scintilla::Internal;
 
 AutoComplete::AutoComplete() :
 	active(false),
@@ -39,17 +33,16 @@ AutoComplete::AutoComplete() :
 	typesep('?'),
 	ignoreCase(false),
 	chooseSingle(false),
-	options(AutoCompleteOption::Normal),
 	posStart(0),
 	startLen(0),
 	cancelAtStartPos(true),
 	autoHide(true),
 	dropRestOfWord(false),
-	ignoreCaseBehaviour(CaseInsensitiveBehaviour::RespectCase),
+	ignoreCaseBehaviour(SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE),
 	widthLBDefault(100),
 	heightLBDefault(100),
-	autoSort(Ordering::PreSorted) {
-	lb = ListBox::Allocate();
+	autoSort(SC_ORDER_PRESORTED) {
+	lb.reset(ListBox::Allocate());
 }
 
 AutoComplete::~AutoComplete() {
@@ -64,11 +57,10 @@ bool AutoComplete::Active() const noexcept {
 
 void AutoComplete::Start(Window &parent, int ctrlID,
 	Sci::Position position, Point location, Sci::Position startLen_,
-	int lineHeight, bool unicodeMode, Technology technology, ListOptions listOptions) {
+	int lineHeight, bool unicodeMode, int technology) {
 	if (active) {
 		Cancel();
 	}
-	lb->SetOptions(listOptions);
 	lb->Create(parent, ctrlID, location, lineHeight, unicodeMode, technology);
 	lb->Clear();
 	active = true;
@@ -115,11 +107,6 @@ struct Sorter {
 
 	Sorter(AutoComplete *ac_, const char *list_) : ac(ac_), list(list_) {
 		int i = 0;
-		if (!list[i]) {
-			// Empty list has a single empty member
-			indices.push_back(i); // word start
-			indices.push_back(i); // word end
-		}
 		while (list[i]) {
 			indices.push_back(i); // word start
 			while (list[i] != ac->GetTypesep() && list[i] != ac->GetSeparator() && list[i])
@@ -141,7 +128,7 @@ struct Sorter {
 		indices.push_back(i); // index of last position
 	}
 
-	bool operator()(int a, int b) noexcept {
+	bool operator()(int a, int b) {
 		const int lenA = indices[a * 2 + 1] - indices[a * 2];
 		const int lenB = indices[b * 2 + 1] - indices[b * 2];
 		const int len  = std::min(lenA, lenB);
@@ -157,7 +144,7 @@ struct Sorter {
 };
 
 void AutoComplete::SetList(const char *list) {
-	if (autoSort == Ordering::PreSorted) {
+	if (autoSort == SC_ORDER_PRESORTED) {
 		lb->SetList(list, separator, typesep);
 		sortMatrix.clear();
 		for (int i = 0; i < lb->Length(); ++i)
@@ -170,7 +157,7 @@ void AutoComplete::SetList(const char *list) {
 	for (int i = 0; i < static_cast<int>(IndexSort.indices.size()) / 2; ++i)
 		sortMatrix.push_back(i);
 	std::sort(sortMatrix.begin(), sortMatrix.end(), IndexSort);
-	if (autoSort == Ordering::Custom || sortMatrix.size() < 2) {
+	if (autoSort == SC_ORDER_CUSTOM || sortMatrix.size() < 2) {
 		lb->SetList(list, separator, typesep);
 		PLATFORM_ASSERT(lb->Length() == static_cast<int>(sortMatrix.size()));
 		return;
@@ -207,7 +194,9 @@ int AutoComplete::GetSelection() const {
 }
 
 std::string AutoComplete::GetValue(int item) const {
-	return lb->GetValue(item);
+	char value[maxItemLen];
+	lb->GetValue(item, value, sizeof(value));
+	return std::string(value);
 }
 
 void AutoComplete::Show(bool show) {
@@ -216,7 +205,7 @@ void AutoComplete::Show(bool show) {
 		lb->Select(0);
 }
 
-void AutoComplete::Cancel() noexcept {
+void AutoComplete::Cancel() {
 	if (lb->Created()) {
 		lb->Clear();
 		lb->Destroy();
@@ -243,41 +232,42 @@ void AutoComplete::Select(const char *word) {
 	int end = lb->Length() - 1; // upper bound of the api array block to search
 	while ((start <= end) && (location == -1)) { // Binary searching loop
 		int pivot = (start + end) / 2;
-		std::string item = GetValue(sortMatrix[pivot]);
+		char item[maxItemLen];
+		lb->GetValue(sortMatrix[pivot], item, maxItemLen);
 		int cond;
 		if (ignoreCase)
-			cond = CompareNCaseInsensitive(word, item.c_str(), lenWord);
+			cond = CompareNCaseInsensitive(word, item, lenWord);
 		else
-			cond = strncmp(word, item.c_str(), lenWord);
+			cond = strncmp(word, item, lenWord);
 		if (!cond) {
 			// Find first match
 			while (pivot > start) {
-				item = lb->GetValue(sortMatrix[pivot-1]);
+				lb->GetValue(sortMatrix[pivot-1], item, maxItemLen);
 				if (ignoreCase)
-					cond = CompareNCaseInsensitive(word, item.c_str(), lenWord);
+					cond = CompareNCaseInsensitive(word, item, lenWord);
 				else
-					cond = strncmp(word, item.c_str(), lenWord);
+					cond = strncmp(word, item, lenWord);
 				if (0 != cond)
 					break;
 				--pivot;
 			}
 			location = pivot;
 			if (ignoreCase
-				&& ignoreCaseBehaviour == CaseInsensitiveBehaviour::RespectCase) {
+				&& ignoreCaseBehaviour == SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE) {
 				// Check for exact-case match
 				for (; pivot <= end; pivot++) {
-					item = lb->GetValue(sortMatrix[pivot]);
-					if (!strncmp(word, item.c_str(), lenWord)) {
+					lb->GetValue(sortMatrix[pivot], item, maxItemLen);
+					if (!strncmp(word, item, lenWord)) {
 						location = pivot;
 						break;
 					}
-					if (CompareNCaseInsensitive(word, item.c_str(), lenWord))
+					if (CompareNCaseInsensitive(word, item, lenWord))
 						break;
 				}
 			}
 		} else if (cond < 0) {
 			end = pivot - 1;
-		} else { // cond > 0
+		} else if (cond > 0) {
 			start = pivot + 1;
 		}
 	}
@@ -287,13 +277,14 @@ void AutoComplete::Select(const char *word) {
 		else
 			lb->Select(-1);
 	} else {
-		if (autoSort == Ordering::Custom) {
+		if (autoSort == SC_ORDER_CUSTOM) {
 			// Check for a logically earlier match
+			char item[maxItemLen];
 			for (int i = location + 1; i <= end; ++i) {
-				std::string item = lb->GetValue(sortMatrix[i]);
-				if (CompareNCaseInsensitive(word, item.c_str(), lenWord))
+				lb->GetValue(sortMatrix[i], item, maxItemLen);
+				if (CompareNCaseInsensitive(word, item, lenWord))
 					break;
-				if (sortMatrix[i] < sortMatrix[location] && !strncmp(word, item.c_str(), lenWord))
+				if (sortMatrix[i] < sortMatrix[location] && !strncmp(word, item, lenWord))
 					location = i;
 			}
 		}

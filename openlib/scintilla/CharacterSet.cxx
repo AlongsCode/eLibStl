@@ -1,6 +1,7 @@
 // Scintilla source code edit control
-/** @file CharacterType.cxx
- ** Tests for character type and case-insensitive comparisons.
+/** @file CharacterSet.cxx
+ ** Simple case functions for ASCII.
+ ** Lexer infrastructure.
  **/
 // Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
@@ -8,11 +9,11 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "CharacterType.h"
+#include "CharacterSet.h"
 
-using namespace Scintilla::Internal;
+using namespace Scintilla;
 
-namespace Scintilla::Internal {
+namespace Scintilla {
 
 int CompareCaseInsensitive(const char *a, const char *b) noexcept {
 	while (*a && *b) {

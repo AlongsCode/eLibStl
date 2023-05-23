@@ -7,7 +7,6 @@
 
 #include <cstddef>
 #include <cstdlib>
-#include <cstdint>
 #include <cassert>
 #include <cstring>
 #include <cmath>
@@ -17,20 +16,16 @@
 #include <string_view>
 #include <vector>
 #include <map>
-#include <set>
-#include <optional>
 #include <algorithm>
 #include <memory>
 
-#include "ScintillaTypes.h"
-#include "ILoader.h"
-#include "ILexer.h"
-
-#include "Debugging.h"
-#include "Geometry.h"
 #include "Platform.h"
 
-#include "CharacterCategoryMap.h"
+#include "ILoader.h"
+#include "ILexer.h"
+#include "Scintilla.h"
+
+#include "CharacterCategory.h"
 
 #include "Position.h"
 #include "UniqueString.h"
@@ -39,6 +34,7 @@
 #include "RunStyles.h"
 #include "ContractionState.h"
 #include "CellBuffer.h"
+#include "KeyMap.h"
 #include "Indicator.h"
 #include "LineMarker.h"
 #include "Style.h"
@@ -53,7 +49,6 @@
 #include "EditModel.h"
 
 using namespace Scintilla;
-using namespace Scintilla::Internal;
 
 Caret::Caret() noexcept :
 	active(false), on(false), period(500) {}
@@ -65,44 +60,33 @@ EditModel::EditModel() : braces{} {
 	posDrag = SelectionPosition(Sci::invalidPosition);
 	braces[0] = Sci::invalidPosition;
 	braces[1] = Sci::invalidPosition;
-	bracesMatchStyle = StyleBraceBad;
+	bracesMatchStyle = STYLE_BRACEBAD;
 	highlightGuideColumn = 0;
-	hasFocus = false;
 	primarySelection = true;
-	imeInteraction = IMEInteraction::Windowed;
-	bidirectional = Bidirectional::Disabled;
-	foldFlags = FoldFlag::None;
-	foldDisplayTextStyle = FoldDisplayTextStyle::Hidden;
+	imeInteraction = imeWindowed;
+	bidirectional = Bidirectional::bidiDisabled;
+	foldFlags = 0;
+	foldDisplayTextStyle = SC_FOLDDISPLAYTEXT_HIDDEN;
 	hotspot = Range(Sci::invalidPosition);
-	hotspotSingleLine = true;
 	hoverIndicatorPos = Sci::invalidPosition;
 	wrapWidth = LineLayout::wrapWidthInfinite;
-	pdoc = new Document(DocumentOption::Default);
+	pdoc = new Document(SC_DOCUMENTOPTION_DEFAULT);
 	pdoc->AddRef();
 	pcs = ContractionStateCreate(pdoc->IsLarge());
 }
 
 EditModel::~EditModel() {
-	try {
-		// This never throws but isn't marked noexcept for compatibility
-		pdoc->Release();
-	} catch (...) {
-		// Ignore any exception
-	}
+	pdoc->Release();
 	pdoc = nullptr;
 }
 
 bool EditModel::BidirectionalEnabled() const noexcept {
-	return (bidirectional != Bidirectional::Disabled) &&
-		(CpUtf8 == pdoc->dbcsCodePage);
+	return (bidirectional != Bidirectional::bidiDisabled) &&
+		(SC_CP_UTF8 == pdoc->dbcsCodePage);
 }
 
 bool EditModel::BidirectionalR2L() const noexcept {
-	return bidirectional == Bidirectional::R2L;
-}
-
-SurfaceMode EditModel::CurrentSurfaceMode() const noexcept {
-	return SurfaceMode(pdoc->dbcsCodePage, BidirectionalR2L());
+	return bidirectional == Bidirectional::bidiR2L;
 }
 
 void EditModel::SetDefaultFoldDisplayText(const char *text) {
@@ -114,19 +98,10 @@ const char *EditModel::GetDefaultFoldDisplayText() const noexcept {
 }
 
 const char *EditModel::GetFoldDisplayText(Sci::Line lineDoc) const noexcept {
-	if (foldDisplayTextStyle == FoldDisplayTextStyle::Hidden || pcs->GetExpanded(lineDoc)) {
+	if (foldDisplayTextStyle == SC_FOLDDISPLAYTEXT_HIDDEN || pcs->GetExpanded(lineDoc)) {
 		return nullptr;
 	}
 
 	const char *text = pcs->GetFoldDisplayText(lineDoc);
 	return text ? text : defaultFoldDisplayText.get();
-}
-
-InSelection EditModel::LineEndInSelection(Sci::Line lineDoc) const {
-	const Sci::Position posAfterLineEnd = pdoc->LineStart(lineDoc + 1);
-	return sel.InSelectionForEOL(posAfterLineEnd);
-}
-
-int EditModel::GetMark(Sci::Line line) const {
-	return pdoc->GetMark(line, FlagSet(changeHistoryOption, ChangeHistoryOption::Markers));
 }

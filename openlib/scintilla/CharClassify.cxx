@@ -10,10 +10,10 @@
 
 #include <stdexcept>
 
-#include "CharacterType.h"
+#include "CharacterSet.h"
 #include "CharClassify.h"
 
-using namespace Scintilla::Internal;
+using namespace Scintilla;
 
 CharClassify::CharClassify() : charClass{} {
 	SetDefaultCharClasses(true);
@@ -21,29 +21,29 @@ CharClassify::CharClassify() : charClass{} {
 
 void CharClassify::SetDefaultCharClasses(bool includeWordClass) {
 	// Initialize all char classes to default values
-	for (int ch = 0; ch < maxChar; ch++) {
+	for (int ch = 0; ch < 256; ch++) {
 		if (ch == '\r' || ch == '\n')
-			charClass[ch] = CharacterClass::newLine;
-		else if (IsControl(ch) || ch == ' ')
-			charClass[ch] = CharacterClass::space;
+			charClass[ch] = ccNewLine;
+		else if (ch < 0x20 || ch == ' ')
+			charClass[ch] = ccSpace;
 		else if (includeWordClass && (ch >= 0x80 || IsAlphaNumeric(ch) || ch == '_'))
-			charClass[ch] = CharacterClass::word;
+			charClass[ch] = ccWord;
 		else
-			charClass[ch] = CharacterClass::punctuation;
+			charClass[ch] = ccPunctuation;
 	}
 }
 
-void CharClassify::SetCharClasses(const unsigned char *chars, CharacterClass newCharClass) {
+void CharClassify::SetCharClasses(const unsigned char *chars, cc newCharClass) {
 	// Apply the newCharClass to the specified chars
 	if (chars) {
 		while (*chars) {
-			charClass[*chars] = newCharClass;
+			charClass[*chars] = static_cast<unsigned char>(newCharClass);
 			chars++;
 		}
 	}
 }
 
-int CharClassify::GetCharsOfClass(CharacterClass characterClass, unsigned char *buffer) const noexcept {
+int CharClassify::GetCharsOfClass(cc characterClass, unsigned char *buffer) const noexcept {
 	// Get characters belonging to the given char class; return the number
 	// of characters (if the buffer is NULL, don't write to it).
 	int count = 0;

@@ -14,10 +14,10 @@ eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALS
 {
 	EnumChildWindows(hWnd,
 		[](HWND hWnd, LPARAM lParam)->BOOL
-		{
-			SendMessageW(hWnd, WM_SETFONT, lParam, FALSE);
-			return TRUE;
-		}, (LPARAM)hFont);
+	{
+		SendMessageW(hWnd, WM_SETFONT, lParam, FALSE);
+		return TRUE;
+	}, (LPARAM)hFont);
 	if (bRedraw)
 		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
 }
@@ -537,7 +537,7 @@ public:
 	/// </summary>
 	/// <param name="pszText">文本指针</param>
 	/// <returns>成功返回TRUE，失败返回FALSE</returns>
-	eStlInline BOOL SetTextA(PCSTR pszText)
+	eStlInline   BOOL SetTextA(PCSTR pszText)
 	{
 		if (m_bInDesignMode)
 		{
