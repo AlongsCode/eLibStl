@@ -87,15 +87,15 @@ PSTR W2A(PCWSTR pszW);
 
 
 PSTR W2UTF8(const std::wstring_view& text);
+
+PSTR W2UTF8(const std::wstring_view& text);
+
 /// <summary>
 /// ANSI到Unicode，使用默认代码页
 /// </summary>
 /// <param name="pszA">ANSI字符串指针</param>
 /// <returns>Unicode字符串指针，应使用delete[]释放</returns>
 PWSTR A2W(PCSTR pszA);
-
-
-PSTR W2UTF8(const std::wstring_view& text);
 
 /// <summary>
 /// 调用易语言支持库函数

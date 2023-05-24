@@ -939,33 +939,6 @@ public:
 
 	void SetItems(BYTE* pItems, SIZE_T cbItems, BOOL bNoCopy)
 	{
-		//std::vector<LBITEMINFO*> v1{};
-		//std::vector<LBITEMINFO> v2{};
-		//LBITEMCOMMINFO s{};
-		//LBITEMINFO* pp;
-		//SetRedraw(FALSE);
-		//auto ull = GetTickCount64();
-		////v1.reserve(50000);
-		//SendMessageW(m_hWnd, LB_INITSTORAGE, 100000, 0);
-		//for (int i = 0; i < 100000; ++i)
-		//{
-		//	pp = new LBITEMINFO{ L"154465565664465",L"5456466646468",0,0,s };
-		//	//v1.push_back(pp);
-		//	SendMessageW(m_hWnd, LB_ADDSTRING, 0, (LPARAM)L"");
-		//	SendMessageW(m_hWnd, LB_SETITEMDATA, i, (LPARAM)pp);
-		//}
-		//ull = GetTickCount64() - ull;
-		//SendMessageW(m_hWnd, LB_RESETCONTENT, 0, 0);
-		//ull = GetTickCount64();
-		//v2.reserve(100000);
-		//SendMessageW(m_hWnd, LB_INITSTORAGE, 100000, 0);
-		//for (int i = 0; i < 100000; ++i)
-		//{
-		//	SendMessageW(m_hWnd, LB_ADDSTRING, 0, (LPARAM)L"");
-		//	v2.push_back({ L"154465565664465",L"5456466646468",0,0,s });
-		//}
-		//ull = GetTickCount64() - ull;
-		//SetRedraw(TRUE);
 		SetRedraw(FALSE);
 		LBDeleteString(-1);
 		if (!pItems || !cbItems)
@@ -1344,7 +1317,7 @@ public:
 		}
 		
 		if (!m_hImageList)
-			return;
+			return NULL;
 		if (m_bILDataLocked)
 			GlobalUnlock(m_hglbImageListData);
 		IStream* pIStream;
