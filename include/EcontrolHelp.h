@@ -10,16 +10,14 @@
 
 
 ESTL_NAMESPACE_BEGIN
-eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALSE)
+eStlInline void SetLBText(HWND hLB, int idx, PCWSTR pszText)
 {
-	EnumChildWindows(hWnd,
-		[](HWND hWnd, LPARAM lParam)->BOOL
-		{
-			SendMessageW(hWnd, WM_SETFONT, lParam, FALSE);
-			return TRUE;
-		}, (LPARAM)hFont);
-	if (bRedraw)
-		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+	int iCurrSel = SendMessageW(hLB, LB_GETCURSEL, 0, 0);
+	auto lParam = SendMessageW(hLB, LB_GETITEMDATA, idx, 0);
+	SendMessageW(hLB, LB_DELETESTRING, idx, 0);
+	SendMessageW(hLB, LB_INSERTSTRING, idx, (LPARAM)(pszText ? pszText : L""));
+	SendMessageW(hLB, LB_SETITEMDATA, idx, lParam);
+	SendMessageW(hLB, LB_SETCURSEL, iCurrSel, 0);
 }
 
 void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData);
@@ -37,6 +35,29 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData);
 /// <param name="IsStrikeOut">是否删除线</param>
 /// <returns>成功返回字体句柄，失败返回NULL</returns>
 HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic = FALSE, BOOL bUnderline = FALSE, BOOL bStrikeOut = FALSE);
+
+#define ESTL_EZDLG_NAMESPACE_BEGIN namespace EzDlg {
+#define ESTL_EZDLG_NAMESPACE_END }
+
+ESTL_EZDLG_NAMESPACE_BEGIN
+/// <summary>
+/// 设置窗口字体。
+/// 函数枚举窗口的所有子窗口并悉数设置字体
+/// </summary>
+/// <param name="hWnd">窗口句柄</param>
+/// <param name="hFont">字体句柄</param>
+/// <param name="bRedraw">是否重画</param>
+eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALSE)
+{
+	EnumChildWindows(hWnd,
+		[](HWND hWnd, LPARAM lParam)->BOOL
+		{
+			SendMessageW(hWnd, WM_SETFONT, lParam, FALSE);
+			return TRUE;
+		}, (LPARAM)hFont);
+	if (bRedraw)
+		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
 
 /// <summary>
 /// 模态对话框预处理。
@@ -89,6 +110,7 @@ eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeE
 		return FALSE;
 }
 
+// IDE对话框上下文基础数据，所有上下文必须由此派生
 struct EDLGCTX_BASE
 {
 	HWND hwndEMain;
@@ -97,6 +119,15 @@ struct EDLGCTX_BASE
 	BOOL bOK;
 };
 
+/// <summary>
+/// 准备显示易IDE对话框。
+/// 函数注册窗口类并为上下文结构分配内存，然后禁用IDE窗口。
+/// 模板参数：上下文结构类型
+/// </summary>
+/// <param name="pAtom">类原子静态变量指针</param>
+/// <param name="pszWndClass">窗口类名</param>
+/// <param name="pfnWndProc">窗口过程</param>
+/// <returns>返回上下文指针</returns>
 template<class T>
 T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 {
@@ -123,7 +154,49 @@ T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 	return pCtx;
 }
 
-void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx);
+/// <summary>
+/// 显示易IDE对话框。
+/// 函数创建窗口并启动模态消息循环。
+/// 注意：消息循环调用IsDialogMessageW以支持导航键，
+/// 它会向窗口发送DM_GETDEFID和DM_SETDEFID，
+/// 分别定义为WM_USER和WM_USER+1，
+/// 应避免使用这两个值来定义自定义消息。
+/// </summary>
+/// <param name="pszWndClass">窗口类</param>
+/// <param name="pszCaption">标题</param>
+/// <param name="x">x，若为CW_USEDEFAULT则显示在IDE窗口中央</param>
+/// <param name="y">y</param>
+/// <param name="cx">宽度</param>
+/// <param name="cy">高度</param>
+/// <param name="dwStyle">窗口样式，若为0则使用WS_OVERLAPPEDWINDOW | WS_VISIBLE</param>
+/// <param name="pCtx">上下文</param>
+void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx);
+
+LRESULT CALLBACK SubclassProc_TabRepair(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
+
+#define SCID_TABREPAIR 20230524'02u
+/// <summary>
+/// Tab键焦点移动修复
+/// </summary>
+/// <param name="hWnd">控件句柄</param>
+/// <returns>成功返回TRUE</returns>
+eStlInline BOOL TabRepairInstall(HWND hWnd)
+{
+	return SetWindowSubclass(hWnd, SubclassProc_TabRepair, SCID_TABREPAIR, 0);
+}
+
+/// <summary>
+/// 取消Tab键焦点移动修复
+/// </summary>
+/// <param name="hWnd">控件句柄</param>
+/// <returns>成功返回TRUE</returns>
+eStlInline BOOL TabRepairUnInstall(HWND hWnd)
+{
+	return RemoveWindowSubclass(hWnd, SubclassProc_TabRepair, SCID_TABREPAIR);
+}
+#undef SCID_TABREPAIR
+ESTL_EZDLG_NAMESPACE_END
 
 /// <summary>
 /// 发送通用事件。
@@ -139,7 +212,7 @@ bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM w
 /// <param name="pszSrc">源字符串</param>
 /// <param name="cchSrc">字符数</param>
 /// <returns>复制的字符数</returns>
-int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = 0);
+int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = -1);
 
 /// <summary>
 /// 克隆ANSI字符串。
@@ -149,9 +222,9 @@ int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = 0);
 /// <param name="pszSrc">源字符串</param>
 /// <param name="cchSrc">字符数</param>
 /// <returns>复制的字符数</returns>
-int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc = 0);
+int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc = -1);
 
-void DupStreamForNewDelete(BYTE* pDst, PCBYTE pSrc, SIZE_T cbSrc);
+SIZE_T DupStreamForNewDelete(BYTE*& pDst, PCBYTE pSrc, SIZE_T cbSrc);
 
 /// <summary>
 /// 取默认字体
@@ -370,11 +443,6 @@ public:
 	}
 };
 
-eStlInline BOOL IsBitExist(DWORD dw1, DWORD dw2)
-{
-	return ((dw1 & dw2) == dw2);
-}
-
 eStlInline DWORD ModifyWindowStyle(HWND hWnd, DWORD dwNew, DWORD dwMask = 0u, int idx = GWL_STYLE, BOOL bAutoMaskNew = FALSE)
 {
 	if (bAutoMaskNew)
@@ -434,6 +502,19 @@ int GetFrameType(HWND hWnd);
 /// <returns>成功返回位图句柄，失败返回NULL</returns>
 HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic);
 
+#define ESTL_CLRPICKER_NAMESPACE_BEGIN namespace ClrPicker {
+#define ESTL_CLRPICKER_NAMESPACE_END }
+
+ESTL_CLRPICKER_NAMESPACE_BEGIN
+HWND Create(int x, int y, int cx, int cy, DWORD dwStyle, DWORD dwExStyle, UINT uID, HWND hParent, UINT uNotifyMsg);
+eStlInline void SelColor(HWND hWnd, int idx)
+{
+	SendMessageW(hWnd, CB_SETCURSEL, idx, 0);
+}
+COLORREF GetColor(HWND hWnd);
+BOOL SetColor(HWND hWnd, COLORREF cr);
+ESTL_CLRPICKER_NAMESPACE_END
+
 class CCtrlWnd
 {
 protected:
@@ -478,6 +559,11 @@ public:
 	{
 		return m_hParent;
 	}
+
+	eStlInline void SetRedraw(BOOL bRedraw)
+	{
+		SendMessageW(m_hWnd, WM_SETREDRAW, bRedraw, 0);
+	}
 };
 
 // 控件基础数据
@@ -507,6 +593,7 @@ protected:
 	DWORD m_dwWinFormID = 0;
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
+	UINT m_uID = 0;
 
 	BOOL m_bGpDecodePicInDesignMode = FALSE;// 设计模式下是否用GDI+解码图片
 
@@ -518,7 +605,7 @@ protected:
 	PWSTR m_pszTextW = NULL;// 标题W
 	void* m_pPicData = NULL;// 图片数据
 
-	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID);
+	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent);
 
 	void InitBase0(PCVOID pAllData);
 public:
@@ -596,37 +683,7 @@ public:
 	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
 	/// <returns>文本指针</returns>
-	eStlInline PWSTR GetTextW(SIZE_T* pcb = NULL)
-	{
-		if (!m_bInDesignMode)
-		{
-			int cch = GetWindowTextLengthW(m_hWnd);
-			if (cch)
-			{
-				delete[] m_pszTextW;
-				m_pszTextW = new WCHAR[cch + 1];
-				GetWindowTextW(m_hWnd, m_pszTextW, cch + 1);
-				if (pcb)
-					*pcb = (cch + 1) * sizeof(WCHAR);
-			}
-			else
-				if (pcb)
-					*pcb = 0u;
-
-		}
-		else
-			if (pcb)
-			{
-				if (!m_pszTextW)
-					*pcb = 0u;
-				else
-					*pcb = (wcslen(m_pszTextW) + 1) * sizeof(WCHAR);
-			}
-
-
-
-		return m_pszTextW;
-	}
+	eStlInline PWSTR GetTextW(SIZE_T* pcb = NULL);
 
 	/// <summary>
 	/// 取文本A。
@@ -662,26 +719,7 @@ public:
 	/// </summary>
 	/// <param name="pcb">指向接收图片数据长度变量的指针</param>
 	/// <returns>图片数据指针</returns>
-	eStlInline BYTE* GetPic(int* pcb)
-	{
-		if (!m_bInDesignMode)
-		{
-			std::vector<unsigned char> x;
-			elibstl::GetDataFromHBIT(m_hbmPic, x);
-			if (x.empty()) {
-				*pcb = 0;
-				return nullptr;
-			}
-
-			delete[] m_pPicData;
-			m_Info0.cbPic = x.size();
-			m_pPicData = new BYTE[m_Info0.cbPic];
-			memcpy(m_pPicData, x.data(), m_Info0.cbPic);
-		}
-
-		*pcb = m_Info0.cbPic;
-		return (BYTE*)m_pPicData;
-	}
+	BYTE* GetPic(int* pcb);
 
 	/// <summary>
 	/// 置字体
@@ -772,13 +810,14 @@ protected:
 	DWORD m_dwWinFormID = 0;
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
+	UINT m_uID = 0;
 
 	ECTRLINFOSMP m_Info0{};// 信息
 
 	CCtrlBaseSimple() = default;
 	~CCtrlBaseSimple() = default;
 
-	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID);
+	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent);
 
 	/// <summary>
 	/// 平面化基类数据。
@@ -862,3 +901,17 @@ ESTL_NAMESPACE_END
 			m_SM.OnParentChanged(p); \
 			p->m_bParentChanged = TRUE; \
 		}
+
+#define QuickGetWindowTextW(VarName, hWnd) \
+			PWSTR VarName; \
+			int ESTLPRIV_cch_##VarName##___ = GetWindowTextLengthW((hWnd)); \
+			if (ESTLPRIV_cch_##VarName##___) \
+			{ \
+				VarName = (PWSTR)_malloca((ESTLPRIV_cch_##VarName##___ + 1)*sizeof(WCHAR)); \
+				assert(VarName);/*消除警告*/ \
+				GetWindowTextW((hWnd), VarName, ESTLPRIV_cch_##VarName##___ + 1); \
+			} \
+			else \
+				VarName = NULL;
+
+#define QuickGetWindowTextWFree(VarName) _freea(VarName)

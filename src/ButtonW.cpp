@@ -142,9 +142,9 @@ class CButton :public elibstl::CCtrlBase
 protected:
 	EBUTTONDATA m_Info{};
 
-	eStlInline SIZE_T InitBase(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
+	eStlInline SIZE_T InitBase(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent)
 	{
-		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, uID, hParent);
 		if (pAllData)
 		{
 			BYTE* p = (BYTE*)pAllData + cbBaseData;
@@ -396,7 +396,7 @@ public:
 	CPushButton() = delete;
 	CPushButton(STD_ECTRL_CREATE_ARGS)
 	{
-		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 
 		if (pAllData)
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_PUSHBTN));
@@ -410,7 +410,6 @@ public:
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_PUSHBUTTON,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
-		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
@@ -645,7 +644,7 @@ public:
 	CCheckButton() = delete;
 	CCheckButton(STD_ECTRL_CREATE_ARGS)
 	{
-		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 		if (!m_pszTextW)
 		{
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"—°‘ÒøÚW");
@@ -661,7 +660,6 @@ public:
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
-		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);
@@ -988,7 +986,7 @@ public:
 	CCommandLink() = delete;
 	CCommandLink(STD_ECTRL_CREATE_ARGS)
 	{
-		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 		if (!m_pszTextW)
 		{
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"√¸¡Ó¡¥Ω”");
@@ -1009,7 +1007,6 @@ public:
 			(m_bInDesignMode ? BS_PUSHBUTTON : BS_COMMANDLINK),
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
-		m_hParent = hParent;
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
 		InitBase(pAllData);

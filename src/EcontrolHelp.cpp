@@ -131,12 +131,21 @@ HFONT EzFont(PCWSTR pszFontName, int iPoint, int iWeight, BOOL bItalic, BOOL bUn
 	return CreateFontW(iSize, 0, 0, 0, iWeight, bItalic, bUnderline, bStrikeOut, 0, 0, 0, 0, 0, pszFontName);
 }
 
-void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx)
+ESTL_EZDLG_NAMESPACE_BEGIN
+void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx)
 {
 	RECT rcEMain{};
-	GetWindowRect(pCtx->hwndEMain, &rcEMain);
-	rcEMain.left += ((rcEMain.right - rcEMain.left - cx) / 2);
-	rcEMain.top += ((rcEMain.bottom - rcEMain.top - cy) / 2);
+	if (x == CW_USEDEFAULT)
+	{
+		GetWindowRect(pCtx->hwndEMain, &rcEMain);
+		rcEMain.left += ((rcEMain.right - rcEMain.left - cx) / 2);
+		rcEMain.top += ((rcEMain.bottom - rcEMain.top - cy) / 2);
+	}
+	else
+	{
+		rcEMain.left = x;
+		rcEMain.top = y;
+	}
 	if (!dwStyle)
 		dwStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 	HWND hWnd = CreateWindowExW(0, pszWndClass, pszCaption, dwStyle,
@@ -147,12 +156,32 @@ void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int cx, int cy, DWORD dw
 	MSG msg;
 	while (GetMessageW(&msg, NULL, 0, 0))
 	{
-		TranslateMessage(&msg);
-		DispatchMessageW(&msg);
+		if (!IsDialogMessageW(hWnd, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
 	}
 }
 
-struct EDLGCTX_IDEINPUTBOX :public EDLGCTX_BASE
+LRESULT CALLBACK SubclassProc_TabRepair(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+	if (uMsg == WM_GETDLGCODE)
+	{
+		LRESULT lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
+		lResult &= ~DLGC_WANTTAB;
+		if (lParam)
+			if (((MSG*)lParam)->message == WM_KEYDOWN && ((MSG*)lParam)->wParam == VK_TAB)
+				lResult &= ~DLGC_WANTALLKEYS;
+		return lResult;
+	}
+
+	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+ESTL_EZDLG_NAMESPACE_END
+
+struct EDLGCTX_IDEINPUTBOX :public EzDlg::EDLGCTX_BASE
 {
 	PCWSTR pszInitContent;
 	PWSTR* ppszInput;
@@ -336,7 +365,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			else
 				*(p->ppszInput) = NULL;
 
-			DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+			EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		}
 		return 0;
 
@@ -345,7 +374,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
 			p->bOK = FALSE;
 			*(p->ppszInput) = NULL;
-			DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+			EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		}
 		return 0;
 		}
@@ -357,7 +386,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
 		p->bOK = FALSE;
 		*(p->ppszInput) = NULL;
-		DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+		EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 	}
 	return 0;
 
@@ -389,7 +418,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
 		DeleteObject(p->hFont);
-		DlgModelOnDestroy(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+		EzDlg::DlgModelOnDestroy(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
 		PostQuitMessage(0);
 	}
 	return 0;
@@ -400,12 +429,12 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 {
-	auto pCtx = EIDEDlgPreShow<EDLGCTX_IDEINPUTBOX>(&s_atomIDEInputBox, WCN_IDEINTPUTBOX, WndProc_InputBox);
+	auto pCtx = EzDlg::EIDEDlgPreShow<EDLGCTX_IDEINPUTBOX>(&s_atomIDEInputBox, WCN_IDEINTPUTBOX, WndProc_InputBox);
 
 	pCtx->ppszInput = ppszInput;
 	pCtx->pszInitContent = pszInitContent;
 
-	EIDEDlgShow(WCN_IDEINTPUTBOX, pszCaption, 560, 500, 0, pCtx);
+	EIDEDlgShow(WCN_IDEINTPUTBOX, pszCaption, CW_USEDEFAULT, 0, 560, 500, 0, pCtx);
 
 	BOOL bOK = pCtx->bOK;
 	delete pCtx;
@@ -529,12 +558,12 @@ bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM w
 int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc)
 {
 	delete[] pszDst;
-	if (!pszSrc)
+	if (!pszSrc || !cchSrc)
 	{
 		pszDst = NULL;
 		return 0;
 	}
-	if (!cchSrc)
+	if (cchSrc < 0)
 		cchSrc = wcslen(pszSrc);
 	pszDst = new WCHAR[cchSrc + 1];
 	wcsncpy(pszDst, pszSrc, cchSrc);
@@ -545,12 +574,12 @@ int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc)
 int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc)
 {
 	delete[] pszDst;
-	if (!pszSrc)
+	if (!pszSrc || !cchSrc)
 	{
 		pszDst = NULL;
 		return 0;
 	}
-	if (!cchSrc)
+	if (cchSrc < 0)
 		cchSrc = strlen(pszSrc);
 	pszDst = new CHAR[cchSrc + 1];
 	strncpy(pszDst, pszSrc, cchSrc);
@@ -558,16 +587,17 @@ int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc)
 	return cchSrc;
 }
 
-void DupStreamForNewDelete(BYTE* pDst, PCBYTE pSrc, SIZE_T cbSrc)
+SIZE_T DupStreamForNewDelete(BYTE*& pDst, PCBYTE pSrc, SIZE_T cbSrc)
 {
 	delete[] pDst;
 	if (!pSrc)
 	{
 		pDst = NULL;
-		return;
+		return 0u;
 	}
 	pDst = new BYTE[cbSrc];
 	memcpy(pDst, pSrc, cbSrc);
+	return cbSrc;
 }
 
 void SetFrameType(HWND hWnd, int iFrame)
@@ -644,11 +674,238 @@ Fail:
 	return NULL;
 }
 
-SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
+ESTL_CLRPICKER_NAMESPACE_BEGIN
+static ATOM s_atomColorPicker = 0;
+static WNDPROC s_pfnColorPickerDefProc = NULL;
+#define WCN_COLORPICKER			L"eLibStl.WndClass.ColorPicker"
+#define PROP_COLORPICKERCTX		L"eLibStl.Prop.ColorPickerContext"
+#define SCID_COLORPICKERPARENT	20230524'01u
+
+struct COLORPICKERCTX
+{
+	UINT uNotifyMsg;
+	COLORREF crCustom;
+	COLORREF crCCDlgCustom[16];// 暂时保留
+};
+
+constexpr struct CPPRESETCOLOR
+{
+	COLORREF cr;
+	PCWSTR pszName;
+}
+c_ColorPickerPresetClr[] =
+{
+	{CLR_DEFAULT,L"默认"},
+	{0x000000,L"黑色"},
+	{0xFFFFFF,L"白色"},
+	{0x0000FF,L"红色"},
+	{0x00FF00,L"绿色"},
+	{0xFF0000,L"蓝色"},
+	{0x00FFFF,L"黄色"},
+	{0xFF00FF,L"品红"},
+	{0xFFFF00,L"青色"},
+	{CLR_INVALID,L"自定义..."},
+};
+#define CLPIDX_CUSTOM (ARRAYSIZE(c_ColorPickerPresetClr) - 1)
+
+static LRESULT CALLBACK WndProc_ColorPicker(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_NCCREATE:
+		SetPropW(hWnd, PROP_COLORPICKERCTX, ((CREATESTRUCTW*)lParam)->lpCreateParams);
+		break;
+
+	case WM_DESTROY:
+	{
+		auto pCtx = (COLORPICKERCTX*)GetPropW(hWnd, PROP_COLORPICKERCTX);
+		RemovePropW(hWnd, PROP_COLORPICKERCTX);
+		delete pCtx;
+	}
+	break;
+	}
+
+	return CallWindowProcW(s_pfnColorPickerDefProc, hWnd, uMsg, wParam, lParam);
+}
+
+constexpr int iCPItemPadding = 2;
+constexpr int cxCPClrBlock = 20;
+static LRESULT CALLBACK SubclassProc_ColorPickerParent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+	switch (uMsg)
+	{
+	case WM_DRAWITEM:
+	{
+		auto pdis = (DRAWITEMSTRUCT*)lParam;
+		auto pCtx = (COLORPICKERCTX*)GetPropW(pdis->hwndItem, PROP_COLORPICKERCTX);
+		if (!pCtx)
+			break;
+		COLORREF cr = c_ColorPickerPresetClr[pdis->itemID].cr;
+		HBRUSH hbr;
+		HDC hDC = pdis->hDC;
+		if (cr == CLR_DEFAULT)
+			hbr = CreateHatchBrush(HS_BDIAGONAL, 0x000000);
+		else if (cr == CLR_INVALID)
+			hbr = CreateSolidBrush(pCtx->crCustom);
+		else
+			hbr = CreateSolidBrush(cr);
+
+		if (IsBitExist(pdis->itemState, ODS_SELECTED))
+		{
+			FillRect(hDC, &pdis->rcItem, (HBRUSH)GetSysColorBrush(COLOR_HIGHLIGHT));
+			SetTextColor(hDC, GetSysColor(COLOR_HIGHLIGHTTEXT));
+		}
+		else
+		{
+			FillRect(hDC, &pdis->rcItem, (HBRUSH)GetSysColorBrush(COLOR_WINDOW));
+			SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
+		}
+
+		HGDIOBJ hOldBr = SelectObject(hDC, hbr);
+		HGDIOBJ hOldPen = SelectObject(hDC, GetStockObject(BLACK_PEN));
+		int xClrBlock = pdis->rcItem.left + iCPItemPadding;
+		Rectangle(hDC,
+			xClrBlock,
+			pdis->rcItem.top + iCPItemPadding,
+			xClrBlock + cxCPClrBlock,
+			pdis->rcItem.bottom - iCPItemPadding);
+		SelectObject(hDC, hOldPen);
+		DeleteObject(SelectObject(hDC, hOldBr));
+		SetBkMode(hDC, TRANSPARENT);
+
+		RECT rcText = pdis->rcItem;
+		rcText.left += (xClrBlock + cxCPClrBlock + iCPItemPadding);
+		DrawTextW(hDC, c_ColorPickerPresetClr[pdis->itemID].pszName, -1, &rcText,
+			DT_NOCLIP | DT_SINGLELINE | DT_VCENTER);
+		return TRUE;
+	}
+	break;
+
+	case WM_MEASUREITEM:
+	{
+		auto pmis = (MEASUREITEMSTRUCT*)lParam;
+		auto pCtx = (COLORPICKERCTX*)GetPropW(GetDlgItem(hWnd,pmis->CtlID), PROP_COLORPICKERCTX);
+		if (!pCtx)
+			break;
+		pmis->itemHeight = 20;
+		return TRUE;
+	}
+	break;
+
+	case WM_COMMAND:
+	{
+		if (HIWORD(wParam) != CBN_SELCHANGE)
+			break;
+		auto pCtx = (COLORPICKERCTX*)GetPropW((HWND)lParam, PROP_COLORPICKERCTX);
+		if (!pCtx)
+			break;
+
+		int idxCurrSel = SendMessageW((HWND)lParam, CB_GETCURSEL, 0, 0);
+		COLORREF cr;
+		if (idxCurrSel == CLPIDX_CUSTOM)
+		{
+			CHOOSECOLORW cc{ sizeof(CHOOSECOLORW) };
+			cc.hwndOwner = hWnd;
+			cc.lpCustColors = pCtx->crCCDlgCustom;
+			cc.Flags = CC_ANYCOLOR | CC_FULLOPEN;
+			if (ChooseColorW(&cc))
+			{
+				pCtx->crCustom = cc.rgbResult;
+				InvalidateRect((HWND)lParam, NULL, FALSE);
+			}
+			cr = pCtx->crCustom;
+		}
+		else
+			cr = c_ColorPickerPresetClr[idxCurrSel].cr;
+		if (pCtx->uNotifyMsg)
+			DefSubclassProc(hWnd, pCtx->uNotifyMsg, LOWORD(wParam), cr);
+		return 0;
+	}
+	break;
+	}
+
+	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+
+HWND Create(int x, int y, int cx, int cy, DWORD dwStyle, DWORD dwExStyle, UINT uID, HWND hParent, UINT uNotifyMsg)
+{
+	if (!s_atomColorPicker)
+	{
+		WNDCLASSEXW wcex{ sizeof(WNDCLASSEXW) };
+		GetClassInfoExW(NULL, WC_COMBOBOXW, &wcex);
+		s_pfnColorPickerDefProc = wcex.lpfnWndProc;
+		wcex.style &= (~CS_GLOBALCLASS);
+		wcex.hInstance = g_elibstl_hModule;
+		wcex.lpszClassName = WCN_COLORPICKER;
+		wcex.lpfnWndProc = WndProc_ColorPicker;
+		s_atomColorPicker = RegisterClassExW(&wcex);
+	}
+
+	auto p = new COLORPICKERCTX;
+	ZeroMemory(p, sizeof(COLORPICKERCTX));
+	p->uNotifyMsg = uNotifyMsg;
+	p->crCustom = CLR_INVALID;
+	SetWindowSubclass(hParent, SubclassProc_ColorPickerParent, SCID_COLORPICKERPARENT, 0);
+	dwStyle |= (WS_CHILD | WS_VISIBLE | CBS_OWNERDRAWFIXED | CBS_DROPDOWNLIST);
+	HWND hWnd = CreateWindowExW(0, WCN_COLORPICKER, NULL, dwStyle, 
+		x, y, cx, cy, hParent, (HMENU)uID, NULL, p);
+
+	int idx;
+	SendMessageW(hWnd, WM_SETREDRAW, FALSE, 0);
+	SendMessageW(hWnd, CB_INITSTORAGE, ARRAYSIZE(c_ColorPickerPresetClr), 0);
+	for (auto& x : c_ColorPickerPresetClr)
+	{
+		idx = SendMessageW(hWnd, CB_ADDSTRING, 0, (LPARAM)x.pszName);
+	}
+	SendMessageW(hWnd, CB_SETCURSEL, 0, 0);
+	SendMessageW(hWnd, WM_SETREDRAW, TRUE, 0);
+	return hWnd;
+}
+
+COLORREF GetColor(HWND hWnd)
+{
+	auto pCtx = (COLORPICKERCTX*)GetPropW(hWnd, PROP_COLORPICKERCTX);
+	if (!pCtx)
+		return CLR_INVALID;
+	int idx = SendMessageW(hWnd, CB_GETCURSEL, 0, 0);
+	if (idx == CB_ERR)
+		return CLR_INVALID;
+	COLORREF cr = c_ColorPickerPresetClr[idx].cr;
+	if (cr == CLR_INVALID)
+		return pCtx->crCustom;
+	else
+		return cr;
+}
+
+BOOL SetColor(HWND hWnd, COLORREF cr)
+{
+	auto pCtx = (COLORPICKERCTX*)GetPropW(hWnd, PROP_COLORPICKERCTX);
+	if (!pCtx)
+		return FALSE;
+	if (cr == CLR_INVALID)
+		return FALSE;
+	for (int i = 0; i < ARRAYSIZE(c_ColorPickerPresetClr); ++i)
+	{
+		if (c_ColorPickerPresetClr[i].cr == cr)
+		{
+			SendMessageW(hWnd, CB_SETCURSEL, i, 0);
+			return TRUE;
+		}
+	}
+	pCtx->crCustom = cr;
+	SendMessageW(hWnd, CB_SETCURSEL, CLPIDX_CUSTOM, 0);
+	return TRUE;
+}
+ESTL_CLRPICKER_NAMESPACE_END
+
+SIZE_T CCtrlBase::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent)
 {
 	m_bInDesignMode = bInDesignMode;
 	m_dwWinFormID = dwWinFormID;
 	m_dwUnitID = dwUnitID;
+	m_uID = uID;
+	m_hParent = hParent;
 
 	if (pAllData)
 	{
@@ -756,11 +1013,63 @@ FailAlloc:
 	return NULL;
 }
 
-SIZE_T CCtrlBaseSimple::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID)
+PWSTR CCtrlBase::GetTextW(SIZE_T* pcb)
+{
+	if (!m_bInDesignMode)
+	{
+		int cch = GetWindowTextLengthW(m_hWnd);
+		if (cch)
+		{
+			delete[] m_pszTextW;
+			m_pszTextW = new WCHAR[cch + 1];
+			GetWindowTextW(m_hWnd, m_pszTextW, cch + 1);
+			if (pcb)
+				*pcb = (cch + 1) * sizeof(WCHAR);
+		}
+		else
+			if (pcb)
+				*pcb = 0u;
+	}
+	else
+		if (pcb)
+		{
+			if (!m_pszTextW)
+				*pcb = 0u;
+			else
+				*pcb = (wcslen(m_pszTextW) + 1) * sizeof(WCHAR);
+		}
+
+	return m_pszTextW;
+}
+
+BYTE* CCtrlBase::GetPic(int* pcb)
+{
+	if (!m_bInDesignMode)
+	{
+		std::vector<unsigned char> x;
+		elibstl::GetDataFromHBIT(m_hbmPic, x);
+		if (x.empty()) {
+			*pcb = 0;
+			return nullptr;
+		}
+
+		delete[] m_pPicData;
+		m_Info0.cbPic = x.size();
+		m_pPicData = new BYTE[m_Info0.cbPic];
+		memcpy(m_pPicData, x.data(), m_Info0.cbPic);
+	}
+
+	*pcb = m_Info0.cbPic;
+	return (BYTE*)m_pPicData;
+}
+
+SIZE_T CCtrlBaseSimple::InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent)
 {
 	m_bInDesignMode = bInDesignMode;
 	m_dwWinFormID = dwWinFormID;
 	m_dwUnitID = dwUnitID;
+	m_uID = uID;
+	m_hParent = hParent;
 
 	if (pAllData)
 	{

@@ -91,7 +91,7 @@ public:
 	CUpDown() = delete;
 	CUpDown(STD_ECTRL_CREATE_ARGS)
 	{
-		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 
 		if (pAllData)
 		{

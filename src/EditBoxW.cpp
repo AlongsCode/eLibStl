@@ -120,6 +120,12 @@ private:
 		auto p = (CEdit*)dwRefData;
 		switch (uMsg)
 		{
+		case WM_KEYDOWN:
+			if (wParam == 'A')
+				if (GetKeyState(VK_CONTROL) & 0x80000000)
+					SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + Aȫѡ
+			break;
+
 		case WM_CHAR:
 		{
 			elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -380,7 +386,7 @@ public:
 	CEdit() = delete;
 	CEdit(STD_ECTRL_CREATE_ARGS)
 	{
-		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 
 		if (pAllData)
 		{

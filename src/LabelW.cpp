@@ -675,7 +675,7 @@ public:
 			}
 		}
 
-		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID);
+		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 		if (pAllData)
 		{
 			BYTE* p = (BYTE*)pAllData + cbBaseData;

@@ -6,6 +6,7 @@
 #include <tuple>
 #include"..\resource.h"
 #include<assert.h>
+#include <CommCtrl.h>
 #include"Tace.hpp"
 
 
@@ -131,4 +132,124 @@ eStlInline BOOL operator<(const FILETIME& ft1, const FILETIME& ft2)
 {
 	return CompareFileTime(&ft1, &ft2) == -1;
 }
+
+eStlInline BOOL IsBitExist(DWORD dw1, DWORD dw2)
+{
+	return ((dw1 & dw2) == dw2);
+}
+
+#define SRSAllocW(cch) (PWSTR)HeapAlloc(GetProcessHeap(), 0, cch * sizeof(WCHAR))
+#define SRSReAllocW(psz, cch) (PWSTR)HeapReAlloc(GetProcessHeap(), 0, psz, cch * sizeof(WCHAR))
+#define SRSFree(psz) HeapFree(GetProcessHeap(), 0, psz)
+#define SRSMakeCapacity(cch) (cch * 2)
+
+// 简单字符串，提供透明的数据引用
+class CSimpleRefStrW
+{
+public:
+	PWSTR m_pszText = NULL;
+	int m_cchText = 0;
+	int m_cchCapacity = 0;
+
+	CSimpleRefStrW() = default;
+
+	CSimpleRefStrW(int cchInit)
+	{
+		m_cchCapacity = cchInit + 1;
+		m_pszText = SRSAllocW(cchInit + 1);
+	}
+
+	CSimpleRefStrW(PCWSTR psz, int cchText = -1)
+	{
+		if (!psz || !cchText)
+			return;
+		if (cchText < 0)
+			cchText = wcslen(psz);
+		if (!cchText)
+			return;
+		m_cchText = cchText;
+		m_cchCapacity = SRSMakeCapacity(cchText + 1);
+		m_pszText = SRSAllocW(m_cchCapacity);
+		wcscpy(m_pszText, psz);
+	}
+
+	CSimpleRefStrW(const CSimpleRefStrW& x)
+	{
+		m_cchText = x.m_cchText;
+		m_cchCapacity = SRSMakeCapacity(m_cchText + 1);
+		m_pszText = SRSAllocW(m_cchCapacity);
+		if (x.m_pszText)
+			wcscpy(m_pszText, x.m_pszText);
+	}
+
+	CSimpleRefStrW(CSimpleRefStrW&& x) noexcept
+	{
+		SRSFree(m_pszText);
+		m_cchText = x.m_cchText;
+		m_cchCapacity = x.m_cchCapacity;
+		m_pszText = x.m_pszText;
+		x.m_pszText = NULL;
+		x.m_cchText = 0;
+		x.m_cchCapacity = 0;
+	}
+
+	~CSimpleRefStrW()
+	{
+		SRSFree(m_pszText);
+	}
+
+	CSimpleRefStrW& operator=(PCWSTR pszSrc)
+	{
+		DupString(pszSrc);
+		return *this;
+	}
+
+	CSimpleRefStrW& operator=(CSimpleRefStrW& x)
+	{
+		DupString(x.m_pszText, x.m_cchText);
+		return *this;
+	}
+
+	CSimpleRefStrW& operator=(CSimpleRefStrW&& x) noexcept
+	{
+		SRSFree(m_pszText);
+		m_cchText = x.m_cchText;
+		m_cchCapacity = x.m_cchCapacity;
+		m_pszText = x.m_pszText;
+		x.m_pszText = NULL;
+		x.m_cchText = 0;
+		x.m_cchCapacity = 0;
+		return *this;
+	}
+
+	operator PWSTR()
+	{
+		return m_pszText;
+	}
+
+	int DupString(PCWSTR pszSrc, int cchSrc = -1);
+
+	PWSTR Attach(PWSTR psz, int cchCapacity, int cchText = -1);
+
+	eStlInline PWSTR Dettach()
+	{
+		auto pTemp = m_pszText;
+		m_cchCapacity = 0;
+		m_cchText = 0;
+		m_pszText = NULL;
+		return pTemp;
+	}
+
+	int PushBack(PCWSTR pszSrc, int cchSrc = -1);
+
+	eStlInline void CopyTo(PWSTR pszDst, int cch = -1)
+	{
+		if (cch < 0)
+			cch = m_cchText;
+		if (!cch || !m_pszText || !pszDst)
+			return;
+		wcsncpy(pszDst, m_pszText, cch);
+		*(pszDst + cch) = L'\0';
+	}
+};
 ESTL_NAMESPACE_END

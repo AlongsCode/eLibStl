@@ -74,4 +74,69 @@ PWSTR A2W(PCSTR pszA)
 	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, pszA, -1, pszW, iBufSize);
 	return pszW;
 }
+
+int CSimpleRefStrW::DupString(PCWSTR pszSrc, int cchSrc)
+{
+	if (!pszSrc || !cchSrc)
+	{
+	NullStr:
+		m_cchText = 0;
+		if (m_pszText)
+			*m_pszText = L'\0';
+		return 0;
+	}
+
+	if (cchSrc < 0)
+		cchSrc = wcslen(pszSrc);
+	if (!cchSrc)
+		goto NullStr;
+	if (m_cchCapacity < cchSrc + 1)
+	{
+		m_cchCapacity = SRSMakeCapacity(cchSrc + 1);
+		if (m_pszText)
+			m_pszText = SRSReAllocW(m_pszText, m_cchCapacity);
+		else
+			m_pszText = SRSAllocW(m_cchCapacity);
+	}
+	m_cchText = cchSrc;
+	wcsncpy(m_pszText, pszSrc, cchSrc);
+	*(m_pszText + cchSrc) = L'\0';
+}
+
+PWSTR CSimpleRefStrW::Attach(PWSTR psz, int cchCapacity, int cchText)
+{
+	auto pTemp = m_pszText;
+	if (!psz)
+	{
+		m_cchCapacity = 0;
+		m_cchText = 0;
+		m_pszText = NULL;
+		return pTemp;
+	}
+	m_cchCapacity = cchCapacity;
+	if (cchText < 0)
+		m_cchText = wcslen(psz);
+	else
+		m_cchText = cchText;
+	m_pszText = psz;
+	return pTemp;
+}
+
+int CSimpleRefStrW::PushBack(PCWSTR pszSrc, int cchSrc)
+{
+	if (!pszSrc || !cchSrc)
+		return 0;
+	if (cchSrc < 0)
+		cchSrc = wcslen(pszSrc);
+	if (!cchSrc)
+		return 0;
+	if (m_cchCapacity < m_cchText + cchSrc + 1)
+	{
+		m_cchCapacity = SRSMakeCapacity(m_cchText + cchSrc + 1);
+		m_pszText = SRSReAllocW(m_pszText, m_cchCapacity);
+	}
+	wcsncpy(m_pszText + m_cchText, pszSrc, cchSrc);
+	m_cchText += cchSrc;
+	*(m_pszText + m_cchText) = L'\0';
+}
 ESTL_NAMESPACE_END
