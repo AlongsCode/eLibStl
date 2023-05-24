@@ -7,7 +7,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲进行原子操作的值等同于对其-1"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR,
 	}
@@ -25,7 +25,7 @@ FucInfo atomic_decrement = { {
 		/*explain*/ ("返回旧值,这个函数保证了在多线程环境下该操作是原子的，即不会被其它线程干扰,即绝对安全,线程中使用原子操作可以不用加互斥体。对于线程操作全局变量时使用，等同于a=a-1"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲转换全角的文本"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -44,7 +44,7 @@ FucInfo   to_full_w = { {
 		/*explain*/ ("转换指定文本为全角。"),
 		/*category*/2,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

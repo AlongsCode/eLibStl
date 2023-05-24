@@ -14,8 +14,7 @@ namespace elibstl {
 
 
 
-#define DTP_HCOPROCESS   MAKELONG (5, 0) 
-#define DTP_HCOROUTINE   MAKELONG (9, 0) 
+
 namespace elibcoroutine {
 	static void* create_coroutine(PFIBER_START_ROUTINE func, void* arg) {
 		//先将线程转换为协程，防止线程在没有转换协程时切换协程
@@ -52,7 +51,7 @@ static ARG_INFO createArgs[] =
 		/*explain*/ ("由“创建协程调度器”返回。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    DATA_TYPE::DTP_HCOROUTINE,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -61,7 +60,7 @@ static ARG_INFO createArgs[] =
 		/*explain*/ ("欲执行的子程序指针,函数原型必须为“[无返回值] 函数([整数型]协程调度器,[整数型]参数)”"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -70,7 +69,7 @@ static ARG_INFO createArgs[] =
 		/*explain*/ ("传入子程序的参数"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -90,7 +89,7 @@ FucInfo create_coroutine = { {
 		/*explain*/ ("在指定调度器中加入协程,协程是轻量级线程，并返回协程句柄.他的优势是函数执行可记录，类似c里的跨函数跳转，但是更安全可靠，同一个调度器可拥有多个协程，可在调度器中对函数协程进行切换，切换之后记录协程执行位置，下次切入此协程时仍然从记录位置执行。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOPROCESS ,
+		/*ret*/     DATA_TYPE::DTP_HCOPROCESS ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -106,7 +105,7 @@ static ARG_INFO m_Args[] =
 		/*explain*/ ("由“创建协程调度器”返回。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    DATA_TYPE::DTP_HCOROUTINE,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -115,7 +114,7 @@ static ARG_INFO m_Args[] =
 		/*explain*/ ("由创建协程生成的协程句柄"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOPROCESS,
+		/*type*/    DATA_TYPE::DTP_HCOPROCESS,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -133,7 +132,7 @@ FucInfo switch_coroutine = { {
 		/*explain*/ ("恢复指定句柄的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     NULL ,
+		/*ret*/    DATA_TYPE::_SDT_NULL ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -151,7 +150,7 @@ static ARG_INFO m_hCo_args[] =
 		/*explain*/ ("由创建协程调度器生成的句柄"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    DATA_TYPE::DTP_HCOROUTINE,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -167,7 +166,7 @@ FucInfo is_valid_hCoprocess = { {
 		/*explain*/ ("挂机指定调度器的当前协程。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     _SDT_NULL ,
+		/*ret*/     DATA_TYPE::_SDT_NULL ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -190,7 +189,7 @@ FucInfo delete_coroutine = { {
 		/*explain*/ ("返回指定协程调度器的指定协程的状态。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT ,
+		/*ret*/     DATA_TYPE::SDT_INT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -211,7 +210,7 @@ FucInfo get_h_coroutine = { {
 		/*explain*/ ("返回指定调度器正在运行的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOPROCESS ,
+		/*ret*/     DATA_TYPE::DTP_HCOPROCESS ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -234,7 +233,7 @@ FucInfo e_coroutine_open = { {
 		/*explain*/ ("创建并返回一个新的协程调度器。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOROUTINE ,
+		/*ret*/     DATA_TYPE::DTP_HCOROUTINE ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -256,7 +255,7 @@ FucInfo e_coroutine_close = { {
 		/*explain*/ ("关闭并释放协程调度器。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     _SDT_NULL ,
+		/*ret*/     DATA_TYPE::_SDT_NULL ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -273,7 +272,7 @@ static ARG_INFO m_hCo_int_args[] =
 		/*explain*/ ("传递进入协程的调度器指针"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -291,7 +290,7 @@ FucInfo e_hCoi2h = { {
 		/*explain*/ ("将协程函数传入的指针转为调度器。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOROUTINE ,
+		/*ret*/     DATA_TYPE::DTP_HCOROUTINE ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

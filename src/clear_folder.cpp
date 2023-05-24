@@ -44,7 +44,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲清除的文件夹"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -63,7 +63,7 @@ FucInfo clear_folder_W = { {
 		/*explain*/ ("将指定目录下所有的文件清空，包括隐藏文件、系统文件和文件夹等,使用这个函数之前，请确保你了解自己在操作的是什么文件"),
 		/*category*/4,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

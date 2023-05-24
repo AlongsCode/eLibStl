@@ -159,7 +159,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("要终止进程的进程ID、进程名称或窗口标题的文本型或宽文本型"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    _SDT_ALL,
+		/*type*/    DATA_TYPE::_SDT_ALL,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -169,15 +169,15 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_kill_process_w(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	BOOL ret = FALSE;
-	if (pArgInf->m_dtDataType == SDT_BIN)
+	if (pArgInf->m_dtDataType == DATA_TYPE::SDT_BIN)
 	{
 		ret = kill_process_w(std::wstring(elibstl::args_to_wsdata(pArgInf, 0)));
 	}
-	else if (pArgInf->m_dtDataType == SDT_TEXT)
+	else if (pArgInf->m_dtDataType == DATA_TYPE::SDT_TEXT)
 	{
 		ret = kill_process_w(std::string(elibstl::args_to_sdata(pArgInf, 0)));
 	}
-	else if (pArgInf->m_dtDataType == SDT_INT)
+	else if (pArgInf->m_dtDataType == DATA_TYPE::SDT_INT)
 	{
 		ret = kill_process_w(pArgInf[0].m_int);
 	}
@@ -190,7 +190,7 @@ FucInfo kill_process = { {
 		/*explain*/ ("强制结束某一指定进程"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

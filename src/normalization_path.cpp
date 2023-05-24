@@ -32,7 +32,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲规范化的路径"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -50,7 +50,7 @@ FucInfo normalization_path_W = { {
 		/*explain*/ ("将路径中的英文全部更换为小写,将\\全部更换为/,对于路径对比非常重要"),
 		/*category*/8,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

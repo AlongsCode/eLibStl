@@ -40,7 +40,7 @@ FucInfo get_cpu_usges = { {
 		/*explain*/ ("获取CPU当前使用率,精确度更高"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_DOUBLE ,
+		/*ret*/     DATA_TYPE::SDT_DOUBLE ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

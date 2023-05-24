@@ -6,7 +6,7 @@ static ARG_INFO WArgs[] =
 		/*explain*/ (""),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -57,7 +57,7 @@ FucInfo g_concatenate_wstrings = { {
 		/*explain*/ ("请确保拼接的字符为带结束符的标准unicode文本,代码因为需要效率,所以不会取判断,如果不带结束符直接用易语言重载的“+”拼接字节集就可以"),
 		/*category*/2,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

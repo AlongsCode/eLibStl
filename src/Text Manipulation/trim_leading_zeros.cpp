@@ -6,7 +6,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲转换Unicode的文本"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -47,7 +47,7 @@ FucInfo g_trim_leading_zeros = { {
 		/*explain*/ ("删数值文本左侧无效零"),
 		/*category*/2,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

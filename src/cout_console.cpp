@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("本参数提供内容所输出到的设备，可以为以下常量值之一： 1、#标准输出设备； 2、#标准错误设备。如果省略本参数，默认为“#标准输出设备”"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("本参数只能为unicode字节集。如果内容为文本且包含多行，可在各行之间用回车符 (即“字符W (13)”)、换行符 (即“字符W (10)”) 或回车换行符的组合 (即：“字符W (13) + 字符W (10)"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -50,7 +50,7 @@ FucInfo cout_w = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,
-		/*ret*/     NULL,
+		/*ret*/    DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

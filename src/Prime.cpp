@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ (""),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -50,7 +50,7 @@ FucInfo prime = { {
 		/*explain*/ ("ÅÐ¶ÏÊÇ·ñÎªËØÊý"),
 		/*category*/1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

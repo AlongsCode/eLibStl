@@ -53,7 +53,7 @@ FucInfo e_GetTickCount_ex = { {
 		/*explain*/ ("高精度获取启动时间,单位100纳秒,需获取毫秒的话请乘以10000"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT64 ,
+		/*ret*/     DATA_TYPE::SDT_INT64 ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

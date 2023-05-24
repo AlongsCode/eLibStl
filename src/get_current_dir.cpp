@@ -28,7 +28,7 @@ FucInfo current_path_W = { {
 		/*explain*/ ("取当前被执行的易程序文件所处的目录。"),
 		/*category*/8,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

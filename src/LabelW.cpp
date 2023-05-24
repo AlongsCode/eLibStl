@@ -62,19 +62,19 @@ private:
 	/// <param name="wParam"></param>
 	/// <param name="lParam"></param>
 	/// <returns></returns>
-	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam) 
+	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam)
 	{
 		EVENT_ARG_VALUE Arg1, Arg2;
 		Arg1.m_inf.m_int = static_cast<int>(wParam);
-		Arg1.m_inf.m_dtDataType = SDT_INT;
+		Arg1.m_inf.m_dtDataType = DATA_TYPE::SDT_INT;
 		Arg2.m_inf.m_int = static_cast<int>(lParam);
-		Arg2.m_inf.m_dtDataType = SDT_INT;
+		Arg2.m_inf.m_dtDataType = DATA_TYPE::SDT_INT;
 
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
 		event.m_nArgCount = 2;
 		event.m_arg[0] = Arg1;
 		event.m_arg[1] = Arg2;
-		
+
 		if (
 			(elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0) != 0)// 成功传递 
 			&&
@@ -1286,12 +1286,12 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)
 
 static EVENT_ARG_INFO2 s_EventArgInfo_Label_Feedback[] =
 {
-	 {"参数一", "调用反馈事件时传递来的第一个参数", 0, SDT_INT},
-	 {"参数二", "调用反馈事件时传递来的第而个参数", 0, SDT_INT},
+	 {"参数一", "调用反馈事件时传递来的第一个参数", 0, DATA_TYPE::SDT_INT},
+	 {"参数二", "调用反馈事件时传递来的第而个参数", 0, DATA_TYPE::SDT_INT},
 };
 static EVENT_INFO2 s_Event_Label[] =
 {
-	/*000*/ {"反馈事件", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, SDT_INT},
+	/*000*/ {"反馈事件", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, DATA_TYPE::SDT_INT},
 };
 
 static int s_Fuc[] = { 193 };
@@ -1302,7 +1302,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1311,7 +1311,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1320,7 +1320,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*explain*/ "为真则采用发送方式传递事件消息，此时本命令将一直等待到“反馈事件”用户事件处理子程序处理完毕后才返回，为假则采用投递方式传递事件消息，此时本命令将直接返回且不等待用户事件处理子程序处理完毕（用户事件处理子程序将在空闲时被调用）。如果本参数被省略，默认采用发送方式传递事件",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1344,7 +1344,7 @@ FucInfo Fn_SendLabelMsg = { {
 		/*explain*/ " 产生标签的反馈事件，以调用此标签的“反馈事件”用户事件处理子程序，可以用作在多线程处理中将控制权转移到程序主线程上去执行。返回用户事件处理子程序所返回的值，如果没有相应的事件处理子程序或采用投递方式传递事件消息，将返回零。",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,

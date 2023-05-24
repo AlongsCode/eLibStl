@@ -13,7 +13,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("以较小字体显示在主指令下方"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    _SDT_ALL,
+		/*type*/    DATA_TYPE::_SDT_ALL,
 		/*default*/ 0,
 		/*state*/    AS_RECEIVE_ALL_TYPE_DATA,
 	},
@@ -22,7 +22,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("用于显示的主指令"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    _SDT_ALL,
+		/*type*/    DATA_TYPE::_SDT_ALL,
 		/*default*/ 0,
 		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -31,7 +31,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("可通过不同位或组合不同按钮，默认为确认,1.确定,2.是,4.否,8.取消(必须为此对话框指定此按钮，才能响应 alt-F4 和转义) 的典型取消操作。),16.重试,32.关闭"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -40,7 +40,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("窗口显示的标题"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    _SDT_ALL,
+		/*type*/    DATA_TYPE::_SDT_ALL,
 		/*default*/ 0,
 		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -49,7 +49,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("父窗口句柄"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -58,7 +58,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("默认为无图标,欲显示图标,默认为:正确,0.无,1.任务对话框中会显示一个非索引符号图标.2.由圆圈中的小写字母 i 组成的图标显示在任务对话框中。3.任务对话框中会显示一个安全防护图标。4.任务对话框中会显示感叹号图标。默认为1。5.正确，6.错误"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -66,12 +66,12 @@ static ARG_INFO Args[] =
 
 static LIB_DATA_TYPE_ELEMENT s_TaskDialog_Button[] =
 {
-	 {SDT_INT, 0, "确定", "TDCBF_OK_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_OK_BUTTON},
-	 {SDT_INT, 0, "是", "TDCBF_YES_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_YES_BUTTON},
-	 {SDT_INT, 0, "否", "TDCBF_NO_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_NO_BUTTON},
-	 {SDT_INT, 0, "取消", "TDCBF_CANCEL_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_CANCEL_BUTTON},
-	 {SDT_INT, 0, "重试", "TDCBF_RETRY_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_RETRY_BUTTON},
-	 {SDT_INT, 0, "关闭", "TDCBF_OK_CLOSE", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_CLOSE_BUTTON}
+	 {DATA_TYPE::SDT_INT, 0, "确定", "TDCBF_OK_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_OK_BUTTON},
+	 {DATA_TYPE::SDT_INT, 0, "是", "TDCBF_YES_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_YES_BUTTON},
+	 {DATA_TYPE::SDT_INT, 0, "否", "TDCBF_NO_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_NO_BUTTON},
+	 {DATA_TYPE::SDT_INT, 0, "取消", "TDCBF_CANCEL_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_CANCEL_BUTTON},
+	 {DATA_TYPE::SDT_INT, 0, "重试", "TDCBF_RETRY_BUTTON", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_RETRY_BUTTON},
+	 {DATA_TYPE::SDT_INT, 0, "关闭", "TDCBF_OK_CLOSE", NULL, LES_HAS_DEFAULT_VALUE, (INT)TDCBF_CLOSE_BUTTON}
 };
 namespace elibstl {
 	LIB_DATA_TYPE_INFO TaskDialog_Button_Type =
@@ -166,7 +166,7 @@ FucInfo task_dialog_w = { {
 		/*explain*/ ("函数调用失败返回-1,如果成功，返回枚举常量:高级信息框按钮::"),
 		/*category*/13,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

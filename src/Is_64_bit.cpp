@@ -15,7 +15,7 @@ FucInfo is_64_bit = { {
 		/*explain*/ ("判断当前运行操作系统是否为64位架构"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

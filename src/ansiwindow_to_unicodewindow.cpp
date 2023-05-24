@@ -56,7 +56,7 @@
 //		/*explain*/ (""),
 //		/*bmp inx*/ 0,
 //		/*bmp num*/ 0,
-//		/*type*/    SDT_INT,
+//		/*type*/    DATA_TYPE::SDT_INT,
 //		/*default*/ 0,
 //		/*state*/   0,
 //	}
@@ -67,7 +67,7 @@
 //		/*explain*/ ("将窗口转换为W版窗口"),
 //		/*category*/10,
 //		/*state*/   NULL,
-//		/*ret*/     SDT_BOOL,
+//		/*ret*/     DATA_TYPE::SDT_BOOL,
 //		/*reserved*/NULL,
 //		/*level*/   LVL_HIGH,
 //		/*bmp inx*/ 0,

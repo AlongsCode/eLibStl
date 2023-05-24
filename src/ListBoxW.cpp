@@ -167,11 +167,11 @@ struct ELISTBOXDATA
 	BITBOOL bMultiSel : 1;	// 鼠标多选
 	BITBOOL bExtSel : 1;	// 按键多选
 	BITBOOL bToolTip : 1;	// 工具提示
-	BITBOOL bUseTabStop: 1;	// 解析制表符
-	BITBOOL bIntegralHeight: 1;	// 取整控件高度
-	BITBOOL bDisableNoScroll: 1;// 显示禁止的滚动条
-	BITBOOL bLibOwnerDraw: 1;	// 支持库自画
-	BITBOOL bEllipsis: 1;	// 省略号
+	BITBOOL bUseTabStop : 1;	// 解析制表符
+	BITBOOL bIntegralHeight : 1;	// 取整控件高度
+	BITBOOL bDisableNoScroll : 1;// 显示禁止的滚动条
+	BITBOOL bLibOwnerDraw : 1;	// 支持库自画
+	BITBOOL bEllipsis : 1;	// 省略号
 };
 
 #define DATA_VER_LBITEMS_1 1
@@ -380,7 +380,7 @@ public:
 		if (m_Info.bLibOwnerDraw)
 			dwLBStyle |= LBS_OWNERDRAWVARIABLE;
 
-		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL,WS_VSCROLL| WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle,
+		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_VSCROLL | WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
@@ -709,7 +709,7 @@ public:
 	{
 		BYTE* p;
 		SIZE_T cbBaseData;
-		SIZE_T cbDir = m_Info.cchDir * sizeof(WCHAR), 
+		SIZE_T cbDir = m_Info.cchDir * sizeof(WCHAR),
 			cbFilePattern = m_Info.cchFilePattern * sizeof(WCHAR);
 		auto hGlobal = FlattenInfoBase0(
 			sizeof(ELISTBOXDATA) +
@@ -727,7 +727,7 @@ public:
 		memcpy(p, &m_Info, sizeof(ELISTBOXDATA));
 		p += sizeof(ELISTBOXDATA);
 		// 项目
-		
+
 		p += m_Info.cbItems;
 		// 图像列表
 
@@ -1018,7 +1018,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ListBoxW(INT nInterfaceNO)
 
 static EVENT_INFO2 s_Event_ListBox[] =
 {
-	/*000*/ {"内容被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"内容被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 
 static UNIT_PROPERTY s_Member_ListBox[] =

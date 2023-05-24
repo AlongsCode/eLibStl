@@ -2,9 +2,9 @@
 #include <shlobj.h>
 static ARG_INFO Args[] =
 {
-	{"标题", "本参数提供显示在对话框上部的标题文本", 0, 0, SDT_TEXT, 0, NULL},
-	{ "是否包含文件", "本参数指定是否在浏览框中同时列出文件名。如果被省略，默认值为假", 0, 0, SDT_BOOL, 0, AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "父窗口", "", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY },
+	{"标题", "本参数提供显示在对话框上部的标题文本", 0, 0, DATA_TYPE::SDT_TEXT, 0, NULL},
+	{ "是否包含文件", "本参数指定是否在浏览框中同时列出文件名。如果被省略，默认值为假", 0, 0, DATA_TYPE::SDT_BOOL, 0, AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "父窗口", "", 0, 0, DATA_TYPE::SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY },
 };
 static char* BrowseForFolder(const std::string_view& Title, BOOL IsDisplayFile, HWND hWndParent) {
 	BROWSEINFOA bi = { 0 };
@@ -47,9 +47,9 @@ EXTERN_C void Fn_BrowseForFolder_A(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 
 static ARG_INFO WArgs[] =
 {
-	{"标题", "本参数提供显示在对话框上部的标题文本", 0, 0, SDT_BIN, 0, NULL},
-	{ "是否包含文件", "本参数指定是否在浏览框中同时列出文件名。如果被省略，默认值为假", 0, 0, SDT_BOOL, 0, AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "父窗口", "", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY },
+	{"标题", "本参数提供显示在对话框上部的标题文本", 0, 0, DATA_TYPE::SDT_BIN, 0, NULL},
+	{ "是否包含文件", "本参数指定是否在浏览框中同时列出文件名。如果被省略，默认值为假", 0, 0, DATA_TYPE::SDT_BOOL, 0, AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "父窗口", "", 0, 0, DATA_TYPE::SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY },
 };
 static unsigned char* BrowseForFolderW(const std::wstring_view& Title, BOOL IsDisplayFile, HWND hWndParent) {
 	BROWSEINFOW bi = { 0 };
@@ -93,7 +93,7 @@ FucInfo e_BrowseForFolder_A = { {
 		/*explain*/ ("打开一个对话框，浏览系统中存在的所有文件夹，返回被选定文件夹的路径名，如果未选中任何文件夹，则返回空文本"),
 		/*category*/13,
 		/*state*/   NULL,
-		/*ret*/     SDT_TEXT,
+		/*ret*/     DATA_TYPE::SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -109,7 +109,7 @@ FucInfo e_BrowseForFolder_W = { {
 		/*explain*/ ("打开一个对话框，浏览系统中存在的所有文件夹，返回被选定文件夹的路径名，如果未选中任何文件夹，则返回空文本"),
 		/*category*/13,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

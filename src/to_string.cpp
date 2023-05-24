@@ -2,7 +2,7 @@
 
 EXTERN_C void Fn_to_string(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	if (pArgInf->m_dtDataType == SDT_BIN) {
+	if (pArgInf->m_dtDataType == DATA_TYPE::SDT_BIN) {
 		pRetData->m_pBin = pArgInf->m_pBin;
 		return;
 	}
@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲转换的数据"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    _SDT_ALL,
+		/*type*/    DATA_TYPE::_SDT_ALL,
 		/*default*/ 0,
 		/*state*/    AS_RECEIVE_ALL_TYPE_DATA,
 	},{
@@ -26,7 +26,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("默认包含结束符"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -38,7 +38,7 @@ FucInfo   eto_wstring = { {
 		/*explain*/ ("转换指定数据为文本。"),
 		/*category*/2,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

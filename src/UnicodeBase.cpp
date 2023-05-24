@@ -6,7 +6,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲转换Unicode的文本"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_TEXT,
+		/*type*/    DATA_TYPE::SDT_TEXT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},{
@@ -14,7 +14,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("默认包含结束符"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -53,7 +53,7 @@ FucInfo L = { {
 		/*explain*/ ("将文本转为unicode文本"),
 		/*category*/2,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

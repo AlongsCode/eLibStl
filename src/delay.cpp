@@ -11,7 +11,7 @@ static ARG_INFO Args[] =
 		/*explain*/	"提示：1000毫秒等于1秒。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	SDT_INT64,
+		/*type*/	DATA_TYPE::SDT_INT64,
 		/*default*/	0,
 		/*state*/	0,
 			}
@@ -47,7 +47,7 @@ FucInfo _e_delay = { {
 		/*explain*/ ("同延迟的高精度版"),
 		/*category*/11,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

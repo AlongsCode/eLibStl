@@ -19,7 +19,7 @@ FucInfo get_cpu_id = { {
 		/*explain*/ ("ªÒ»°CPU–Ú¡–∫≈"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_TEXT ,
+		/*ret*/     DATA_TYPE::SDT_TEXT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

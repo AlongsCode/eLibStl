@@ -14,7 +14,7 @@ FucInfo clearConsole = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/  NULL,
-		/*ret*/     NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

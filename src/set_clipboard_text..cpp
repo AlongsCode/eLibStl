@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("需置入剪辑板的uncidoe文本"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -57,7 +57,7 @@ FucInfo set_clip_board_text_w = { {
 		/*explain*/ (""),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

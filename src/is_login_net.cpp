@@ -13,7 +13,7 @@ FucInfo is_connect_to_internet = { {
 		/*explain*/ ("判断计算机是否已经连接网络"),
 		/*category*/7,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

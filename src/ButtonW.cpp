@@ -1282,8 +1282,8 @@ ESTL_NAMESPACE_END
 /////////////////////////////普通按钮
 static EVENT_INFO2 s_Event_PushBtn[] =
 {
-	/*000*/ {"按钮被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
-	/*001*/ {"下拉箭头被单击", "当下拉箭头被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"按钮被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
+	/*001*/ {"下拉箭头被单击", "当下拉箭头被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_PushBtn[] =
 {
@@ -1297,7 +1297,7 @@ static UNIT_PROPERTY s_Member_PushBtn[] =
 ///////////////////////////////选择框
 static EVENT_INFO2 s_Event_CheckBtn[] =
 {
-	/*000*/ {"被单击", "当选择框被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"被单击", "当选择框被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_CheckBtn[] =
 {
@@ -1315,7 +1315,7 @@ static UNIT_PROPERTY s_Member_CheckBtn[] =
 /////////////////////////////命令链接
 static EVENT_INFO2 s_Event_CmdLink[] =
 {
-	/*000*/ {"被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_CmdLink[] =
 {
@@ -1355,7 +1355,7 @@ static ARG_INFO s_Args_GetIdealSize[] =
 		/*explain*/ "接受宽度的变量，若调用前变量不为0，则变量的值指定为按钮的宽度，将以此值为基准计算理想高度",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR,
 	},
@@ -1364,7 +1364,7 @@ static ARG_INFO s_Args_GetIdealSize[] =
 		/*explain*/ "接受高度的变量",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR,
 	}
@@ -1376,7 +1376,7 @@ FucInfo Fn_BtnGetIdealSize = { {
 		/*explain*/ ("取按钮理想尺寸。本命令需要在清单中指定Comctl6.0"),
 		/*category*/-1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,

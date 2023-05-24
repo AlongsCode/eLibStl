@@ -140,7 +140,7 @@ static void debug_put(T... args)
 	str.append(L"\r\n");
 	OutputDebugStringW(str.c_str());
 	//MDATA_INF RetData, ArgInf;
-	//ArgInf.m_dtDataType = SDT_TEXT;
+	//ArgInf.m_dtDataType = DATA_TYPE::SDT_TEXT;
 	//char* pDebugText = elibstl::clone_text(str.c_str());
 	//ArgInf.m_pText = pDebugText;
 	//elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);

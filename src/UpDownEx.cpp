@@ -441,13 +441,13 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 
 static EVENT_ARG_INFO2 s_Event_Arg[] =
 {
-	{"当前位置", "", 0, SDT_INT},
-	{"建议改变的值", "", 0, SDT_INT},
+	{"当前位置", "", 0, DATA_TYPE::SDT_INT},
+	{"建议改变的值", "", 0, DATA_TYPE::SDT_INT},
 };
 static EVENT_INFO2 s_Event_UpDown[] =
 {
 	/*000*/ {"调节钮被按下", "当调节钮被按下时触发。返回真允许位置更改，返回假禁止位置更改", _EVENT_OS(OS_ALL) | EV_IS_VER2,
-			ARRAYSIZE(s_Event_Arg), s_Event_Arg, SDT_BOOL},
+			ARRAYSIZE(s_Event_Arg), s_Event_Arg, DATA_TYPE::SDT_BOOL},
 };
 
 static UNIT_PROPERTY s_Member_UpDown[] =
@@ -505,7 +505,7 @@ static ARG_INFO s_ArgsSetAccel[] =
 		/*explain*/ "必须按从小到大的顺序排列",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_ARRAY_DATA,
 	},
@@ -514,7 +514,7 @@ static ARG_INFO s_ArgsSetAccel[] =
 		/*explain*/ "成员数必须与参数一相同，且成员须一一对应",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_ARRAY_DATA,
 	}
@@ -525,7 +525,7 @@ FucInfo Fn_UpDownSetAccel = { {
 		/*explain*/ "设置按住调节钮后经过指定秒数后的增量",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -549,7 +549,7 @@ EXTERN_C void libstl_UpDown_GetAccel(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 		return;
 	}
 	int cNeedAccel;
-	if (pArgInf[1].m_dtDataType == _SDT_NULL)
+	if (pArgInf[1].m_dtDataType == DATA_TYPE::_SDT_NULL)
 		cNeedAccel = cAccel;
 	else if (pArgInf[1].m_int <= 0 || pArgInf[1].m_int > cAccel)
 		cNeedAccel = cAccel;
@@ -577,7 +577,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*explain*/ "若该参数为空或小于等于0或大于实际加速度数量，则返回所有加速度。",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -586,7 +586,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR_ARRAY,
 	},
@@ -595,7 +595,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR_ARRAY,
 	}
@@ -606,7 +606,7 @@ FucInfo Fn_UpDownGetAccel = { {
 		/*explain*/ "返回控件实际拥有的加速度数量",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,

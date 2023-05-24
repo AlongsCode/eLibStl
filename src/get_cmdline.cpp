@@ -94,7 +94,7 @@ FucInfo get_cmdline_W = { {
 		/*explain*/ ("本命令可以取出在启动易程序时附加在其可执行文件名后面的所有以空格分隔的命令行文本段。"),
 		/*category*/8,
 		/*state*/   CT_RETRUN_ARY_TYPE_DATA,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

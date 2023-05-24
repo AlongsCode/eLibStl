@@ -262,7 +262,7 @@ FucInfo Fn_memfile_structure = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/  _CMD_OS(__OS_WIN) | CT_IS_HIDED | CT_IS_OBJ_CONSTURCT_CMD,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -284,7 +284,7 @@ FucInfo Fn_memfile_copy = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/   _CMD_OS(__OS_WIN) | CT_IS_HIDED | CT_IS_OBJ_COPY_CMD,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -310,7 +310,7 @@ FucInfo Fn_memfile_destruct = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/    _CMD_OS(__OS_WIN) | CT_IS_HIDED | CT_IS_OBJ_FREE_CMD,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -333,7 +333,7 @@ FucInfo Fn_memfile_get_size = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/    _CMD_OS(__OS_WIN) ,
-		/*ret*/ SDT_INT,
+		/*ret*/ DATA_TYPE::SDT_INT,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -355,7 +355,7 @@ FucInfo Fn_memfile_seek_begin = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/    _CMD_OS(__OS_WIN) ,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -376,7 +376,7 @@ FucInfo Fn_memfile_seek_end = { {
 		/*explain*/ NULL,
 		/*category*/ -1,
 		/*state*/    _CMD_OS(__OS_WIN) ,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -391,7 +391,7 @@ static ARG_INFO Args[] =
 		/*explain*/	"对于非“文本型”参数，将自动转换为文本。本参数可接受任意基本类型，但不接受数组以及自定义数据类型。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	_SDT_ALL,
+		/*type*/	DATA_TYPE::_SDT_ALL,
 		/*default*/	0,
 		/*state*/	AS_RECEIVE_ALL_TYPE_DATA,
 			}
@@ -402,10 +402,10 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	for (INT i = 1; i < nArgCount; i++)
 	{
 
-		if ((pArgInf[i].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
+		if (pArgInf[i].is_dt_flag())//是数组
 		{
-			pArgInf[i].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
-			if (pArgInf[i].m_dtDataType == SDT_TEXT)
+			pArgInf[i].remove_dt_flag(); //去除数组标志
+			if (pArgInf[i].m_dtDataType == DATA_TYPE::SDT_TEXT)
 			{
 				size_t dwSize;
 				LPSTR* pAryData = elibstl::get_array_element_inf<LPSTR*>(pArgInf[i].m_pAryData, &dwSize); ;
@@ -430,7 +430,7 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 
 
 			}
-			else if (pArgInf[i].m_dtDataType == SDT_BIN)/*宽文本*/
+			else if (pArgInf[i].m_dtDataType == DATA_TYPE::SDT_BIN)/*宽文本*/
 			{
 				size_t dwSize;
 				LPBYTE* pAryData = elibstl::get_array_element_inf<LPBYTE*>(pArgInf[i].m_pAryData, &dwSize);
@@ -471,7 +471,7 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 			INT nLen;
 			void* pData;
 			INT nData = 0;
-			if (pArgInf[i].m_dtDataType == SDT_TEXT)
+			if (pArgInf[i].m_dtDataType == DATA_TYPE::SDT_TEXT)
 			{
 				if (pArgInf[i].m_pText == NULL)
 				{
@@ -486,7 +486,7 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 				}
 
 			}
-			else if (pArgInf[i].m_dtDataType == SDT_BIN)
+			else if (pArgInf[i].m_dtDataType == DATA_TYPE::SDT_BIN)
 			{
 				if (pArgInf[i].m_pBin == NULL)
 				{
@@ -526,7 +526,7 @@ FucInfo Fn_memfile_write = { {
 		/*explain*/ "此代码会将字节集视为宽文本，请传递标准附带结束符的宽文本，如需写入字节集请使用写入字节集",
 		/*category*/ -1,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | _CMD_OS(__OS_WIN) ,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -542,7 +542,7 @@ static ARG_INFO Args_mem[] =
 		/*explain*/	"",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	SDT_BIN,
+		/*type*/	DATA_TYPE::SDT_BIN,
 		/*default*/	0,
 		/*state*/	0,
 			}
@@ -566,7 +566,7 @@ FucInfo Fn_memfile_write_mem = { {
 		/*explain*/ "此代码会将二进制数据完整准确写入",
 		/*category*/ -1,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | _CMD_OS(__OS_WIN) ,
-		/*ret*/ _SDT_NULL,
+		/*ret*/ DATA_TYPE::_SDT_NULL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -582,7 +582,7 @@ static ARG_INFO args_read[] =
 		/*explain*/	"实际长度等于取决于文件长度。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	SDT_INT,
+		/*type*/	DATA_TYPE::SDT_INT,
 		/*default*/	0,
 		/*state*/	NULL,
 			}
@@ -601,7 +601,7 @@ FucInfo Fn_memfile_read = { {
 		/*explain*/  "如果所读取长度大于文件长度则会截断",
 		/*category*/ -1,
 		/*state*/     _CMD_OS(__OS_WIN) ,
-		/*ret*/SDT_BIN,
+		/*ret*/DATA_TYPE::SDT_BIN,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -620,7 +620,7 @@ static ARG_INFO args_seek[] =
 		/*explain*/	"1、#文件首； 2、#文件尾； 3、#现行位置。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	SDT_INT,
+		/*type*/	DATA_TYPE::SDT_INT,
 		/*default*/	3,
 		/*state*/	AS_HAS_DEFAULT_VALUE,
 			},{
@@ -628,7 +628,7 @@ static ARG_INFO args_seek[] =
 				/*explain*/	"实际长度等于取决于文件长度。",
 				/*bmp inx*/	0,
 				/*bmp num*/	0,
-				/*type*/	SDT_INT,
+				/*type*/	DATA_TYPE::SDT_INT,
 				/*default*/	0,
 				/*state*/	NULL,
 					}
@@ -649,7 +649,7 @@ FucInfo Fn_memfile_seek = { {
 		/*explain*/  " 在被打开的文件中，设置下一个读或写操作的位置",
 		/*category*/ -1,
 		/*state*/     _CMD_OS(__OS_WIN) ,
-		/*ret*/SDT_BOOL,
+		/*ret*/DATA_TYPE::SDT_BOOL,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -670,7 +670,7 @@ FucInfo Fn_memfile_get_off_set = { {
 		/*explain*/  " 在被打开的文件中，设置下一个读或写操作的位置",
 		/*category*/ -1,
 		/*state*/     _CMD_OS(__OS_WIN) ,
-		/*ret*/SDT_INT,
+		/*ret*/DATA_TYPE::SDT_INT,
 		/*reserved*/0,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,

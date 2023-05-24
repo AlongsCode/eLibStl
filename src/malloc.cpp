@@ -7,7 +7,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		SDT_INT,
+		DATA_TYPE::SDT_INT,
 		0,
 		NULL,
 	},
@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		SDT_BOOL,
+		DATA_TYPE::SDT_BOOL,
 		0,
 		AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -31,7 +31,7 @@ EXTERN_C void Fn_e_malloc(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 	{
 		return;
 	}
-	if (pArgInf[1].m_dtDataType != _SDT_NULL && pArgInf[1].m_bool)
+	if (pArgInf[1].m_dtDataType != DATA_TYPE::_SDT_NULL && pArgInf[1].m_bool)
 	{
 		std::memset(p, 0, pArgInf[0].m_int);
 	}
@@ -44,7 +44,7 @@ FucInfo e_malloc = { {
 		/*explain*/ ("此代码申请内存不经过易语言ide的引用计数,完全由程序员管理,需自行释放。"),
 		/*category*/15,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

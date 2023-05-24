@@ -54,7 +54,7 @@ FucInfo get_net_work_types_w = { {
 		/*explain*/ ("枚举所有的网络类型。"),
 		/*category*/7,
 		/*state*/   CT_RETRUN_ARY_TYPE_DATA,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

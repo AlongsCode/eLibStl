@@ -9,7 +9,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲删除的文件的路径"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -28,7 +28,7 @@ FucInfo remove_file_W = { {
 		/*explain*/ ("删除指定文件。成功返回真，失败返回假。"),
 		/*category*/4,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

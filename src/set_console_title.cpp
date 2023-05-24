@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲设置的控制台标题"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -26,7 +26,7 @@ FucInfo set_console_title = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

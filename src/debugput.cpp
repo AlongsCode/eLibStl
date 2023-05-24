@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*explain*/	"对于非“文本型”参数，将自动转换为文本。本参数可接受任意基本类型，但不接受数组以及自定义数据类型。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	_SDT_ALL,
+		/*type*/	DATA_TYPE::_SDT_ALL,
 		/*default*/	0,
 		/*state*/	AS_DEFAULT_VALUE_IS_EMPTY | AS_RECEIVE_ALL_TYPE_DATA,
 			}
@@ -72,21 +72,21 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 	// 根据数据类型进行分支处理
 	switch (param->m_dtDataType)
 	{
-	case SDT_INT:
+	case DATA_TYPE::SDT_INT:
 		oss << param->m_int << " | "; break;
-	case SDT_SHORT:
+	case DATA_TYPE::SDT_SHORT:
 		oss << param->m_short << " | "; break;
-	case SDT_BYTE:
+	case DATA_TYPE::SDT_BYTE:
 		oss << static_cast<int>(param->m_byte) << " | "; break;
-	case SDT_INT64:
+	case DATA_TYPE::SDT_INT64:
 		oss << param->m_int64 << " | "; break;
-	case SDT_FLOAT:
+	case DATA_TYPE::SDT_FLOAT:
 		oss << param->m_float << " | "; break;
-	case SDT_DOUBLE:
+	case DATA_TYPE::SDT_DOUBLE:
 		oss << param->m_double << " | "; break;
-	case SDT_BOOL:
+	case DATA_TYPE::SDT_BOOL:
 		oss << (param->m_bool ? "true" : "false") << " | "; break;
-	case SDT_TEXT:
+	case DATA_TYPE::SDT_TEXT:
 	{
 		const char* pText = param->m_pText;
 		if (pText == nullptr || *pText == '\0')
@@ -99,17 +99,17 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 		}
 		break;
 	}
-	case SDT_BIN:
+	case DATA_TYPE::SDT_BIN:
 	{
 		const auto& bytes = elibstl::arg_to_vdata(param->m_pBin);
 		oss << "[字节集:" << bytes.size() << "] " << ByteArrayToString<char>(bytes) << " | ";
 		break;
 	}
-	case SDT_DATE_TIME:
+	case DATA_TYPE::SDT_DATE_TIME:
 		oss << "[" << DateTimeFormat(param->m_date) << "] | "; break;
-	case SDT_SUB_PTR:
+	case DATA_TYPE::SDT_SUB_PTR:
 		oss << "(子程序地址:" << param->m_dwSubCodeAdr << ") | "; break;
-	case _SDT_NULL:
+	case DATA_TYPE::_SDT_NULL:
 		oss << "(空) | "; break;
 	default:
 		oss << "(?未知?) | "; break;
@@ -120,29 +120,29 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 
 inline int GetTypeSize(const int dtDataType) {
 	switch (dtDataType) {
-	case SDT_INT:
+	case DATA_TYPE::SDT_INT:
 		return sizeof(INT);
-	case SDT_SHORT:
+	case DATA_TYPE::SDT_SHORT:
 		return sizeof(SHORT);
-	case SDT_BYTE:
+	case DATA_TYPE::SDT_BYTE:
 		return sizeof(BYTE);
-	case SDT_INT64:
+	case DATA_TYPE::SDT_INT64:
 		return sizeof(INT64);
-	case SDT_FLOAT:
+	case DATA_TYPE::SDT_FLOAT:
 		return sizeof(FLOAT);
-	case SDT_DOUBLE:
+	case DATA_TYPE::SDT_DOUBLE:
 		return sizeof(DOUBLE);
-	case SDT_BOOL:
+	case DATA_TYPE::SDT_BOOL:
 		return sizeof(BOOL);
-	case SDT_TEXT:
+	case DATA_TYPE::SDT_TEXT:
 		return sizeof(LPVOID);
-	case SDT_BIN:
+	case DATA_TYPE::SDT_BIN:
 		return sizeof(LPVOID);
-	case SDT_DATE_TIME:
+	case DATA_TYPE::SDT_DATE_TIME:
 		return sizeof(DATE);
-	case SDT_SUB_PTR:
+	case DATA_TYPE::SDT_SUB_PTR:
 		return sizeof(LPVOID);
-	case _SDT_NULL:
+	case DATA_TYPE::_SDT_NULL:
 		return 1;
 	default:
 		return 1;
@@ -179,28 +179,28 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 		}
 		switch (pParam->m_dtDataType)
 		{
-		case SDT_INT:
+		case DATA_TYPE::SDT_INT:
 			oss << *(INT*)p;
 			break;
-		case SDT_SHORT:
+		case DATA_TYPE::SDT_SHORT:
 			oss << *(SHORT*)p;
 			break;
-		case SDT_BYTE:
+		case DATA_TYPE::SDT_BYTE:
 			oss << static_cast<int>(*(BYTE*)p);
 			break;
-		case SDT_INT64:
+		case DATA_TYPE::SDT_INT64:
 			oss << *(INT64*)p;
 			break;
-		case SDT_FLOAT:
+		case DATA_TYPE::SDT_FLOAT:
 			oss << *(FLOAT*)p;
 			break;
-		case SDT_DOUBLE:
+		case DATA_TYPE::SDT_DOUBLE:
 			oss << *(DOUBLE*)p;
 			break;
-		case SDT_BOOL:
+		case DATA_TYPE::SDT_BOOL:
 			oss << ((*(BOOL*)p) == TRUE ? "真" : "假");
 			break;
-		case SDT_TEXT:
+		case DATA_TYPE::SDT_TEXT:
 		{
 			char* pText = (char*)(*(LPVOID*)p);
 			if (pText == NULL || strlen(pText) == 0)
@@ -212,7 +212,7 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 
 			break;
 		}
-		case SDT_BIN:
+		case DATA_TYPE::SDT_BIN:
 		{
 
 			if ((*(LPVOID*)p) == 0)
@@ -231,16 +231,16 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 			oss << "} ";
 			break;
 		}
-		case SDT_DATE_TIME:
+		case DATA_TYPE::SDT_DATE_TIME:
 		{
 			const DATE temp = *(DATE*)p;  p += sizeof(DATE);
 			oss << "[" << DateTimeFormat(temp) << "],";
 			break;
 		}
-		case SDT_SUB_PTR:
+		case DATA_TYPE::SDT_SUB_PTR:
 			oss << "(子程序地址:" + std::to_string(*reinterpret_cast<const DWORD*>(p));
 			break;
-		case _SDT_NULL:
+		case DATA_TYPE::_SDT_NULL:
 			oss << "(空)";
 			break;
 		default:
@@ -266,8 +266,8 @@ EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 	for (int i = 0; i < nArgCount; i++)
 	{
 		PMDATA_INF pParam = &pArgInf[i];
-		BOOL bIsArray = ((pParam->m_dtDataType & DT_IS_ARY) != 0);
-		if (bIsArray) pParam->m_dtDataType &= (~DT_IS_ARY);
+		BOOL bIsArray = pParam->is_dt_flag();/*时候数组*/
+		if (bIsArray) pParam->remove_dt_flag();/*移除数组标志*/
 		if (!bIsArray) //参数为非数组情况
 		{
 			printParam(str, pParam);
@@ -282,7 +282,7 @@ EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 		str.str(str.str().substr(0, str.str().size() - 3));
 	}
 	MDATA_INF RetData, ArgInf;
-	ArgInf.m_dtDataType = SDT_TEXT;
+	ArgInf.m_dtDataType = DATA_TYPE::SDT_TEXT;
 	char* pDebugText = elibstl::clone_text(str.str());
 	ArgInf.m_pText = pDebugText;
 	elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
@@ -295,7 +295,7 @@ FucInfo e_debugput = { {
 		/*explain*/ ("同易语言调试输出"),
 		/*category*/11,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -315,7 +315,7 @@ static ARG_INFO Args2[] =
 		/*explain*/	"请确保对象正确。",
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
-		/*type*/	SDT_BIN,
+		/*type*/	DATA_TYPE::SDT_BIN,
 		/*default*/	0,
 		/*state*/	NULL,
 			}
@@ -413,7 +413,7 @@ EXTERN_C void Fn_debugput_img(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 		auto data = elibstl::arg_to_vdata(pArgInf, i);
 
 		MDATA_INF RetData, ArgInf;
-		ArgInf.m_dtDataType = SDT_TEXT;
+		ArgInf.m_dtDataType = DATA_TYPE::SDT_TEXT;
 		/*图片的话置剪辑板*/
 		char* pDebugText = elibstl::clone_text("[elbbstl::image]");
 		SetImageToClipboard(data);
@@ -429,7 +429,7 @@ FucInfo e_debugput_img = { {
 		/*explain*/ ("调试输出字节流图片"),
 		/*category*/11,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -462,7 +462,7 @@ EXTERN_C void Fn_debugput_w(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 		std::string str = "";
 
 		MDATA_INF RetData, ArgInf;
-		ArgInf.m_dtDataType = SDT_TEXT;
+		ArgInf.m_dtDataType = DATA_TYPE::SDT_TEXT;
 
 		char* pDebugText = elibstl::clone_text("[unicode文本:" + std::to_string(data.size()) + " ] " + UmakeA(data));
 		ArgInf.m_pText = pDebugText;
@@ -477,7 +477,7 @@ FucInfo e_debugput_w = { {
 		/*explain*/ ("仅用作调试输出宽字符,并不会对宽字符合法性进行检查"),
 		/*category*/11,
 		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

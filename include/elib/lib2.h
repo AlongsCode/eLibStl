@@ -24,73 +24,57 @@
 #include <stdio.h>
 #include <math.h>
 #include<assert.h>
-
+#include <cstdint>
 typedef DATE* PDATE;
+
+
+/*基础数据类型构造*/
+/*用户代替宏MAKELONG (MAKEWORD (a, b),	0x8000),且确保不同编译器不同基础是数据类型长度不同时，同平台下值相同*/
+constexpr auto BaseType(std::uint16_t a, std::uint16_t b)
+{
+	std::uint16_t merged = static_cast<std::uint16_t>((static_cast<std::uint8_t>(a) & 0xff) | (static_cast<std::uint16_t>(static_cast<std::uint8_t>(b) & 0xff) << 8));
+	std::uint32_t result = (static_cast<std::uint32_t>(merged) & 0xffff) | (static_cast<std::uint32_t>(0x8000) << 16);
+	return static_cast<std::int32_t>(result);
+}
+
+/*自定义数据类型*/
+constexpr auto UserType(std::uint16_t a, std::uint16_t b)
+{
+	return static_cast<std::uint32_t>((static_cast<std::uint16_t>(a) & 0xFFFF) | (static_cast<std::uint32_t>(static_cast<std::uint16_t>(b) & 0xFFFF) << 16));
+}
+enum  DATA_TYPE : std::int32_t {
+	/*此位置为基础数据类型*/
+	_SDT_NULL = 0,  // 空
+	_SDT_ALL = BaseType(0, 0),  // 通用型
+	SDT_BYTE = BaseType(1, 1),  // uint8
+	SDT_SHORT = BaseType(1, 12),  // int16
+	SDT_INT = BaseType(1, 3),  // int32
+	SDT_INT64 = BaseType(1, 4),  // int64
+	SDT_FLOAT = BaseType(1, 5),  // float
+	SDT_DOUBLE = BaseType(1, 6),  // double
+	SDT_BOOL = BaseType(2, 0),  // int32，但是 C++ 中更好使用 bool
+	SDT_DATE_TIME = BaseType(3, 0),  // double ole时间类型,也为了兼容原版
+	SDT_TEXT = BaseType(4, 0),  // text 文本型
+	SDT_BIN = BaseType(5, 0),  // 字节集 struct ebin
+	SDT_SUB_PTR = BaseType(6, 0),  // 子程序指针
+	SDT_UTEXT = BaseType(7, 0),  // 原位置已被易语言抛弃，这里接替位置代表unicode 字符，默认为utf16
+	SDT_STATMENT = BaseType(8, 0),//子语句型，仅用于库命令定义其参数的数据类型。其数据长度为两个uintptr_t,第一个记录存根子程序地址，第二个记录该子语句所在子程序的变量栈首。
+
+	/*核心库定义数据类型,代表数据类型在核心库中的索引*/
+	KRNLN_EDB = UserType(34, 1),
+	/*此位置为用户自定义数据类型位置,代表数据类型在本库中索引*/
+	DTP_HCOPROCESS = UserType(5, 0),
+	DTP_HCOROUTINE = UserType(9, 0),
+
+};
+
+
+
+
 
 //+////////////////////////////////////////////////////////////////////////
 
-// 以下是由系统定义的基本数据类型
-
-#define        _SDT_NULL        (DATA_TYPE)0           // 空数据(内部使用,必须为零)
-
-/*  仅用于库命令定义其参数或返回值的数据类型。
-	1、当用于定义库命令参数时,_SDT_ALL可以匹配所有数据类型(数组类型必须符合要求)。
-	2、由于定义为返回_SDT_ALL数据类型的库命令不允许返回数组或复合数据类型的数据(即用户或库自定义数据类型但不包含窗口或菜单组件),
-		所以_SDT_ALL类型的数据只可能为非数组的系统数据类型或窗口组件、菜单数据类型。*/
-#define        _SDT_ALL        (DATA_TYPE)MAKELONG (MAKEWORD (0, 0), 0x8000)    // (内部使用)
-
-		// 数值,匹配所有类型数字,仅用于库命令定义其参数及返回值的数据类型。
-	//#define _SDT_NUM        (DATA_TYPE)MAKELONG (MAKEWORD (1, 0), 0x8000)        // (内部使用),3.0版本中已经废弃。
-#define SDT_BYTE        (DATA_TYPE)MAKELONG (MAKEWORD (1, 1), 0x8000)        // 字节
-#define SDT_SHORT       (DATA_TYPE)MAKELONG (MAKEWORD (1, 2), 0x8000)        // 短整数
-#define SDT_INT         (DATA_TYPE)MAKELONG (MAKEWORD (1, 3), 0x8000)        // 整数
-#define SDT_INT64       (DATA_TYPE)MAKELONG (MAKEWORD (1, 4), 0x8000)        // 长整数
-#define SDT_FLOAT       (DATA_TYPE)MAKELONG (MAKEWORD (1, 5), 0x8000)        // 小数
-#define SDT_DOUBLE      (DATA_TYPE)MAKELONG (MAKEWORD (1, 6), 0x8000)        // 双精度小数
-#define SDT_BOOL        (DATA_TYPE)MAKELONG (MAKEWORD (2, 0), 0x8000)        // 逻辑
-#define SDT_DATE_TIME   (DATA_TYPE)MAKELONG (MAKEWORD (3, 0), 0x8000)        // 日期时间
-#define SDT_TEXT        (DATA_TYPE)MAKELONG (MAKEWORD (4, 0), 0x8000)        // 文本
-#define SDT_BIN         (DATA_TYPE)MAKELONG (MAKEWORD (5, 0), 0x8000)        // 字节集
-#define SDT_SUB_PTR     (DATA_TYPE)MAKELONG (MAKEWORD (6, 0), 0x8000)        // 子程序指针
-//#define _SDT_VAR_REF    (DATA_TYPE)MAKELONG (MAKEWORD (7, 0), 0x8000)        // 参考,3.0版本中已经废弃。
-
-	/*
-	子语句型,仅用于库命令定义其参数的数据类型。其数据长度为两个INT,第一个记录存根子程序地址,第二个记录该子语句所在子程序的变量栈首。
-	注意在用作库命令参数时,编译器允许其可以接收所有基本数据类型,所以必须首先判断处理
-	调用例子：
-		if (pArgInf->m_dtDataType == SDT_BOOL)
-			return pArgInf->m_bool;
-
-		if (pArgInf->m_dtDataType == SDT_STATMENT)
-		{
-			DWORD dwEBP = pArgInf->m_statment.m_dwSubEBP;
-			DWORD dwSubAdr = pArgInf->m_statment.m_dwStatmentSubCodeAdr;
-			DWORD dwECX, dwEAX;
-
-			_asm
-			{
-				mov eax, dwEBP
-				call dwSubAdr
-				mov dwECX, ecx
-				mov dwEAX, eax
-			}
-
-			if (dwECX == SDT_BOOL)
-				return dwEAX != 0;
-
-			// 释放文本或字节集数据所分配的内存。
-			if (dwECX == SDT_TEXT || dwECX == SDT_BIN)
-				MFree ((void*)dwEAX);
-		}
-
-		GReportError ("用作进行条件判断的子语句参数只能接受逻辑型数据");
-	*/
-#define SDT_STATMENT    (DATA_TYPE)MAKELONG (MAKEWORD (8, 0),    0x8000)
-
-
-	//+////////////////////////////////////////////////////////////////////////
-
-	// 用作区分系统类型、用户自定义类型、库定义数据类型
+// 用作区分系统类型、用户自定义类型、库定义数据类型
 #define DTM_SYS_DATA_TYPE_MASK          0x80000000
 #define DTM_USER_DATA_TYPE_MASK         0x40000000
 #define DTM_LIB_DATA_TYPE_MASK          0x00000000
@@ -114,8 +98,7 @@ typedef DATE* PDATE;
 // 本标志与上标志不能共存。
 #define DT_IS_VAR                       0x20000000
 
-typedef DWORD DATA_TYPE;
-typedef DATA_TYPE* PDATA_TYPE;
+
 
 //+//////////////////////////////////////////////////////////////
 
@@ -154,7 +137,7 @@ typedef struct
 	INT            m_nDefault;
 
 #define AS_HAS_DEFAULT_VALUE            (1 << 0)    // 本参数有默认值,默认值在m_nDefault中说明。本参数在编辑程序时已被处理,编译时不需再处理。
-#define AS_DEFAULT_VALUE_IS_EMPTY       (1 << 1)    // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为_SDT_NULL。
+#define AS_DEFAULT_VALUE_IS_EMPTY       (1 << 1)    // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为DATA_TYPE::_SDT_NULL。
 #define AS_RECEIVE_VAR                  (1 << 2)    // 为本参数提供数据时只能提供单一变量,而不能提供整个变量数组、立即数或命令返回值。运行时所传递过来的参数数据肯定是内容不为数组的变量地址。
 #define AS_RECEIVE_VAR_ARRAY            (1 << 3)    // 为本参数提供数据时只能提供整个变量数组,而不能提供单一变量、立即数或命令返回值。
 #define AS_RECEIVE_VAR_OR_ARRAY         (1 << 4)    // 为本参数提供数据时只能提供单一变量或整个变量数组,而不能提供立即数或命令返回值。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
@@ -208,10 +191,10 @@ typedef struct
 #define CT_IS_OBJ_CONSTURCT_CMD     (1 << 9)   //! 注意每个数据类型最多只能有一个方法具有此标记。
 #define _CMD_OS(os)     ((os) >> 16)  // 用作转换os类型以便加入到m_wState。
 #define _TEST_CMD_OS(m_wState,os)    ((_CMD_OS (os) & m_wState) != 0) // 用作测试指定命令是否支持指定操作系统。
-	/* ! 千万注意：如果返回值类型为 _SDT_ALL , 绝对不能返回数组(即CT_RETRUN_ARY_TYPE_DATA
+	/* ! 千万注意：如果返回值类型为 DATA_TYPE::_SDT_ALL , 绝对不能返回数组(即CT_RETRUN_ARY_TYPE_DATA
 	   置位)或复合数据类型的数据(即用户或库自定义数据类型但不包含窗口或菜单组件),
 	   因为无法自动删除复合类型中所分配的额外空间(如文本型或者字节集型成员等).
-	   由于通用型数据只可能通过库命令返回,因此所有_SDT_ALL类型的数据只可能为非数组的
+	   由于通用型数据只可能通过库命令返回,因此所有DATA_TYPE::_SDT_ALL类型的数据只可能为非数组的
 	   系统数据类型或窗口组件、菜单数据类型。
    */
 	WORD            m_wState;           // 标记, CT_开头常量
@@ -242,7 +225,7 @@ typedef CMD_INFO* PCMD_INFO;
 // 数据类型使用的结构。
 typedef struct
 {
-	DATA_TYPE   m_dtType;       // 子数据组件的数据类型, 如果位于枚举数据类型中,则本成员必须为SDT_INT。 
+	DATA_TYPE   m_dtType;       // 子数据组件的数据类型, 如果位于枚举数据类型中,则本成员必须为DATA_TYPE::SDT_INT。 
 	LPBYTE      m_pArySpec;     // 数组指定串,如果不为数组,此值为NULL。注意绝对不能指定某维数上限为0的数组。如果位于枚举数据类型中,则本成员必须为NULL。
 	LPCSTR      m_szName;       // 子数据组件的中文变量名称,如果所属的数据类型只有一个子数据组件,则此值应该为NULL。
 	LPCSTR      m_szEgName;     // 子数据组件的英文变量名称,可以为空或NULL。
@@ -651,54 +634,125 @@ typedef struct
 #pragma pack (1)    // 设置为以一字节对齐。
 #endif
 
-typedef struct
+#ifdef _MSC_VER // 判断是否为 MSVC 编译器,对于MSVC柔性数组处理有点傻逼,会报警告,gcc和clang并不会
+#pragma warning(disable : 4200) // 禁用警告 C4200
+#endif
+struct EBIN
+{
+	int m_flag;
+	size_t m_size;
+	unsigned char p_start[];
+
+	EBIN() : m_flag(1), m_size(0) {}
+};
+using PEBIN = EBIN*;
+#pragma pack (push, 1)
+/*易库参数数据结构体
+参数数据提供方式有四种：
+立即数提供方式：直接提供数值作为参数，不能用于库或用户自定义类型。
+单一变量提供方式：提供基本数据类型或自定义数据类型的变量，包括变量数组的元素、自定义变量的成员变量等。
+整个变量数组提供方式：提供整个变量数组的所有元素作为参数。
+参数命令提供方式：使用命令的返回值来提供参数数据，即将命令的执行结果作为参数传递。
+这些方式可根据具体情况选择适合的方式来提供参数数据。*/
+struct MDATA_INF
 {
 	union
 	{
-		BYTE   m_byte;            // SDT_BYTE
-		SHORT  m_short;            // SDT_SHORT
-		INT    m_int;            // SDT_INT
-		DWORD  m_uint;            // (DWORD)SDT_INT
-		INT64  m_int64;            // SDT_INT64
-		FLOAT  m_float;            // SDT_FLOAT
-		DOUBLE m_double;        // SDT_DOUBLE
-		DATE   m_date;            // SDT_DATE_TIME
-		BOOL   m_bool;            // SDT_BOOL
-		char* m_pText;            // SDT_TEXT,不可能为NULL。为了避免修改到常量段(m_pText有可能指向常量段区域)中的数据,只可读取而不可更改其中的内容
-		LPBYTE m_pBin;            // SDT_BIN,不可能为NULL,只可读取而不可更改其中的内容。
-		DWORD  m_dwSubCodeAdr;    // SDT_SUB_PTR,记录子程序代码地址。
-		STATMENT_CALL_DATA m_statment;    // SDT_STATMENT数据类型。
-		MUNIT  m_unit;            // 窗口组件、菜单数据类型。
-		void* m_pCompoundData;    // 复合数据类型数据指针,指针所指向数据的格式请见 run.h 。可以直接更改其中的数据成员,但是如果需要必须首先释放该成员。
-		void* m_pAryData;        // 数组数据指针,指针所指向数据的格式请见 run.h 。注意如果为文本或字节集数组,则成员数据指针可能为NULL。只可读取而不可更改其中的内容。
-
-		//! 为指向变量地址的指针,仅当传入参数到库命令实现函数时才有用。
-		BYTE* m_pByte;    // SDT_BYTE*
-		SHORT* m_pShort;    // SDT_SHORT*
-		INT* m_pInt;        // SDT_INT*
-		DWORD* m_pUInt;    // ((DWORD)SDT_INT)*
-		INT64* m_pInt64;    // SDT_INT64*
-		FLOAT* m_pFloat;    // SDT_FLOAT*
-		DOUBLE* m_pDouble;    // SDT_DOUBLE*
-		DATE* m_pDate;    // SDT_DATE_TIME*
-		BOOL* m_pBool;    // SDT_BOOL*
-		char** m_ppText;    // SDT_TEXT,*m_ppText可能为NULL。注意写入新值之前必须释放前值,即：MFree (*m_ppText)。不可直接更改*m_ppText所指向的内容,只能释放原指针后换入新指针。
-		LPBYTE* m_ppBin;    // SDT_BIN,*m_ppBin可能为NULL。注意写入新值之前必须释放前值,即：MFree (*m_ppBin)。不可直接更改*m_ppBin所指向的内容,只能释放原指针后换入新指针。
-		DWORD* m_pdwSubCodeAdr;            // SDT_SUB_PTR,子程序代码地址变量。
-		PSTATMENT_CALL_DATA m_pStatment;    // SDT_STATMENT数据类型变量。
-		PMUNIT m_pUnit;                // 窗口组件、菜单数据类型变量。
-		void** m_ppCompoundData;    // 复合数据类型变量。可以直接更改其中的数据成员,但是如果需要必须首先释放该成员。
-		void** m_ppAryData;            // 数组数据变量,注意：1、写入新值之前必须释放原值(使用NRS_FREE_VAR通知)。2、变量如果为文本或字节集数组,则成员数据指针可能为NULL。不可直接更改*m_ppAryData所指向的内容,只能释放原指针后换入新指针。
+		// 基本数据类型
+		unsigned char m_byte;         // DATA_TYPE::SDT_BYTE
+		short	      m_short;        // DATA_TYPE::SDT_SHORT
+		int	      m_int;          // DATA_TYPE::SDT_INT
+		unsigned int	      m_uint;         // (unsigned long)DATA_TYPE::SDT_INT
+		__int64      m_int64;        // DATA_TYPE::SDT_INT64
+		float	      m_float;        // DATA_TYPE::SDT_FLOAT
+		double	      m_double;       // DATA_TYPE::SDT_DOUBLE
+		double          m_date;         // DATA_TYPE::SDT_DATE_TIME OLE时间
+		bool          m_bool;         // DATA_TYPE::SDT_BOOL #define BOOL
+		char* m_pText;        // DATA_TYPE::SDT_TEXT，不可能为NULL。
+		wchar_t* m_pUText;        // DATA_TYPE::SDT_UTEXT，不可能为NULL。
+		unsigned char* m_pBin;         // DATA_TYPE::SDT_BIN，不可能为NULL
+		MUNIT         m_unit;			//窗口单元
+		uintptr_t        m_dwSubCodeAdr; // DATA_TYPE::SDT_SUB_PTR，记录子程序代码地址
+		STATMENT_CALL_DATA m_statment;    // DATA_TYPE::SDT_STATMENT数据类型
+		void* m_pCompoundData; // 复合数据类型数据指针
+		void* m_pAryData;     // 数组数据指针
+		// 指向变量地址的指针
+		unsigned char* m_pByte;         // DATA_TYPE::SDT_BYTE*
+		short* m_pShort;        // DATA_TYPE::SDT_SHORT*
+		int* m_pInt;          // DATA_TYPE::SDT_INT*
+		unsigned int* m_pUInt;         // ((unsigned long)DATA_TYPE::SDT_INT)*
+		__int64* m_pInt64;        // DATA_TYPE::SDT_INT64*
+		float* m_pFloat;        // DATA_TYPE::SDT_FLOAT*
+		double* m_pDouble;       // DATA_TYPE::SDT_DOUBLE*
+		double* m_pDate;         // DATA_TYPE::SDT_DATE_TIME*
+		bool* m_pBool;         // DATA_TYPE::SDT_BOOL*
+		char** m_ppText;        // DATA_TYPE::SDT_TEXT，*m_ppText可能为NULL
+		wchar_t** m_ppUText;        // DATA_TYPE::SDT_UTEXT，不可能为NULL。
+		unsigned char** m_ppBin;         // DATA_TYPE::SDT_BIN，*m_ppBin可能为NULL
+		uintptr_t* m_pdwSubCodeAdr; // DATA_TYPE::SDT_SUB_PTR，子程序代码地址变量
+		PSTATMENT_CALL_DATA m_pStatment;    // DATA_TYPE::SDT_STATMENT数据类型变量
+		void** m_ppCompoundData;   // 复合数据类型变量
+		void** m_ppAryData;        // 数组数据变量
 	};
-
-	// 1、当用作传入参数时,如果该参数具有 AS_RECEIVE_VAR_OR_ARRAY 或AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
-	// 2、当用作传递参数数据时,如果为空白数据,则为 _SDT_NULL 。
-	DATA_TYPE m_dtDataType;
+	DATA_TYPE m_dtDataType; // 参数数据类型，包含数组标志和空白数据标志
 
 
+	MDATA_INF() = default;
 
-} MDATA_INF;
-typedef MDATA_INF* PMDATA_INF;
+	/*基本数据类型标志*/
+// 在数据类型中的数组标志,如果某数据类型值此位置1,则表示为此数据类型的数组。
+// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA
+// 标志的库命令参数说明其为是否为数组数据,其他场合均未使用。因此其他地方均可以忽略本标志。
+//DT_IS_ARY = 0x20000000,
+// 在数据类型中的传址标志,如果某数据类型值此位置1,则表示为此数据类型的变量地址。
+// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
+// 变量地址,其他场合均未使用。因此其他地方均可以忽略本标志。
+// 本标志与上标志不能共存。
+//DT_IS_VAR = 0x20000000,
+
+/*此为打上标记即为符合AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA或AS_RECEIVE_VAR_OR_OTHER的特殊对象(数组,引用\指针)*/
+	inline bool is_dt_flag() {
+		return (static_cast<std::int32_t>(m_dtDataType) & static_cast<std::int32_t>(0x20000000)) == 0x20000000;
+	}
+
+	// 移除标志
+	inline void remove_dt_flag() {
+		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) & ~0x20000000);
+	}
+
+	// 添加标志
+	inline void add_dt_flag() {
+		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) | 0x20000000);
+	}
+	/*取数据空间长度*/
+	//inline size_t get_esys_datatype_size()
+	//{
+	//	static  const std::map<DATA_TYPE, size_t> dataSizes = {
+	//		{DATA_TYPE::DATA_TYPE::SDT_BYTE, sizeof(unsigned char)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_SHORT, sizeof(short)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_BOOL, sizeof(int)},//易中逻辑型数组实际为int数组
+	//		{DATA_TYPE::DATA_TYPE::SDT_INT, sizeof(int)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_FLOAT, sizeof(float)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_SUB_PTR, sizeof(uintptr_t)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_TEXT, sizeof(char*)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_UTEXT, sizeof(wchar_t*)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_BIN, sizeof(PEBIN)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_INT64, sizeof(__int64)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_DOUBLE, sizeof(double)},
+	//		{DATA_TYPE::DATA_TYPE::SDT_DATE_TIME, sizeof(double)}//OLE时间
+	//	};
+	//	auto iter = dataSizes.find(m_dtDataType);
+	//	if (iter != dataSizes.end()) {
+	//		return iter->second;
+	//	}
+	//	return 0u;
+	//}
+
+
+};
+#pragma pack (pop)
+using PMDATA_INF = MDATA_INF*;
+
 
 #ifndef __GCC_
 #pragma pack (pop, old_value)    // 恢复VC++编译器结构对齐字节数。
@@ -746,7 +800,7 @@ typedef struct
 	DWORD  m_dwUnitID;        // 窗口组件 ID
 	INT    m_nEventIndex;    // 事件索引
 	INT    m_nArgCount;        // 事件所传递的参数数目,最多 5 个。
-	INT    m_nArgValue[5];    // 记录各参数值,SDT_BOOL 型参数值为 1 或 0。
+	INT    m_nArgValue[5];    // 记录各参数值,DATA_TYPE::SDT_BOOL 型参数值为 1 或 0。
 
 	//!!! 注意下面两个成员在没有定义返回值的事件处理中无效。
 	BOOL  m_blHasRetVal;    // 用户事件处理子程序处理完毕事件后是否有返回值
@@ -1111,7 +1165,7 @@ typedef INT(WINAPI* PFN_NOTIFY_SYS) (INT nMsg, DWORD dwParam1, DWORD dwParam2); 
 /* 所有命令和方法实现函数的原型。
    1、必须是 CDECL 调用方式;
    2、pRetData 用作返回数据;
-   3、如果指定库命令返回数据类型不为 _SDT_ALL ,可以不填充 pRetData->m_dtDataType,如果为 _SDT_ALL ,则必须填写;
+   3、如果指定库命令返回数据类型不为 DATA_TYPE::_SDT_ALL ,可以不填充 pRetData->m_dtDataType,如果为 DATA_TYPE::_SDT_ALL ,则必须填写;
    4、pArgInf 提供参数数据本身,所指向的 MDATA_INF 描述每个输入参数,数目等同于 nArgCount 。*/
 typedef void (*PFN_EXECUTE_CMD) (PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf);
 
@@ -1223,4 +1277,4 @@ typedef struct
 
 #endif
 
-//#define SDT_TYPE_OBJECT _SDT_NULL
+//#define SDT_TYPE_OBJECT DATA_TYPE::_SDT_NULL

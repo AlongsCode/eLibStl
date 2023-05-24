@@ -46,7 +46,7 @@ FucInfo get_ip_this = { {
 		/*explain*/ ("获取本机计算机ip地址"),
 		/*category*/7,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

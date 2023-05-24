@@ -1,20 +1,20 @@
 #include"ElibHelp.h"
 static ARG_INFO SimulateKeyArg[] =
 {
-	  { "虚拟键值", "可以为键值，键名等ansi unicode均可",0 , 0,  _SDT_ALL, NULL, NULL },
+	  { "虚拟键值", "可以为键值，键名等ansi unicode均可",0 , 0,  DATA_TYPE::_SDT_ALL, NULL, NULL },
 };
 
 static BYTE MyVkKeyScanExA(MDATA_INF pArgInf) {
 	HKL hKl = GetKeyboardLayout(0);
 	BYTE ret = 0;
 	//文本型
-	if (pArgInf.m_dtDataType == SDT_TEXT) {
+	if (pArgInf.m_dtDataType == DATA_TYPE::SDT_TEXT) {
 		if (strlen(pArgInf.m_pText) > 0)
 		{
 			ret = static_cast<BYTE>(VkKeyScanExA(pArgInf.m_pText[0], hKl));
 		}
 	}//宽字符
-	else if (pArgInf.m_dtDataType == SDT_BIN) {
+	else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BIN) {
 		std::wstring Ebin = std::wstring(elibstl::args_to_wsdata(&pArgInf, 0));
 		if (!Ebin.empty()) {
 			ret = static_cast<BYTE>(VkKeyScanExW(Ebin[0], hKl));
@@ -53,7 +53,7 @@ FucInfo analog_press = { {
 		/*explain*/ ("对于在多键位需要同时按下时，模拟按键无法模拟的情况下使用"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -69,7 +69,7 @@ FucInfo analog_up = { {
 		/*explain*/ ("对于在多键位需要同时按下时，模拟按键无法模拟的情况下使用"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

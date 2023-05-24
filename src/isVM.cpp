@@ -39,7 +39,7 @@ FucInfo g_is_inside_virtual_machine = { {
 		/*explain*/ ("检查是否运行在VirtualPC或VMware上"),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

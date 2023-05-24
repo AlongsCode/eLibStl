@@ -160,9 +160,9 @@ extern "C" PFN_INTERFACE WINAPI libstl_GetInterface_clinetex(INT nInterfaceNO)
 
 EVENT_INFO2 s_clinet_event[] =
 {
-	/*000*/ {"数据到达", "当服务器端将数据发送过来后，会产生本事件。在本事件的处理子程序中调用“取回数据”方法即可取回本次所收到的数据。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
-	/*001*/ {"连接成功", "当连接服务器端成功后，会产生本事件。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
-	/*002*/ {"连接断开", "当连接被服务器端断开后，会产生本事件。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"数据到达", "当服务器端将数据发送过来后，会产生本事件。在本事件的处理子程序中调用“取回数据”方法即可取回本次所收到的数据。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
+	/*001*/ {"连接成功", "当连接服务器端成功后，会产生本事件。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
+	/*002*/ {"连接断开", "当连接被服务器端断开后，会产生本事件。", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 
 
@@ -213,7 +213,7 @@ static ARG_INFO connectArgs[] =
 		/*explain*/ ("服务器的ip地址"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_TEXT,
+		/*type*/    DATA_TYPE::SDT_TEXT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -222,7 +222,7 @@ static ARG_INFO connectArgs[] =
 		/*explain*/ ("服务器对应端口号"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_SHORT,
+		/*type*/    DATA_TYPE::SDT_SHORT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -263,7 +263,7 @@ FucInfo Clinet_connect = { {
 		/*explain*/ ("连接到指定主机上的指定端口，该主机上的该端口必须已经被某一服务器组件监听。成功返回真，失败返回假。"),
 		/*category*/-1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -284,7 +284,7 @@ FucInfo Clinet_close = { {
 		/*explain*/ (" 断开与服务器的已有连接。"),
 		/*category*/-1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -310,7 +310,7 @@ FucInfo Clinet_GetData = { {
 		/*explain*/ ("取回所接收到的数据。本命令必须在“数据到达”事件的处理子程序中使用。"),
 		/*category*/-1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -327,7 +327,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("欲发送的数据"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -336,7 +336,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("是否返回，默认为假"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -357,7 +357,7 @@ FucInfo  Clinet_Send = { {
 		/*explain*/ ("向指定已经连接进来的客户发送数据。成功返回真，失败返回假。"),
 		/*category*/-1,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

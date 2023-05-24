@@ -7,7 +7,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		SDT_INT,
+		DATA_TYPE::SDT_INT,
 		0,
 		NULL,
 	}
@@ -23,7 +23,7 @@ FucInfo e_free = { {
 		/*explain*/ ("释放所申请的内存。"),
 		/*category*/15,
 		/*state*/   NULL,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

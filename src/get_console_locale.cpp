@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("1.unicode输出流,2.unicode输入流,3.ansi输出流,4.ansi输入流,默认为1"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -44,7 +44,7 @@ FucInfo get_console_locale = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   NULL,
-		/*ret*/     SDT_TEXT,
+		/*ret*/     DATA_TYPE::SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

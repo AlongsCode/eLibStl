@@ -60,7 +60,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("。本参数指定欲获取目录的类型，可以为以下常量值之一： 1: #我的文档;  2: #我的收藏夹;  3: #系统桌面;  4: #系统字体;  5: #开始菜单组;  6: #程序菜单组;  7: #启动菜单组;  8: #程序数据目录;  9: #Windows安装目录;  10: #Windows系统目录;  11: #临时文件目录。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -72,7 +72,7 @@ FucInfo get_special_folder_path_W = { {
 		/*explain*/ ("本命令返回指定的Windows系统特定目录，所返回目录名以“\\”符号结束，如失败返回空文本。"),
 		/*category*/8,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

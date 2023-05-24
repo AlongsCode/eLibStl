@@ -37,7 +37,7 @@ FucInfo get_clip_board_text_w = { {
 		/*explain*/ (""),
 		/*category*/6,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

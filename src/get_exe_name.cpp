@@ -40,7 +40,7 @@ FucInfo get_exe_name_W = { {
 		/*explain*/ ("取当前被执行的易程序文件的名称。"),
 		/*category*/8,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

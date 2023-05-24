@@ -14,7 +14,7 @@ FucInfo free_console = { {
 		/*explain*/ ("将控制台与进程分离，其后此进程中任何操作操作都无法控制控制台"),
 		/*category*/5,
 		/*state*/   NULL,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

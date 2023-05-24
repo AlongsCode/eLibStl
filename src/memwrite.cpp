@@ -7,7 +7,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		_SDT_ALL,
+		DATA_TYPE::_SDT_ALL,
 		0,
 		NULL,
 	},
@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		SDT_INT,
+		DATA_TYPE::SDT_INT,
 		0,
 		NULL,
 	},
@@ -25,7 +25,7 @@ static ARG_INFO Args[] =
 		"",
 		0,
 		0,
-		SDT_INT,
+		DATA_TYPE::SDT_INT,
 		0,
 		AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -36,10 +36,10 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 {
 	unsigned char* pData = nullptr;
 	size_t dwLen;
-	if ((pArgInf[0].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
+	if (pArgInf[0].is_dt_flag())//是数组
 	{
-		pArgInf[0].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
-		if (pArgInf[0].m_dtDataType == SDT_BYTE)//字节数组
+		pArgInf[0].remove_dt_flag(); //去除数组标志
+		if (pArgInf[0].m_dtDataType == DATA_TYPE::SDT_BYTE)//字节数组
 		{
 			pData = elibstl::get_array_element_inf<unsigned char*>(pArgInf[0].m_pAryData, &dwLen);
 			if (dwLen == 0)
@@ -50,7 +50,7 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 	}
 	else
 	{
-		if (pArgInf[0].m_dtDataType == SDT_TEXT)
+		if (pArgInf[0].m_dtDataType == DATA_TYPE::SDT_TEXT)
 		{
 			if (pArgInf[0].m_pText == NULL)
 				return;
@@ -62,7 +62,7 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 			pData = (LPBYTE)pArgInf[0].m_pText;
 
 		}
-		else if (pArgInf[0].m_dtDataType == SDT_BIN)
+		else if (pArgInf[0].m_dtDataType == DATA_TYPE::SDT_BIN)
 		{
 			if (pArgInf[0].m_pBin == NULL)
 				return;
@@ -83,7 +83,7 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 		}
 
 	}
-	if (pArgInf[2].m_dtDataType != _SDT_NULL && pArgInf[2].m_int > 0)
+	if (pArgInf[2].m_dtDataType != DATA_TYPE::_SDT_NULL && pArgInf[2].m_int > 0)
 	{
 		if (static_cast<size_t>(pArgInf[2].m_int) < dwLen)
 			dwLen = pArgInf[2].m_int;
@@ -97,7 +97,7 @@ FucInfo e_WriteMem = { {
 		/*explain*/ ("此代码申请内存不经过易语言ide的引用计数,完全由程序员管理,需自行释放。"),
 		/*category*/15,
 		/*state*/   NULL,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

@@ -800,7 +800,7 @@ public:
 		auto p = new CEdit(STD_ECTRL_CREATE_REAL_ARGS);
 		return elibstl::make_cwnd(p->GetHWND());
 	}
-	
+
 	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
@@ -1049,7 +1049,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 
 static EVENT_INFO2 s_Event_Edit[] =
 {
-	/*000*/ {"内容被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"内容被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, DATA_TYPE::_SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_Edit[] =
 {
@@ -1099,7 +1099,7 @@ static ARG_INFO s_ArgsAddText[] =
 		/*explain*/ ("欲加入的文本"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -1110,7 +1110,7 @@ FucInfo Fn_EditAddText = { {
 		/*explain*/ ("将指定文本加入到编辑框内容的尾部"),
 		/*category*/-1,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1144,7 +1144,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*explain*/ "相对客户区",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -1153,7 +1153,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*explain*/ "相对客户区",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	},
@@ -1162,7 +1162,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*explain*/ "接收字符行中位置的变量，若函数失败，则改变量的值为-1",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1173,7 +1173,7 @@ FucInfo Fn_EditCharFromPos = { {
 		/*explain*/ "返回字符位置，失败返回-1",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1194,7 +1194,7 @@ FucInfo Fn_EditCanUndo = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1214,7 +1214,7 @@ FucInfo Fn_EditEmptyUndoBuf = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1234,7 +1234,7 @@ FucInfo Fn_EditGetFirstLine = { {
 		/*explain*/ "返回行索引",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1254,7 +1254,7 @@ FucInfo Fn_EditGetLineCount = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1274,7 +1274,7 @@ FucInfo Fn_EditGetModify = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1294,7 +1294,7 @@ FucInfo Fn_EditHideBallloonTip = { {
 		/*explain*/ "该函数需要在清单中指定Comctl6.0",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1315,7 +1315,7 @@ static ARG_INFO s_ArgsLineLength[] =
 		/*explain*/ "若此参数设为-1，则返回选区所在各行的未选定字符数",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -1326,7 +1326,7 @@ FucInfo Fn_EditLineLength = { {
 		/*explain*/ "返回某一行字符的长度，若编辑框为单行模式，则返回全部文本的长度，失败返回0",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1357,7 +1357,7 @@ static ARG_INFO s_ArgsGetLine[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -1368,7 +1368,7 @@ FucInfo Fn_EditGetLine = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1393,7 +1393,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1402,7 +1402,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1413,7 +1413,7 @@ FucInfo Fn_EditGetMargins = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1443,7 +1443,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1452,7 +1452,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1461,7 +1461,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1470,7 +1470,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1481,7 +1481,7 @@ FucInfo Fn_EditGetRect = { {
 		/*explain*/ "返回字符位置，失败返回-1",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1502,7 +1502,7 @@ static ARG_INFO s_ArgsLineFromChar[] =
 		/*explain*/ "若该参数设为-1，则返回当前光标所在行，或者返回选定内容所在行（如果有）",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -1513,7 +1513,7 @@ FucInfo Fn_EditLineFromChar = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1534,7 +1534,7 @@ static ARG_INFO s_ArgsLineIndex[] =
 		/*explain*/ "若该参数设为-1，则指定当前光标所在行",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -1545,7 +1545,7 @@ FucInfo Fn_EditLineIndex = { {
 		/*explain*/ "失败返回-1",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_INT,
+		/*ret*/     DATA_TYPE::SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1566,7 +1566,7 @@ static ARG_INFO s_ArgsScroll[] =
 		/*explain*/ "0 - 向上一行   1 - 向下一行   2 - 向上一页   3 - 向下一页",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -1577,7 +1577,7 @@ FucInfo Fn_EditScroll = { {
 		/*explain*/ "失败返回假",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1598,7 +1598,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1607,7 +1607,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1618,7 +1618,7 @@ FucInfo Fn_EditLineScroll = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1643,7 +1643,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   0,
 	},
@@ -1652,7 +1652,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1661,7 +1661,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1672,7 +1672,7 @@ FucInfo Fn_EditPosFromChar = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1693,7 +1693,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   0,
 	},
@@ -1702,7 +1702,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ FALSE,
 		/*state*/   AS_HAS_DEFAULT_VALUE,
 	}
@@ -1713,7 +1713,7 @@ FucInfo Fn_EditReplaceSel = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1726,14 +1726,14 @@ EXTERN_C void libstl_Edit_SetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	DWORD dwMask = 0u;
-	if (pArgInf[1].m_dtDataType != _SDT_NULL)
+	if (pArgInf[1].m_dtDataType != DATA_TYPE::_SDT_NULL)
 	{
 		if (pArgInf[1].m_int < 0)
 			pArgInf[1].m_int = EC_USEFONTINFO;
 		dwMask |= EC_LEFTMARGIN;
 	}
 
-	if (pArgInf[2].m_dtDataType != _SDT_NULL)
+	if (pArgInf[2].m_dtDataType != DATA_TYPE::_SDT_NULL)
 	{
 		if (pArgInf[2].m_int < 0)
 			pArgInf[2].m_int = EC_USEFONTINFO;
@@ -1749,7 +1749,7 @@ static ARG_INFO s_ArgsSetMargins[] =
 		/*explain*/ "空为不设置，-1为设为默认",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1758,7 +1758,7 @@ static ARG_INFO s_ArgsSetMargins[] =
 		/*explain*/ "空为不设置，-1为设为默认",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1769,7 +1769,7 @@ FucInfo Fn_EditSetMargins = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1790,7 +1790,7 @@ static ARG_INFO s_ArgsSetModify[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BOOL,
+		/*type*/    DATA_TYPE::SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   0,
 	}
@@ -1801,7 +1801,7 @@ FucInfo Fn_EditSetModify = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1813,8 +1813,8 @@ FucInfo Fn_EditSetModify = { {
 EXTERN_C void libstl_Edit_SetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	if (pArgInf[1].m_dtDataType == _SDT_NULL && pArgInf[2].m_dtDataType == _SDT_NULL &&
-		pArgInf[3].m_dtDataType == _SDT_NULL && pArgInf[4].m_dtDataType == _SDT_NULL)
+	if (pArgInf[1].m_dtDataType == DATA_TYPE::_SDT_NULL && pArgInf[2].m_dtDataType == DATA_TYPE::_SDT_NULL &&
+		pArgInf[3].m_dtDataType == DATA_TYPE::_SDT_NULL && pArgInf[4].m_dtDataType == DATA_TYPE::_SDT_NULL)
 	{
 		SendMessageW(hWnd, EM_SETRECT, 0, NULL);
 		return;
@@ -1829,7 +1829,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1838,7 +1838,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1847,7 +1847,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1856,7 +1856,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1867,7 +1867,7 @@ FucInfo Fn_EditSetRect = { {
 		/*explain*/ "若四个参数全为空，则将显示矩形置回默认",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1880,7 +1880,7 @@ EXTERN_C void libstl_Edit_SetTabStop(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 
-	if (pArgInf[1].m_dtDataType == _SDT_NULL)
+	if (pArgInf[1].m_dtDataType == DATA_TYPE::_SDT_NULL)
 	{
 		SendMessageW(hWnd, EM_SETTABSTOPS, 0, 0);
 		return;
@@ -1909,7 +1909,7 @@ static ARG_INFO s_ArgsSetTabStop[] =
 		/*explain*/ "以对话框单位表示的制表位数组，若此参数设为空，则将制表位置回默认",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_RECEIVE_ARRAY_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
 	}
@@ -1920,7 +1920,7 @@ FucInfo Fn_EditSetTabStop = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1947,7 +1947,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1956,7 +1956,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
 	},
@@ -1965,7 +1965,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*explain*/ "0 - 无图标   1 - 信息图标   2 - 警告图标   3 - 错误图标   4 - 大信息图标   5 - 大警告图标   6 - 大错误图标，默认0",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    DATA_TYPE::SDT_INT,
 		/*default*/ 0,
 		/*state*/   AS_HAS_DEFAULT_VALUE,
 	}
@@ -1976,7 +1976,7 @@ FucInfo Fn_EditSetBallloonTip = { {
 		/*explain*/ "该函数需要在清单中指定Comctl6.0，失败返回假",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -1997,7 +1997,7 @@ FucInfo Fn_EditUndo = { {
 		/*explain*/ "失败返回假",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -2017,7 +2017,7 @@ FucInfo Fn_EditPaste = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -2037,7 +2037,7 @@ FucInfo Fn_EditCopy = { {
 		/*explain*/ "失败返回假",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     SDT_BOOL,
+		/*ret*/     DATA_TYPE::SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
@@ -2057,7 +2057,7 @@ FucInfo Fn_EditSelAll = { {
 		/*explain*/ "",
 		/*category*/-1,
 		/*state*/   0,
-		/*ret*/     _SDT_NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,

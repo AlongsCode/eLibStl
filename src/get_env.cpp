@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*explain*/ (""),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    DATA_TYPE::SDT_BIN,
 		/*default*/ 0,
 		/*state*/   NULL,
 	}
@@ -40,7 +40,7 @@ FucInfo get_env_W = { {
 		/*explain*/ ("返回文本，它关连于一个操作系统环境变量。成功时返回所取得的值，失败则返回空文本。"),
 		/*category*/8,
 		/*state*/   NULL,
-		/*ret*/     SDT_BIN,
+		/*ret*/     DATA_TYPE::SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

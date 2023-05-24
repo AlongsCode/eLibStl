@@ -75,7 +75,7 @@ namespace elibstl
 		{
 			throw std::invalid_argument("Invalid template argument type.");
 		}
-		if (pArgInf[index].m_dtDataType == _SDT_NULL)
+		if (pArgInf[index].m_dtDataType == DATA_TYPE::_SDT_NULL)
 		{
 			return {};
 		}
@@ -108,7 +108,7 @@ namespace elibstl
 	inline auto args_to_sdata(PMDATA_INF pArgInf, int index)
 	{
 
-		if (pArgInf[index].m_dtDataType == SDT_TEXT && pArgInf[index].m_pText && *pArgInf[index].m_pText != '\0') {
+		if (pArgInf[index].m_dtDataType == DATA_TYPE::SDT_TEXT && pArgInf[index].m_pText && *pArgInf[index].m_pText != '\0') {
 			//无需对原始指针操作的情况下映射为string_view
 			return std::string_view(pArgInf[index].m_pText);
 		}
@@ -129,7 +129,7 @@ namespace elibstl
 	}
 	inline PCWSTR args_to_pszw(PMDATA_INF pArgInf, int idx)
 	{
-		if (pArgInf[idx].m_dtDataType == _SDT_NULL)
+		if (pArgInf[idx].m_dtDataType == DATA_TYPE::_SDT_NULL)
 			return NULL;
 		else if (reinterpret_cast<INT*>(pArgInf[idx].m_pBin + sizeof(INT))[0])
 			return reinterpret_cast<PCWSTR>(pArgInf[idx].m_pBin + 8);
@@ -452,27 +452,27 @@ namespace elibstl
 	}
 	//移除数组标志
 	inline void remove_array_flags(PMDATA_INF pArgInf) {
-		pArgInf->m_dtDataType &= ~DT_IS_ARY;
+		pArgInf->remove_dt_flag();
 	}
 	// 添加数组标志
 	inline void add_array_flags(PMDATA_INF pArgInf) {
-		pArgInf->m_dtDataType |= DT_IS_ARY;
+		pArgInf->add_dt_flag();
 	}
 	//取基础类型长度
 	inline size_t get_esys_datatype_size(DATA_TYPE pArgInf)
 	{
 		static  const std::map<DATA_TYPE, size_t> dataSizes = {
-			{SDT_BYTE, sizeof(BYTE)},
-			{SDT_SHORT, sizeof(SHORT)},
-			{SDT_BOOL, sizeof(BOOL)},
-			{SDT_INT, sizeof(INT)},
-			{SDT_FLOAT, sizeof(FLOAT)},
-			{SDT_SUB_PTR, sizeof(DWORD)},
-			{SDT_TEXT, sizeof(DWORD)},
-			{SDT_BIN, sizeof(DWORD)},
-			{SDT_INT64, sizeof(INT64)},
-			{SDT_DOUBLE, sizeof(DOUBLE)},
-			{SDT_DATE_TIME, sizeof(DATE)}
+			{DATA_TYPE::SDT_BYTE, sizeof(BYTE)},
+			{DATA_TYPE::SDT_SHORT, sizeof(SHORT)},
+			{DATA_TYPE::SDT_BOOL, sizeof(BOOL)},
+			{DATA_TYPE::SDT_INT, sizeof(INT)},
+			{DATA_TYPE::SDT_FLOAT, sizeof(FLOAT)},
+			{DATA_TYPE::SDT_SUB_PTR, sizeof(DWORD)},
+			{DATA_TYPE::SDT_TEXT, sizeof(DWORD)},
+			{DATA_TYPE::SDT_BIN, sizeof(DWORD)},
+			{DATA_TYPE::SDT_INT64, sizeof(INT64)},
+			{DATA_TYPE::SDT_DOUBLE, sizeof(DOUBLE)},
+			{DATA_TYPE::SDT_DATE_TIME, sizeof(DATE)}
 		};
 		auto iter = dataSizes.find(pArgInf);
 		if (iter != dataSizes.end()) {
@@ -485,30 +485,30 @@ namespace elibstl
 
 		switch (pArgInf->m_dtDataType)
 		{
-		case SDT_TEXT:
+		case DATA_TYPE::SDT_TEXT:
 			efree(*pArgInf->m_ppText);
 			*pArgInf->m_ppText = clone_text(str);
 			break;
-		case SDT_BIN:
+		case DATA_TYPE::SDT_BIN:
 			efree(*pArgInf->m_ppBin);
 			*pArgInf->m_ppBin = clone_textw(str);
 			break;
-		case SDT_BYTE:
+		case DATA_TYPE::SDT_BYTE:
 			*pArgInf->m_pByte = (BYTE)_wtoi(str.c_str());
 			break;
-		case SDT_SHORT:
+		case DATA_TYPE::SDT_SHORT:
 			*pArgInf->m_pShort = (SHORT)_wtoi(str.c_str());
 			break;
-		case SDT_INT:
+		case DATA_TYPE::SDT_INT:
 			*pArgInf->m_pInt = _wtoi(str.c_str());
 			break;
-		case SDT_INT64:
+		case DATA_TYPE::SDT_INT64:
 			*pArgInf->m_pInt64 = _wtoi64(str.c_str());
 			break;
-		case SDT_FLOAT:
+		case DATA_TYPE::SDT_FLOAT:
 			*pArgInf->m_pFloat = (FLOAT)_wtof(str.c_str());
 			break;
-		case SDT_DOUBLE:
+		case DATA_TYPE::SDT_DOUBLE:
 			*pArgInf->m_pDouble = _wtof(str.c_str());
 			break;
 		default:
@@ -571,7 +571,7 @@ namespace elibstl
 		{
 			std::wstring str;
 
-			if (pArgInf.m_dtDataType == SDT_TEXT) {
+			if (pArgInf.m_dtDataType == DATA_TYPE::SDT_TEXT) {
 				if (pArgInf.m_pText && *pArgInf.m_pText != '\0') {
 					int widesize = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, NULL, 0);
 					if (GetLastError() == ERROR_NO_UNICODE_TRANSLATION)
@@ -593,49 +593,49 @@ namespace elibstl
 				}
 			}
 			//整数值类型
-			else if (pArgInf.m_dtDataType == SDT_BYTE || pArgInf.m_dtDataType == SDT_SHORT || pArgInf.m_dtDataType == SDT_INT ||
-				pArgInf.m_dtDataType == SDT_SUB_PTR) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BYTE || pArgInf.m_dtDataType == DATA_TYPE::SDT_SHORT || pArgInf.m_dtDataType == DATA_TYPE::SDT_INT ||
+				pArgInf.m_dtDataType == DATA_TYPE::SDT_SUB_PTR) {
 				intptr_t nVal = 0;
-				if (pArgInf.m_dtDataType == SDT_BYTE)
+				if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BYTE)
 					nVal = pArgInf.m_byte;
-				else if (pArgInf.m_dtDataType == SDT_SHORT)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_SHORT)
 					nVal = pArgInf.m_short;
-				else if (pArgInf.m_dtDataType == SDT_INT)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_INT)
 					nVal = pArgInf.m_int;
-				else if (pArgInf.m_dtDataType == SDT_SUB_PTR)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_SUB_PTR)
 					nVal = pArgInf.m_int;
 				return  std::to_wstring(nVal);
 			}
-			else if (pArgInf.m_dtDataType == SDT_INT64) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_INT64) {
 				return  std::to_wstring(pArgInf.m_int64);
 			}
-			else if (pArgInf.m_dtDataType == SDT_FLOAT) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_FLOAT) {
 				str = std::to_wstring(pArgInf.m_float);
 				str = str.substr(0, str.find_last_not_of(L'0') + 1);
 				if (str.back() == L'.')
 					str.pop_back();
 			}
-			else if (pArgInf.m_dtDataType == SDT_DOUBLE) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_DOUBLE) {
 				str = std::to_wstring(pArgInf.m_double);
 				str = str.substr(0, str.find_last_not_of(L'0') + 1);
 				if (str.back() == L'.')
 					str.pop_back();
 
 			}
-			else if (pArgInf.m_dtDataType == SDT_BOOL) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BOOL) {
 				if (pArgInf.m_bool)
 					return  L"真";
 				else
 					return  L"假";
 
 			}
-			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BIN) {//如果为字节集直接返回就可
 				if (pArgInf.m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
 					//无需对原始指针操作的情况下映射为string_view
 					return std::wstring(reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
 				}
 			}
-			else if (pArgInf.m_dtDataType == SDT_DATE_TIME) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_DATE_TIME) {
 
 				wchar_t temp[MAX_PATH]{ 0 };
 				SYSTEMTIME st = { 0 };
@@ -715,7 +715,7 @@ namespace elibstl
 		{
 			std::wstring str;
 
-			if (pArgInf.m_dtDataType == SDT_TEXT) {
+			if (pArgInf.m_dtDataType == DATA_TYPE::SDT_TEXT) {
 				if (pArgInf.m_pText && *pArgInf.m_pText != '\0') {
 					int widesize = MultiByteToWideChar(CP_ACP, 0, pArgInf.m_pText, -1, NULL, 0);
 					if (GetLastError() == ERROR_NO_UNICODE_TRANSLATION)
@@ -737,49 +737,49 @@ namespace elibstl
 				}
 			}
 			//整数值类型
-			else if (pArgInf.m_dtDataType == SDT_BYTE || pArgInf.m_dtDataType == SDT_SHORT || pArgInf.m_dtDataType == SDT_INT ||
-				pArgInf.m_dtDataType == SDT_SUB_PTR) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BYTE || pArgInf.m_dtDataType == DATA_TYPE::SDT_SHORT || pArgInf.m_dtDataType == DATA_TYPE::SDT_INT ||
+				pArgInf.m_dtDataType == DATA_TYPE::SDT_SUB_PTR) {
 				intptr_t nVal = 0;
-				if (pArgInf.m_dtDataType == SDT_BYTE)
+				if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BYTE)
 					nVal = pArgInf.m_byte;
-				else if (pArgInf.m_dtDataType == SDT_SHORT)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_SHORT)
 					nVal = pArgInf.m_short;
-				else if (pArgInf.m_dtDataType == SDT_INT)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_INT)
 					nVal = pArgInf.m_int;
-				else if (pArgInf.m_dtDataType == SDT_SUB_PTR)
+				else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_SUB_PTR)
 					nVal = pArgInf.m_int;
 				return  std::to_wstring(nVal);
 			}
-			else if (pArgInf.m_dtDataType == SDT_INT64) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_INT64) {
 				return  std::to_wstring(pArgInf.m_int64);
 			}
-			else if (pArgInf.m_dtDataType == SDT_FLOAT) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_FLOAT) {
 				str = std::to_wstring(pArgInf.m_float);
 				str = str.substr(0, str.find_last_not_of(L'0') + 1);
 				if (str.back() == L'.')
 					str.pop_back();
 			}
-			else if (pArgInf.m_dtDataType == SDT_DOUBLE) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_DOUBLE) {
 				str = std::to_wstring(pArgInf.m_double);
 				str = str.substr(0, str.find_last_not_of(L'0') + 1);
 				if (str.back() == L'.')
 					str.pop_back();
 
 			}
-			else if (pArgInf.m_dtDataType == SDT_BOOL) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BOOL) {
 				if (pArgInf.m_bool)
 					return  L"真";
 				else
 					return  L"假";
 
 			}
-			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_BIN) {//如果为字节集直接返回就可
 				if (pArgInf.m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
 					//无需对原始指针操作的情况下映射为string_view
 					return std::wstring(reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
 				}
 			}
-			else if (pArgInf.m_dtDataType == SDT_DATE_TIME) {
+			else if (pArgInf.m_dtDataType == DATA_TYPE::SDT_DATE_TIME) {
 
 				wchar_t temp[MAX_PATH]{ 0 };
 				SYSTEMTIME st = { 0 };
