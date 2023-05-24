@@ -25,9 +25,6 @@
     <Filter Include="源文件\资源文件">
       <UniqueIdentifier>{e0569e42-c333-45f0-8d00-716272d0f0f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\实现\全局命令\操作系统">
-      <UniqueIdentifier>{97c9b339-1e2f-498b-88d7-f408db18e043}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\实现\全局命令\磁盘操作">
       <UniqueIdentifier>{bdc67ce8-c5bf-4335-856d-4a672ad3040c}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,12 @@
     </Filter>
     <Filter Include="源文件\实现\全局命令\代码调试\unicode调试框">
       <UniqueIdentifier>{d1213135-db8d-44e6-b211-104337b9d388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\文件读写">
+      <UniqueIdentifier>{5709af61-c926-46d0-b583-4fb9eeb5a518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib">
+      <UniqueIdentifier>{655e0a69-ba73-475f-b22e-2695c1e757d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -191,17 +194,11 @@
     <ClCompile Include="src\Prime.cpp">
       <Filter>源文件\实现\全局命令\算数运算</Filter>
     </ClCompile>
-    <ClCompile Include="src\message_box.cpp">
-      <Filter>源文件\实现\全局命令\操作系统</Filter>
-    </ClCompile>
     <ClCompile Include="src\readfile.cpp">
       <Filter>源文件\实现\全局命令\磁盘操作</Filter>
     </ClCompile>
     <ClCompile Include="src\writefile.cpp">
       <Filter>源文件\实现\全局命令\磁盘操作</Filter>
-    </ClCompile>
-    <ClCompile Include="src\message_box_ex.cpp">
-      <Filter>源文件\实现\全局命令\操作系统</Filter>
     </ClCompile>
     <ClCompile Include="src\toupper.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
@@ -304,9 +301,6 @@
     </ClCompile>
     <ClCompile Include="src\get_ip_this_w.cpp">
       <Filter>源文件\实现\全局命令\网络通信</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Is_64_bit.cpp">
-      <Filter>源文件\实现\全局命令\操作系统</Filter>
     </ClCompile>
     <ClCompile Include="src\Clinet.cpp">
       <Filter>源文件\组件\通用型\tcp</Filter>
@@ -449,10 +443,25 @@
     <ClCompile Include="src\Code Debug\UnicedeEdit.cpp">
       <Filter>源文件\实现\全局命令\代码调试\unicode调试框</Filter>
     </ClCompile>
+    <ClCompile Include="src\ListBoxW.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\message_box.cpp">
+      <Filter>源文件\实现\全局命令\对话框类</Filter>
+    </ClCompile>
+    <ClCompile Include="src\message_box_ex.cpp">
+      <Filter>源文件\实现\全局命令\对话框类</Filter>
+    </ClCompile>
     <ClCompile Include="src\InputBox.cpp">
       <Filter>源文件\实现\全局命令\对话框类</Filter>
     </ClCompile>
-    <ClCompile Include="src\ListBoxW.cpp">
+    <ClCompile Include="src\Is_64_bit.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\memfile.cpp">
+      <Filter>源文件\组件\通用型\文件读写</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Control\Scintilla.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
   </ItemGroup>

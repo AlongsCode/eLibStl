@@ -624,7 +624,7 @@ public:
 	/// </summary>
 	/// <param name="pszText">文本指针</param>
 	/// <returns>成功返回TRUE，失败返回FALSE</returns>
-	eStlInline BOOL SetTextA(PCSTR pszText)
+	eStlInline   BOOL SetTextA(PCSTR pszText)
 	{
 		if (m_bInDesignMode)
 		{

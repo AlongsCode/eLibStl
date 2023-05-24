@@ -75,6 +75,28 @@ PWSTR A2W(PCSTR pszA)
 	return pszW;
 }
 
+PSTR W2UTF8(const std::wstring_view& text)
+{
+	int utf8Length = WideCharToMultiByte(CP_UTF8, 0, text.data(), static_cast<int>(text.length()), nullptr, 0, nullptr, nullptr);
+	PSTR pszW = new CHAR[utf8Length + 1];
+	WideCharToMultiByte(CP_UTF8, 0, text.data(), static_cast<int>(text.length()), pszW, utf8Length, nullptr, nullptr);
+	pszW[utf8Length] = '\0';
+	return pszW;
+}
+
+LPSTR A2UTF8(const std::string_view& text)
+{
+	int wideLength = MultiByteToWideChar(CP_ACP, 0, text.data(), static_cast<int>(text.length()), nullptr, 0);
+	std::wstring wideText(wideLength, L'\0');
+	MultiByteToWideChar(CP_ACP, 0, text.data(), static_cast<int>(text.length()), &wideText[0], wideLength);
+
+	int utf8Length = WideCharToMultiByte(CP_UTF8, 0, wideText.c_str(), -1, nullptr, 0, nullptr, nullptr);
+	LPSTR pszUTF8 = new CHAR[utf8Length + 1];
+	WideCharToMultiByte(CP_UTF8, 0, wideText.c_str(), -1, pszUTF8, utf8Length, nullptr, nullptr);
+	pszUTF8[utf8Length] = '\0';
+	return pszUTF8;
+}
+
 int CSimpleRefStrW::DupString(PCWSTR pszSrc, int cchSrc)
 {
 	if (!pszSrc || !cchSrc)
@@ -139,4 +161,5 @@ int CSimpleRefStrW::PushBack(PCWSTR pszSrc, int cchSrc)
 	m_cchText += cchSrc;
 	*(m_pszText + m_cchText) = L'\0';
 }
+
 ESTL_NAMESPACE_END

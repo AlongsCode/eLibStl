@@ -104,7 +104,7 @@ EXTERN_C void efn_extract_shortest_matching_text(PMDATA_INF pRetData, INT nArgCo
 		text = elibstl::args_to_wsdata(pArgInf, 0).data(),
 		left = elibstl::args_to_wsdata(pArgInf, 1).data(),
 		right = elibstl::args_to_wsdata(pArgInf, 2).data();
-	size_t size = static_cast<size_t>(elibstl::args_to_data<int>(pArgInf, 3).value_or(-1));
+	size_t size = static_cast<size_t>(elibstl::args_to_data<INT>(pArgInf, 3).value_or(-1));
 	std::vector<LPBYTE> ret;
 
 	if (size == static_cast<size_t>(-1))

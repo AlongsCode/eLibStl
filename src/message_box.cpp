@@ -81,7 +81,7 @@ FucInfo message_box_w = { {
 		/*ccname*/  ("信息框W"),
 		/*egname*/  (""),
 		/*explain*/ ("支持unicode的信息框,以及延迟时间"),
-		/*category*/3,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,

@@ -329,8 +329,9 @@ EXTERN_C void Fn_Server_GetData(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);
-	vector<unsigned char> tempdata = pServer->get_data();
-	pRetData->m_pBin = elibstl::clone_bin(tempdata.data(), tempdata.size());
+	size_t size = 0;
+	auto tempdata = pServer->get_data(&size);
+	pRetData->m_pBin = elibstl::clone_bin(tempdata, size);
 }
 
 FucInfo Server_GetData = { {

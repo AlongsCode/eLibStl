@@ -67,6 +67,8 @@
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\EplObj Class\memfile.cpp" />
+    <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
     <ClCompile Include="src\e_call.cpp" />
     <ClCompile Include="src\e_coroutine.cpp" />
     <ClCompile Include="src\create_dir.cpp" />
@@ -342,7 +344,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -370,7 +372,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -403,7 +405,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -543,7 +545,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers />
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>WIN32;__E_STATIC_LIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;__E_STATIC_LIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ConformanceMode>true</ConformanceMode>
@@ -574,6 +576,7 @@
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

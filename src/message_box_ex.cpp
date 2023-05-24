@@ -164,7 +164,7 @@ FucInfo task_dialog_w = { {
 		/*ccname*/  ("高级信息框"),
 		/*egname*/  ("TaskDialog"),
 		/*explain*/ ("函数调用失败返回-1,如果成功，返回枚举常量:高级信息框按钮::"),
-		/*category*/3,
+		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,
