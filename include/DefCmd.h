@@ -272,7 +272,7 @@ CtCommandLink/*命令链接*/\
 ,ClMenu/*菜单*/\
 ,CtListBoxW/*列表框*/\
 ,Obj_EMemFile/*内存文件*/\
-,CtScintilla
+//,CtScintilla无法通过静态编译，暂时移除
 
 
 
