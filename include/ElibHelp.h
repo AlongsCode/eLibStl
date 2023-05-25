@@ -23,6 +23,7 @@
 
 #define MAKEINTATOMW(i)  (PWSTR)((ULONG_PTR)((WORD)(i)))
 #define va_arg_idx(ap, idx, t) (*(t*)((ap)+_INTSIZEOF(t)*(idx)))
+#define BOOLNOT(x) (x) = !(x)
 
 struct FucInfo
 {
@@ -176,7 +177,8 @@ public:
 		m_cchText = cchText;
 		m_cchCapacity = SRSMakeCapacity(cchText + 1);
 		m_pszText = SRSAllocW(m_cchCapacity);
-		wcscpy(m_pszText, psz);
+		if (m_pszText)
+			wcscpy(m_pszText, psz);
 	}
 
 	CSimpleRefStrW(const CSimpleRefStrW& x)

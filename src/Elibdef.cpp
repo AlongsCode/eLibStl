@@ -1,6 +1,6 @@
-//#pragma comment(linker,"\"/manifestdependency:type='win32' \
-//name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-//processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 
 #include"ElibHelp.h"
@@ -9,6 +9,7 @@
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "Gdiplus.lib")
+#pragma comment(lib, "UxTheme.lib")
 //以下代码无需关注，添加命令自建cpp,命令和对象添加到DefCmd
 #ifndef  __E_STATIC_LIB
 //我怕vc2017linker链接不上,静态库用宏屏蔽掉吧，也不影响动态库的编译
@@ -128,16 +129,12 @@ extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 	return  &s_LibInfo;
 };
 #pragma endregion 暴露接口
-ESTL_NAMESPACE_BEGIN
-BOOL ShowListBoxDesignDlg(BYTE** ppItemsData, SIZE_T* pcbItems, BYTE* pInitData);
-ESTL_NAMESPACE_END
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH: {
 		g_elibstl_hModule = hModule;
-		//elibstl::ShowListBoxDesignDlg(0, 0,0);
 		break;
 	}
 	case DLL_PROCESS_DETACH:

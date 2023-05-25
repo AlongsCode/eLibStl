@@ -141,7 +141,7 @@ network_post/*网页访问*/\
 ,edbs_set_current/*跳到*/\
 ,edbs_read/*读*/\
 ,edbs_write/*写*/\
-, edbs_close/*关闭*/\
+,edbs_close/*关闭*/\
 ,edbs_next/*EDB.下一行*/\
 ,edbs_previous/*EDB.上一行*/\
 ,edbs_clean/*EDB.清空*/\
@@ -184,8 +184,8 @@ network_post/*网页访问*/\
 ,Fn_UpDownGetAccel/*调节器.取加速度*/\
 ,g_trim_leading_zeros/*删文本左侧无效零*/\
 ,g_extract_shortest_matching_text/*取中间文本*/\
-, g_byte_array_to_string/*字节集到十进制文本A*/\
-, g_byte_array_to_wstring/*字节集到十进制文本W*/\
+,g_byte_array_to_string/*字节集到十进制文本A*/\
+,g_byte_array_to_wstring/*字节集到十进制文本W*/\
 ,g_concatenate_wstrings/*拼接文本W*/\
 ,g_is_inside_virtual_machine/*是否运行在虚拟机*/\
 ,g_get_all_py/*取所有发音W*/\
@@ -236,8 +236,36 @@ network_post/*网页访问*/\
 ,Fn_memfile_read/*内存文件.读*/\
 ,Fn_memfile_write_mem/*内存文件.写入字节集*/\
 ,Fn_memfile_seek/*内存文件.移动读写位置*/\
-,Fn_memfile_get_off_set/*内存文件.取读写位置*/
-
+,Fn_memfile_get_off_set/*内存文件.取读写位置*/\
+,Fn_ListBoxWAddString/*列表框.*/\
+,Fn_ListBoxWInsertString/*列表框.*/\
+,Fn_ListBoxWDelString/*列表框.*/\
+,Fn_ListBoxWGetItemCount/*列表框.*/\
+,Fn_ListBoxWGetTopIndex/*列表框.*/\
+,Fn_ListBoxWSetTopIndex/*列表框.*/\
+,Fn_ListBoxWGetItemlParam/*列表框.*/\
+,Fn_ListBoxWSetItemlParam/*列表框.*/\
+,Fn_ListBoxWGetItemString/*列表框.*/\
+,Fn_ListBoxWSetItemString/*列表框.*/\
+,Fn_ListBoxWGetSelectedItemCount/*列表框.*/\
+,Fn_ListBoxWGetSelectedItem/*列表框.*/\
+,Fn_ListBoxWIsItemSelected/*列表框.*/\
+,Fn_ListBoxWGetItemCheckState/*列表框.*/\
+,Fn_ListBoxWSetItemCheckState/*列表框.*/\
+,Fn_ListBoxWSelectItem/*列表框.*/\
+,Fn_ListBoxWFindString/*列表框.*/\
+,Fn_ListBoxWGetItemColor/*列表框.*/\
+,Fn_ListBoxWSetItemColor/*列表框.*/\
+,Fn_ListBoxWGetItemTip/*列表框.*/\
+,Fn_ListBoxWSetItemTip/*列表框.*/\
+,Fn_ListBoxWGetItemImageIndex/*列表框.*/\
+,Fn_ListBoxWSetItemImageIndex/*列表框.*/\
+,Fn_ListBoxWInitStorage/*列表框.*/\
+,Fn_ListBoxWInsertMultiString/*列表框.*/\
+,Fn_ListBoxWAddMultiString/*列表框.*/\
+,Fn_ListBoxWGetItemRect/*列表框.*/\
+,Fn_ListBoxWHitTest/*列表框.*/\
+,Fn_ListBoxWGetItemStringLength/*列表框.*/\
 
 
 
@@ -272,7 +300,7 @@ CtCommandLink/*命令链接*/\
 ,ClMenu/*菜单*/\
 ,CtListBoxW/*列表框*/\
 ,Obj_EMemFile/*内存文件*/\
-//,CtScintilla无法通过静态编译，暂时移除
+/*,CtScintilla无法通过静态编译，暂时移除*/
 
 
 

@@ -1,4 +1,6 @@
 #include "EcontrolHelp.h"
+#include <Uxtheme.h>
+#include <vsstyle.h>
 
 #define SCID_LISTBOX		20230521'01u
 #define SCID_LISTBOXPARENT	20230521'02u
@@ -18,6 +20,8 @@ struct LBITEMCOMMINFO
 	BITBOOL bDisabled : 1;
 };
 
+#pragma warning (push)
+#pragma warning (disable:26495)// “未初始化变量”
 // 只用于运行时保存信息
 struct LBITEMINFO
 {
@@ -27,6 +31,7 @@ struct LBITEMINFO
 	HBRUSH hbrSelBK;
 	LBITEMCOMMINFO Info;
 };
+#pragma warning (pop)
 
 // 只用于设计对话框
 struct LBITEMINFO_DESIGN
@@ -38,9 +43,9 @@ struct LBITEMINFO_DESIGN
 * 版本1数据布局：
 * LBITEMSDATAHEADER_MEM结构
 * {
-* LBITEMHEADER_MEM结构
-* 标题
-* 提示文本
+*	LBITEMHEADER_MEM结构
+*	标题
+*	提示文本
 * }
 */
 #define DATA_VER_LBITEMS_1 1
@@ -340,6 +345,8 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 			}
 			else
 				pszText = NULL;
+#pragma warning (push)
+#pragma warning (disable:6387)// “可能为NULL，不符合函数规范”
 			SetDlgItemTextW(hWnd, IDC_ED_CAPTION, pszText);
 			_freea(pszText);
 			// 提示文本
@@ -361,6 +368,7 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_TEXT), pItem->Info.crText);
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_SELBK), pItem->Info.crSelBK);
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_SELTEXT), pItem->Info.crSelText);
+#pragma warning (pop)
 		}
 		return 0;
 		}
@@ -489,7 +497,7 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		SendMessageW(hLB, WM_SETREDRAW, FALSE, 0);
 		SendMessageW(hLB, LB_INITSTORAGE, cItems, 48);
-		int iTemp;
+
 		int cchTotal = 0;
 		LBITEMINFO_DESIGN* pItem;
 		pData += sizeof(LBITEMSDATAHEADER_MEM);
@@ -589,42 +597,55 @@ struct ELISTBOXDATA
 	UINT uFileAttr;			// 文件过滤属性
 	FILETIME ftMinTime;		// 文件最小时间，基于协调世界时
 	FILETIME ftMaxTime;		// 文件最大时间，基于协调世界时
-	SIZE_T cbItems;			// 表项数据长度
-	SIZE_T cbImageList;		// 图片组长度
-	int cchDir;				// 目录字符数
-	int cchFilePattern;		// 文件过滤器字符数
-	BITBOOL bMultiColumn : 1;	// 横向扩展
-	BITBOOL bAutoSort : 1;	// 自动排序
-	BITBOOL bMultiSel : 1;	// 鼠标多选
-	BITBOOL bExtSel : 1;	// 按键多选
-	BITBOOL bToolTip : 1;	// 工具提示
-	BITBOOL bUseTabStop: 1;	// 解析制表符
+	SIZE_T cbItems;			// 表项数据长度，全程维护此值
+	SIZE_T cbImageList;		// 图片组长度，仅在保存信息时有效
+	int cchDir;				// 目录字符数，全程维护此值
+	int cchFilePattern;		// 文件过滤器字符数，全程维护此值
+	int iCheckBoxMode;		// 选择列表框模式
+	BITBOOL bAutoSort : 1;		// 自动排序
+	BITBOOL bMultiSel : 1;		// 鼠标多选
+	BITBOOL bExtSel : 1;		// 按键多选
+	BITBOOL bToolTip : 1;		// 工具提示
 	BITBOOL bIntegralHeight: 1;	// 取整控件高度
 	BITBOOL bDisableNoScroll: 1;// 显示禁止的滚动条
-	BITBOOL bEllipsis: 1;	// 省略号
+	BITBOOL bEllipsis: 1;		// 省略号
 };
+
+constexpr int c_LBPadding = 3;
 
 class CListBox :public CCtrlBase
 {
 	SUBCLASS_MGR_DECL(CListBox)
 private:
 	ELISTBOXDATA m_Info{};
-
-	BYTE* m_pItems = NULL;
-
-	BOOL m_bImageListNeedDel = FALSE;
-	HIMAGELIST m_hImageList = NULL;
-	HGLOBAL m_hglbImageListData = NULL;
-	BOOL m_bILDataLocked = FALSE;
-	BYTE* m_pImageListData = NULL;
-
-	PWSTR m_pszDir = NULL;
-	PWSTR m_pszFilePattern = NULL;
-
-	HBRUSH m_hbrBK = NULL;
-	HBRUSH m_hbrSelBK = NULL;
-
-	std::vector<LBITEMINFO> m_ItemsInfo{};
+public:
+	//////////图像列表相关
+	BOOL m_bImageListNeedDel = FALSE;		// 图像列表句柄是否需要被释放
+	HIMAGELIST m_hImageList = NULL;			// 图像列表句柄
+	std::vector<BYTE> m_ILData{};			// 图片组数据
+	int m_cxImage = 0, m_cyImage = 0;		// 图像列表尺寸
+	//////////文件框相关
+	PWSTR m_pszDir = NULL;					// 目录
+	PWSTR m_pszFilePattern = NULL;			// 过滤器
+	//////////通用信息
+	HBRUSH m_hbrBK = NULL;					// 通用表项背景画刷
+	HBRUSH m_hbrSelBK = NULL;				// 通用选择表项背景画刷
+	int m_idxChecked = -1;					// 选中的项目，仅单选模式有效
+	BYTE* m_pItems = NULL;					// 项目数据，非设计模式下总为NULL
+	HTHEME m_hTheme = NULL;					// 主题句柄，绘制选择框时用
+	int m_cxCheckBox = 0;					// 选择框尺寸
+	std::vector<LBITEMINFO> m_ItemsInfo{};	// 所有项目
+private:
+	void UpdateThemeInfo()
+	{
+		CloseThemeData(m_hTheme);
+		m_hTheme = OpenThemeData(m_hWnd, L"Button");
+		HDC hDC = GetDC(m_hWnd);
+		SIZE size;
+		GetThemePartSize(m_hTheme, hDC, BP_CHECKBOX, CBS_CHECKEDNORMAL, NULL, TS_DRAW, &size);
+		m_cxCheckBox = size.cx;
+		ReleaseDC(m_hWnd, hDC);
+	}
 
 	void AddFile()
 	{
@@ -703,6 +724,25 @@ private:
 		_freea(pszPath);
 	}
 
+	int HitTestCheckBox(POINT pt)
+	{
+		POINT ptScr = pt;
+		ClientToScreen(m_hWnd, &ptScr);
+		int idx = LBItemFromPt(m_hWnd, ptScr, FALSE);
+		if (idx < 0)
+			return -1;
+
+		RECT rcItem;
+		if (SendMessageW(m_hWnd, LB_GETITEMRECT, idx, (LPARAM)&rcItem) == LB_ERR)
+			return -1;
+
+		rcItem.right = rcItem.left + m_cxCheckBox;
+		if (PtInRect(&rcItem, pt))
+			return idx;
+		else
+			return -1;
+	}
+
 	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch (uMsg)
@@ -728,20 +768,15 @@ private:
 			if (pdis->itemID == -1)
 				break;
 			auto& Item = p->m_ItemsInfo[pdis->itemID];
-			UINT uDTFlags = DT_NOCLIP | DT_SINGLELINE |
-				MultiSelect<UINT>(p->m_Info.iAlignH, DT_LEFT, DT_CENTER, DT_VCENTER) |
-				MultiSelect<UINT>(p->m_Info.iAlignV, DT_TOP, DT_VCENTER, DT_BOTTOM) |
-				(p->m_Info.bEllipsis ? DT_END_ELLIPSIS : 0);
-			HDC hDC = pdis->hDC;
 
+			HDC hDC = pdis->hDC;
+			// 画背景
 			if (IsBitExist(pdis->itemState, ODS_SELECTED))
 			{
 				if (Item.hbrSelBK)
 					FillRect(hDC, &pdis->rcItem, Item.hbrSelBK);
-				else if (p->m_hbrSelBK)
-					FillRect(hDC, &pdis->rcItem, p->m_hbrSelBK);
 				else
-					FillRect(hDC, &pdis->rcItem, (HBRUSH)GetSysColorBrush(COLOR_HIGHLIGHT));
+					FillRect(hDC, &pdis->rcItem, p->m_hbrSelBK);
 
 				if (Item.Info.crSelText != CLR_DEFAULT)
 					SetTextColor(hDC, Item.Info.crSelText);
@@ -754,10 +789,8 @@ private:
 			{
 				if (Item.hbrBK)
 					FillRect(hDC, &pdis->rcItem, Item.hbrBK);
-				else if (p->m_hbrBK)
-					FillRect(hDC, &pdis->rcItem, p->m_hbrBK);
 				else
-					FillRect(hDC, &pdis->rcItem, (HBRUSH)GetSysColorBrush(COLOR_WINDOW));
+					FillRect(hDC, &pdis->rcItem, p->m_hbrBK);
 
 				if (Item.Info.crText != CLR_DEFAULT)
 					SetTextColor(hDC, Item.Info.crText);
@@ -766,9 +799,60 @@ private:
 				else
 					SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
 			}
+			// 画选择框
+			RECT rc = pdis->rcItem;
+			if (p->m_Info.iCheckBoxMode)
+			{
+				rc.left += c_LBPadding;
+				rc.right = rc.left + p->m_cxCheckBox;
 
+				int iPartID;
+				int iStateID;
+				if (p->m_Info.iCheckBoxMode == 1)
+				{
+					iPartID = BP_RADIOBUTTON;
+					if (p->m_idxChecked == pdis->itemID)
+						iStateID = RBS_CHECKEDNORMAL;
+					else
+						iStateID = RBS_UNCHECKEDNORMAL;
+				}
+				else
+				{
+					iPartID = BP_CHECKBOX;
+					if (Item.Info.bChecked)
+						iStateID = CBS_CHECKEDNORMAL;
+					else
+						iStateID = CBS_UNCHECKEDNORMAL;
+				}
+				DrawThemeBackground(p->m_hTheme, hDC, iPartID, iStateID, &rc, NULL);
+				rc.right += c_LBPadding;
+				rc.left = rc.right;
+			}
+			else
+			{
+				rc.left += c_LBPadding;
+				rc.right = rc.left;
+			}
+			// 画图片
+			if (p->m_cxImage)
+			{
+				if (p->m_hImageList && Item.Info.idxImage >= 0)
+				{
+					ImageList_Draw(p->m_hImageList, Item.Info.idxImage, hDC,
+						rc.right,
+						rc.top + ((rc.bottom - rc.top) - p->m_cyImage) / 2,
+						ILD_NORMAL | (IsBitExist(pdis->itemState, ODS_SELECTED) ? ILD_SELECTED : 0));
+				}
+				rc.left += (p->m_cxImage + c_LBPadding);
+			}
+			rc.right = pdis->rcItem.right;
+			// 画文本
+			UINT uDTFlags = DT_NOCLIP | DT_SINGLELINE |
+				MultiSelect<UINT>(p->m_Info.iAlignH, DT_LEFT, DT_CENTER, DT_VCENTER) |
+				MultiSelect<UINT>(p->m_Info.iAlignV, DT_TOP, DT_VCENTER, DT_BOTTOM) |
+				(p->m_Info.bEllipsis ? DT_END_ELLIPSIS : 0);
 			SetBkMode(hDC, TRANSPARENT);
-			DrawTextW(hDC, Item.rsCaption, -1, &pdis->rcItem, uDTFlags);
+			DrawTextW(hDC, Item.rsCaption, -1, &rc, uDTFlags);
 			return TRUE;
 		}
 		break;
@@ -785,13 +869,61 @@ private:
 		auto p = (CListBox*)dwRefData;
 		switch (uMsg)
 		{
+		case WM_LBUTTONDOWN:// 更新检查框
+		{
+			if (!p->m_Info.iCheckBoxMode)
+				break;
+
+			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+			RECT rcItem;
+			int idx = p->HitTestCheckBox(pt);
+			if (idx < 0)
+				break;
+			if (p->m_Info.iCheckBoxMode == 1)
+			{
+				if (p->m_idxChecked != idx)
+				{
+					if (p->m_idxChecked >= 0)
+					{
+						DefSubclassProc(hWnd, LB_GETITEMRECT, p->m_idxChecked, (LPARAM)&rcItem);
+						InvalidateRect(hWnd, &rcItem, FALSE);
+					}
+					p->m_idxChecked = idx;
+				}
+			}
+			else
+			{
+				BOOLNOT(p->m_ItemsInfo[idx].Info.bChecked);
+				DefSubclassProc(hWnd, LB_GETITEMRECT, idx, (LPARAM)&rcItem);
+				InvalidateRect(hWnd, &rcItem, FALSE);
+			}
+		}
+		break;
+
+		case WM_LBUTTONDBLCLK:// 连击修复
+		{
+			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+			int idx = p->HitTestCheckBox(pt);
+			if (idx >= 0)
+				PostMessageW(hWnd, WM_LBUTTONDOWN, wParam, lParam);
+		}
+		break;
+
+		case WM_THEMECHANGED:
+			p->UpdateThemeInfo();
+			break;
+
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
+
 		case WM_DESTROY:
 			m_SM.OnCtrlDestroy(p);
+			delete p;
 			break;
 		}
+
+		SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -800,21 +932,23 @@ public:
 	{
 		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 
+		BYTE* pILData = NULL;
 		if (pAllData)
 		{
 			BYTE* p = (BYTE*)pAllData + cbBaseData;
+			// 结构
 			memcpy(&m_Info, p, sizeof(ELISTBOXDATA));
-
 			p += sizeof(ELISTBOXDATA);
-
+			// 项目
 			DupStreamForNewDelete(m_pItems, p, m_Info.cbItems);
 			p += m_Info.cbItems;
-
+			// 图像列表
+			pILData = p;
 			p += m_Info.cbImageList;
-
+			// 目录
 			DupStringForNewDeleteW(m_pszDir, (PCWSTR)p, m_Info.cchDir);
 			p += m_Info.cchDir * sizeof(WCHAR);
-
+			// 过滤器
 			DupStringForNewDeleteW(m_pszFilePattern, (PCWSTR)p, m_Info.cchFilePattern);
 			p += m_Info.cchFilePattern * sizeof(WCHAR);
 		}
@@ -832,16 +966,10 @@ public:
 		m_Info.iVer = DATA_VER_LISTBOX_1;
 
 		DWORD dwLBStyle = LBS_OWNERDRAWFIXED | LBS_NODATA;
-		if (m_Info.bMultiColumn)
-			dwLBStyle |= LBS_MULTICOLUMN;
-		if (m_Info.bAutoSort)
-			dwLBStyle |= LBS_SORT;
 		if (m_Info.bMultiSel)
 			dwLBStyle |= LBS_MULTIPLESEL;
 		if (m_Info.bExtSel)
 			dwLBStyle |= LBS_EXTENDEDSEL;
-		if (m_Info.bUseTabStop)
-			dwLBStyle |= LBS_USETABSTOPS;
 		if (!m_Info.bIntegralHeight)
 			dwLBStyle |= LBS_NOINTEGRALHEIGHT;
 		if (m_Info.bDisableNoScroll)
@@ -851,13 +979,18 @@ public:
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
+		UpdateThemeInfo();
+
 		SetRedraw(FALSE);
+		// 设置图像列表
+		if (pILData)
+			SetImageList(pILData, m_Info.cbImageList);
 		// 插入表项
 		if (m_pszDir)
 			AddFile();
 		else
 			SetItems(m_pItems, m_Info.cbItems, TRUE);
-
+		// 
 		SetClr(1, m_Info.crBK);
 		SetSelClr(1, m_Info.crSelBK);
 		SetCurrSel(m_Info.idxCurrSel);
@@ -867,8 +1000,32 @@ public:
 		SetRedraw(TRUE);
 	}
 
-	void LBInsertString(PCWSTR pszString, PCWSTR pszTip, const LBITEMCOMMINFO& CommInfo, int iPos = -1)
+	~CListBox()
 	{
+		delete[] m_pItems;
+		for (auto& x : m_ItemsInfo)
+		{
+			DeleteObject(x.hbrBK);
+			DeleteObject(x.hbrSelBK);
+		}
+
+		DeleteObject(m_hbrBK);
+		DeleteObject(m_hbrSelBK);
+
+		delete[] m_pszDir;
+		delete[] m_pszFilePattern;
+
+		if (m_bImageListNeedDel)
+			ImageList_Destroy(m_hImageList);
+
+		CloseThemeData(m_hTheme);
+	}
+
+	int LBInsertString(PCWSTR pszString, PCWSTR pszTip, const LBITEMCOMMINFO& CommInfo, int iPos = -1)
+	{
+		int idx = SendMessageW(m_hWnd, LB_INSERTSTRING, iPos, (LPARAM)L"");
+		if (idx == LB_ERR)
+			return -1;
 		LBITEMINFO Item{ pszString,pszTip,NULL,NULL,CommInfo };
 		if (CommInfo.crBK != CLR_DEFAULT)
 			Item.hbrBK = CreateSolidBrush(CommInfo.crBK);
@@ -877,19 +1034,22 @@ public:
 		if (iPos < 0)
 			m_ItemsInfo.push_back(std::move(Item));
 		else
-			m_ItemsInfo.insert(m_ItemsInfo.begin() + iPos, std::move(Item));
-		SendMessageW(m_hWnd, LB_INSERTSTRING, iPos, (LPARAM)L"");
+			m_ItemsInfo.insert(m_ItemsInfo.begin() + idx, std::move(Item));
+		return idx;
 	}
 
-	void LBAddString(PCWSTR pszString, PCWSTR pszTip, const LBITEMCOMMINFO& CommInfo)
+	int LBAddString(PCWSTR pszString, PCWSTR pszTip, const LBITEMCOMMINFO& CommInfo)
 	{
+		int idx = SendMessageW(m_hWnd, LB_ADDSTRING, 0, (LPARAM)L"");
+		if (idx == LB_ERR)
+			return -1;
 		LBITEMINFO Item{ pszString,pszTip,NULL,NULL,CommInfo };
 		if (CommInfo.crBK != CLR_DEFAULT)
 			Item.hbrBK = CreateSolidBrush(CommInfo.crBK);
 		if (CommInfo.crSelBK != CLR_DEFAULT)
 			Item.hbrSelBK = CreateSolidBrush(CommInfo.crSelBK);
 		m_ItemsInfo.push_back(std::move(Item));
-		SendMessageW(m_hWnd, LB_ADDSTRING, 0, (LPARAM)L"");
+		return idx;
 	}
 
 	void LBSetItem(int idx, PCWSTR pszString, PCWSTR pszTip, const LBITEMCOMMINFO& CommInfo)
@@ -908,7 +1068,7 @@ public:
 		m_ItemsInfo.resize(cItems);
 	}
 
-	void LBDeleteString(int iPos)
+	BOOL LBDeleteString(int iPos)
 	{
 		if (iPos < 0)
 		{
@@ -920,15 +1080,17 @@ public:
 			}
 			m_ItemsInfo.resize(0u);
 		}
-		else if (iPos >= 0 && iPos < m_ItemsInfo.size())
+		else if (iPos >= 0 && iPos < (int)m_ItemsInfo.size())
 		{
-			SendMessageW(m_hWnd, LB_DELETESTRING, iPos, 0);
+			if (SendMessageW(m_hWnd, LB_DELETESTRING, iPos, 0) == LB_ERR)
+				return FALSE;
 			auto Item = m_ItemsInfo[iPos];
 			DeleteObject(Item.hbrBK);
 			DeleteObject(Item.hbrSelBK);
 			m_ItemsInfo.erase(m_ItemsInfo.begin() + iPos);
 		}
 		Redraw();
+		return TRUE;
 	}
 
 	void LBInitStorage(int cItems)
@@ -958,16 +1120,15 @@ public:
 		LBITEMHEADER_MEM* pItemHeader;
 		PCWSTR pszCaption;
 		PCWSTR pszTip;
-		if (m_bInDesignMode)
-			if (bNoCopy)
-			{
-				if (m_pItems != pItems)
-					delete[] m_pItems;
-				m_pItems = pItems;
-				m_Info.cbItems = cbItems;
-			}
-			else
-				m_Info.cbItems = DupStreamForNewDelete(m_pItems, pItems, cbItems);
+		if (bNoCopy)
+		{
+			if (m_pItems != pItems)
+				delete[] m_pItems;
+			m_pItems = pItems;
+			m_Info.cbItems = cbItems;
+		}
+		else if (m_bInDesignMode)
+			m_Info.cbItems = DupStreamForNewDelete(m_pItems, pItems, cbItems);
 
 		pHeader = (LBITEMSDATAHEADER_MEM*)pData;
 		pData += sizeof(LBITEMSDATAHEADER_MEM);
@@ -988,9 +1149,6 @@ public:
 
 		SetRedraw(TRUE);
 		Redraw();
-
-		if (!m_bInDesignMode && bNoCopy)
-			delete[] pItems;
 	}
 
 	BYTE* GetItems()
@@ -1060,19 +1218,6 @@ public:
 			return SendMessageW(m_hWnd, LB_GETCURSEL, 0, 0);
 	}
 
-	eStlInline void SetMultiColumn(BOOL bMultiColumn)
-	{
-		m_Info.bMultiColumn = bMultiColumn;
-	}
-
-	eStlInline BOOL GetMultiColumn()
-	{
-		if (m_bInDesignMode)
-			return m_Info.bMultiColumn;
-		else
-			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), LBS_MULTICOLUMN);
-	}
-
 	eStlInline void SetItemHeight(int cy)
 	{
 		m_Info.cyItem = cy;
@@ -1096,7 +1241,7 @@ public:
 			if (cr != CLR_DEFAULT)
 				m_hbrBK = CreateSolidBrush(cr);
 			else
-				m_hbrBK = NULL;
+				m_hbrBK = GetSysColorBrush(COLOR_WINDOW);
 		}
 		else
 			m_Info.crText = cr;
@@ -1158,19 +1303,6 @@ public:
 	eStlInline BOOL GetToolTip()
 	{
 		return m_Info.bToolTip;
-	}
-
-	eStlInline void SetUseTabStop(BOOL bUseTabStop)
-	{
-		m_Info.bUseTabStop = bUseTabStop;
-	}
-
-	eStlInline BOOL GetUseTabStop()
-	{
-		if (m_bInDesignMode)
-			return m_Info.bUseTabStop;
-		else
-			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), LBS_USETABSTOPS);
 	}
 
 	eStlInline void SetIntegralHeight(BOOL bIntegralHeight)
@@ -1264,30 +1396,31 @@ public:
 
 	void SetImageList(BYTE* pData, SIZE_T cb)
 	{
-		if (m_bILDataLocked)
-			GlobalUnlock(m_hglbImageListData);
-		GlobalFree(m_hglbImageListData);
+		// 啥乱吴涛真有你的哈，几千几万的字节集到处拷，不留头上那8字节身上难受？
 		if (m_hImageList && m_bImageListNeedDel)
 			ImageList_Destroy(m_hImageList);
 
 		m_hImageList = NULL;
-		m_bILDataLocked = FALSE;
-		m_hglbImageListData = NULL;
 		m_bImageListNeedDel = FALSE;
-		m_pImageListData = NULL;
-		if (!pData || !cb)
+		if (!pData || cb <= 8u)
+		{
+			m_ILData.resize(0u);
 			return;
+		}
+
+		m_ILData.resize(cb);
+		for (SIZE_T i = 0; i < cb; ++i)
+			m_ILData[i] = pData[i];
 
 		HGLOBAL hGlobal;
-		hGlobal = GlobalAlloc(GMEM_MOVEABLE, cb);
-		m_hglbImageListData = hGlobal;
+		hGlobal = GlobalAlloc(GMEM_MOVEABLE, cb - 8);
 		if (!hGlobal)
 			return;
-		
+
 		void* p;
 		if (p = GlobalLock(hGlobal))
 		{
-			memcpy(p, pData, cb);
+			memcpy(p, pData + 8, cb - 8);
 			GlobalUnlock(hGlobal);
 		}
 
@@ -1297,38 +1430,84 @@ public:
 			m_hImageList = ImageList_Read(pIStream);
 			m_bImageListNeedDel = TRUE;
 			pIStream->Release();
+			ImageList_GetIconSize(m_hImageList, &m_cxImage, &m_cyImage);
 		}
+		GlobalFree(hGlobal);
 		Redraw();
 	}
 
 	BYTE* GetImageList(int* pcb)
 	{
+		SIZE_T cb = m_ILData.size();
 		if (m_bInDesignMode)
 		{
-			if (!m_hglbImageListData)
-				return NULL;
-			if (m_bILDataLocked)
-				return m_pImageListData;
+			if (cb)
+			{
+				if (pcb)
+					*pcb = cb;
+				return m_ILData.data();
+			}
 			else
 			{
-				m_bILDataLocked = TRUE;
-				return m_pImageListData = (BYTE*)GlobalLock(m_hglbImageListData);
+				if (pcb)
+					*pcb = 0;
+				return NULL;
 			}
 		}
 		
 		if (!m_hImageList)
+		{
+			if (pcb)
+				*pcb = 0;
 			return NULL;
-		if (m_bILDataLocked)
-			GlobalUnlock(m_hglbImageListData);
+		}
+
+		HGLOBAL hGlobal;
+		hGlobal = GlobalAlloc(GMEM_MOVEABLE, 4);
+		if (!hGlobal)
+		{
+			if (pcb)
+				*pcb = 0;
+			return NULL;
+		}
+
 		IStream* pIStream;
-		if (SUCCEEDED(CreateStreamOnHGlobal(m_hglbImageListData, FALSE, &pIStream)))
+		if (SUCCEEDED(CreateStreamOnHGlobal(hGlobal, FALSE, &pIStream)))
 		{
 			ImageList_Write(m_hImageList, pIStream);
 			pIStream->Release();
 		}
 
-		m_bILDataLocked = TRUE;
-		return m_pImageListData = (BYTE*)GlobalLock(m_hglbImageListData);
+		cb = GlobalSize(hGlobal) + 8;
+
+		COLORREF crDef = CLR_DEFAULT;
+		BYTE* pData, *pcr;
+		if (m_bImageListNeedDel)
+			pcr = m_ILData.data() + 4;
+		else
+			pcr = (BYTE*)&crDef;
+
+		if (pData = (BYTE*)GlobalLock(hGlobal))
+		{
+			m_ILData.resize(cb);
+			m_ILData[0] = 'M';
+			m_ILData[1] = 'I';
+			m_ILData[2] = 'T';
+			m_ILData[3] = 'L';
+			m_ILData[4] = pcr[0];
+			m_ILData[5] = pcr[1];
+			m_ILData[6] = pcr[2];
+			m_ILData[7] = pcr[3];
+			for (SIZE_T i = 7; i < cb; ++i)
+				m_ILData[i] = pData[i];
+
+			GlobalUnlock(hGlobal);
+		}
+		GlobalFree(hGlobal);
+
+		if (pcb)
+			*pcb = cb;
+		return m_ILData.data();
 	}
 
 	void SetSelClr(int idx, COLORREF cr)
@@ -1381,8 +1560,20 @@ public:
 			return m_Info.iAlignV;
 	}
 
+	eStlInline void SetCheckBoxMode(int iCheckBoxMode)
+	{
+		m_Info.iCheckBoxMode = iCheckBoxMode;
+		Redraw();
+	}
+
+	eStlInline int GetCheckBoxMode()
+	{
+		return m_Info.iCheckBoxMode;
+	}
+
 	eStlInline HGLOBAL FlattenInfo() override
 	{
+		m_Info.cbImageList = m_ILData.size();
 		BYTE* p;
 		SIZE_T cbBaseData;
 		SIZE_T cbDir = m_Info.cchDir * sizeof(WCHAR), 
@@ -1406,7 +1597,7 @@ public:
 		memcpy(p, m_pItems, m_Info.cbItems);
 		p += m_Info.cbItems;
 		// 图像列表
-
+		memcpy(p, m_ILData.data(), m_Info.cbImageList);
 		p += m_Info.cbImageList;
 		// 目录
 		memcpy(p, m_pszDir, cbDir);
@@ -1437,70 +1628,70 @@ public:
 		case 1:// 现行选中项
 			p->SetCurrSel(pPropertyVaule->m_int);
 			break;
-		case 2:// 横向扩展
-			p->SetMultiColumn(pPropertyVaule->m_bool);
-			return TRUE;
-		case 3:// 行高
+		case 2:// 行高
 			p->SetItemHeight(pPropertyVaule->m_int);
 			break;
-		case 4:// 文本颜色
-		case 5:// 背景颜色
-			p->SetClr(nPropertyIndex - 4, pPropertyVaule->m_clr);
+		case 3:// 文本颜色
+		case 4:// 背景颜色
+			p->SetClr(nPropertyIndex - 3, pPropertyVaule->m_clr);
 			break;
-		case 6:// 边框
+		case 5:// 边框
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
-		case 7:// 自动排序
+		case 6:// 自动排序
 			p->SetAutoSort(pPropertyVaule->m_bool);
-			return TRUE;
-		case 8:// 鼠标多选
+			break;
+		case 7:// 鼠标多选
 			p->SetMultiSel(pPropertyVaule->m_bool);
 			return TRUE;
-		case 9:// 按键多选
+		case 8:// 按键多选
 			p->SetExtSel(pPropertyVaule->m_bool);
 			return TRUE;
-		case 10:// 工具提示
+		case 9:// 工具提示
 			p->SetToolTip(pPropertyVaule->m_bool);
 			break;
-		case 11:// 解析制表符
-			p->SetUseTabStop(pPropertyVaule->m_bool);
-			return TRUE;
-		case 12:// 取整控件高度
+		case 10:// 取整控件高度
 			p->SetIntegralHeight(pPropertyVaule->m_bool);
 			return TRUE;
-		case 13:// 显示禁止滚动条
+		case 11:// 显示禁止滚动条
 			p->SetDisableNoScroll(pPropertyVaule->m_bool);
 			return TRUE;
-		case 14:// 目录
+		case 12:// 目录
 			p->SetDir((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 15:// 文件过滤器
+		case 13:// 文件过滤器
 			p->SetFilePattern((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 16:// 文件过滤属性
+		case 14:// 文件过滤属性
 			p->SetFileAttr(pPropertyVaule->m_int);
 			break;
-		case 17:// 文件最小日期
+		case 15:// 文件最小日期
 			p->SetFileTime(FALSE, pPropertyVaule->m_dtDateTime);
 			break;
-		case 18:// 文件最大日期
+		case 16:// 文件最大日期
 			p->SetFileTime(TRUE, pPropertyVaule->m_dtDateTime);
 			break;
-		case 19:// 图片组
+		case 17:// 图片组
 			p->SetImageList(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 20:// 选中文本颜色
-		case 21:// 选中背景颜色
-			p->SetSelClr(nPropertyIndex - 21, pPropertyVaule->m_clr);
+		case 18:// 选中文本颜色
+		case 19:// 选中背景颜色
+			p->SetSelClr(nPropertyIndex - 18, pPropertyVaule->m_clr);
 			break;
-		case 22:// 省略号裁剪
+		case 20:// 省略号裁剪
 			p->SetEllipsis(pPropertyVaule->m_bool);
 			break;
-		case 23:// 横向对齐
+		case 21:// 横向对齐
 			p->SetAlign(TRUE, pPropertyVaule->m_int);
 			break;
-		case 24:// 纵向对齐
+		case 22:// 纵向对齐
 			p->SetAlign(FALSE, pPropertyVaule->m_int);
+			break;
+		case 23:// 选择列表框
+			p->SetCheckBoxMode(pPropertyVaule->m_int);
+			break;
+		case 24:// 字体
+			p->SetFont((LOGFONTA*)pPropertyVaule->m_data.m_pData);
 			break;
 		}
 
@@ -1525,70 +1716,71 @@ public:
 		case 1:// 现行选中项
 			pPropertyVaule->m_int = p->GetCurrSel();
 			break;
-		case 2:// 横向扩展
-			pPropertyVaule->m_bool = p->GetMultiColumn();
-			break;
-		case 3:// 行高
+		case 2:// 行高
 			pPropertyVaule->m_int = p->GetItemHeight();
 			break;
-		case 4:// 文本颜色
-		case 5:// 背景颜色
-			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 4);
+		case 3:// 文本颜色
+		case 4:// 背景颜色
+			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 3);
 			break;
-		case 6:// 边框
+		case 5:// 边框
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
-		case 7:// 自动排序
+		case 6:// 自动排序
 			pPropertyVaule->m_bool = p->GetAutoSort();
 			break;
-		case 8:// 鼠标多选
+		case 7:// 鼠标多选
 			pPropertyVaule->m_bool = p->GetMultiSel();
 			break;
-		case 9:// 按键多选
+		case 8:// 按键多选
 			pPropertyVaule->m_bool = p->GetExtSel();
 			break;
-		case 10:// 工具提示
+		case 9:// 工具提示
 			pPropertyVaule->m_bool = p->GetToolTip();
 			break;
-		case 11:// 解析制表符
-			pPropertyVaule->m_bool = p->GetUseTabStop();
-			break;
-		case 12:// 取整控件高度
+		case 10:// 取整控件高度
 			pPropertyVaule->m_bool = p->GetIntegralHeight();
 			break;
-		case 13:// 显示禁止滚动条
+		case 11:// 显示禁止滚动条
 			pPropertyVaule->m_bool = p->GetDisableNoScroll();
 			break;
-		case 14:// 目录
+		case 12:// 目录
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetDir(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 15:// 文件过滤器
+		case 13:// 文件过滤器
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetFilePattern(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 16:// 文件过滤属性
+		case 14:// 文件过滤属性
 			pPropertyVaule->m_int = p->GetFileAttr();
 			break;
-		case 17:// 文件最小日期
+		case 15:// 文件最小日期
 			pPropertyVaule->m_dtDateTime = p->GetFileTime(FALSE);
 			break;
-		case 18:// 文件最大日期
+		case 16:// 文件最大日期
 			pPropertyVaule->m_dtDateTime = p->GetFileTime(TRUE);
 			break;
-		case 19:// 图片组
+		case 17:// 图片组
 			pPropertyVaule->m_data.m_pData = p->GetImageList(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 20:// 选中文本颜色
-		case 21:// 选中背景颜色
-			pPropertyVaule->m_clr = p->GetSelClr(nPropertyIndex - 21);
+		case 18:// 选中文本颜色
+		case 19:// 选中背景颜色
+			pPropertyVaule->m_clr = p->GetSelClr(nPropertyIndex - 18);
 			break;
-		case 22:// 省略号裁剪
+		case 20:// 省略号裁剪
 			pPropertyVaule->m_bool = p->GetEllipsis();
 			break;
-		case 23:// 横向对齐
+		case 21:// 横向对齐
 			pPropertyVaule->m_int = p->GetAlign(TRUE);
 			break;
-		case 24:// 纵向对齐
+		case 22:// 纵向对齐
 			pPropertyVaule->m_int = p->GetAlign(FALSE);
+			break;
+		case 23:// 选择列表框
+			pPropertyVaule->m_int = p->GetCheckBoxMode();
+			break;
+		case 24:// 字体
+			pPropertyVaule->m_data.m_pData = p->GetFont();
+			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
 			break;
 		}
 
@@ -1598,7 +1790,6 @@ public:
 	static BOOL WINAPI EInputW(HUNIT hUnit, INT nPropertyIndex, BOOL* pblModified, LPVOID pResultExtraData)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
-		PWSTR psz;
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
@@ -1612,7 +1803,10 @@ public:
 			*pblModified = bOK;
 		}
 		break;
+
 		case 14:// 目录
+		{
+			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetDir(NULL)))
 			{
 				delete[] p->m_pszDir;
@@ -1624,8 +1818,12 @@ public:
 				p->AddFile();
 				*pblModified = TRUE;
 			}
-			break;
+		}
+		break;
+
 		case 15:// 过滤器
+		{
+			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetFilePattern(NULL)))
 			{
 				delete[] p->m_pszFilePattern;
@@ -1637,7 +1835,8 @@ public:
 				p->AddFile();
 				*pblModified = TRUE;
 			}
-			break;
+		}
+		break;
 		}
 		return FALSE;
 	}
@@ -1659,8 +1858,8 @@ public:
 		{
 		case NU_GET_CREATE_SIZE_IN_DESIGNER:
 		{
-			*((int*)dwParam1) = 80;
-			*((int*)dwParam2) = 20;
+			*((int*)dwParam1) = 200;
+			*((int*)dwParam2) = 400;
 		}
 		return TRUE;
 		}
@@ -1704,32 +1903,799 @@ static UNIT_PROPERTY s_Member_ListBox[] =
 
 	/*000*/  {"表项", "Items", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 	/*001*/  {"现行选中项", "CurrSel", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*002*/	 {"横向扩展", "MultiColumn", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*003*/  {"行高", "ItemHeight", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*004*/  {"文本颜色", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
-	/*005*/  {"背景颜色", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),NULL},
-	/*006*/  {"边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
-	/*007*/  {"自动排序", "AutoSort", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*008*/  {"鼠标多选", "MultiSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*009*/  {"按键多选", "ExtSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*010*/  {"工具提示", "ToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*011*/  {"解析制表符", "UseTabStop", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*012*/  {"取整控件高度", "IntegralHeight", "是否将控件高度对齐到项目高度的整数倍。当然，如果个别项目高度与整体不同，该属性没有意义，但仍可用，此时将对齐到总体高度。", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*013*/  {"显示禁止滚动条", "DisableNoScroll", "滚动条不可用时显示禁止的滚动条而不是隐藏滚动条", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*014*/  {"目录", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
-	/*015*/  {"文件过滤器", "FilePattern", "如“*.mp3”，多个过滤器之间用竖线“|”分隔", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
-	/*016*/  {"文件过滤属性", "FileAttr", "以下值的位或组合：1 - 只读  2 - 隐藏  4 - 系统  16 - 目录  32 - 存档  128 - 通常", UD_INT, _PROP_OS(__OS_WIN),  NULL},
-	/*017*/  {"文件最小日期", "FileDateMin", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
-	/*018*/  {"文件最大日期", "FileDataMax", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
-	/*019*/  {"图片组", "ImageList", "", UD_IMAGE_LIST, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
-	/*020*/  {"选中文本颜色", "SelTextClr", "", UD_COLOR, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,NULL},
-	/*021*/  {"选中背景颜色", "SelBKClr", "", UD_COLOR, _PROP_OS(__OS_WIN) | UW_HAS_INDENT, NULL},
-	/*022*/	 {"省略号裁剪", "Ellipsis", "", UD_BOOL, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
-	/*023*/  {"横向对齐方式", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN) | UW_HAS_INDENT, "左边\0""居中\0""右边\0""\0"},
-	/*024*/  {"纵向对齐方式", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,"上边\0""居中\0""下边\0""\0"},
+	/*002*/  {"行高", "ItemHeight", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*003*/  {"文本颜色", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
+	/*004*/  {"背景颜色", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),NULL},
+	/*005*/  {"边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
+	/*006*/  {"自动排序", "AutoSort", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*007*/  {"鼠标多选", "MultiSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*008*/  {"按键多选", "ExtSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*009*/  {"工具提示", "ToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*010*/  {"取整控件高度", "IntegralHeight", "是否将控件高度对齐到项目高度的整数倍", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*011*/  {"显示禁止滚动条", "DisableNoScroll", "滚动条不可用时显示禁止的滚动条而不是隐藏滚动条", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*012*/  {"目录", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*013*/  {"文件过滤器", "FilePattern", "如“*.mp3”，多个过滤器之间用竖线“|”分隔", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*014*/  {"文件过滤属性", "FileAttr", "以下值的位或组合：1 - 只读  2 - 隐藏  4 - 系统  16 - 目录  32 - 存档  128 - 通常", UD_INT, _PROP_OS(__OS_WIN),  NULL},
+	/*015*/  {"文件最小日期", "FileDateMin", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
+	/*016*/  {"文件最大日期", "FileDataMax", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
+	/*017*/  {"图片组", "ImageList", "", UD_IMAGE_LIST, _PROP_OS(__OS_WIN),  NULL},
+	/*018*/  {"选中文本颜色", "SelTextClr", "", UD_COLOR, _PROP_OS(__OS_WIN),NULL},
+	/*019*/  {"选中背景颜色", "SelBKClr", "", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
+	/*020*/	 {"省略号裁剪", "Ellipsis", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*021*/  {"横向对齐方式", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左边\0""居中\0""右边\0""\0"},
+	/*022*/  {"纵向对齐方式", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"上边\0""居中\0""下边\0""\0"},
+	/*023*/  {"选择列表框", "CheckBoxMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"无\0""单选列表框\0""复选列表框\0""\0"},
+	/*024*/  {"字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
 };
 
-static INT s_Cmd_ListBox[] = { 0 };
+
+EXTERN_C void libstl_ListBoxW_AddString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	elibstl::LBITEMCOMMINFO CommInfo{};
+	CommInfo.crBK = CommInfo.crSelBK = CommInfo.crText = CommInfo.crSelText = CLR_DEFAULT;
+	CommInfo.idxImage = -1;
+	pRetData->m_int = p->LBAddString(
+		elibstl::args_to_pszw(pArgInf, 1),
+		elibstl::args_to_pszw(pArgInf, 2),
+		CommInfo);
+}
+static ARG_INFO s_ArgsAddString[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL },
+	{ "提示文本","",0,0,SDT_BIN,0,AS_DEFAULT_VALUE_IS_EMPTY }
+};
+FucInfo Fn_ListBoxWAddString = { {
+		/*ccname*/  "加入表项",
+		/*egname*/  "AddString",
+		/*explain*/ "返回表项索引，失败返回-1",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsAddString),
+		/*arg lp*/  s_ArgsAddString,
+	} , ESTLFNAME(libstl_ListBoxW_AddString) };
+
+EXTERN_C void libstl_ListBoxW_InsertString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	elibstl::LBITEMCOMMINFO CommInfo{};
+	CommInfo.crBK = CommInfo.crSelBK = CommInfo.crText = CommInfo.crSelText = CLR_DEFAULT;
+	CommInfo.idxImage = -1;
+	pRetData->m_int = p->LBInsertString(
+		elibstl::args_to_pszw(pArgInf, 1),
+		elibstl::args_to_pszw(pArgInf, 2),
+		CommInfo,
+		pArgInf[3].m_int);
+}
+static ARG_INFO s_ArgsInsertString[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL },
+	{ "提示文本","",0,0,SDT_BIN,0,AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "插入位置","",0,0,SDT_INT,-1,AS_HAS_DEFAULT_VALUE },
+};
+FucInfo Fn_ListBoxWInsertString = { {
+		/*ccname*/  "插入表项",
+		/*egname*/  "InsertString",
+		/*explain*/ "返回表项索引，失败返回-1",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsInsertString),
+		/*arg lp*/  s_ArgsInsertString,
+	} , ESTLFNAME(libstl_ListBoxW_InsertString) };
+
+EXTERN_C void libstl_ListBoxW_DelString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	pRetData->m_bool = p->LBDeleteString(pArgInf[1].m_int);
+}
+static ARG_INFO s_ArgsDelString[] =
+{
+	{ "删除位置","若为-1则删除所有项目",0,0,SDT_INT,0,0 },
+};
+FucInfo Fn_ListBoxWDelString = { {
+		/*ccname*/  "删除表项",
+		/*egname*/  "DelString",
+		/*explain*/ "成功返回真，失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsDelString),
+		/*arg lp*/  s_ArgsDelString,
+	} , ESTLFNAME(libstl_ListBoxW_DelString) };
+
+EXTERN_C void libstl_ListBoxW_GetItemCount(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int - SendMessageW(hWnd, LB_GETCOUNT, 0, 0);
+}
+FucInfo Fn_ListBoxWGetItemCount = { {
+		/*ccname*/  "取表项数",
+		/*egname*/  "GetItemCount",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemCount) };
+
+EXTERN_C void libstl_ListBoxW_GetTopIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_int == SendMessageW(hWnd, LB_GETTOPINDEX, 0, 0);
+}
+FucInfo Fn_ListBoxWGetTopIndex = { {
+		/*ccname*/  "取第一可见项",
+		/*egname*/  "GetTopIndex",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , ESTLFNAME(libstl_ListBoxW_GetTopIndex) };
+
+EXTERN_C void libstl_ListBoxW_SetTopIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	pRetData->m_bool = (SendMessageW(hWnd, LB_SETTOPINDEX, pArgInf[1].m_int, 0) != LB_ERR);
+}
+static ARG_INFO s_ArgsSetTopIndex[] =
+{
+	{ "位置","",0,0,SDT_INT,0,NULL }
+};
+FucInfo Fn_ListBoxWSetTopIndex = { {
+		/*ccname*/  "加入表项",
+		/*egname*/  "SetTopIndex",
+		/*explain*/ "成功返回真，失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetTopIndex),
+		/*arg lp*/  s_ArgsSetTopIndex,
+	} , ESTLFNAME(libstl_ListBoxW_SetTopIndex) };
+
+EXTERN_C void libstl_ListBoxW_GetItemlParam(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	int idx = pArgInf[1].m_int;
+	if (idx < 0 || idx > p->m_ItemsInfo.size())
+	{
+		pRetData->m_int = 0;
+		return;
+	}
+
+	pRetData->m_int = p->m_ItemsInfo[idx].Info.lParam;
+}
+static ARG_INFO s_ArgsGetItemlParam[] =
+{
+	{ "索引","",0,0,SDT_INT,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemlParam = { {
+		/*ccname*/  "取表项数值",
+		/*egname*/  "GetItemlParam",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemlParam),
+		/*arg lp*/  s_ArgsGetItemlParam,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemlParam) };
+
+EXTERN_C void libstl_ListBoxW_SetItemlParam(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	int idx = pArgInf[1].m_int;
+	if (idx < 0 || idx > p->m_ItemsInfo.size())
+	{
+		pRetData->m_int = 0;
+		return;
+	}
+
+	p->m_ItemsInfo[idx].Info.lParam = pArgInf[2].m_int;
+}
+static ARG_INFO s_ArgsSetItemlParam[] =
+{
+	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "表项数值","",0,0,SDT_INT,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemlParam = { {
+		/*ccname*/  "置表项数值",
+		/*egname*/  "SetItemlParam",
+		/*explain*/ "成功返回真，失败返回假",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BOOL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemlParam),
+		/*arg lp*/  s_ArgsSetItemlParam,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemlParam) };
+
+EXTERN_C void libstl_ListBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	int idx = pArgInf[1].m_int;
+	if (idx < 0 || idx > p->m_ItemsInfo.size())
+	{
+		pRetData->m_pBin = NULL;
+		return;
+	}
+
+	auto& rsCaption = p->m_ItemsInfo[idx].rsCaption;
+	if (!rsCaption.m_cchText)
+	{
+		pRetData->m_pBin = NULL;
+		return;
+	}
+
+	pRetData->m_pBin = elibstl::malloc_array<BYTE>(rsCaption.m_cchText + 1);
+	rsCaption.CopyTo((PWSTR)(pRetData->m_pBin + 8));
+}
+static ARG_INFO s_ArgsGetItemString[] =
+{
+	{ "索引","",0,0,SDT_INT,0,NULL },
+};
+FucInfo Fn_ListBoxWGetItemString = { {
+		/*ccname*/  "取表项文本",
+		/*egname*/  "GetItemString",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_BIN,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemString),
+		/*arg lp*/  s_ArgsGetItemString,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemString) };
+
+EXTERN_C void libstl_ListBoxW_SetItemString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	auto p = elibstl::CListBox::m_CtrlSCInfo[hWnd];
+
+	int idx = pArgInf[1].m_int;
+	if (idx < 0 || idx > p->m_ItemsInfo.size())
+	{
+		pRetData->m_pBin = NULL;
+		return;
+	}
+
+	auto& rsCaption = p->m_ItemsInfo[idx].rsCaption;
+	rsCaption = elibstl::args_to_pszw(pArgInf, 2);
+	p->Redraw();
+}
+static ARG_INFO s_ArgsSetItemString[] =
+{
+	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemString = { {
+		/*ccname*/  "置表项文本",
+		/*egname*/  "SetItemString",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemString),
+		/*arg lp*/  s_ArgsSetItemString,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemString) };
+
+EXTERN_C void libstl_ListBoxW_GetSelectedItemCount(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+	pRetData->m_int = SendMessageW(hWnd, LB_GETSELCOUNT, 0, 0);
+}
+FucInfo Fn_ListBoxWGetSelectedItemCount = { {
+		/*ccname*/  "取选中表项数",
+		/*egname*/  "GetSelectedItemCount",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , ESTLFNAME(libstl_ListBoxW_GetSelectedItemCount) };
+
+EXTERN_C void libstl_ListBoxW_GetSelectedItem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+	int cSeledItems = SendMessageW(hWnd, LB_GETSELCOUNT, 0, 0);
+	if (cSeledItems <= 0)
+	{
+		pRetData->m_pAryData = NULL;
+		return;
+	}
+
+	pRetData->m_pAryData = elibstl::malloc_array<int>(cSeledItems);
+	SendMessageW(hWnd, LB_GETSELITEMS, cSeledItems, (LPARAM)((BYTE*)pRetData->m_pAryData + 8));
+}
+FucInfo Fn_ListBoxWGetSelectedItem = { {
+		/*ccname*/  "取选中表项",
+		/*egname*/  "GetSelectedItem",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   CT_RETRUN_ARY_TYPE_DATA,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} , ESTLFNAME(libstl_ListBoxW_GetSelectedItem) };
+
+EXTERN_C void libstl_ListBoxW_IsItemSelected(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsIsItemSelected[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWIsItemSelected = { {
+		/*ccname*/  "表项是否选中 ",
+		/*egname*/  "IsItemSelected",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsIsItemSelected),
+		/*arg lp*/  s_ArgsIsItemSelected,
+	} , ESTLFNAME(libstl_ListBoxW_IsItemSelected) };
+
+EXTERN_C void libstl_ListBoxW_GetItemCheckState(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemCheckState[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemCheckState = { {
+		/*ccname*/  "取表项检查状态",
+		/*egname*/  "GetItemCheckState",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemCheckState),
+		/*arg lp*/  s_ArgsGetItemCheckState,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemCheckState) };
+
+EXTERN_C void libstl_ListBoxW_SetItemCheckState(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsSetItemCheckState[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemCheckState = { {
+		/*ccname*/  "置表项检查状态",
+		/*egname*/  "SetItemCheckState",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemCheckState),
+		/*arg lp*/  s_ArgsSetItemCheckState,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemCheckState) };
+
+EXTERN_C void libstl_ListBoxW_SelectItem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsSelectItem[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSelectItem = { {
+		/*ccname*/  "选中表项",
+		/*egname*/  "SelectItem",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSelectItem),
+		/*arg lp*/  s_ArgsSelectItem,
+	} , ESTLFNAME(libstl_ListBoxW_SelectItem) };
+
+EXTERN_C void libstl_ListBoxW_FindString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsFindString[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWFindString = { {
+		/*ccname*/  "寻找表项",
+		/*egname*/  "FindString",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsFindString),
+		/*arg lp*/  s_ArgsFindString,
+	} , ESTLFNAME(libstl_ListBoxW_FindString) };
+
+EXTERN_C void libstl_ListBoxW_GetItemColor(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemColor[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemColor = { {
+		/*ccname*/  "取表项颜色",
+		/*egname*/  "GetItemColor",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemColor),
+		/*arg lp*/  s_ArgsGetItemColor,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemColor) };
+
+EXTERN_C void libstl_ListBoxW_SetItemColor(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsSetItemColor[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemColor = { {
+		/*ccname*/  "置表项颜色",
+		/*egname*/  "SetItemColor",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemColor),
+		/*arg lp*/  s_ArgsSetItemColor,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemColor) };
+
+EXTERN_C void libstl_ListBoxW_GetItemTip(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemTip[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemTip = { {
+		/*ccname*/  "取表项提示文本",
+		/*egname*/  "GetItemTip",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemTip),
+		/*arg lp*/  s_ArgsGetItemTip,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemTip) };
+
+EXTERN_C void libstl_ListBoxW_SetItemTip(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsSetItemTip[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemTip = { {
+		/*ccname*/  "置表项提示文本",
+		/*egname*/  "SetItemTip",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemTip),
+		/*arg lp*/  s_ArgsSetItemTip,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemTip) };
+
+EXTERN_C void libstl_ListBoxW_GetItemImageIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemImageIndex[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemImageIndex = { {
+		/*ccname*/  "取表项图片索引",
+		/*egname*/  "GetItemImageIndex",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemImageIndex),
+		/*arg lp*/  s_ArgsGetItemImageIndex,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemImageIndex) };
+
+EXTERN_C void libstl_ListBoxW_SetItemImageIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsSetItemImageIndex[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWSetItemImageIndex = { {
+		/*ccname*/  "置表项图片索引",
+		/*egname*/  "SetItemImageIndex",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsSetItemImageIndex),
+		/*arg lp*/  s_ArgsSetItemImageIndex,
+	} , ESTLFNAME(libstl_ListBoxW_SetItemImageIndex) };
+
+EXTERN_C void libstl_ListBoxW_InitStorage(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsInitStorage[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWInitStorage = { {
+		/*ccname*/  "保留内存",
+		/*egname*/  "InitStorage",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsInitStorage),
+		/*arg lp*/  s_ArgsInitStorage,
+	} , ESTLFNAME(libstl_ListBoxW_InitStorage) };
+
+EXTERN_C void libstl_ListBoxW_InsertMultiString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsInsertMultiString[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWInsertMultiString = { {
+		/*ccname*/  "插入多个项目",
+		/*egname*/  "InsertMultiString",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsInsertMultiString),
+		/*arg lp*/  s_ArgsInsertMultiString,
+	} , ESTLFNAME(libstl_ListBoxW_InsertMultiString) };
+
+EXTERN_C void libstl_ListBoxW_AddMultiString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsAddMultiString[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWAddMultiString = { {
+		/*ccname*/  "加入多个项目",
+		/*egname*/  "AddMultiString",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsAddMultiString),
+		/*arg lp*/  s_ArgsAddMultiString,
+	} , ESTLFNAME(libstl_ListBoxW_AddMultiString) };
+
+EXTERN_C void libstl_ListBoxW_GetItemRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemRect[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemRect = { {
+		/*ccname*/  "取项目矩形",
+		/*egname*/  "GetItemRect",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemRect),
+		/*arg lp*/  s_ArgsGetItemRect,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemRect) };
+
+EXTERN_C void libstl_ListBoxW_HitTest(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsHitTest[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWHitTest = { {
+		/*ccname*/  "命中测试",
+		/*egname*/  "HitTest",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsHitTest),
+		/*arg lp*/  s_ArgsHitTest,
+	} , ESTLFNAME(libstl_ListBoxW_HitTest) };
+
+EXTERN_C void libstl_ListBoxW_GetItemStringLength(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+
+}
+static ARG_INFO s_ArgsGetItemStringLength[] =
+{
+	{ "文本","",0,0,SDT_BIN,0,NULL }
+};
+FucInfo Fn_ListBoxWGetItemStringLength = { {
+		/*ccname*/  "取项目文本长度",
+		/*egname*/  "GetItemStringLength",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     SDT_INT,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/ARRAYSIZE(s_ArgsGetItemStringLength),
+		/*arg lp*/  s_ArgsGetItemStringLength,
+	} , ESTLFNAME(libstl_ListBoxW_GetItemStringLength) };
+
+
+
+
+
+
+static INT s_Cmd_ListBox[] = { 237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,
+								259,260,261,262,263,264,265};
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtListBoxW = {
 	"列表框W",//中文名称
