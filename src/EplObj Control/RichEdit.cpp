@@ -66,6 +66,7 @@ public:
 			break;
 		case 10:// 自动检测链接
 			p->SetAutoDetectURL(pPropertyVaule->m_bool);
+			return TRUE;/*重画*/
 			break;
 		case 11:// 撤销次数
 			p->SetUndoLimit(pPropertyVaule->m_int);
