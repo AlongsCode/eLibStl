@@ -1032,7 +1032,6 @@ private:
 			case LBN_SELCHANGE:
 				p->OnSelChange();
 				return 0;// 不使用返回值
-
 			}
 		}
 		break;
@@ -1200,7 +1199,8 @@ public:
 			0, 0, 0, 0, NULL, NULL, NULL, NULL);
 		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_VSCROLL | WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
-		SetDragList(m_Info.bDragList);// 必须在子类化之前
+		if (m_Info.bDragList)
+			SetDragList(m_Info.bDragList);// 必须在子类化之前
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
 		UpdateThemeInfo();

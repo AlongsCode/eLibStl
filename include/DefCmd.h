@@ -270,7 +270,10 @@ network_post/*网页访问*/\
 ,Fn_ListBoxWSort2/*列表框.自定义排序*/\
 ,Fn_ListBoxWSwapItem/*列表框.交换表项*/\
 ,Fn_ListBoxWMoveItem/*列表框.移动表项*/\
-
+,Fn_DirBoxGetCurrentItem/*目录框.取当前选中表项*/\
+,Fn_DirBoxExtend/*目录框.展开到*/\
+,Fn_DirBoxGetCheckedItems/*目录框.取所有检查项目*/\
+,Fn_DirBoxRefresh/*目录框.刷新*/\
 
 
 
@@ -304,7 +307,8 @@ CtCommandLink/*命令链接*/\
 ,ClMenu/*菜单*/\
 ,CtListBoxW/*列表框*/\
 ,Obj_EMemFile/*内存文件*/\
-/*,CtScintilla无法通过静态编译，暂时移除*/
+/*,CtScintilla无法通过静态编译，暂时移除*/\
+,CtDirBoxW/*目录框*/\
 
 
 

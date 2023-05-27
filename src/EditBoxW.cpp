@@ -1112,7 +1112,7 @@ static ARG_INFO s_ArgsAddText[] =
 };
 FucInfo Fn_EditAddText = { {
 		/*ccname*/  ("加入文本"),
-		/*egname*/  ("AddTextW"),
+		/*egname*/  ("AddText"),
 		/*explain*/ ("将指定文本加入到编辑框内容的尾部"),
 		/*category*/-1,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,

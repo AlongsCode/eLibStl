@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <Shlwapi.h>
 #include <windowsx.h>
+#include <commoncontrols.h>
 /*易定义的标签反馈事件*/
 #define WM_EFEEDBACK  32885
 
@@ -929,3 +930,24 @@ ESTL_NAMESPACE_END
 				VarName = NULL;
 
 #define QuickGetWindowTextWFree(VarName) _freea(VarName)
+
+#define QuickDupStringW(VarName, pszSrc, cchSrc) \
+			PWSTR VarName; \
+			if (!pszSrc || !cchSrc) \
+			{ \
+				VarName = NULL; \
+			} \
+			else \
+			{ \
+				int ESTLPRIV_QDS_cch_##VarName##___; \
+				if (cchSrc < 0) \
+					ESTLPRIV_QDS_cch_##VarName##___ = wcslen(pszSrc); \
+				else \
+					ESTLPRIV_QDS_cch_##VarName##___ = cchSrc; \
+				VarName = (PWSTR)_malloca((cchSrc + 1) * sizeof(WCHAR)); \
+				assert(VarName);/*消除警告*/ \
+				wcsncpy(VarName, pszSrc, cchSrc); \
+				*(VarName + cchSrc) = L'\0'; \
+			} \
+
+#define QuickDupStringFree(VarName) _freea(VarName)

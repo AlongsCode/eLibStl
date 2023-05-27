@@ -464,6 +464,9 @@
     <ClCompile Include="src\EplObj Control\Scintilla.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
+    <ClCompile Include="src\DirBox.cpp">
+      <Filter>源文件\组件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">
