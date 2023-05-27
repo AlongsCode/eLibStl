@@ -113,15 +113,18 @@ eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeE
 // IDE对话框上下文基础数据，所有上下文必须由此派生
 struct EDLGCTX_BASE
 {
-	HWND hwndEMain;
-	BOOL bEMainWndInitEnabled;
+	//HWND hwndEMain;
+	//BOOL bEMainWndInitEnabled;
+	HWND hDlg;
+	HWND hParent;
+	BOOL bParentEnabled;
 	HFONT hFont;
 	BOOL bOK;
 };
 
 /// <summary>
 /// 准备显示易IDE对话框。
-/// 函数注册窗口类并为上下文结构分配内存，然后禁用IDE窗口。
+/// 函数注册窗口类并为上下文结构分配内存。
 /// 模板参数：上下文结构类型
 /// </summary>
 /// <param name="pAtom">类原子静态变量指针</param>
@@ -131,14 +134,13 @@ struct EDLGCTX_BASE
 template<class T>
 T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 {
-	HWND hwndEMain = (HWND)NotifySys(NES_GET_MAIN_HWND, 0, 0);
 	if (!*pAtom)
 	{
 		WNDCLASSW wc{};
 		wc.lpszClassName = pszWndClass;
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-		wc.hIcon = (HICON)GetClassLongPtrW(hwndEMain, GCLP_HICON);
+		wc.hIcon = (HICON)GetClassLongPtrW((HWND)NotifySys(NES_GET_MAIN_HWND, 0, 0), GCLP_HICON);
 		wc.style = CS_VREDRAW | CS_HREDRAW;
 		wc.hInstance = g_elibstl_hModule;
 		wc.lpfnWndProc = pfnWndProc;
@@ -148,15 +150,12 @@ T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 
 	auto pCtx = new T;
 	ZeroMemory(pCtx, sizeof(T));
-	pCtx->bEMainWndInitEnabled = DlgPreModel(hwndEMain);
-	pCtx->hwndEMain = hwndEMain;
-
 	return pCtx;
 }
 
 /// <summary>
 /// 显示易IDE对话框。
-/// 函数创建窗口并启动模态消息循环。
+/// 函数禁用IDE支持库，然后创建窗口并启动模态消息循环。
 /// 注意：消息循环调用IsDialogMessageW以支持导航键，
 /// 它会向窗口发送DM_GETDEFID和DM_SETDEFID，
 /// 分别定义为WM_USER和WM_USER+1，
@@ -170,7 +169,20 @@ T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 /// <param name="cy">高度</param>
 /// <param name="dwStyle">窗口样式，若为0则使用WS_OVERLAPPEDWINDOW | WS_VISIBLE</param>
 /// <param name="pCtx">上下文</param>
-void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx);
+void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, 
+	DWORD dwStyle, EDLGCTX_BASE* pCtx, HWND hParent = NULL);
+
+eStlInline void EIDEDlgEnd(EDLGCTX_BASE* pCtx)
+{
+	EzDlg::DlgEndModel(pCtx->hDlg, pCtx->hParent, pCtx->bParentEnabled);
+}
+
+eStlInline void EIDEDlgOnDestroy(EDLGCTX_BASE* pCtx)
+{
+	DeleteObject(pCtx->hFont);
+	pCtx->hFont = NULL;
+	EzDlg::DlgModelOnDestroy(pCtx->hDlg, pCtx->hParent, pCtx->bParentEnabled);
+}
 
 LRESULT CALLBACK SubclassProc_TabRepair(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
@@ -250,6 +262,8 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 /// <param name="pszCaption">标题</param>
 /// <returns>成功返回TRUE，失败返回FALSE</returns>
 BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent = NULL, PCWSTR pszCaption = L"请输入文本：");
+
+BOOL ImageListSelectDlg(HIMAGELIST hImageList, int idxInit, int* pidxSel, HWND hParent = NULL);
 
 /// <summary>
 /// 控件实用类：子类化管理器
@@ -683,7 +697,7 @@ public:
 	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
 	/// <returns>文本指针</returns>
-	eStlInline PWSTR GetTextW(SIZE_T* pcb = NULL);
+	PWSTR GetTextW(SIZE_T* pcb = NULL);
 
 	/// <summary>
 	/// 取文本A。

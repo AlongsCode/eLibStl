@@ -230,6 +230,16 @@ public:
 		return *this;
 	}
 
+	BOOL operator==(PCWSTR psz)
+	{
+		if (!m_pszText && !psz)
+			return TRUE;
+		else if (!m_pszText || !psz)
+			return FALSE;
+		else
+			return wcscmp(m_pszText, psz) == 0;
+	}
+
 	operator PWSTR()
 	{
 		return m_pszText;

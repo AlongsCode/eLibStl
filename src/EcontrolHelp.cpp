@@ -1,24 +1,10 @@
 #include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
-#define WCN_IDEINTPUTBOX			L"eLibStl.WndClass.IDEInputBox"
-
-#define IDC_ED_INPUT	101
-#define IDC_BT_READIN	201
-#define IDC_BT_OK		202
-#define IDC_BT_CANCEL	203
-
-#define PROP_IDEINPUTBOXEDITPROC	L"eLibStl.Prop.IDEInputBox.Edit.Proc"
-
-#define DEF_SIZE(height,width) static INT WINAPI DefSize(INT nMsg, DWORD dwParam1, DWORD dwParam2){switch (nMsg){case NU_GET_CREATE_SIZE_IN_DESIGNER:{*((intptr_t*)dwParam1) = height;*((intptr_t*)dwParam2) = width;}return TRUE;}return FALSE;}
-
-
-
-//有写地方需要使用到，所以先定义
 HMODULE g_elibstl_hModule = NULL;
 
 ESTL_NAMESPACE_BEGIN
-void  GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
+void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 {
 	pData.clear();
 	if (hBitmap == NULL)
@@ -79,7 +65,14 @@ void  GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	dwbmbitssize = ((bitmap.bmWidth * wbitcount + 31) / 32) * 4 * bitmap.bmHeight;
 	//为位图内容分配内存
 	hdib = GlobalAlloc(GHND, dwbmbitssize + dwpalettesize + sizeof(BITMAPINFOHEADER));
+	if (!hdib)
+		return;
 	lpbi = (LPBITMAPINFOHEADER)GlobalLock(hdib);
+	if (!lpbi)
+	{
+		GlobalFree(hdib);
+		return;
+	}
 	*lpbi = bi;
 
 	// 处理调色板 
@@ -132,12 +125,18 @@ HFONT EzFont(PCWSTR pszFontName, int iPoint, int iWeight, BOOL bItalic, BOOL bUn
 }
 
 ESTL_EZDLG_NAMESPACE_BEGIN
-void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, DWORD dwStyle, EDLGCTX_BASE* pCtx)
+void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, 
+	DWORD dwStyle, EDLGCTX_BASE* pCtx, HWND hParent)
 {
+	if (hParent)
+		pCtx->hParent = hParent;
+	else
+		pCtx->hParent = (HWND)NotifySys(NES_GET_MAIN_HWND, 0, 0);
+	pCtx->bParentEnabled = DlgPreModel(pCtx->hParent);
 	RECT rcEMain{};
 	if (x == CW_USEDEFAULT)
 	{
-		GetWindowRect(pCtx->hwndEMain, &rcEMain);
+		GetWindowRect(pCtx->hParent, &rcEMain);
 		rcEMain.left += ((rcEMain.right - rcEMain.left - cx) / 2);
 		rcEMain.top += ((rcEMain.bottom - rcEMain.top - cy) / 2);
 	}
@@ -150,7 +149,8 @@ void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, in
 		dwStyle = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 	HWND hWnd = CreateWindowExW(0, pszWndClass, pszCaption, dwStyle,
 		rcEMain.left, rcEMain.top, cx, cy, NULL, NULL, g_elibstl_hModule, pCtx);
-	SetWindowLongPtrW(hWnd, GWLP_HWNDPARENT, (LONG_PTR)pCtx->hwndEMain);
+	pCtx->hDlg = hWnd;
+	SetWindowLongPtrW(hWnd, GWLP_HWNDPARENT, (LONG_PTR)pCtx->hParent);
 	assert(hWnd);
 
 	MSG msg;
@@ -181,6 +181,14 @@ LRESULT CALLBACK SubclassProc_TabRepair(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 }
 ESTL_EZDLG_NAMESPACE_END
 
+#define IDC_ED_INPUT	101
+#define IDC_BT_READIN	201
+#define IDC_BT_OK		202
+#define IDC_BT_CANCEL	203
+
+#define WCN_IDEINTPUTBOX			L"eLibStl.WndClass.IDEInputBox"
+#define PROP_IDEINPUTBOXEDITPROC	L"eLibStl.Prop.IDEInputBox.Edit.Proc"
+
 struct EDLGCTX_IDEINPUTBOX :public EzDlg::EDLGCTX_BASE
 {
 	PCWSTR pszInitContent;
@@ -200,7 +208,7 @@ static LRESULT CALLBACK WndProc_InputBoxEdit(HWND hWnd, UINT uMsg, WPARAM wParam
 
 static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	const int cyBtn = 36, cxBtn1 = 110, cxBtn2 = 90, sizePadding = 10;
+	constexpr int cyBtn = 36, cxBtn1 = 110, cxBtn2 = 90, sizePadding = 10;
 	switch (uMsg)
 	{
 	case WM_SIZE:
@@ -288,10 +296,13 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			}
 			assert(p);// 消掉下面那个警告
 			DWORD dwRead;
-			ReadFile(hFile, p, dwSize, &dwRead, NULL);
+			BOOL b = ReadFile(hFile, p, dwSize, &dwRead, NULL);
 			CloseHandle(hFile);
-			*(p + dwSize / sizeof(WCHAR)) = L'\0';
-			SetWindowTextW(GetDlgItem(hWnd, IDC_ED_INPUT), p);
+			if (b)// 消除警告
+			{
+				*(p + dwSize / sizeof(WCHAR)) = L'\0';
+				SetWindowTextW(GetDlgItem(hWnd, IDC_ED_INPUT), p);
+			}
 			HeapFree(GetProcessHeap(), 0, p);
 		}
 		return 0;
@@ -311,7 +322,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			else
 				*(p->ppszInput) = NULL;
 
-			EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+			EzDlg::EIDEDlgEnd(p);
 		}
 		return 0;
 
@@ -320,7 +331,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
 			p->bOK = FALSE;
 			*(p->ppszInput) = NULL;
-			EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+			EzDlg::EIDEDlgEnd(p);
 		}
 		return 0;
 		}
@@ -332,7 +343,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
 		p->bOK = FALSE;
 		*(p->ppszInput) = NULL;
-		EzDlg::DlgEndModel(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+		EzDlg::EIDEDlgEnd(p);
 	}
 	return 0;
 
@@ -347,24 +358,24 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			sizePadding, sizePadding, 0, 0, hWnd, (HMENU)IDC_ED_INPUT, g_elibstl_hModule, NULL);
 		SetPropW(hCtrl, PROP_IDEINPUTBOXEDITPROC, (HANDLE)SetWindowLongPtrW(hCtrl, GWLP_WNDPROC, (LONG_PTR)WndProc_InputBoxEdit));
 		ShowScrollBar(hCtrl, SB_VERT, TRUE);
-		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+
 		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"导入文本(&I)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn1, cyBtn, hWnd, (HMENU)IDC_BT_READIN, g_elibstl_hModule, NULL);
-		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+
 		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"确定(&O)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_OK, g_elibstl_hModule, NULL);
-		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+
 		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"取消(&C)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_CANCEL, g_elibstl_hModule, NULL);
-		SendMessageW(hCtrl, WM_SETFONT, (WPARAM)p->hFont, FALSE);
+
+		EzDlg::SetFontForWndAndCtrl(hWnd, p->hFont, FALSE);
 	}
 	return 0;
 
 	case WM_DESTROY:
 	{
 		auto p = (EDLGCTX_IDEINPUTBOX*)GetWindowLongPtrW(hWnd, 0);
-		DeleteObject(p->hFont);
-		EzDlg::DlgModelOnDestroy(hWnd, p->hwndEMain, p->bEMainWndInitEnabled);
+		EzDlg::EIDEDlgOnDestroy(p);
 		PostQuitMessage(0);
 	}
 	return 0;
@@ -383,6 +394,187 @@ BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent, PCWSTR pszCaption)
 	EIDEDlgShow(WCN_IDEINTPUTBOX, pszCaption, CW_USEDEFAULT, 0, 560, 500, 0, pCtx);
 
 	BOOL bOK = pCtx->bOK;
+	delete pCtx;
+	return bOK;
+}
+
+#define IDC_LV_IMAGE	101
+
+#define WCN_IDEILSELDLG			L"eLibStl.WndClass.IDEImageListSelectDlg"
+
+struct EDLGCTX_IDEILSEL :public EzDlg::EDLGCTX_BASE
+{
+	HIMAGELIST hImageList;
+	int idxInit;
+	int idxRet;
+};
+static ATOM s_atomIDEILSelDlg = 0;
+
+static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	constexpr int cyBtn = 36, cxBtn = 90, sizePadding = 10;
+	switch (uMsg)
+	{
+	case WM_SIZE:
+	{
+		int cxClient = LOWORD(lParam), cyClient = HIWORD(lParam);
+
+		SetWindowPos(GetDlgItem(hWnd, IDC_LV_IMAGE), NULL,
+			sizePadding,
+			sizePadding,
+			cxClient - sizePadding * 2,
+			cyClient - sizePadding * 3 - cyBtn,
+			SWP_NOZORDER | SWP_NOACTIVATE);
+
+		SetWindowPos(GetDlgItem(hWnd, IDC_BT_OK), NULL,
+			cxClient - cxBtn * 2 - sizePadding * 2,
+			cyClient - sizePadding - cyBtn,
+			0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		SetWindowPos(GetDlgItem(hWnd, IDC_BT_CANCEL), NULL,
+			cxClient - cxBtn - sizePadding,
+			cyClient - sizePadding - cyBtn,
+			0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	return 0;
+
+	case WM_NOTIFY:
+	{
+		auto pnmhdr = (NMHDR*)lParam;
+		if (pnmhdr->idFrom != IDC_LV_IMAGE)
+			break;
+#pragma warning (push)
+#pragma warning (disable:26454)// “算术溢出”
+		switch (pnmhdr->code)
+		{
+		case LVN_GETDISPINFOW:
+		{
+			auto pnmldi = (NMLVDISPINFOW*)lParam;
+			pnmldi->item.mask = LVIF_IMAGE | LVIF_TEXT;
+			pnmldi->item.iImage = pnmldi->item.iItem;
+			WCHAR sz[48];
+			_swprintf(sz, L"%d", pnmldi->item.iItem);
+			wcsncpy(pnmldi->item.pszText, sz, pnmldi->item.cchTextMax);
+			*(pnmldi->item.pszText + pnmldi->item.cchTextMax) = L'\0';
+		}
+		return 0;// 没有返回值
+
+		case NM_DBLCLK:
+		{
+			auto pnmia = (NMITEMACTIVATE*)lParam;
+			if (pnmia->iItem >= 0)
+			{
+				auto p = (EDLGCTX_IDEILSEL*)GetWindowLongPtrW(hWnd, 0);
+				p->bOK = TRUE;
+				p->idxRet = pnmia->iItem;
+				EzDlg::EIDEDlgEnd(p);
+			}
+		}
+		return 0;// 没有返回值
+		}
+#pragma warning (pop)
+	}
+	break;
+
+	case WM_COMMAND:
+	{
+		if (HIWORD(wParam) != BN_CLICKED)
+			break;
+		auto p = (EDLGCTX_IDEILSEL*)GetWindowLongPtrW(hWnd, 0);
+		switch (LOWORD(wParam))
+		{
+		case IDC_BT_OK:
+		{
+			p->bOK = TRUE;
+			HWND hLV = GetDlgItem(hWnd, IDC_LV_IMAGE);
+			int cItems = SendMessageW(hLV, LVM_GETITEMCOUNT, 0, 0);
+			for (int i = 0; i < cItems; i++)
+			{
+				if (SendMessageW(hLV, LVM_GETITEMSTATE, i, LVIS_SELECTED) == LVIS_SELECTED)
+				{
+					p->idxRet = i;
+					EzDlg::EIDEDlgEnd(p);
+					return 0;
+				}
+			}
+			p->idxRet = -1;
+			EzDlg::EIDEDlgEnd(p);
+		}
+		return 0;
+
+		case IDC_BT_CANCEL:
+		{
+			p->bOK = FALSE;
+			EzDlg::EIDEDlgEnd(p);
+		}
+		return 0;
+		}
+	}
+	break;
+
+	case WM_CREATE:
+	{
+		auto p = (EDLGCTX_IDEILSEL*)((CREATESTRUCTW*)lParam)->lpCreateParams;
+		SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
+		p->hFont = EzFont(L"微软雅黑", 10);
+
+		HWND hCtrl, hLV;
+		hLV = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEWW, NULL, 
+			WS_VISIBLE | WS_CHILD | LVS_OWNERDATA | LVS_SHAREIMAGELISTS | LVS_SINGLESEL,
+			0, 0, 0, 0, hWnd, (HMENU)IDC_LV_IMAGE, NULL, NULL);
+		UINT uExLVStyle = LVS_EX_DOUBLEBUFFER;
+		SendMessageW(hLV, LVM_SETEXTENDEDLISTVIEWSTYLE, uExLVStyle, uExLVStyle);
+
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"确定(&O)", WS_CHILD | WS_VISIBLE,
+			0, 0, cxBtn, cyBtn, hWnd, (HMENU)IDC_BT_OK, g_elibstl_hModule, NULL);
+
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"取消(&C)", WS_CHILD | WS_VISIBLE,
+			0, 0, cxBtn, cyBtn, hWnd, (HMENU)IDC_BT_CANCEL, g_elibstl_hModule, NULL);
+
+		EzDlg::SetFontForWndAndCtrl(hWnd, p->hFont);
+
+		if (!p->hImageList)
+			return 0;
+		int cImages = ImageList_GetImageCount(p->hImageList);
+		if (!cImages)
+			return 0;
+
+		SendMessageW(hLV, LVM_SETIMAGELIST, LVSIL_NORMAL, (LPARAM)p->hImageList);
+		SendMessageW(hLV, LVM_SETITEMCOUNT, cImages, 0);
+	}
+	return 0;
+
+	case WM_CLOSE:
+	{
+		auto p = (EDLGCTX_IDEILSEL*)GetWindowLongPtrW(hWnd, 0);
+		p->bOK = FALSE;
+		EzDlg::EIDEDlgEnd(p);
+	}
+	return 0;
+
+	case WM_DESTROY:
+	{
+		auto p = (EDLGCTX_IDEILSEL*)GetWindowLongPtrW(hWnd, 0);
+		EzDlg::EIDEDlgOnDestroy(p);
+		PostQuitMessage(0);
+	}
+	return 0;
+	}
+
+	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+BOOL ImageListSelectDlg(HIMAGELIST hImageList, int idxInit, int* pidxSel, HWND hParent)
+{
+	auto pCtx = EzDlg::EIDEDlgPreShow<EDLGCTX_IDEILSEL>(&s_atomIDEILSelDlg, WCN_IDEILSELDLG, WndProc_ILSelDlg);
+
+	pCtx->hImageList = hImageList;
+	pCtx->idxInit = idxInit;
+	pCtx->idxRet = -1;
+	EIDEDlgShow(WCN_IDEILSELDLG, L"选择图片", CW_USEDEFAULT, 0, 560, 500, 0, pCtx, hParent);
+
+	BOOL bOK = pCtx->bOK;
+	*pidxSel = pCtx->idxRet;
 	delete pCtx;
 	return bOK;
 }

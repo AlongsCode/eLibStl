@@ -79,8 +79,10 @@ namespace elibstl
 		{
 			return {};
 		}
+#pragma warning (push)
+#pragma warning (disable:4302)// ¡°´Óvoid*µ½T½Ø¶Ï¡±
 		return reinterpret_cast<T>(pArgInf[index].m_pCompoundData);
-
+#pragma warning (pop)
 	}
 	inline std::vector<unsigned char> arg_to_vdata(PMDATA_INF pArgInf, int index) {
 		if (pArgInf[index].m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf[index].m_pBin + sizeof(std::uint32_t)) >= 2) {

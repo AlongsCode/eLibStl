@@ -114,15 +114,27 @@ int CSimpleRefStrW::DupString(PCWSTR pszSrc, int cchSrc)
 		goto NullStr;
 	if (m_cchCapacity < cchSrc + 1)
 	{
-		m_cchCapacity = SRSMakeCapacity(cchSrc + 1);
+		int cch = SRSMakeCapacity(cchSrc + 1);
+		PWSTR pNew;
 		if (m_pszText)
-			m_pszText = SRSReAllocW(m_pszText, m_cchCapacity);
+		{
+			pNew = SRSReAllocW(m_pszText, cch);
+			if (!pNew)
+				return 0;
+		}
 		else
-			m_pszText = SRSAllocW(m_cchCapacity);
+		{
+			pNew = SRSAllocW(cch);
+			if (!pNew)
+				return 0;
+		}
+		m_cchCapacity = cch;
+		m_pszText = pNew;
 	}
 	m_cchText = cchSrc;
 	wcsncpy(m_pszText, pszSrc, cchSrc);
 	*(m_pszText + cchSrc) = L'\0';
+	return cchSrc;
 }
 
 PWSTR CSimpleRefStrW::Attach(PWSTR psz, int cchCapacity, int cchText)
@@ -154,12 +166,17 @@ int CSimpleRefStrW::PushBack(PCWSTR pszSrc, int cchSrc)
 		return 0;
 	if (m_cchCapacity < m_cchText + cchSrc + 1)
 	{
-		m_cchCapacity = SRSMakeCapacity(m_cchText + cchSrc + 1);
-		m_pszText = SRSReAllocW(m_pszText, m_cchCapacity);
+		int cch = SRSMakeCapacity(m_cchText + cchSrc + 1);
+		auto pNew = SRSReAllocW(m_pszText, cch);
+		if (!pNew)
+			return 0;
+		m_cchCapacity = cch;
+		m_pszText = pNew;
 	}
 	wcsncpy(m_pszText + m_cchText, pszSrc, cchSrc);
 	m_cchText += cchSrc;
 	*(m_pszText + m_cchText) = L'\0';
+	return cchSrc;
 }
 
 ESTL_NAMESPACE_END
