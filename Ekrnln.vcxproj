@@ -69,6 +69,7 @@
     <ClCompile Include="src\DirBox.cpp" />
     <ClCompile Include="src\edb.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
+    <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
     <ClCompile Include="src\e_call.cpp" />
     <ClCompile Include="src\e_coroutine.cpp" />

@@ -309,6 +309,7 @@ CtCommandLink/*命令链接*/\
 ,Obj_EMemFile/*内存文件*/\
 /*,CtScintilla无法通过静态编译，暂时移除*/\
 ,CtDirBoxW/*目录框*/\
+,CtRichEdit/*富文本框*/
 
 
 
