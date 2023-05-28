@@ -2432,7 +2432,7 @@ static ARG_INFO s_ArgsSetTopIndex[] =
 	{ "位置","",0,0,SDT_INT,0,NULL }
 };
 FucInfo Fn_ListBoxWSetTopIndex = { {
-		/*ccname*/  "加入表项",
+		/*ccname*/  "置第一可见项",
 		/*egname*/  "SetTopIndex",
 		/*explain*/ "成功返回真，失败返回假",
 		/*category*/-1,

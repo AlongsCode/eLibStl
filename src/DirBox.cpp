@@ -1,7 +1,7 @@
 #include "EcontrolHelp.h"
 
-#define SCID_DIRBOX			20230527'01u
-#define SCID_DIRBOXPARENT	20230527'02u
+#define SCID_DIRBOX			20230527'03u
+#define SCID_DIRBOXPARENT	20230527'04u
 
 ESTL_NAMESPACE_BEGIN
 // Ä¿Â¼¿ò

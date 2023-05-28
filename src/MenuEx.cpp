@@ -977,7 +977,7 @@ static ARG_INFO s_Args_GetMenu[] =
 	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, AS_HAS_DEFAULT_VALUE}
 };
 FucInfo Fn_MenuGetMenu = { {
-		/*ccname*/  "置窗口菜单",
+		/*ccname*/  "取窗口菜单",
 		/*egname*/  "GetMenu",
 		/*explain*/ "返回菜单句柄",
 		/*category*/-1,
