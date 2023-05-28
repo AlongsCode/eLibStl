@@ -1071,7 +1071,7 @@ static UNIT_PROPERTY s_Member_RichEdit[] =
 
 	/*0*/{"内容格式","TextFormat","本属性指定对文本框的内容进行读写时所使用的文本格式。具体格式的组合看开发文档。",UD_PICK_INT,_PROP_OS(OS_ALL),"纯文本\0""RTF丰富文本\0""\0"},
 	/*1*/{"文本","Text","纯ansi文本",UD_TEXT,_PROP_OS(OS_ALL),NULL},
-	/*2*/{"文本W", "TextW", "本属性所使用的文本格式由“内容格式”属性决定,纯文本为标准utf16字符,RTF对象为对象数据", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*2*/{"内容", "TextW", "本属性所使用的文本格式由“内容格式”属性决定,纯文本为标准utf16字符,RTF对象为对象数据", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 	/*3*/{"边框","Style","",UD_PICK_INT,_PROP_OS(OS_ALL),"无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
 	/*4*/{"背景颜色","BackColor","文本框的背景颜色",UD_COLOR,_PROP_OS(OS_ALL),NULL},
 	/*5*/{"是否允许多行","AllowMultiLines","本属性设置文本框是否允许输入多行文本",UD_BOOL,_PROP_OS(OS_ALL),NULL},
