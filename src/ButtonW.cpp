@@ -1,6 +1,6 @@
 /*
-* 2023.5.7
-* FIXME：按钮的图像列表相关功能没有封装
+* 2023.5.29
+* TODO：现在使用让默认窗口过程处理WM_SETFOUCS的方法避免WM_COMMAND错误触发，是否需要找出深层原因然后考虑对策？
 */
 #include"EcontrolHelp.h"
 
@@ -387,6 +387,9 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
+
+		case WM_SETFOCUS:
+			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -635,6 +638,9 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
+
+		case WM_SETFOCUS:
+			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -645,19 +651,18 @@ public:
 	CCheckButton(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
-		if (!m_pszTextW)
-		{
-			elibstl::DupStringForNewDeleteW(m_pszTextW, L"选择框W");
-			m_pszTextA = elibstl::W2A(m_pszTextW);
-		}
 
 		if (pAllData)
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CHECKBTN));
 		else
+		{
 			m_Info.algH = 0;
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"选择框W");
+			m_pszTextA = elibstl::W2A(m_pszTextW);
+		}
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON,
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON|BS_NOTIFY,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 
@@ -977,6 +982,9 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
+
+		case WM_SETFOCUS:
+			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -987,14 +995,14 @@ public:
 	CCommandLink(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
-		if (!m_pszTextW)
+
+		if (pAllData)
+			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CMDLINK));
+		else
 		{
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"命令链接");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
-
-		if (pAllData)
-			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CMDLINK));
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
 		m_pszNote = NULL;
 		if (m_InfoEx.cchNote)

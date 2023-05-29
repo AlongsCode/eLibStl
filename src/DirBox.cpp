@@ -71,7 +71,7 @@ public:
 					tvi.pszText = szBuf;
 					SendMessageW(hTV, TVM_GETITEMW, 0, (LPARAM)&tvi);
 
-					if (tvi.lParam == DBITEMFLAG_HASCHILDPATH)
+					if (tvi.lParam == DBITEMFLAG_ISHIDEITEM)
 					{
 						tvi.mask = TVIF_TEXT;
 						tvi.cchTextMax = MAX_PATH - 1;
@@ -106,21 +106,17 @@ public:
 					HTREEITEM hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)pnmtv->itemNew.hItem);
 					if (!hItem)
 						break;
-					hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hItem);
-					if (!hItem)
-						break;
 
 					p->SetRedraw(FALSE);
-
 					tvi.mask = TVIF_PARAM;
 					tvi.hItem = hItem;
 					tvi.lParam = DBITEMFLAG_ISHIDEITEM;
 					SendMessageW(hTV, TVM_SETITEMW, 0, (LPARAM)&tvi);
-					
+
 					hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_NEXT, (LPARAM)hItem);
 					while (hItem)
 					{
-						hItemTemp = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_PARENT, (LPARAM)hItem);
+						hItemTemp = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_NEXT, (LPARAM)hItem);
 						SendMessageW(hTV, TVM_DELETEITEM, 0, (LPARAM)hItem);
 						hItem = hItemTemp;
 					}
@@ -134,9 +130,7 @@ public:
 				std::wstring sPath{};
 				WCHAR szBuf[MAX_PATH];
 				int cch;
-				HTREEITEM hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)pnmtv->itemNew.hItem);
-				if (!hItem)
-					break;
+				HTREEITEM hItem;
 
 				tvi.mask = TVIF_TEXT;
 				tvi.cchTextMax = MAX_PATH - 1;
@@ -219,7 +213,7 @@ public:
 		}
 		m_Info.iVer = DATA_VER_DIRBOX_1;
 
-		DWORD dwTVStyle = 0;
+		DWORD dwTVStyle = TVS_SHOWSELALWAYS | TVS_TRACKSELECT;
 		if (m_Info.bHasButton)
 			dwTVStyle |= TVS_HASBUTTONS;
 		if (m_Info.bHasLine)
@@ -318,8 +312,6 @@ public:
 		wcscpy(pszNextLevelPath, pszPath);
 		*pszTemp = L'\0';
 
-		TVINSERTSTRUCTW tis;
-		SHFILEINFOW sfi;
 		WIN32_FIND_DATAW wfd;
 		HANDLE hFind;
 		HTREEITEM hNewItem = NULL, hItemAfterDir = TVI_FIRST, hItemAfterFile = TVI_LAST;
@@ -415,7 +407,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bHasButton;
 		else
-			IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_HASBUTTONS);
+			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_HASBUTTONS);
 	}
 
 	eStlInline	void SetHasLine(BOOL bHasLine)
@@ -429,7 +421,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bHasLine;
 		else
-			IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_HASLINES);
+			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_HASLINES);
 	}
 
 	eStlInline void SetFullRowSel(BOOL bFullRowSel)
@@ -443,7 +435,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bFullRowSel;
 		else
-			IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_FULLROWSELECT);
+			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_FULLROWSELECT);
 	}
 
 	eStlInline void SetFadeInOutExpandos(BOOL bFadeInOutExpandos)
@@ -457,7 +449,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bFadeInOutExpandos;
 		else
-			IsBitExist(SendMessageW(m_hWnd, TVM_GETEXTENDEDSTYLE, 0, 0), TVS_EX_FADEINOUTEXPANDOS);
+			return IsBitExist(SendMessageW(m_hWnd, TVM_GETEXTENDEDSTYLE, 0, 0), TVS_EX_FADEINOUTEXPANDOS);
 	}
 
 	eStlInline void SetCheckBox(BOOL bCheckBox)
@@ -471,7 +463,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.bCheckBox;
 		else
-			IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_CHECKBOXES);
+			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_CHECKBOXES);
 	}
 
 	eStlInline void SetFileShowing(BOOL bFileShowing)
@@ -733,6 +725,7 @@ FucInfo Fn_DirBoxGetCurrentItem = { {
 		/*arg lp*/  NULL,
 	} , libstl_DirBox_GetCurrentItem ,"libstl_DirBox_GetCurrentItem" };
 
+// –Ë“™–ﬁ∏¥
 EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
@@ -777,6 +770,10 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 		uOldPos = uPos + 1;
 		hTopItem = (HTREEITEM)SendMessageW(hWnd, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hItem);
 		uPos = svPath.find(L"\\", uOldPos);
+		if (uPos == std::wstring_view::npos && uOldPos != svPath.size())
+		{
+			uPos = svPath.size();
+		}
 	}
 	SendMessageW(hWnd, WM_SETREDRAW, TRUE, 0);
 }
@@ -795,10 +792,10 @@ FucInfo Fn_DirBoxExtend = { {
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/0,
-		/*arg lp*/  NULL,
+		/*ArgCount*/ARRAYSIZE(s_ArgsExtend),
+		/*arg lp*/  s_ArgsExtend,
 	} , libstl_DirBox_Extend ,"libstl_DirBox_Extend" };
-
+// Œ¥≤‚ ‘
 void GetCheckedItemsHelper(HWND hTV, std::vector<BYTE*>& aText, HTREEITEM hParentItem, TVITEMEXW* ptvi)
 {
 	HTREEITEM hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hParentItem);
@@ -852,7 +849,7 @@ FucInfo Fn_DirBoxGetCheckedItems = { {
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
 	} , libstl_DirBox_GetCheckedItems ,"libstl_DirBox_GetCheckedItems" };
-
+// Œ¥≤‚ ‘
 EXTERN_C void libstl_DirBox_Refresh(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
