@@ -24,6 +24,7 @@ struct EDIRBOXDATA
 	BITBOOL bCheckBox : 1;			// 复选框
 	BITBOOL bFile : 1;				// 显示文件
 	BITBOOL bNoCache : 1;			// 禁止缓存内容
+	BITBOOL bTrackSelect : 1;		// 热点跟踪
 };
 
 #define DBITEMFLAG_HASCHILDPATH 1
@@ -37,6 +38,8 @@ private:
 
 	PWSTR m_pszDir = NULL;
 	IImageList* m_pIImageList = NULL;
+
+	int m_cyImage = 0;
 public:
 	std::wstring m_sCurrPath{};
 
@@ -178,16 +181,18 @@ public:
 			delete p;
 			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
-		case WM_NOTIFY:
+		case WM_SETFONT:
 		{
-			switch (((NMHDR*)lParam)->code)
-			{
-			case TVN_ITEMEXPANDING:
-			{
-				int a = 0;
-			}
-			}
+			LOGFONTA lf;
+			GetObjectA((HFONT)wParam, sizeof(lf), &lf);
+			int cy = max(p->m_cyImage, lf.lfHeight);
+			if (cy < 16)
+				cy = -1;
+			else
+				cy += 4;
+			DefSubclassProc(hWnd, TVM_SETITEMHEIGHT, cy, lParam);
 		}
+		break;
 		}
 
 		SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -213,7 +218,7 @@ public:
 		}
 		m_Info.iVer = DATA_VER_DIRBOX_1;
 
-		DWORD dwTVStyle = TVS_SHOWSELALWAYS | TVS_TRACKSELECT;
+		DWORD dwTVStyle = TVS_SHOWSELALWAYS;
 		if (m_Info.bHasButton)
 			dwTVStyle |= TVS_HASBUTTONS;
 		if (m_Info.bHasLine)
@@ -222,19 +227,20 @@ public:
 			dwTVStyle |= TVS_FULLROWSELECT;
 		if (m_Info.bCheckBox)
 			dwTVStyle |= TVS_CHECKBOXES;
-
-		m_hWnd = CreateWindowExW(WS_EX_CLIENTEDGE, WC_TREEVIEWW, NULL, WS_CHILD | WS_CLIPSIBLINGS | dwTVStyle,
+		if (m_Info.bTrackSelect)
+			dwTVStyle |= TVS_TRACKSELECT;
+		
+		m_hWnd = CreateWindowExW(WS_EX_CLIENTEDGE, WC_TREEVIEWW, NULL, WS_CHILD | WS_CLIPSIBLINGS | dwTVStyle | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 
 		UINT uExTVStyle = TVS_EX_DOUBLEBUFFER;
 		SendMessageW(m_hWnd, TVM_SETEXTENDEDSTYLE, uExTVStyle, uExTVStyle);
 
-		int cxImage, cyImage;
+		int cxImage;
 		SHGetImageList(SHIL_SMALL, IID_PPV_ARGS(&m_pIImageList));
 		SendMessageW(m_hWnd, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)m_pIImageList);
-		m_pIImageList->GetIconSize(&cxImage, &cyImage);
-		SendMessageW(m_hWnd, TVM_SETITEMHEIGHT, cyImage + 4, 0);
+		m_pIImageList->GetIconSize(&cxImage, &m_cyImage);
 
 		SetFadeInOutExpandos(m_Info.bFadeInOutExpandos);
 		InitBase0(pAllData);
@@ -347,7 +353,8 @@ public:
 		int cchFile = m_Info.cchDir;
 		WCHAR pszPath[MAX_PATH];
 		wcscpy(pszPath, m_pszDir);
-		PathStripPathW(pszPath);
+		if (*(pszPath + cchFile - 1) == L'\\')
+			*(pszPath + cchFile - 1) = L'\0';
 
 		WCHAR pszNextLevelPath[MAX_PATH];
 		PWSTR pszTemp = pszNextLevelPath + cchFile;
@@ -490,6 +497,20 @@ public:
 		return m_Info.bNoCache;
 	}
 
+	eStlInline void SetTrackSel(BOOL bTrackSel)
+	{
+		m_Info.bTrackSelect = bTrackSel;
+		ModifyWindowStyle(m_hWnd, bTrackSel ? TVS_TRACKSELECT : 0, TVS_TRACKSELECT);
+	}
+
+	eStlInline BOOL GetTrackSel()
+	{
+		if (m_bInDesignMode)
+			return m_Info.bTrackSelect;
+		else
+			return IsBitExist(GetWindowLongPtrW(m_hWnd, GWL_STYLE), TVS_TRACKSELECT);
+	}
+
 	eStlInline HGLOBAL FlattenInfo() override
 	{
 		BYTE* p;
@@ -558,6 +579,9 @@ public:
 		case 10:// 禁止缓存内容
 			p->SetNoCache(pPropertyVaule->m_bool);
 			break;
+		case 11:// 热点跟踪
+			p->SetTrackSel(pPropertyVaule->m_bool);
+			break;
 		}
 
 		return FALSE;
@@ -608,6 +632,9 @@ public:
 			break;
 		case 10:// 禁止缓存内容
 			pPropertyVaule->m_bool = p->GetNoCache();
+			break;
+		case 11:// 热点跟踪
+			pPropertyVaule->m_bool = p->GetTrackSel();
 			break;
 		}
 
@@ -697,6 +724,7 @@ static UNIT_PROPERTY s_Member_DirBox[] =
 	/*008*/	 {"包含文件", "ShowFile", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
 	/*009*/	 {"字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN), NULL},
 	/*010*/  {"禁止缓存内容", "DisableContentCache", "本属性为真时每次收缩展开目录都会重新获取子目录", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*011*/  {"热点跟踪", "TrackSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 
 
@@ -725,12 +753,13 @@ FucInfo Fn_DirBoxGetCurrentItem = { {
 		/*arg lp*/  NULL,
 	} , libstl_DirBox_GetCurrentItem ,"libstl_DirBox_GetCurrentItem" };
 
-// 需要修复
 EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 
 	PCWSTR pszPath = elibstl::args_to_pszw(pArgInf, 1);
+	if (!pszPath)
+		return;
 	std::wstring_view svPath(pszPath), svSubStr;
 	TVITEMEXW tvi;
 	WCHAR szBuf[MAX_PATH];
@@ -743,7 +772,7 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 	SendMessageW(hWnd, WM_SETREDRAW, FALSE, 0);
 	while (uPos != std::wstring_view::npos && hTopItem)
 	{
-		svSubStr = svPath.substr(uOldPos, uPos - uOldPos + 1);
+		svSubStr = svPath.substr(uOldPos, uPos - uOldPos);
 		hItem = hTopItem;
 		bExpand = FALSE;
 		do
@@ -753,7 +782,7 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 			tvi.pszText = szBuf;
 			tvi.hItem = hItem;
 			SendMessageW(hWnd, TVM_GETITEMW, 0, (LPARAM)&tvi);
-			if (svSubStr == szBuf)
+			if (_wcsnicmp(svSubStr.data(), szBuf, svSubStr.size()) == 0)
 			{
 				bExpand = TRUE;
 				SendMessageW(hWnd, TVM_EXPAND, TVE_EXPAND, (LPARAM)hItem);
@@ -770,10 +799,8 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 		uOldPos = uPos + 1;
 		hTopItem = (HTREEITEM)SendMessageW(hWnd, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hItem);
 		uPos = svPath.find(L"\\", uOldPos);
-		if (uPos == std::wstring_view::npos && uOldPos != svPath.size())
-		{
+		if (uPos == std::wstring_view::npos && uOldPos < svPath.size())
 			uPos = svPath.size();
-		}
 	}
 	SendMessageW(hWnd, WM_SETREDRAW, TRUE, 0);
 }
@@ -795,7 +822,7 @@ FucInfo Fn_DirBoxExtend = { {
 		/*ArgCount*/ARRAYSIZE(s_ArgsExtend),
 		/*arg lp*/  s_ArgsExtend,
 	} , libstl_DirBox_Extend ,"libstl_DirBox_Extend" };
-// 未测试
+
 void GetCheckedItemsHelper(HWND hTV, std::vector<BYTE*>& aText, HTREEITEM hParentItem, TVITEMEXW* ptvi)
 {
 	HTREEITEM hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hParentItem);
@@ -807,9 +834,12 @@ void GetCheckedItemsHelper(HWND hTV, std::vector<BYTE*>& aText, HTREEITEM hParen
 			ptvi->hItem = hItem;
 			ptvi->cchTextMax = MAX_PATH - 1;
 			SendMessageW(hTV, TVM_GETITEMW, 0, (LPARAM)ptvi);
-			pMem = elibstl::malloc_wstring(ptvi->cchTextMax);
-			wcscpy((PWSTR)(pMem + 8), ptvi->pszText);
-			aText.push_back(pMem);
+			if (ptvi->lParam != DBITEMFLAG_ISHIDEITEM)
+			{
+				pMem = elibstl::malloc_wstring(wcslen(ptvi->pszText));
+				wcscpy((PWSTR)(pMem + 8), ptvi->pszText);
+				aText.push_back(pMem);
+			}
 		}
 		GetCheckedItemsHelper(hTV, aText, hItem, ptvi);
 		hItem = (HTREEITEM)SendMessageW(hTV, TVM_GETNEXTITEM, TVGN_NEXT, (LPARAM)hItem);
@@ -821,7 +851,7 @@ EXTERN_C void libstl_DirBox_GetCheckedItems(PMDATA_INF pRetData, INT nArgCount, 
 
 	WCHAR szBuf[MAX_PATH];
 	TVITEMEXW tvi;
-	tvi.mask = TVIF_TEXT;
+	tvi.mask = TVIF_TEXT | TVIF_PARAM;
 	tvi.pszText = szBuf;
 	std::vector<BYTE*> aText{};
 
@@ -829,7 +859,7 @@ EXTERN_C void libstl_DirBox_GetCheckedItems(PMDATA_INF pRetData, INT nArgCount, 
 	size_t c = aText.size();
 	if (!c)
 	{
-		pRetData->m_pAryData = NULL;
+		pRetData->m_pAryData = elibstl::malloc_array<BYTE*>(0);// 不能返回NULL
 		return;
 	}
 	pRetData->m_pAryData = elibstl::malloc_array<BYTE*>(c);
@@ -849,7 +879,7 @@ FucInfo Fn_DirBoxGetCheckedItems = { {
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
 	} , libstl_DirBox_GetCheckedItems ,"libstl_DirBox_GetCheckedItems" };
-// 未测试
+
 EXTERN_C void libstl_DirBox_Refresh(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);

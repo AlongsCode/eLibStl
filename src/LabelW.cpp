@@ -698,7 +698,8 @@ public:
 		}
 		m_Info.iVer = DATA_VER_LABEL_1;
 
-		m_hWnd = CreateWindowExW(m_Info.bTransparent ? WS_EX_TRANSPARENT : 0, WCN_LABELW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS,
+		m_hWnd = CreateWindowExW(m_Info.bTransparent ? WS_EX_TRANSPARENT : 0, WCN_LABELW, m_pszTextW, 
+			WS_CHILD | WS_CLIPSIBLINGS | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, g_elibstl_hModule, this);
 		m_hParent = hParent;
 		m_SM.OnCtrlCreate2(this);

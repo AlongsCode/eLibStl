@@ -79,8 +79,8 @@ struct EBUTTONDATA
 	int iVer;				// 版本号
 	DWORD dwReserved;		// 保留
 
-	int algH;				// 横向对齐
-	int algV;				// 纵向对齐
+	int iAlignH;				// 横向对齐
+	int iAlignV;				// 纵向对齐
 	BOOL bShowTextAndImage;	// 是否同时显示图片和文本
 };
 
@@ -160,15 +160,12 @@ protected:
 		InitBase0(pAllData);
 		if (pAllData)
 		{
-			SetAlign(TRUE, m_Info.algH);
-			SetAlign(FALSE, m_Info.algV);
+			SetAlign(TRUE, m_Info.iAlignH);
+			SetAlign(FALSE, m_Info.iAlignV);
 			SetTextImageShowing(m_Info.bShowTextAndImage);
 		}
 		else
-		{
-			m_Info.algH = 1;
-			m_Info.algV = 1;
-		}
+			m_Info.iAlignV = 1;
 
 		if (m_hbmPic)
 		{
@@ -227,7 +224,7 @@ public:
 		if (bHAlign)
 		{
 			dwStyle &= (~(BS_LEFT | BS_CENTER | BS_RIGHT));
-			m_Info.algH = iAlign;
+			m_Info.iAlignH = iAlign;
 			switch (iAlign)
 			{
 			case 0: dwStyle |= BS_LEFT; break;
@@ -238,7 +235,7 @@ public:
 		else
 		{
 			dwStyle &= (~(BS_TOP | BS_VCENTER | BS_BOTTOM));
-			m_Info.algV = iAlign;
+			m_Info.iAlignV = iAlign;
 			switch (iAlign)
 			{
 			case 0: dwStyle |= BS_TOP; break;
@@ -259,9 +256,9 @@ public:
 	{
 		if (m_bInDesignMode)
 			if (bHAlign)
-				return m_Info.algH;
+				return m_Info.iAlignH;
 			else
-				return m_Info.algV;
+				return m_Info.iAlignV;
 		else
 			if (bHAlign)
 				return MultiSelectWndStyle(m_hWnd, BS_LEFT, BS_CENTER, BS_RIGHT);
@@ -403,7 +400,7 @@ public:
 		}
 		m_InfoEx.iVer = DATA_VER_BTN_PUSHBTN_1;
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_PUSHBUTTON,
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_PUSHBUTTON | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 
@@ -646,13 +643,13 @@ public:
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CHECKBTN));
 		else
 		{
-			m_Info.algH = 0;
+			m_Info.iAlignH = 0;
 			elibstl::DupStringForNewDeleteW(m_pszTextW, L"选择框W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
 
-		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON|BS_NOTIFY,
+		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		/*
 		* 有一个专用于单选按钮的状态叫做BST_DONTCLICK，
@@ -1005,7 +1002,7 @@ public:
 		}
 
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS |
-			(m_bInDesignMode ? BS_PUSHBUTTON : BS_COMMANDLINK),
+			(m_bInDesignMode ? BS_PUSHBUTTON : BS_COMMANDLINK) | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 

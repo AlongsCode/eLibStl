@@ -421,7 +421,7 @@ public:
 		else
 			dwEDStyle = ES_AUTOHSCROLL;
 
-		m_hWnd = CreateWindowExW(0, WC_EDITW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | dwEDStyle,
+		m_hWnd = CreateWindowExW(0, WC_EDITW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | dwEDStyle | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;

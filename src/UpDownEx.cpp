@@ -115,7 +115,7 @@ public:
 		if (m_Info.bHotTrack)
 			dwUDStyle |= UDS_HOTTRACK;
 
-		m_hWnd = CreateWindowExW(0, UPDOWN_CLASSW, NULL, WS_CLIPSIBLINGS | WS_CHILD | dwUDStyle,
+		m_hWnd = CreateWindowExW(0, UPDOWN_CLASSW, NULL, WS_CLIPSIBLINGS | WS_CHILD | dwUDStyle | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;

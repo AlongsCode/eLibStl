@@ -1197,7 +1197,7 @@ public:
 		m_hToolTip = CreateWindowExW(0, TOOLTIPS_CLASSW, NULL,
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP | (m_Info.bBalloonToolTip ? TTS_BALLOON : 0),
 			0, 0, 0, 0, NULL, NULL, NULL, NULL);
-		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_VSCROLL | WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle,
+		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_VSCROLL | WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		if (m_Info.bDragList)
 			SetDragList(m_Info.bDragList);// 必须在子类化之前
