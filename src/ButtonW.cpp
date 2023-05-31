@@ -1,7 +1,3 @@
-/*
-* 2023.5.29
-* TODO：现在使用让默认窗口过程处理WM_SETFOUCS的方法避免WM_COMMAND错误触发，是否需要找出深层原因然后考虑对策？
-*/
 #include"EcontrolHelp.h"
 
 #pragma warning(disable:4996)
@@ -387,9 +383,6 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
-
-		case WM_SETFOCUS:
-			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -638,9 +631,6 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
-
-		case WM_SETFOCUS:
-			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
@@ -664,6 +654,12 @@ public:
 
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON|BS_NOTIFY,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
+		/*
+		* 有一个专用于单选按钮的状态叫做BST_DONTCLICK，
+		* 如果未设置这个状态，那么按钮每次获得焦点都会产生BN_CLICKED，
+		* 发送BM_SETDONTCLICK设置它防止事件错误生成
+		*/
+		SendMessageW(m_hWnd, BM_SETDONTCLICK, TRUE, 0);
 		m_SM.OnCtrlCreate(this);
 
 		SendMessageW(m_hWnd, WM_SETREDRAW, FALSE, 0);
@@ -982,9 +978,6 @@ private:
 		case WM_SHOWWINDOW:
 			CHECK_PARENT_CHANGE;
 			break;
-
-		case WM_SETFOCUS:
-			return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 		}
 
 		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
