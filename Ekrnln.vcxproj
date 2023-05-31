@@ -66,7 +66,7 @@
     <ClCompile Include="src\cout_console.cpp" />
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />
-    <ClCompile Include="src\DirBox.cpp" />
+    <ClCompile Include="src\DirBoxW.cpp" />
     <ClCompile Include="src\edb.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />

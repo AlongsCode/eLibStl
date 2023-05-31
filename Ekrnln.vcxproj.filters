@@ -410,9 +410,6 @@
     <ClCompile Include="src\memwrite.cpp">
       <Filter>源文件\实现\全局命令\内存操作</Filter>
     </ClCompile>
-    <ClCompile Include="src\MenuEx.cpp">
-      <Filter>源文件\组件</Filter>
-    </ClCompile>
     <ClCompile Include="src\Text Manipulation\trim_leading_zeros.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
@@ -464,11 +461,14 @@
     <ClCompile Include="src\EplObj Control\Scintilla.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
-    <ClCompile Include="src\DirBox.cpp">
+    <ClCompile Include="src\DirBoxW.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
     <ClCompile Include="src\EplObj Control\RichEdit.cpp">
       <Filter>源文件\组件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MenuEx.cpp">
+      <Filter>源文件\组件\通用型</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
