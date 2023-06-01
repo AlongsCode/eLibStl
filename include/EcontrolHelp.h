@@ -114,8 +114,6 @@ eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeE
 // IDE对话框上下文基础数据，所有上下文必须由此派生
 struct EDLGCTX_BASE
 {
-	//HWND hwndEMain;
-	//BOOL bEMainWndInitEnabled;
 	HWND hDlg;
 	HWND hParent;
 	BOOL bParentEnabled;
@@ -156,7 +154,7 @@ T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 
 /// <summary>
 /// 显示易IDE对话框。
-/// 函数禁用IDE支持库，然后创建窗口并启动模态消息循环。
+/// 函数禁用IDE主窗口，然后创建窗口并启动模态消息循环。
 /// 注意：消息循环调用IsDialogMessageW以支持导航键，
 /// 它会向窗口发送DM_GETDEFID和DM_SETDEFID，
 /// 分别定义为WM_USER和WM_USER+1，
@@ -249,12 +247,13 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 	LOGFONTA lf{};
 	HDC hDC = GetDC(hWnd);
 	lf.lfHeight = -MulDiv(10, GetDeviceCaps(hDC, LOGPIXELSY), 72);
+	lf.lfWeight = 400;// 权重设默认，不然选字体的时候可能会直接转移到细体上
 	strcpy(lf.lfFaceName, "宋体");
 	lf.lfCharSet = GB2312_CHARSET;
 	ReleaseDC(hWnd, hDC);
 	return lf;
 }
-
+ 
 /// <summary>
 /// 输入框
 /// </summary>

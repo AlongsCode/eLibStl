@@ -1,3 +1,7 @@
+/*
+* 2023.6.1
+* TODO：列表框取整高度需要修复
+*/
 #include "EcontrolHelp.h"
 
 #include <algorithm>
@@ -270,6 +274,8 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 
 			case IDC_BT_SELIMAGE:
 			{
+				if (iCurrSel == LB_ERR)
+					break;
 				auto pItem = (LBITEMINFO_DESIGN*)SendMessageW(hLB, LB_GETITEMDATA, iCurrSel, 0);
 				int idxRet;
 				if (ImageListSelectDlg(p->hImageList, pItem->Info.idxImage, &idxRet, hWnd))
@@ -1187,7 +1193,7 @@ public:
 			dwLBStyle |= LBS_MULTIPLESEL;
 		if (m_Info.bExtSel)
 			dwLBStyle |= LBS_EXTENDEDSEL;
-		if (!m_Info.bIntegralHeight)
+		//if (!m_Info.bIntegralHeight)
 			dwLBStyle |= LBS_NOINTEGRALHEIGHT;
 		if (m_Info.bDisableNoScroll)
 			dwLBStyle |= LBS_DISABLENOSCROLL;
@@ -1202,7 +1208,6 @@ public:
 		if (m_Info.bDragList)
 			SetDragList(m_Info.bDragList);// 必须在子类化之前
 		m_SM.OnCtrlCreate(this);
-		m_hParent = hParent;
 		UpdateThemeInfo();
 
 		m_ti.hwnd = m_hWnd;

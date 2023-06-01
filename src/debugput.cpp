@@ -415,7 +415,7 @@ EXTERN_C void Fn_debugput_img(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 		MDATA_INF RetData, ArgInf;
 		ArgInf.m_dtDataType = SDT_TEXT;
 		/*图片的话置剪辑板*/
-		char* pDebugText = elibstl::clone_text("[elbbstl::image]");
+		char* pDebugText = elibstl::clone_text("[elibstl::image]");
 		SetImageToClipboard(data);
 		ArgInf.m_pText = pDebugText;
 		elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
