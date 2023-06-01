@@ -16,7 +16,7 @@ namespace elibstl
 		return ret;
 	}
 #ifndef __E_STATIC_LIB
-	void e_debugbox_init();
+	void	e_debugbox_init();
 #endif
 	INT WINAPI ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2)
 	{
@@ -25,12 +25,12 @@ namespace elibstl
 		{
 		case NL_SYS_NOTIFY_FUNCTION:
 		{
+
+			s_pfnNotifySys = (PFN_NOTIFY_SYS)dwParam1;
 #ifndef __E_STATIC_LIB
 			/*∑¿÷π±‡“Îæ≤Ã¨ø‚ ±≥È»°¥À“≥¥˙¬Î*/
 			e_debugbox_init();
 #endif
-			s_pfnNotifySys = (PFN_NOTIFY_SYS)dwParam1;
-
 			break;
 		}
 		case NL_FREE_LIB_DATA:

@@ -785,6 +785,7 @@ private:
 	eStlInline void OnSelChange()
 	{
 		EVENT_NOTIFY2 evt(m_dwWinFormID, m_dwUnitID, 0);
+
 		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
 	}
 
@@ -1030,6 +1031,7 @@ private:
 
 		case WM_NOTIFY:
 		{
+
 			if (!m_CtrlSCInfo.count(((NMHDR*)lParam)->hwndFrom))
 				break;
 			auto p = m_CtrlSCInfo[((NMHDR*)lParam)->hwndFrom];
@@ -1194,7 +1196,7 @@ public:
 		if (m_Info.bExtSel)
 			dwLBStyle |= LBS_EXTENDEDSEL;
 		//if (!m_Info.bIntegralHeight)
-			dwLBStyle |= LBS_NOINTEGRALHEIGHT;
+		dwLBStyle |= LBS_NOINTEGRALHEIGHT;
 		if (m_Info.bDisableNoScroll)
 			dwLBStyle |= LBS_DISABLENOSCROLL;
 		if (!m_Info.bIntegralHeight)
@@ -1226,7 +1228,7 @@ public:
 		SetClr(1, m_Info.crBK);
 		SetSelClr(1, m_Info.crSelBK);
 		SetCurrSel(m_Info.idxCurrSel);
-		
+
 		InitBase0(pAllData);
 		if (m_Info.cyItem)// 必须在InitBase0之后
 			SetItemHeight(m_Info.cyItem);
@@ -1507,6 +1509,9 @@ public:
 		else
 		{
 			int idx = SendMessageW(m_hWnd, LB_GETCURSEL, 0, 0);
+			if (idx == LB_ERR)
+				return -1;
+
 			if (m_ItemsInfo[idx].Info.bDisabled)
 				return -1;
 			else
@@ -1559,9 +1564,9 @@ public:
 		{
 			std::sort(m_ItemsInfo.begin(), m_ItemsInfo.end(),
 				[](LBITEMINFO& i1, LBITEMINFO& i2) -> bool
-				{
-					return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
-				});
+			{
+				return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
+			});
 			Redraw();
 		}
 	}
@@ -3396,15 +3401,15 @@ EXTERN_C void libstl_ListBoxW_Sort(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 	if (pArgInf[1].m_int == 0)
 		std::sort(p->m_ItemsInfo.begin(), p->m_ItemsInfo.end(),
 			[](elibstl::LBITEMINFO& i1, elibstl::LBITEMINFO& i2) -> bool
-			{
-				return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
-			});
+	{
+		return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
+	});
 	else
 		std::sort(p->m_ItemsInfo.begin(), p->m_ItemsInfo.end(),
 			[](elibstl::LBITEMINFO& i1, elibstl::LBITEMINFO& i2) -> bool
-			{
-				return wcscmp(i1.rsCaption, i2.rsCaption) > 0;
-			});
+	{
+		return wcscmp(i1.rsCaption, i2.rsCaption) > 0;
+	});
 	p->Redraw();
 }
 static ARG_INFO s_ArgsSort[] =
@@ -3445,9 +3450,9 @@ EXTERN_C void libstl_ListBoxW_Sort2(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 
 	std::sort(p->m_ItemsInfo.begin(), p->m_ItemsInfo.end(),
 		[pProc = pProc](elibstl::LBITEMINFO& i1, elibstl::LBITEMINFO& i2) -> bool
-		{
-			return pProc(i1.Info.lParam, i2.Info.lParam);
-		});
+	{
+		return pProc(i1.Info.lParam, i2.Info.lParam);
+	});
 	p->Redraw();
 	pRetData->m_bool = TRUE;
 }
