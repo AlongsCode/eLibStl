@@ -1432,7 +1432,7 @@ EXTERN_C void libstl_Edit_GetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
 	RECT rc;
-	SendMessageW(hWnd, EM_GETRECT, 0, (LPARAM)&rc);
+	DWORD dwRet = SendMessageW(hWnd, EM_GETRECT, 0, (LPARAM)&rc);
 	if (pArgInf[1].m_pInt)
 		*pArgInf[1].m_pInt = rc.left;
 	if (pArgInf[2].m_pInt)
@@ -1595,7 +1595,7 @@ FucInfo Fn_EditScroll = { {
 EXTERN_C void libstl_Edit_LineScroll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	SendMessageW(hWnd, EM_LINESCROLL, pArgInf[1].m_int, pArgInf[2].m_int);
+	pRetData->m_bool = HIWORD(SendMessageW(hWnd, EM_LINESCROLL, pArgInf[1].m_int, pArgInf[2].m_int));
 }
 static ARG_INFO s_ArgsLineScroll[] =
 {
@@ -1690,7 +1690,7 @@ FucInfo Fn_EditPosFromChar = { {
 EXTERN_C void libstl_Edit_ReplaceSel(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
-	SendMessageW(hWnd, EM_REPLACESEL, pArgInf[2].m_int, (LPARAM)(pArgInf[1].m_pBin + 8));
+	DWORD dwRet = SendMessageW(hWnd, EM_REPLACESEL, pArgInf[2].m_int, (LPARAM)(pArgInf[1].m_pBin + 8));
 }
 static ARG_INFO s_ArgsReplaceSel[] =
 {
@@ -1746,7 +1746,7 @@ EXTERN_C void libstl_Edit_SetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 		dwMask |= EC_RIGHTMARGIN;
 	}
 
-	SendMessageW(hWnd, EM_SETMARGINS, dwMask, MAKELPARAM(pArgInf[1].m_int, pArgInf[2].m_int));
+	SendMessageW(hWnd, EM_SETMARGINS, pArgInf[1].m_int, MAKELPARAM(pArgInf[1].m_int, pArgInf[2].m_int));
 }
 static ARG_INFO s_ArgsSetMargins[] =
 {
@@ -1892,7 +1892,21 @@ EXTERN_C void libstl_Edit_SetTabStop(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 		return;
 	}
 	int cAry = elibstl::get_array_count(pArgInf[1].m_pAryData);
-	SendMessageW(hWnd, EM_SETTABSTOPS, cAry, (LPARAM)((BYTE*)pArgInf[1].m_pAryData + 8));
+	if (!cAry)
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, 0, 0);
+		return;
+	}
+	else if (cAry == 1)
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, 1, *(int*)((BYTE*)pArgInf[1].m_pAryData + 8));
+		return;
+	}
+	else
+	{
+		SendMessageW(hWnd, EM_SETTABSTOPS, cAry, (LPARAM)((BYTE*)pArgInf[1].m_pAryData + 8));
+		return;
+	}
 }
 static ARG_INFO s_ArgsSetTabStop[] =
 {
