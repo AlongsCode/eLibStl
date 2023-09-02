@@ -27,7 +27,6 @@ struct EDIRBOXDATA
 	BITBOOL bTrackSelect : 1;		// ÈÈµã¸ú×Ù
 };
 
-#define DBITEMFLAG_HASCHILDPATH 1
 #define DBITEMFLAG_ISHIDEITEM 1
 
 class CDirBox :public elibstl::CCtrlBase
