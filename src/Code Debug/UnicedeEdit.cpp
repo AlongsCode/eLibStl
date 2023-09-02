@@ -207,7 +207,7 @@ public:
 	bool m_isCreate = false;
 
 	int m_idxNewTab = -1;
-	WNDPROC m_oldproc = nullptr;
+
 public:
 	EDebugEdit() {
 		/*初始化失败*/
@@ -227,12 +227,7 @@ public:
 		SubDebugBoxClass();
 	};
 	~EDebugEdit() {
-		if (m_oldproc)
-		{
-			SetWindowLongA(m_hDebugBox, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(m_oldproc));
-			RemoveWindowSubclass(m_hTab, SubclassProc_TabParent, SCID_TABPARENT);
-			RemoveWindowSubclass(m_hTabControl, SubclassProc_Tab, SCID_TAB);
-		}
+
 	};
 
 private:
@@ -248,9 +243,10 @@ private:
 				break;
 
 			int idxCurr = SendMessageW(p->m_hTabControl, TCM_GETCURSEL, 0, 0);
-			if (idxCurr == 1)
-				TaskDialog(GetActiveWindow(), NULL, L"提示", L"你正在使用原版调试框!", L"原版信息框并不支持unicode和图片", TDCBF_OK_BUTTON, LPCWSTR(65529), 0);
-
+			if (idxCurr == p->m_idxNewTab)
+				ShowWindow(p->m_hRicEdit, SW_SHOWNOACTIVATE);
+			else
+				ShowWindow(p->m_hRicEdit, SW_HIDE);
 		}
 		break;
 		}
@@ -269,10 +265,6 @@ private:
 		case TCM_INSERTITEMW:
 
 			break;
-		case TCM_SETCURSEL:
-			if (wParam == 1)
-				wParam = 8;
-			break;
 
 		case TCM_DELETEITEM:
 
@@ -281,12 +273,13 @@ private:
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	static LRESULT CALLBACK SubclassProc_OrgEdit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	static LRESULT CALLBACK SubclassProc_OrgEdit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+		UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
-		auto p = (EDebugEdit*)GetWindowLongA(hWnd, GWL_USERDATA);
+		auto p = (EDebugEdit*)dwRefData;
 		switch (uMsg)
 		{
-		case WM_WINDOWPOSCHANGED:
+		case WM_WINDOWPOSCHANGED: 
 		{
 			WINDOWPOS* windowPos = reinterpret_cast<WINDOWPOS*>(lParam);
 			//检查是否改变
@@ -297,11 +290,11 @@ private:
 
 		}
 		break;
-		case EM_REPLACESEL:
+		case EM_REPLACESEL: 
 		{
 			if (lParam == NULL)
 				break;
-			auto text = elibstl::A2W(reinterpret_cast<const CHAR*>(lParam));
+			auto text = reinterpret_cast<const WCHAR*>(lParam);
 			if (text && wcslen(text))//继续判断
 			{
 
@@ -324,15 +317,14 @@ private:
 				else
 					p->m_hRicEdit.AppendText(UmakeW(text).c_str());
 			}
-			if (text)
-				delete[]text;
 		}
 		break;
 		}
-		return CallWindowProcW(p->m_oldproc, hWnd, uMsg, wParam, lParam);
+
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	void GetOldDataAndMakeNewWnd()
+	void GetOldDataAndMakeNewWnd() 
 	{
 		/*窗口位置*/
 		RECT  rect;
@@ -346,25 +338,37 @@ private:
 		GetWindowTextW(m_hDebugBox, &sText[0], cchText + 1);
 
 		m_hRicEdit.Create(m_hTabControl, sText.c_str(),
-			point.x, point.y, rect.right - rect.left, rect.bottom - rect.top,
+			point.x, point.y, rect.right - rect.left, rect.bottom - rect.top, 
 			GetWindowLongPtrW(m_hDebugBox, GWL_STYLE));
 	}
+	/*获取易语言IDE窗口句柄*/
+	HWND GetEplIDEWindowHandle()
+	{
+		if (m_hEplIDE)
+			return m_hEplIDE;
 
-
-	/*子类化,获取数据等*/
-	void SubDebugBoxClass() {
-		SetWindowSubclass(m_hTab, SubclassProc_TabParent, SCID_TABPARENT, (DWORD_PTR)this);
-		SetWindowSubclass(m_hTabControl, SubclassProc_Tab, SCID_TAB, (DWORD_PTR)this);
-		m_oldproc = (WNDPROC)SetWindowLongA(m_hDebugBox, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(SubclassProc_OrgEdit));
-		SetWindowLongA(m_hDebugBox, GWL_USERDATA, (LONG)this);
-		//SetWindowSubclass(m_hDebugBox, SubclassProc_OrgEdit, SCID_EDITORG, (DWORD_PTR)this);
+		auto hProcessID = GetCurrentProcessId();
+		if (hProcessID == NULL)
+			return NULL;
+		struct EFINDWND
+		{
+			DWORD m_hProcessID;
+			HWND m_RetWnd;
+			EFINDWND(DWORD hProcessID, HWND RetWnd) {
+				m_hProcessID = hProcessID;
+				m_RetWnd = RetWnd;
+			}
+		};
+		EFINDWND eFindWindow(hProcessID, NULL);
+		if (EnumWindows(&EnumWindowsProc_ENewFrame, reinterpret_cast<LPARAM> (&eFindWindow))) {
+			return NULL;
+		}
+		return eFindWindow.m_RetWnd;
 	}
-private:
-
 	/*获取易语言调试输出窗口句柄*/
 	bool GetEplDebugOutputWindow() {
 
-		m_hEplIDE = reinterpret_cast<HWND>(elibstl::NotifySys(NES_GET_MAIN_HWND, 0, 0));
+		m_hEplIDE = GetEplIDEWindowHandle();
 		if (m_hEplIDE == NULL)
 		{
 			return false;
@@ -372,7 +376,7 @@ private:
 		auto Temp_hWnd = FindWindowExW(m_hEplIDE, 0, L"AfxControlBar42s", L"状态夹");
 		if (Temp_hWnd == NULL)
 		{
-			return false;
+			return NULL;
 		}
 		Temp_hWnd = GetDlgItem(Temp_hWnd, 130);
 		if (Temp_hWnd == NULL)
@@ -395,10 +399,43 @@ private:
 		return true;
 
 	}
+	/*子类化,获取数据等*/
+	void SubDebugBoxClass() {
+		SetWindowSubclass(m_hTab, SubclassProc_TabParent, SCID_TABPARENT, (DWORD_PTR)this);
+		SetWindowSubclass(m_hTabControl, SubclassProc_Tab, SCID_TAB, 0);
+		SetWindowSubclass(m_hDebugBox, SubclassProc_OrgEdit, SCID_EDITORG, (DWORD_PTR)this);
+	}
+private:
+	/*枚举易窗口*/
+	static BOOL CALLBACK EnumWindowsProc_ENewFrame(HWND hwnd, LPARAM lParam) {
+		struct EFINDWND
+		{
+			DWORD m_hProcessID;
+			HWND m_RetWnd;
+		};
+		EFINDWND* data = reinterpret_cast<EFINDWND*>(lParam);
+		DWORD dwProcessID = NULL;
+		GetWindowThreadProcessId(hwnd, &dwProcessID);
+		WCHAR szClassName[MAX_PATH + 1]{ 0 };
+		GetClassNameW(hwnd, szClassName, MAX_PATH);
+
+		if (dwProcessID == data->m_hProcessID && wcscmp(szClassName, L"ENewFrame") == 0) {
+			data->m_RetWnd = hwnd;
+			return FALSE;
+		}
+		else
+			return TRUE;
+	}
 };
 
+EDebugEdit* GetRichEdit() {
+	/*用于延迟初始化,卸载时自动析构*/
+	static EDebugEdit instance;
+	return &instance;
+	return NULL;
+}
 
 void e_debugbox_init() {
-	static EDebugEdit instance;
+	GetRichEdit();
 }
 ESTL_NAMESPACE_END
