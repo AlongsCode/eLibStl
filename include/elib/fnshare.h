@@ -3,6 +3,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #ifndef _private
 #define _private  //称识为只私有
 #endif
+#include<shlwapi.h>
 #include<string_view>
 #include<stdexcept>
 #include<optional>
@@ -48,6 +49,16 @@ namespace elibstl
 	{
 		return reinterpret_cast<T*>(pArgInf[0].m_ppCompoundData[0]);
 	}
+	inline auto ErrorMsgBox(const std::wstring& filePath, const std::wstring& msg) {
+#ifdef _WIN32
+		//std::wstring fileName = std::filesystem::path(filePath).filename();
+		std::wstring fileName = PathFindFileNameW(filePath.c_str());/*路径不会为空*/
+		std::wstring error_msg = L"出现运行时异常,已被支持库拦截(编译后不会出现该提示，但同样会处理异常操作,防止重大错误引起崩溃!)\n出错文件：" + fileName + L"\n错误信息:" + msg;
+		int result = ::MessageBoxW(0, error_msg.c_str(), L"出现重大错误", MB_OK | MB_ICONERROR);
+#endif
+	}
+#define put_errmsg(x) elibstl::ErrorMsgBox(__FILEW__,x)
+
 	template <typename T>
 	std::optional<T> args_to_data(PMDATA_INF pArgInf, size_t index)
 	{
@@ -82,6 +93,15 @@ namespace elibstl
 #pragma warning (push)
 #pragma warning (disable:4302)// “从void*到T截断”
 		return reinterpret_cast<T>(pArgInf[index].m_pCompoundData);
+#pragma warning (pop)
+	}
+
+	template <typename T>
+	const T& args_to_data_noop(PMDATA_INF pArgInf, size_t index)
+	{
+#pragma warning (push)
+#pragma warning (disable:4302)// “从void*到T截断”
+		return reinterpret_cast<T&>(pArgInf[index].m_pCompoundData);
 #pragma warning (pop)
 	}
 	inline std::vector<unsigned char> arg_to_vdata(PMDATA_INF pArgInf, int index) {
@@ -160,9 +180,9 @@ namespace elibstl
 		return ((HWND)NotifySys(NAS_GET_HWND_OF_CWND_OBJECT, (INT)GetWndPtr(pArgInfo), 0));
 	}
 
-	inline BOOL is_debug(char* szErrText)
+	inline BOOL is_debug()
 	{
-		return NotifySys(NRS_GET_PRG_TYPE, reinterpret_cast<DWORD>(szErrText), 0) == PT_DEBUG_RUN_VER;
+		return NotifySys(NRS_GET_PRG_TYPE, 0, 0) == PT_DEBUG_RUN_VER;
 	}
 
 	// 从易语言里申请内存, 单位为字节

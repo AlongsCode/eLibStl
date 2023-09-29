@@ -21,8 +21,8 @@ static ARG_INFO Args[] =
 		NULL,
 	},
 	{
-		"内存区域指针",
-		"",
+		"最大写入长度",
+		"超出此区域会被截断",
 		0,
 		0,
 		SDT_INT,
@@ -36,6 +36,10 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 {
 	unsigned char* pData = nullptr;
 	size_t dwLen;
+	if (pArgInf[1].m_int<=0)
+	{
+		put_errmsg(L"您正向一个负指针/空指针写入数据?!"); return;
+	}
 	if ((pArgInf[0].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
 	{
 		pArgInf[0].m_dtDataType &= ~DT_IS_ARY; //去除数组标志

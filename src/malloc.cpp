@@ -26,16 +26,11 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_e_malloc(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	pRetData->m_int = 0;
-	auto p = std::malloc(pArgInf[0].m_int);
-	if (!p)
-	{
-		return;
-	}
-	if (pArgInf[1].m_dtDataType != _SDT_NULL && pArgInf[1].m_bool)
-	{
-		std::memset(p, 0, pArgInf[0].m_int);
-	}
-	pRetData->m_int = reinterpret_cast<size_t>(p);
+	if (pArgInf[0].m_int <= 0) { put_errmsg(L"您正在申请一个负长度/零长度的内存!"); return; }
+	auto p = operator new(static_cast<std::size_t>(pArgInf[0].m_int), std::nothrow);
+	if (!p)return;
+	if (pArgInf[1].m_dtDataType != _SDT_NULL && pArgInf[1].m_bool)std::memset(p, 0, static_cast<std::size_t>(pArgInf[0].m_int));
+	pRetData->m_int = reinterpret_cast<std::uintptr_t>(p);
 }
 
 FucInfo e_malloc = { {

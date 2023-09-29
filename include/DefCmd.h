@@ -274,7 +274,7 @@ network_post/*网页访问*/\
 ,Fn_DirBoxExtend/*目录框.展开到*/\
 ,Fn_DirBoxGetCheckedItems/*目录框.取所有检查项目*/\
 ,Fn_DirBoxRefresh/*目录框.刷新*/\
-
+,e_memcpy/*内存复制*/
 
 
 
