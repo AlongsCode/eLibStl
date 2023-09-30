@@ -274,12 +274,8 @@ network_post/*网页访问*/\
 ,Fn_DirBoxExtend/*目录框.展开到*/\
 ,Fn_DirBoxGetCheckedItems/*目录框.取所有检查项目*/\
 ,Fn_DirBoxRefresh/*目录框.刷新*/\
-<<<<<<< HEAD
-,Fn_EditCut/*编辑框.剪切*/
-
-=======
 ,e_memcpy/*内存复制*/
->>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
+, Fn_EditCut/*编辑框.剪切*/
 
 
 
