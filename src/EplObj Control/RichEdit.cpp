@@ -1067,7 +1067,8 @@ ESTL_NAMESPACE_BEGIN
 static UNIT_PROPERTY s_Member_RichEdit[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个
+	//空串结束
 
 	/*0*/{"内容格式","TextFormat","本属性指定对文本框的内容进行读写时所使用的文本格式。具体格式的组合看开发文档。",UD_PICK_INT,_PROP_OS(OS_ALL),"纯文本\0""RTF丰富文本\0""\0"},
 	/*1*/{"文本","Text","纯ansi文本",UD_TEXT,_PROP_OS(OS_ALL),NULL},

@@ -470,8 +470,13 @@
     <ClCompile Include="src\MenuEx.cpp">
       <Filter>源文件\组件\通用型</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="ComboBoxW.cpp">
       <Filter>源文件\组件</Filter>
+=======
+    <ClCompile Include="src\memcpy.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

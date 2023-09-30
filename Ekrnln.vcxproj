@@ -104,6 +104,7 @@
     <ClCompile Include="src\ListBoxW.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
+    <ClCompile Include="src\memcpy.cpp" />
     <ClCompile Include="src\memwrite.cpp" />
     <ClCompile Include="src\MenuEx.cpp" />
     <ClCompile Include="src\message_box.cpp" />
@@ -184,27 +185,39 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{8797a36d-5147-4ae1-9f2a-afa4e87a1aae}</ProjectGuid>
     <RootNamespace>LibKrnln</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Lib|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+<<<<<<< HEAD
     <PlatformToolset>v142</PlatformToolset>
+=======
+    <PlatformToolset>v143</PlatformToolset>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgLib|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
+<<<<<<< HEAD
     <PlatformToolset>v142</PlatformToolset>
+=======
+    <PlatformToolset>v143</PlatformToolset>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
+<<<<<<< HEAD
     <PlatformToolset>v142</PlatformToolset>
+=======
+    <PlatformToolset>v143</PlatformToolset>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -230,7 +243,11 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Static|Win32'">
+<<<<<<< HEAD
     <PlatformToolset>v142</PlatformToolset>
+=======
+    <PlatformToolset>v143</PlatformToolset>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -245,7 +262,11 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DbgExe|Win32'">
+<<<<<<< HEAD
     <PlatformToolset>v142</PlatformToolset>
+=======
+    <PlatformToolset>v143</PlatformToolset>
+>>>>>>> 2f154ca500be4acc49cc6107e4a802ffc308946f
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <UseDebugLibraries>true</UseDebugLibraries>
