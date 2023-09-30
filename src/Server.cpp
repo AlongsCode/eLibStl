@@ -132,7 +132,7 @@ HUNIT WINAPI Create_SeverWindow(
 	return elibstl::make_cwnd(hWnd);
 }
 BOOL WINAPI NotifyPropertyChanged_ServerApp(HUNIT hUnit, INT nPropertyIndex,
-	PUNIT_PROPERTY_VALUE pValue, LPTSTR* ppszTipText)    //目前尚未使用
+	PUNIT_PROPERTY_VALUE pValue, PSTR* ppszTipText)    //目前尚未使用
 {
 	HWND hWnd = elibstl::get_hwnd_from_hunit(hUnit);
 	eServer* pServer = (eServer*)GetWindowLongPtrW(hWnd, GWL_USERDATA);

@@ -246,7 +246,7 @@ eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 {
 	LOGFONTA lf{};
 	HDC hDC = GetDC(hWnd);
-	lf.lfHeight = -MulDiv(10, GetDeviceCaps(hDC, LOGPIXELSY), 72);
+	lf.lfHeight = -MulDiv(9, GetDeviceCaps(hDC, LOGPIXELSY), 72);
 	lf.lfWeight = 400;// 权重设默认，不然选字体的时候可能会直接转移到细体上
 	strcpy(lf.lfFaceName, "宋体");
 	lf.lfCharSet = GB2312_CHARSET;
@@ -638,14 +638,14 @@ public:
 	/// </summary>
 	/// <param name="pszText">文本指针</param>
 	/// <returns>成功返回TRUE，失败返回FALSE</returns>
-	eStlInline   BOOL SetTextA(PCSTR pszText)
+	eStlInline BOOL SetTextA(PCSTR pszText)
 	{
 		if (m_bInDesignMode)
 		{
-			elibstl::DupStringForNewDeleteA(m_pszTextA, pszText);
+			DupStringForNewDeleteA(m_pszTextA, pszText);
 			delete[] m_pszTextW;
 			if (pszText)
-				m_pszTextW = elibstl::A2W(pszText);
+				m_pszTextW = A2W(pszText);
 			else
 				m_pszTextW = NULL;
 		}
@@ -661,10 +661,10 @@ public:
 	{
 		if (m_bInDesignMode)
 		{
-			elibstl::DupStringForNewDeleteW(m_pszTextW, pszText);
+			DupStringForNewDeleteW(m_pszTextW, pszText);
 			delete[] m_pszTextA;
 			if (pszText)
-				m_pszTextA = elibstl::W2A(pszText);
+				m_pszTextA = W2A(pszText);
 			else
 				m_pszTextA = NULL;
 		}
@@ -685,7 +685,7 @@ public:
 			m_pszTextW = pszText;
 			delete[] m_pszTextA;
 			if (pszText)
-				m_pszTextA = elibstl::W2A(pszText);
+				m_pszTextA = W2A(pszText);
 			else
 				m_pszTextA = NULL;
 		}
@@ -770,7 +770,7 @@ public:
 	eStlInline void SetFrame(int iFrame)
 	{
 		m_Info0.iFrame = iFrame;
-		elibstl::SetFrameType(m_hWnd, iFrame);
+		SetFrameType(m_hWnd, iFrame);
 		FrameChanged();
 	}
 
@@ -783,7 +783,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info0.iFrame;
 		else
-			return elibstl::GetFrameType(m_hWnd);
+			return GetFrameType(m_hWnd);
 	}
 
 	/// <summary>
@@ -847,7 +847,7 @@ protected:
 	eStlInline void SetFrame(int iFrame)
 	{
 		m_Info0.iFrame = iFrame;
-		elibstl::SetFrameType(m_hWnd, iFrame);
+		SetFrameType(m_hWnd, iFrame);
 		FrameChanged();
 	}
 
@@ -860,7 +860,7 @@ protected:
 		if (m_bInDesignMode)
 			return m_Info0.iFrame;
 		else
-			return elibstl::GetFrameType(m_hWnd);
+			return GetFrameType(m_hWnd);
 	}
 
 	/// <summary>
@@ -888,25 +888,25 @@ ESTL_NAMESPACE_END
 // 声明子类化管理器所需成员
 #define SUBCLASS_MGR_DECL(Class) \
 	public: \
-		static std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
-		static std::unordered_map<HWND, int> m_ParentSCInfo; \
+		static ::std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
+		static ::std::unordered_map<HWND, int> m_ParentSCInfo; \
 	private: \
-		static elibstl::CSubclassMgr<Class> m_SM;
+		static ::elibstl::CSubclassMgr<Class> m_SM;
 // 初始化子类化管理器所需成员
 #define SUBCLASS_MGR_INIT(Class, uIDParent, uIDCtrl) \
-	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
-	std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \
-	elibstl::CSubclassMgr<Class> Class::m_SM{ m_ParentSCInfo,m_CtrlSCInfo,ParentSubclassProc,CtrlSubclassProc,uIDParent,uIDCtrl };
+	::std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
+	::std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \
+	::elibstl::CSubclassMgr<Class> Class::m_SM{ m_ParentSCInfo,m_CtrlSCInfo,ParentSubclassProc,CtrlSubclassProc,uIDParent,uIDCtrl };
 // 声明简单子类化管理器所需成员
 #define SUBCLASS_SMP_MGR_DECL(Class) \
 	public: \
-		static std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
+		static ::std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
 	private: \
-		static elibstl::CSubclassMgrSimple<Class> m_SM;
+		static ::elibstl::CSubclassMgrSimple<Class> m_SM;
 // 初始化简单子类化管理器所需成员
 #define SUBCLASS_SMP_MGR_INIT(Class, uIDCtrl) \
-	std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
-	elibstl::CSubclassMgrSimple<Class> Class::m_SM{ m_CtrlSCInfo,CtrlSubclassProc,uIDCtrl };
+	::std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
+	::elibstl::CSubclassMgrSimple<Class> Class::m_SM{ m_CtrlSCInfo,CtrlSubclassProc,uIDCtrl };
 // 检查父窗口是否改变，放在WM_SHOWWINDOW下，控件在容器中时，创建参数中的父窗口句柄实际上是顶级窗口句柄，WM_SHOWWINDOW前会被改为容器窗口
 #define CHECK_PARENT_CHANGE \
 	if (!p->m_bParentChanged) \

@@ -21,8 +21,8 @@ typedef struct
 {
     HWND m_hWnd;
     HICON m_hIcon;
-    LPTSTR m_szCaption;
-    LPTSTR m_szToolTip;
+    PSTR m_szCaption;
+    PSTR m_szToolTip;
 }
 ADD_TAB_INF;
 

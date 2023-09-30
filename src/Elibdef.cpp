@@ -48,8 +48,8 @@ static LIB_INFO s_LibInfo =
 {
 	/*m_dwLibFormatVer*/        LIB_FORMAT_VER, // 库格式号, 应该等于LIB_FORMAT_VER
 	/*m_szGuid*/                "9E98DDB731D5421890CAD9CC6C999442", // 对应于本库的唯一GUID串, 不能为NULL或空, 库的所有版本此串都应相同
-	/*m_nMajorVersion*/         1, // 本库的主版本号, 必须大于0
-	/*m_nMinorVersion*/         1, // 本库的次版本号
+	/*m_nMajorVersion*/         2, // 本库的主版本号, 必须大于0
+	/*m_nMinorVersion*/         0, // 本库的次版本号
 	/*m_nBuildNumber*/          1, // 构建版本号, 无需对此版本号作任何处理
 
 	/*m_nRqSysMajorVer*/        3, // 所需要的易语言系统的主版本号
@@ -71,8 +71,8 @@ static LIB_INFO s_LibInfo =
 	/*m_szHomePage*/            "", // 主页
 	/*m_szOther*/               "开发测试群：761463364", // 其他信息
 
-	/*m_nDataTypeCount*/       sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
-	/*g_DataType_web*/         g_DataType, // 本库中所有的自定义数据类型
+	/*m_nDataTypeCount*/		sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
+	/*g_DataType_web*/			g_DataType, // 本库中所有的自定义数据类型
 
 	/*m_nCategoryCount*/        16, // 全局命令类别数目, 可为0
 	/*m_szzCategory*/

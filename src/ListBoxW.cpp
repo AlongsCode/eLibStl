@@ -1028,11 +1028,11 @@ private:
 		}
 		break;
 
-		case WM_NOTIFY:
+		case WM_COMMAND:
 		{
-			if (!m_CtrlSCInfo.count(((NMHDR*)lParam)->hwndFrom))
+			if (!m_CtrlSCInfo.count((HWND)lParam))
 				break;
-			auto p = m_CtrlSCInfo[((NMHDR*)lParam)->hwndFrom];
+			auto p = m_CtrlSCInfo[(HWND)lParam];
 			switch (HIWORD(wParam))
 			{
 			case LBN_SELCHANGE:
@@ -1505,13 +1505,7 @@ public:
 		if (m_bInDesignMode)
 			return m_Info.idxCurrSel;
 		else
-		{
-			int idx = SendMessageW(m_hWnd, LB_GETCURSEL, 0, 0);
-			if (m_ItemsInfo[idx].Info.bDisabled)
-				return -1;
-			else
-				return idx;
-		}
+			return (int)SendMessageW(m_hWnd, LB_GETCURSEL, 0, 0);
 	}
 
 	eStlInline void SetItemHeight(int cy)
@@ -1969,7 +1963,7 @@ public:
 		return elibstl::make_cwnd(p->GetHWND());
 	}
 
-	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 

@@ -21,7 +21,7 @@ typedef unsigned char UCHAR;
 typedef char TCHAR;
 typedef UCHAR* PUCHAR;
 typedef char* PSZ;
-typedef char* LPTSTR;
+typedef char* PSTR;
 typedef const char* LPCTSTR;
 typedef unsigned long DWORD;
 typedef unsigned char BYTE;

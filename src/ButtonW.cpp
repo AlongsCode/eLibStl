@@ -165,7 +165,10 @@ protected:
 			SetTextImageShowing(m_Info.bShowTextAndImage);
 		}
 		else
+		{
 			m_Info.iAlignV = 1;
+			m_Info.iAlignH = 1;
+		}
 
 		if (m_hbmPic)
 		{
@@ -260,10 +263,31 @@ public:
 			else
 				return m_Info.iAlignV;
 		else
+		{
+			DWORD dwStyle = (DWORD)GetWindowLongPtrW(m_hWnd, GWL_STYLE);
 			if (bHAlign)
-				return MultiSelectWndStyle(m_hWnd, BS_LEFT, BS_CENTER, BS_RIGHT);
+			{
+				if (IsBitExist(dwStyle, BS_LEFT))
+					return 0;
+				else if (IsBitExist(dwStyle, BS_CENTER))
+					return 1;
+				else if (IsBitExist(dwStyle, BS_RIGHT))
+					return 2;
+				else
+					return 1;
+			}
 			else
-				return MultiSelectWndStyle(m_hWnd, BS_TOP, BS_VCENTER, BS_BOTTOM);
+			{
+				if (IsBitExist(dwStyle, BS_TOP))
+					return 0;
+				else if (IsBitExist(dwStyle, BS_VCENTER))
+					return 1;
+				else if (IsBitExist(dwStyle, BS_BOTTOM))
+					return 2;
+				else
+					return 1;
+			}
+		}
 	}
 
 	/// <summary>
@@ -499,7 +523,7 @@ public:
 		return elibstl::make_cwnd(p->GetHWND());
 	}
 
-	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 
@@ -817,7 +841,7 @@ public:
 		return elibstl::make_cwnd(p->GetHWND());
 	}
 
-	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 
@@ -1169,7 +1193,7 @@ public:
 		}
 	}
 
-	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 

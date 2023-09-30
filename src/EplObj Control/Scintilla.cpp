@@ -434,7 +434,7 @@
 //		return p->FlattenInfo();
 //	}
 //
-//	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+//	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 //	{
 //		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 //

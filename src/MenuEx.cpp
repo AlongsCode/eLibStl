@@ -424,7 +424,7 @@ static ARG_INFO s_Args_DeleteItem[] =
 	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuDeleteItem = { {
-		/*ccname*/  "插入项目",
+		/*ccname*/  "删除项目",
 		/*egname*/  "DeleteItem",
 		/*explain*/ "成功返回真，失败返回假",
 		/*category*/-1,

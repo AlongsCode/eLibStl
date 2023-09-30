@@ -18,7 +18,8 @@ ESTL_NAMESPACE_BEGIN
 * EEDITDATA结构
 * 提示文本
 */
-#define DATA_VER_EDIT_1	1
+#define DATA_VER_EDIT_1	1// 76B
+#define DATA_VER_EDIT_2	2
 struct EEDITDATA
 {
 	int iVer;				// 版本号
@@ -33,11 +34,7 @@ struct EEDITDATA
 	int iScrollBar;			// 滚动条
 	int iAlign;				// 对齐
 	int iInputMode;			// 输入方式
-	union
-	{
-		WCHAR chMask;		// 密码遮盖字符
-		int PRIV_ALIGN___;
-	};
+	WCHAR chMask;			// 密码遮盖字符
 	int iTransformMode;		// 转换方式
 	int iSelPos;			// 起始选择位置
 	int iSelNum;			// 被选择字符数
@@ -47,11 +44,35 @@ struct EEDITDATA
 	BOOL bAutoWrap;			// 自动换行
 };
 
+struct EEDITDATA_2
+{
+	int iVer;				// 版本号
+
+	COLORREF crText;		// 文本颜色
+	COLORREF crTextBK;		// 文本背景色
+	COLORREF crBK;			// 编辑框背景色
+	int iMaxLen;			// 最大允许长度
+	int iScrollBar;			// 滚动条
+	int iAlign;				// 对齐
+	int iInputMode;			// 输入方式
+	int iTransformMode;		// 转换方式
+	int iSelPos;			// 起始选择位置
+	int iSelNum;			// 被选择字符数
+	int cchCueBanner;		// 提示文本长度，仅保存信息时有效
+	WCHAR chMask;			// 密码遮盖字符
+	BITBOOL bCueBannerShowAlways : 1;	// 总是显示提示文本，即使编辑框具有焦点
+	BITBOOL bNoAutoSetRect : 1;			// 是否禁止控件内部设置格式矩形（单行时）
+	BITBOOL bAutoWrap : 1;				// 自动换行
+	BITBOOL bHideSel : 1;				// 隐藏选择
+	BITBOOL bMultiLine : 1;				// 多行
+	BITBOOL bCtrlASelAll : 1;			// Ctrl+A全选
+};
+
 class CEdit :public elibstl::CCtrlBase
 {
 	SUBCLASS_MGR_DECL(CEdit)
 private:
-	EEDITDATA m_Info{};
+	EEDITDATA_2 m_Info{};
 
 	HBRUSH m_hbrEditBK = NULL;
 	PWSTR m_pszSelText = NULL;
@@ -121,7 +142,7 @@ private:
 		switch (uMsg)
 		{
 		case WM_KEYDOWN:
-			if (wParam == 'A')
+			if (wParam == 'A' && p->m_Info.bCtrlASelAll)
 				if (GetKeyState(VK_CONTROL) & 0x80000000)
 					SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + A全选
 			break;
@@ -390,13 +411,49 @@ public:
 
 		if (pAllData)
 		{
-			BYTE* p = (BYTE*)pAllData + cbBaseData;
-			memcpy(&m_Info, p, sizeof(EEDITDATA));
-
 			m_pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
 			*m_pszCueBanner = L'\0';
 
-			p += sizeof(EEDITDATA);
+			BYTE* p = (BYTE*)pAllData + cbBaseData;
+			switch (*(int*)p)
+			{
+			case DATA_VER_EDIT_1:
+			{
+				auto pVer1 = (EEDITDATA*)p;
+				m_Info.crText = pVer1->crText;
+				m_Info.crTextBK = pVer1->crTextBK;
+				m_Info.crBK = pVer1->crBK;
+				m_Info.iMaxLen = pVer1->iMaxLen;
+				m_Info.iScrollBar = pVer1->iScrollBar;
+				m_Info.iAlign = pVer1->iAlign;
+				m_Info.iInputMode = pVer1->iInputMode;
+				m_Info.iTransformMode = pVer1->iTransformMode;
+				m_Info.iSelPos = pVer1->iSelPos;
+				m_Info.iSelNum = pVer1->iSelNum;
+				m_Info.cchCueBanner = pVer1->cchCueBanner;
+				m_Info.chMask = pVer1->chMask;
+				m_Info.bCueBannerShowAlways = pVer1->bCueBannerShowAlways;
+				m_Info.bNoAutoSetRect = pVer1->bNoAutoSetRect;
+				m_Info.bAutoWrap = pVer1->bAutoWrap;
+				m_Info.bHideSel = pVer1->bHideSel;
+				m_Info.bMultiLine = pVer1->bMultiLine;
+				m_Info.bCtrlASelAll = TRUE;
+
+				p += sizeof(EEDITDATA);
+			}
+			break;
+
+			case DATA_VER_EDIT_2:
+			{
+				memcpy(&m_Info, p, sizeof(EEDITDATA_2));
+				p += sizeof(EEDITDATA_2);
+			}
+			break;
+
+			default:
+				break;
+			}
+
 			if (m_Info.cchCueBanner)
 			{
 				memcpy(m_pszCueBanner, p, m_Info.cchCueBanner * sizeof(WCHAR));
@@ -411,9 +468,10 @@ public:
 			m_Info.crTextBK = 0x00FFFFFF;
 			m_Info.crBK = 0x00FFFFFF;
 			m_Info.bHideSel = TRUE;
+			m_Info.bCtrlASelAll = TRUE;
 		}
 
-		m_Info.iVer = DATA_VER_EDIT_1;
+		m_Info.iVer = DATA_VER_EDIT_2;
 
 		DWORD dwEDStyle;
 		if (m_Info.bMultiLine)
@@ -708,7 +766,7 @@ public:
 			dwLen = dwEnd - dwStart;
 		if (!dwLen)
 			return NULL;
-		m_pszSelText = new WCHAR[dwEnd + 1];// UTF-16是变长的，这里按说还要多一步解析，先这样吧。。
+		m_pszSelText = new WCHAR[dwEnd + 1];
 		GetWindowTextW(m_hWnd, m_pszSelText, (int)dwEnd + 1);
 		if (pcb)
 			*pcb = (dwEnd + 1) * sizeof(WCHAR);
@@ -766,6 +824,16 @@ public:
 		return m_Info.bAutoWrap;
 	}
 
+	eStlInline BOOL GetCtrlAToSelAll()
+	{
+		return m_Info.bCtrlASelAll;
+	}
+
+	eStlInline void SetCtrlAToSelAll(BOOL b)
+	{
+		m_Info.bCtrlASelAll = b;
+	}
+
 	eStlInline HGLOBAL FlattenInfo() override
 	{
 		BYTE* p;
@@ -783,7 +851,7 @@ public:
 			cbCueBanner = 0u;
 		}
 
-		auto hGlobal = FlattenInfoBase0(sizeof(EEDITDATA) + cbCueBanner, &cbBaseData);
+		auto hGlobal = FlattenInfoBase0(sizeof(EEDITDATA_2) + cbCueBanner, &cbBaseData);
 		if (!hGlobal)
 			goto Fail;
 		p = (BYTE*)GlobalLock(hGlobal);
@@ -791,9 +859,9 @@ public:
 			goto Fail;
 		// 结构
 		p += cbBaseData;
-		memcpy(p, &m_Info, sizeof(EEDITDATA));
+		memcpy(p, &m_Info, sizeof(EEDITDATA_2));
 		// 提示文本
-		p += sizeof(EEDITDATA);
+		p += sizeof(EEDITDATA_2);
 		memcpy(p, m_pszCueBanner, cbCueBanner);
 		// 
 		GlobalUnlock(hGlobal);
@@ -807,7 +875,7 @@ public:
 		return elibstl::make_cwnd(p->GetHWND());
 	}
 	
-	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, LPTSTR* ppszTipText)
+	static BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
 	{
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 
@@ -874,6 +942,8 @@ public:
 			break;
 		case 20:// 自动换行
 			return p->SetAutoWrap(pPropertyVaule->m_bool);
+		case 21:// Ctrl+A全选
+			return p->GetCtrlAToSelAll();
 		}
 
 		return FALSE;
@@ -1085,6 +1155,7 @@ static UNIT_PROPERTY s_Member_Edit[] =
 	/*018*/  {"提示文本W", "CueBanner", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
 	/*019*/  {"总是显示提示文本", "AlwaysCueBanner", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 	/*020*/  {"自动换行", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*021*/  {"CtrlA全选", "CtrlA", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 ///////////////////////////////////方法
 static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175 };
@@ -2071,6 +2142,27 @@ FucInfo Fn_EditSelAll = { {
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
 	} , libstl_Edit_SelAll ,"libstl_Edit_SelAll" };
+
+///////////////////////////////////
+EXTERN_C void libstl_Edit_Cut(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	HWND hWnd = elibstl::get_hwnd_from_arg(pArgInf);
+	SendMessageW(hWnd, WM_CUT, 0, 0);
+}
+FucInfo Fn_EditCut = { {
+		/*ccname*/  "剪切",
+		/*egname*/  "Cut",
+		/*explain*/ "",
+		/*category*/-1,
+		/*state*/   0,
+		/*ret*/     _SDT_NULL,
+		/*reserved*/NULL,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/  NULL,
+	} ,ESTLFNAME(libstl_Edit_Cut) };
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtEdit = {
 	"编辑框W",//中文名称

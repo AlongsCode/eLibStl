@@ -125,7 +125,7 @@ HUNIT WINAPI Create_clinetWindow(
 	return elibstl::make_cwnd(hWnd);
 }
 BOOL WINAPI NotifyPropertyChanged_clinetApp(HUNIT hUnit, INT nPropertyIndex,
-	PUNIT_PROPERTY_VALUE pValue, LPTSTR* ppszTipText)    //目前尚未使用
+	PUNIT_PROPERTY_VALUE pValue, PSTR* ppszTipText)    //目前尚未使用
 {
 	return FALSE;//不用重新创建
 }

@@ -1,5 +1,5 @@
 #pragma region 命令添加到这
-#define ALL_E_LIB_CMD \
+#define ALL_E_LIB_CMD /*头部不要添加东西，保持命令索引=行号-3*/ \
 rnd_ex,/*取随机数Ex*/\
 L,/*unicode_base*/\
 fint_text_a,/*寻找文本A*/\
@@ -274,6 +274,7 @@ network_post/*网页访问*/\
 ,Fn_DirBoxExtend/*目录框.展开到*/\
 ,Fn_DirBoxGetCheckedItems/*目录框.取所有检查项目*/\
 ,Fn_DirBoxRefresh/*目录框.刷新*/\
+,Fn_EditCut/*编辑框.剪切*/
 
 
 
@@ -310,6 +311,7 @@ CtCommandLink/*命令链接*/\
 /*,CtScintilla无法通过静态编译，暂时移除*/\
 ,CtDirBoxW/*目录框*/\
 ,CtRichEdit/*富文本框*/\
+//,CtComboBox
 
 
 

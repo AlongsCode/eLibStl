@@ -8,6 +8,7 @@
 #include<assert.h>
 #include <CommCtrl.h>
 #include"Tace.hpp"
+#include <cctype>
 
 
 
