@@ -1158,7 +1158,7 @@ static UNIT_PROPERTY s_Member_Edit[] =
 	/*021*/  {"CtrlA全选", "CtrlA", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 ///////////////////////////////////方法
-static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175 };
+static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,275 };
 
 EXTERN_C void libstl_Edit_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
