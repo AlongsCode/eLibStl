@@ -1148,7 +1148,7 @@ LIB_DATA_TYPE_INFO CtRichEdit = {
 	0,//命令数量
 	0,//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	IDB_UPDOWN_EX,//资源ID
+	IDB_RICHEDIT,//资源ID
 	0,
 	0,//事件
 	ARRAYSIZE(s_Member_RichEdit),//属性数

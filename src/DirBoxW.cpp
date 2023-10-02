@@ -911,7 +911,7 @@ LIB_DATA_TYPE_INFO CtDirBoxW = {
 	ARRAYSIZE(s_Cmd_DirBox),//命令数量
 	s_Cmd_DirBox,//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	104,//资源ID
+	IDB_DIRBOX_W ,//资源ID
 	ARRAYSIZE(s_Event_DirBox),
 	s_Event_DirBox,
 	ARRAYSIZE(s_Member_DirBox),//属性数

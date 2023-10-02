@@ -3619,7 +3619,7 @@ LIB_DATA_TYPE_INFO CtListBoxW = {
 	ARRAYSIZE(s_Cmd_ListBox),//命令数量
 	s_Cmd_ListBox,//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	104,//资源ID
+	IDB_LISTBOX_W,//资源ID
 	ARRAYSIZE(s_Event_ListBox),
 	s_Event_ListBox,
 	ARRAYSIZE(s_Member_ListBox),//属性数

@@ -2660,7 +2660,7 @@ LIB_DATA_TYPE_INFO CtComboBox = {
 	ARRAYSIZE(s_Cmd_ComboBox),//命令数量
 	s_Cmd_ComboBox,//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//标志
-	104,//资源ID
+	IDB_COMBOBOX_W ,//资源ID
 	ARRAYSIZE(s_Event_ComboBox),
 	s_Event_ComboBox,
 	ARRAYSIZE(s_Member_ComboBox),//属性数

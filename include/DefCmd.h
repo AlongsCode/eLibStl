@@ -299,8 +299,10 @@ network_post/*网页访问*/\
 ,Fn_ComboBoxWSwapItem/*组合框.交换表项*/\
 ,Fn_ComboBoxWMoveItem/*组合框.移动表项*/\
 ,Fn_ListBoxWGetItemDisableState/*列表框.取表项禁止状态*/\
-,Fn_ListBoxWSetItemDisableState/*列表框.置表项禁止状态*/
-
+,Fn_ListBoxWSetItemDisableState/*列表框.置表项禁止状态*/\
+,edbs_del/*易数据库.删除*/\
+,edbs_pop/*易数据库.彻底删除*/\
+,edbs_cancel_del/*易数据库,取消删除*/
 
 
 

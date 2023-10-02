@@ -66,6 +66,14 @@ IDB_COMLINKBUTTON_W     BITMAP                  "res\\ObjComLinkButton_W.bmp"
 
 IDB_LABEL_W             BITMAP                  "res\\ObjLabel_W.bmp"
 
+IDB_LISTBOX_W           BITMAP                  "res\\ObjListBox_W.bmp"
+
+IDB_COMBOBOX_W          BITMAP                  "res\\ObjComboBox_W.bmp"
+
+IDB_DIRBOX_W            BITMAP                  "res\\ObjDirBox_W.bmp"
+
+IDB_RICHEDIT            BITMAP                  "res\\RichEdit.bmp"
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

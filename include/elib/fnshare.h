@@ -10,6 +10,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<vector>
 #include<string>
 #include<map>
+#include <cmath>
 namespace elibstl
 {
 	/*易库通信,调用易库命令等*/
@@ -796,10 +797,23 @@ namespace elibstl
 
 			}
 			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
-				if (pArgInf.m_pBin && *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) >= 2 && *reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2) != L'\0') {
-					//无需对原始指针操作的情况下映射为string_view
-					return std::wstring(reinterpret_cast<wchar_t*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2), *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t)) / sizeof(wchar_t));
-				}
+				if (!pArgInf.m_pBin)return {};
+	
+				auto p = reinterpret_cast<char*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2);
+				auto size = *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t));
+				if (!p || size <= 2 || *reinterpret_cast<wchar_t*>(p) == L'\0')return {};
+				/*为了保证安全任何情况下都要进行构造*/
+				std::vector<char> ret(p, p + size);
+				ret.push_back(0); ret.push_back(0);
+				return reinterpret_cast<wchar_t*>(ret.data());
+				/*if (size <= 2 || *reinterpret_cast<wchar_t*>(p) == L'\0')return {};
+				auto maxsize = static_cast<size_t>(std::ceil(size / 2.0f));
+				std::wstring ret(L'0', maxsize);
+				memcpy(&ret[0], p, size);
+				
+				if (ret.back() != L'0')
+					ret.push_back(L'\0');
+				return ret;*/
 			}
 			else if (pArgInf.m_dtDataType == SDT_DATE_TIME) {
 

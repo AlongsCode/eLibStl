@@ -243,7 +243,7 @@ EXTERN_C void libstl_InputBox(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 {
 
 
-	auto prompt_str = elibstl::arg_to_wstring(pArgInf, 0);
+	auto prompt_str =elibstl::arg_to_wstring(pArgInf, 0);
 	/*默认为当前活动窗口*/
 	auto hParent = elibstl::args_to_data<INT>(pArgInf, 5).value_or(reinterpret_cast<INT>(GetActiveWindow()));
 	auto title = elibstl::arg_to_wstring(pArgInf, 1);
@@ -278,6 +278,8 @@ EXTERN_C void libstl_InputBox(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 		Dlg.Add(L"确认输入(&O)", 1342242816, 63, 66 + MultiLineAdd, 55, 19, IDOK, 0x0080);
 		Dlg.Add(L"取消(&C)", 1342242816, 134, 66 + MultiLineAdd, 55, 19, IDCANCEL, 0x0080);
 		/*输入框 */
+		
+		debug_put(init_text, prompt_str);
 		Dlg.Add(init_text, dwStyleEdit, 7, 45, 238, 12 + MultiLineAdd, 58570, 0x0081);
 		/*提示框*/
 		Dlg.Add(prompt_str, 1342312448, 7, 7, 238, 35, 0, 0x0082);

@@ -507,5 +507,8 @@
     <Image Include="res\ObjLabel_W.bmp">
       <Filter>源文件\资源文件\图标</Filter>
     </Image>
+    <Image Include="res\ObjListBox_W.bmp">
+      <Filter>源文件\资源文件\图标</Filter>
+    </Image>
   </ItemGroup>
 </Project>
