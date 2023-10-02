@@ -276,6 +276,31 @@ network_post/*网页访问*/\
 ,Fn_DirBoxRefresh/*目录框.刷新*/\
 ,e_memcpy/*内存复制*/\
 ,Fn_EditCut/*编辑框.剪切*/\
+,Fn_ComboBoxWInsertString/*组合框.插入项目*/\
+,Fn_ComboBoxWDelString/*组合框.删除项目*/\
+,Fn_ComboBoxWGetItemCount/*组合框.取项目数*/\
+,Fn_ComboBoxWGetTopIndex/*组合框.取第一可见项*/\
+,Fn_ComboBoxWSetTopIndex/*组合框.置第一可见项*/\
+,Fn_ComboBoxWGetItemlParam/*组合框.取项目数值*/\
+,Fn_ComboBoxWSetItemlParam/*组合框.置项目数值*/\
+,Fn_ComboBoxWGetItemString/*组合框.取项目文本*/\
+,Fn_ComboBoxWSetItemString/*组合框.置项目文本*/\
+,Fn_ComboBoxWFindString/*组合框.寻找项目*/\
+,Fn_ComboBoxWGetItemColor/*组合框.取项目颜色*/\
+,Fn_ComboBoxWSetItemColor/*组合框.置项目颜色*/\
+,Fn_ComboBoxWGetItemImageIndex/*组合框.取项目图片索引*/\
+,Fn_ComboBoxWSetItemImageIndex/*组合框.置项目图片索引*/\
+,Fn_ComboBoxWInitStorage/*组合框.保留内存*/\
+,Fn_ComboBoxWGetImageList/*组合框.取图像列表句柄*/\
+,Fn_ComboBoxWSetImageList/*组合框.置图像列表句柄*/\
+,Fn_ComboBoxWGetItemStringLength/*组合框.取项目文本长度*/\
+,Fn_ComboBoxWSort/*组合框.排序*/\
+,Fn_ComboBoxWSort2/*组合框.自定义排序*/\
+,Fn_ComboBoxWSwapItem/*组合框.交换表项*/\
+,Fn_ComboBoxWMoveItem/*组合框.移动表项*/\
+,Fn_ListBoxWGetItemDisableState/*列表框.取表项禁止状态*/\
+,Fn_ListBoxWSetItemDisableState/*列表框.置表项禁止状态*/
+
 
 
 
@@ -311,7 +336,7 @@ CtCommandLink/*命令链接*/\
 /*,CtScintilla无法通过静态编译，暂时移除*/\
 ,CtDirBoxW/*目录框*/\
 ,CtRichEdit/*富文本框*/\
-//,CtComboBox
+,CtComboBox
 
 
 

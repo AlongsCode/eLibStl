@@ -323,6 +323,8 @@ typedef struct
 //!!! 注意高位包含 __OS_xxxx 宏用于指定本属性所支持的操作系统。
 #define _PROP_OS(os)            ((os) >> 16)// 用作转换os类型以便加入到m_wState。
 #define _TEST_PROP_OS(m_wState,os)    ((_PROP_OS (os) & m_wState) != 0) // 用作测试指定属性是否支持指定操作系统。
+
+#define UW_OS_WIN				_PROP_OS(__OS_WIN)
 	WORD m_wState;        // UW_开头常量
 
 	// 顺序记录所有的备选文本(除开UD_FILE_NAME),以一个空串结束。

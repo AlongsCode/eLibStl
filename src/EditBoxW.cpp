@@ -769,8 +769,8 @@ public:
 		m_pszSelText = new WCHAR[dwEnd + 1];
 		GetWindowTextW(m_hWnd, m_pszSelText, (int)dwEnd + 1);
 		if (pcb)
-			*pcb = (dwEnd + 1) * sizeof(WCHAR);
-		return m_pszSelText;
+			*pcb = (dwLen + 1) * sizeof(WCHAR);
+		return m_pszSelText + dwStart;
 	}
 
 	eStlInline void SetCueBannerNoCopy(PCWSTR psz)
@@ -839,17 +839,8 @@ public:
 		BYTE* p;
 		SIZE_T cbBaseData;
 		SIZE_T cbCueBanner;
-		auto pszCueBanner = GetCueBanner();
-		if (pszCueBanner)
-		{
-			m_Info.cchCueBanner = wcslen(pszCueBanner);
-			cbCueBanner = (m_Info.cchCueBanner + 1) * sizeof(WCHAR);
-		}
-		else
-		{
-			m_Info.cchCueBanner = 0;
-			cbCueBanner = 0u;
-		}
+		m_Info.cchCueBanner = wcslen(m_pszCueBanner);
+		cbCueBanner = (m_Info.cchCueBanner + 1) * sizeof(WCHAR);
 
 		auto hGlobal = FlattenInfoBase0(sizeof(EEDITDATA_2) + cbCueBanner, &cbBaseData);
 		if (!hGlobal)

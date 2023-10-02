@@ -430,12 +430,12 @@ private:
 
 EDebugEdit* GetRichEdit() {
 	/*用于延迟初始化,卸载时自动析构*/
-	static EDebugEdit instance;
-	return &instance;
+	//static EDebugEdit instance;
+	//return &instance;
 	return NULL;
 }
 
 void e_debugbox_init() {
-	GetRichEdit();
+	//GetRichEdit();
 }
 ESTL_NAMESPACE_END
