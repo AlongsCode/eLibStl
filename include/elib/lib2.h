@@ -84,6 +84,7 @@ enum  DATA_TYPE : std::int32_t {
 	SDT_STATMENT = BaseType(8, 0),//子语句型，仅用于库命令定义其参数的数据类型。其数据长度为两个uintptr_t,第一个记录存根子程序地址，第二个记录该子语句所在子程序的变量栈首。
 
 	/*核心库定义数据类型,代表数据类型在核心库中的索引*/
+	KRNLN_WIN = UserType(1, 1),
 	KRNLN_EDB = UserType(34, 1),
 	/*此位置为用户自定义数据类型位置,代表数据类型在本库中索引*/
 	DTP_HCOPROCESS = UserType(5, 0),
@@ -96,9 +97,9 @@ enum  DATA_TYPE : std::int32_t {
 	//+////////////////////////////////////////////////////////////////////////
 
 	// 用作区分系统类型、用户自定义类型、库定义数据类型
-#define DTM_SYS_DATA_TYPE_MASK          0x80000000
-#define DTM_USER_DATA_TYPE_MASK         0x40000000
-#define DTM_LIB_DATA_TYPE_MASK          0x00000000
+#define DTM_SYS_DATA_TYPE_MASK          0x80000000//1000 0000 0000 0000 0000 0000 0000 0000
+#define DTM_USER_DATA_TYPE_MASK         0x40000000//0100 0000 0000 0000 0000 0000 0000 0000
+#define DTM_LIB_DATA_TYPE_MASK          0x00000000//000 0000 0000 0000 0000 0000 0000 0000
 
 // 用作细分用户自定义数据类型
 #define UDTM_USER_DECLARE_MASK          0x00000000    // 用户自定义复合数据类型
@@ -111,7 +112,7 @@ enum  DATA_TYPE : std::int32_t {
 // 在数据类型中的数组标志,如果某数据类型值此位置1,则表示为此数据类型的数组。
 // 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_ARRAY或ArgMark::AS_RECEIVE_ALL_TYPE_DATA
 // 标志的库命令参数说明其为是否为数组数据,其他场合均未使用。因此其他地方均可以忽略本标志。
-#define DT_IS_ARY                       0x20000000
+#define DT_IS_ARY                       0x20000000//10 0000 0000 0000 0000 0000 0000 0000
 
 // 在数据类型中的传址标志,如果某数据类型值此位置1,则表示为此数据类型的变量地址。
 // 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
@@ -982,6 +983,18 @@ typedef struct
 // 返回当前执行文件名称文本指针。
 #define NRS_GET_EXE_NAME                    2004
 
+
+/*
+参数二为结构体指针
+struct
+	{
+		HUNIT m_uint{ 0 };//组件HUNIT
+		void* m_pCwnd{ nullptr };//父组件CWND
+		BOOL m_bModal{ TRUE };//是否模态
+	}*/
+#define NRS_LOAD_WIN       2005
+
+
 // 取组件对象指针
 // dwParam1为WinForm的ID
 // dwParam2为WinUnit的ID
@@ -1011,6 +1024,7 @@ typedef struct
 // dwParam1为该数据的DATA_TYPE,只能为系统数据类型。
 // dwParam2为指向该数组数据的指针。
 #define NRS_FREE_ARY                        2023
+
 
 // 分配指定空间的内存,所有与易程序交互的内存都必须使用本通知分配。
 // dwParam1为欲需求内存字节数。

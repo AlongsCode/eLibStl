@@ -302,9 +302,13 @@ network_post/*网页访问*/\
 ,Fn_ListBoxWSetItemDisableState/*列表框.置表项禁止状态*/\
 ,edbs_del/*易数据库.删除*/\
 ,edbs_pop/*易数据库.彻底删除*/\
-,edbs_cancel_del/*易数据库,取消删除*/
-
-
+,edbs_cancel_del/*易数据库,取消删除*/\
+,e_load_windows/*载入窗口*/\
+,EplVar_structure/*变量.构造*/\
+,EplVar_copy/*变量.复制*/\
+,EplVar_destruct/*变量.析构*/\
+,Fn_Var_Set/*变量.置*/\
+,Fn_Var_Get/*变量.取*/\
 
 
 /*此下两个完全没必要*/
@@ -338,7 +342,8 @@ CtCommandLink/*命令链接*/\
 /*,CtScintilla无法通过静态编译，暂时移除*/\
 ,CtDirBoxW/*目录框*/\
 ,CtRichEdit/*富文本框*/\
-,CtComboBox
+,CtComboBox/**/\
+,epl_class_Var/*强类型动态数组*/\
 
 
 

@@ -69,6 +69,7 @@
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\DirBoxW.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\EplObj Class\eplvar.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\kill_proc.cpp" />
     <ClCompile Include="src\LabelW.cpp" />
     <ClCompile Include="src\ListBoxW.cpp" />
+    <ClCompile Include="src\LoadWin.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
     <ClCompile Include="src\memcpy.cpp" />

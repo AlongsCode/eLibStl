@@ -109,6 +109,9 @@
     <Filter Include="源文件\openlib">
       <UniqueIdentifier>{655e0a69-ba73-475f-b22e-2695c1e757d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\通用型\弱类型动态变量">
+      <UniqueIdentifier>{5feb1e68-a935-4c98-9cf3-344fc6127e95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -475,6 +478,12 @@
     </ClCompile>
     <ClCompile Include="src\memcpy.cpp">
       <Filter>源文件\实现\全局命令\内存操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\eplvar.cpp">
+      <Filter>源文件\组件\通用型\弱类型动态变量</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LoadWin.cpp">
+      <Filter>源文件\实现\全局命令\窗口操作</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
