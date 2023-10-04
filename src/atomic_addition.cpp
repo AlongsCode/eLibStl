@@ -9,7 +9,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR,
+		/*state*/   ArgMark::AS_RECEIVE_VAR,
 	},
 	{
 		/*name*/    "Óû²Ù×÷µÄÖµ",
@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 

@@ -9,7 +9,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		AS_RECEIVE_VAR,
+		ArgMark::AS_RECEIVE_VAR,
 	}
 };
 EXTERN_C void Fn_e_free(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)

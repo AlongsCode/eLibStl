@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "输出文本",
 		/*explain*/ ("本参数只能为unicode字节集。如果内容为文本且包含多行，可在各行之间用回车符 (即“字符W (13)”)、换行符 (即“字符W (10)”) 或回车换行符的组合 (即：“字符W (13) + 字符W (10)"),
@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 

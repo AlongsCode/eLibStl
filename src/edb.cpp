@@ -1442,7 +1442,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "字段信息",
@@ -1451,7 +1451,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    MAKELONG(34, 1),
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_ARRAY_DATA,
+		/*state*/   ArgMark::AS_RECEIVE_ARRAY_DATA,
 		},
 };
 
@@ -1622,7 +1622,7 @@ static ARG_INFO edbs_ex_open_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo edbs_ex_open = { {
@@ -1665,7 +1665,7 @@ static ARG_INFO edbs_ex_addpendnop_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo	edbs_ex_addpendnop = { {
@@ -1719,7 +1719,7 @@ static ARG_INFO edbs_set_current_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo	edbs_set_current = { {
@@ -1755,7 +1755,7 @@ static ARG_INFO fn_edbs_read_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo	edbs_read = { {
@@ -1788,7 +1788,7 @@ static ARG_INFO fn_edbs_write_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},{
 		/*name*/    "数据",
 		/*explain*/ ("对应字段的数据，不足会填充0，超出会截断"),
@@ -1796,7 +1796,7 @@ static ARG_INFO fn_edbs_write_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	}
 };
 FucInfo	edbs_write = { {
@@ -2024,7 +2024,7 @@ static ARG_INFO fn_edbs_set_column_name_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "欲修改为的字段名",
@@ -2033,7 +2033,7 @@ static ARG_INFO fn_edbs_set_column_name_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo	edbs_set_column_name = { {
@@ -2070,7 +2070,7 @@ static ARG_INFO fn_edbs_del_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ -1,
-		/*state*/   AS_HAS_DEFAULT_VALUE,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 FucInfo	edbs_del = { {
@@ -2125,7 +2125,7 @@ static ARG_INFO fn_edbs_cancel_del_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ -1,
-		/*state*/   AS_HAS_DEFAULT_VALUE,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 FucInfo	edbs_cancel_del = { {

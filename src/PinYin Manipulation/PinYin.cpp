@@ -429,7 +429,7 @@ static ARG_INFO Args1[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	}
 };
 EXTERN_C void efn_get_all_py(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -463,7 +463,7 @@ static ARG_INFO Args2[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	}
 };
 EXTERN_C void efn_get_py_count(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -496,7 +496,7 @@ static ARG_INFO Args3[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"欲取拼音编码的索引",
@@ -505,7 +505,7 @@ static ARG_INFO Args3[] =
 		0,
 		SDT_INT,
 		1,
-		AS_HAS_DEFAULT_VALUE,
+		ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 EXTERN_C void efn_get_py(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -588,7 +588,7 @@ static ARG_INFO Args4[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},{
 		"待比较文本二",
 		"",
@@ -596,7 +596,7 @@ static ARG_INFO Args4[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"是否支持南方音",
@@ -605,7 +605,7 @@ static ARG_INFO Args4[] =
 		0,
 		SDT_BOOL,
 		1,
-		AS_HAS_DEFAULT_VALUE,
+		ArgMark::AS_HAS_DEFAULT_VALUE,
 	},
 	{
 		"是否为模糊比较",
@@ -614,7 +614,7 @@ static ARG_INFO Args4[] =
 		0,
 		SDT_BOOL,
 		0,
-		AS_DEFAULT_VALUE_IS_EMPTY,
+		ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo g_comp_py = { {
@@ -649,7 +649,7 @@ static ARG_INFO Args5[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},{
 		"待比较文本二",
 		"",
@@ -657,7 +657,7 @@ static ARG_INFO Args5[] =
 		0,
 		SDT_BIN,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"是否支持南方音",
@@ -666,7 +666,7 @@ static ARG_INFO Args5[] =
 		0,
 		SDT_BOOL,
 		1,
-		AS_HAS_DEFAULT_VALUE,
+		ArgMark::AS_HAS_DEFAULT_VALUE,
 	},
 	{
 		"拼音输入字类别",
@@ -675,7 +675,7 @@ static ARG_INFO Args5[] =
 		0,
 		SDT_INT,
 		0,
-		AS_DEFAULT_VALUE_IS_EMPTY,
+		ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo g_comp_py_code = { {

@@ -54,7 +54,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "子程序地址",
@@ -63,7 +63,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "参数",
@@ -72,7 +72,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -108,7 +108,7 @@ static ARG_INFO m_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "协程句柄",
@@ -117,7 +117,7 @@ static ARG_INFO m_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOPROCESS,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -153,7 +153,7 @@ static ARG_INFO m_hCo_args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -275,7 +275,7 @@ static ARG_INFO m_hCo_int_args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/  ArgMark::AS_NONE,
 	}
 };
 

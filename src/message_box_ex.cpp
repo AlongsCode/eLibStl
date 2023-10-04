@@ -15,7 +15,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/    AS_RECEIVE_ALL_TYPE_DATA,
+		/*state*/    ArgMark::AS_RECEIVE_ALL_TYPE_DATA,
 	},
 	{
 		/*name*/    "提示标题",
@@ -24,7 +24,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_RECEIVE_ALL_TYPE_DATA | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "按钮",
@@ -33,7 +33,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "窗口标题",
@@ -42,7 +42,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/    AS_RECEIVE_ALL_TYPE_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_RECEIVE_ALL_TYPE_DATA | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "父窗口",
@@ -51,7 +51,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "图标",
@@ -60,7 +60,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 

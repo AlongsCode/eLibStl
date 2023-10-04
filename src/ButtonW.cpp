@@ -1376,7 +1376,7 @@ static ARG_INFO s_Args_GetIdealSize[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR,
+		/*state*/   ArgMark::AS_RECEIVE_VAR,
 	},
 	{
 		/*name*/    "¸ß¶È",
@@ -1385,7 +1385,7 @@ static ARG_INFO s_Args_GetIdealSize[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR,
+		/*state*/   ArgMark::AS_RECEIVE_VAR,
 	}
 };
 

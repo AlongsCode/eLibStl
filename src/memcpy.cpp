@@ -12,7 +12,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"待复制的内存",
@@ -21,7 +21,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"内存长度",
@@ -30,7 +30,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},/*{
 		"是否报错?",
 		"对于不安全的内存操作进行报错，之后退出程序.否则出错后会安全处理后导致函数无效!建议在调试时为真方便调试和定位所处位置,编译后为假!",
@@ -38,7 +38,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_BOOL,
 		0,
-		AS_HAS_DEFAULT_VALUE,
+		ArgMark::AS_HAS_DEFAULT_VALUE,
 	}*/
 
 };

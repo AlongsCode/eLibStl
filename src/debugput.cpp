@@ -12,7 +12,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/	0,
 		/*type*/	_SDT_ALL,
 		/*default*/	0,
-		/*state*/	AS_DEFAULT_VALUE_IS_EMPTY | AS_RECEIVE_ALL_TYPE_DATA,
+		/*state*/	ArgMark::AS_DEFAULT_VALUE_IS_EMPTY | ArgMark::AS_RECEIVE_ALL_TYPE_DATA,
 			}
 };
 
@@ -317,7 +317,7 @@ static ARG_INFO Args2[] =
 		/*bmp num*/	0,
 		/*type*/	SDT_BIN,
 		/*default*/	0,
-		/*state*/	NULL,
+		/*state*/	ArgMark::AS_NONE,
 			}
 };
 namespace elibstl {

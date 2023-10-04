@@ -11,7 +11,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "访问方式",
@@ -20,7 +20,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/  AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/  ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "提交信息",
@@ -29,7 +29,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "提交Cookies",
 		/*explain*/ ("提交的Cookie。"),
@@ -37,7 +37,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY ,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY ,
 	},
 	{
 		/*name*/    "返回Cookies",
@@ -46,7 +46,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY | AS_RECEIVE_VAR,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY | ArgMark::AS_RECEIVE_VAR,
 	},
 	{
 		/*name*/    " 附加协议头",
@@ -55,7 +55,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "返回协议头",
@@ -64,7 +64,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY | AS_RECEIVE_VAR,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY | ArgMark::AS_RECEIVE_VAR,
 	},{
 		/*name*/    "禁止重定向",
 		/*explain*/ ("是否禁止网页重定向。"),
@@ -72,7 +72,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 
 	},{
 		/*name*/    "字节集提交",
@@ -81,7 +81,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "代理地址",
 		/*explain*/ ("代理地址，格式为ip:port，例如8.8.8.8:88。"),
@@ -89,7 +89,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "是否补全必要协议头",
 		/*explain*/ ("当附件协议头为空时自动添加必要的UA协议头 默认为真，假将不再添加非传入协议头"),
@@ -97,7 +97,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 
 	},
 	{
@@ -107,7 +107,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 
 	},
 	{
@@ -117,7 +117,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 
 	}
 };

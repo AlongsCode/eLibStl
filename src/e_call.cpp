@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 			0,
 			_SDT_ALL,
 			0,
-			NULL,
+			ArgMark::AS_NONE,
 		},
 		{
 				"返回值",
@@ -19,7 +19,7 @@ static ARG_INFO Args[] =
 				0,
 				_SDT_ALL,
 				0,
-				AS_DEFAULT_VALUE_IS_EMPTY | AS_RECEIVE_VAR,
+				ArgMark::AS_DEFAULT_VALUE_IS_EMPTY | ArgMark::AS_RECEIVE_VAR,
 		},{
 			"参数",
 			"本参数值将作为参数传入被调用子程序。如果相应子程序没有参数，请省略本参数；如果相应子程序有多个参数，请重复提供本参数。请务必提供准确的参数类型和参数个数，否则后果不可预知。",
@@ -27,7 +27,7 @@ static ARG_INFO Args[] =
 			0,
 			_SDT_ALL,
 			0,
-			AS_DEFAULT_VALUE_IS_EMPTY,
+			ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 		}
 };
 

@@ -1,7 +1,7 @@
 #include"ElibHelp.h"
 static ARG_INFO SimulateKeyArg[] =
 {
-	  { "虚拟键值", "可以为键值，键名等ansi unicode均可",0 , 0,  _SDT_ALL, NULL, NULL },
+	  { "虚拟键值", "可以为键值，键名等ansi unicode均可",0 , 0,  _SDT_ALL, NULL, ArgMark::AS_NONE },
 };
 
 static BYTE MyVkKeyScanExA(MDATA_INF pArgInf) {

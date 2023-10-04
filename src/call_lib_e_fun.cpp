@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 			0,
 			SDT_TEXT,
 			0,
-			NULL,
+			ArgMark::AS_NONE,
 		},
 		{
 				"函数名",
@@ -19,7 +19,7 @@ static ARG_INFO Args[] =
 				0,
 				_SDT_ALL,
 				0,
-				NULL,
+				ArgMark::AS_NONE,
 		},	{
 				"返回值",
 				"请确保使用规范",
@@ -27,7 +27,7 @@ static ARG_INFO Args[] =
 				0,
 				_SDT_ALL,
 				0,
-				AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+				ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 		},
 		{
 			"参数",
@@ -36,7 +36,7 @@ static ARG_INFO Args[] =
 			0,
 			_SDT_ALL,
 			0,
-			AS_DEFAULT_VALUE_IS_EMPTY,
+			ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 		}
 };
 

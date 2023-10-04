@@ -21,7 +21,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "指定文本",
@@ -30,7 +30,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/    NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 

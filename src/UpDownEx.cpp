@@ -507,7 +507,7 @@ static ARG_INFO s_ArgsSetAccel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_ARRAY_DATA,
+		/*state*/   ArgMark::AS_RECEIVE_ARRAY_DATA,
 	},
 	{
 		/*name*/    "增量",
@@ -516,7 +516,7 @@ static ARG_INFO s_ArgsSetAccel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_ARRAY_DATA,
+		/*state*/   ArgMark::AS_RECEIVE_ARRAY_DATA,
 	}
 };
 FucInfo Fn_UpDownSetAccel = { {
@@ -579,7 +579,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收秒数变量",
@@ -588,7 +588,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR_ARRAY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR_ARRAY,
 	},
 	{
 		/*name*/    "接收增量变量",
@@ -597,7 +597,7 @@ static ARG_INFO s_ArgsGetAccel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR_ARRAY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR_ARRAY,
 	}
 };
 FucInfo Fn_UpDownGetAccel = { {

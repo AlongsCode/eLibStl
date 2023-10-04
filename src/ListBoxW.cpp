@@ -2326,8 +2326,8 @@ EXTERN_C void libstl_ListBoxW_AddString(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsAddString[] =
 {
-	{ "文本","",0,0,SDT_BIN,0,NULL },
-	{ "提示文本","",0,0,SDT_BIN,0,AS_DEFAULT_VALUE_IS_EMPTY }
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "提示文本","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY }
 };
 FucInfo Fn_ListBoxWAddString = { {
 		/*ccname*/  "加入表项",
@@ -2360,9 +2360,9 @@ EXTERN_C void libstl_ListBoxW_InsertString(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsInsertString[] =
 {
-	{ "文本","",0,0,SDT_BIN,0,NULL },
-	{ "提示文本","",0,0,SDT_BIN,0,AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "插入位置","",0,0,SDT_INT,-1,AS_HAS_DEFAULT_VALUE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "提示文本","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "插入位置","",0,0,SDT_INT,-1,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWInsertString = { {
 		/*ccname*/  "插入表项",
@@ -2388,7 +2388,7 @@ EXTERN_C void libstl_ListBoxW_DelString(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsDelString[] =
 {
-	{ "删除位置","若为-1则删除所有项目",0,0,SDT_INT,0,0 },
+	{ "删除位置","若为-1则删除所有项目",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWDelString = { {
 		/*ccname*/  "删除表项",
@@ -2452,7 +2452,7 @@ EXTERN_C void libstl_ListBoxW_SetTopIndex(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsSetTopIndex[] =
 {
-	{ "位置","",0,0,SDT_INT,0,NULL }
+	{ "位置","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWSetTopIndex = { {
 		/*ccname*/  "置第一可见项",
@@ -2485,7 +2485,7 @@ EXTERN_C void libstl_ListBoxW_GetItemlParam(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetItemlParam[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWGetItemlParam = { {
 		/*ccname*/  "取表项数值",
@@ -2518,8 +2518,8 @@ EXTERN_C void libstl_ListBoxW_SetItemlParam(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetItemlParam[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "表项数值","",0,0,SDT_INT,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "表项数值","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWSetItemlParam = { {
 		/*ccname*/  "置表项数值",
@@ -2560,7 +2560,7 @@ EXTERN_C void libstl_ListBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetItemString[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemString = { {
 		/*ccname*/  "取表项文本",
@@ -2595,8 +2595,8 @@ EXTERN_C void libstl_ListBoxW_SetItemString(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetItemString[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "文本","",0,0,SDT_BIN,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ListBoxWSetItemString = { {
 		/*ccname*/  "置表项文本",
@@ -2681,7 +2681,7 @@ EXTERN_C void libstl_ListBoxW_IsItemSelected(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsIsItemSelected[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWIsItemSelected = { {
 		/*ccname*/  "表项是否选中 ",
@@ -2717,7 +2717,7 @@ EXTERN_C void libstl_ListBoxW_GetItemCheckState(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsGetItemCheckState[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemCheckState = { {
 		/*ccname*/  "取表项检查状态",
@@ -2760,8 +2760,8 @@ EXTERN_C void libstl_ListBoxW_SetItemCheckState(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsSetItemCheckState[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "是否检查","",0,0,SDT_BOOL,0,NULL},
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "是否检查","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSetItemCheckState = { {
 		/*ccname*/  "置表项检查状态",
@@ -2789,8 +2789,8 @@ EXTERN_C void libstl_ListBoxW_SelectItem(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsSelectItem[] =
 {
-	{ "索引","若为多选模式，则传递-1会操作所有项",0,0,SDT_INT,0,NULL },
-	{ "是否选择","",0,0,SDT_BOOL,0,NULL },
+	{ "索引","若为多选模式，则传递-1会操作所有项",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "是否选择","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSelectItem = { {
 		/*ccname*/  "选中表项",
@@ -2882,9 +2882,9 @@ EXTERN_C void libstl_ListBoxW_FindString(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsFindString[] =
 {
-	{ "文本","",0,0,SDT_BIN,0,NULL },
-	{ "起始搜寻索引","",0,0,SDT_INT,0,AS_HAS_DEFAULT_VALUE },
-	{ "匹配模式","0 - 包含  1 - 头部  2 - 尾部  3 - 相同",0,0,SDT_INT,0,AS_HAS_DEFAULT_VALUE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "起始搜寻索引","",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "匹配模式","0 - 包含  1 - 头部  2 - 尾部  3 - 相同",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWFindString = { {
 		/*ccname*/  "寻找表项",
@@ -2924,8 +2924,8 @@ EXTERN_C void libstl_ListBoxW_GetItemColor(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsGetItemColor[] =
 {
-	{ "索引","",0,0,SDT_INT,0,0 },
-	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,0 },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemColor = { {
 		/*ccname*/  "取表项颜色",
@@ -2989,9 +2989,9 @@ EXTERN_C void libstl_ListBoxW_SetItemColor(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsSetItemColor[] =
 {
-	{ "索引","",0,0,SDT_INT,0,0 },
-	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,0 },
-	{ "颜色","若要保持缺省，传递 #默认色 常量",0,0,SDT_INT,0,0 },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "颜色","若要保持缺省，传递 #默认色 常量",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSetItemColor = { {
 		/*ccname*/  "置表项颜色",
@@ -3032,7 +3032,7 @@ EXTERN_C void libstl_ListBoxW_GetItemTip(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsGetItemTip[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemTip = { {
 		/*ccname*/  "取表项提示文本",
@@ -3066,8 +3066,8 @@ EXTERN_C void libstl_ListBoxW_SetItemTip(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsSetItemTip[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "文本","",0,0,SDT_BIN,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ListBoxWSetItemTip = { {
 		/*ccname*/  "置表项提示文本",
@@ -3100,7 +3100,7 @@ EXTERN_C void libstl_ListBoxW_GetItemImageIndex(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsGetItemImageIndex[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemImageIndex = { {
 		/*ccname*/  "取表项图片索引",
@@ -3135,8 +3135,8 @@ EXTERN_C void libstl_ListBoxW_SetItemImageIndex(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsSetItemImageIndex[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "图片索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "图片索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetItemImageIndex = { {
 		/*ccname*/  "置表项图片索引",
@@ -3168,7 +3168,7 @@ EXTERN_C void libstl_ListBoxW_InitStorage(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsInitStorage[] =
 {
-	{ "项目数","",0,0,SDT_INT,0,NULL },
+	{ "项目数","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWInitStorage = { {
 		/*ccname*/  "保留内存",
@@ -3194,7 +3194,7 @@ EXTERN_C void libstl_ListBoxW_GetImageList(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsGetImageList[] =
 {
-	{ "是否返回非外部图像列表","若本参数为真则返回值可能是控件内部维护的图像列表，绝对不能在外部删除或修改该图像列表",0,0,SDT_BOOL,FALSE,AS_HAS_DEFAULT_VALUE },
+	{ "是否返回非外部图像列表","若本参数为真则返回值可能是控件内部维护的图像列表，绝对不能在外部删除或修改该图像列表",0,0,SDT_BOOL,FALSE,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWGetImageList = { {
 		/*ccname*/  "取图像列表句柄",
@@ -3220,7 +3220,7 @@ EXTERN_C void libstl_ListBoxW_SetImageList(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsSetImageList[] =
 {
-	{ "图像列表句柄","该图像列表由调用者维护，控件不会修改或删除",0,0,SDT_INT,0,0 },
+	{ "图像列表句柄","该图像列表由调用者维护，控件不会修改或删除",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetImageList = { {
 		/*ccname*/  "置图像列表句柄",
@@ -3260,11 +3260,11 @@ EXTERN_C void libstl_ListBoxW_GetItemRect(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsGetItemRect[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "接收左边变量","",0,0,SDT_INT,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "接收顶边变量","",0,0,SDT_INT,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "接收右边变量","",0,0,SDT_INT,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "接收底边变量","",0,0,SDT_INT,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "接收左边变量","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "接收顶边变量","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "接收右边变量","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "接收底边变量","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
 };
 FucInfo Fn_ListBoxWGetItemRect = { {
 		/*ccname*/  "取表项矩形",
@@ -3331,10 +3331,10 @@ EXTERN_C void libstl_ListBoxW_HitTest(PMDATA_INF pRetData, INT nArgCount, PMDATA
 }
 static ARG_INFO s_ArgsHitTest[] =
 {
-	{ "横向位置","相对客户区",0,0,SDT_INT,0,NULL },
-	{ "纵向位置","相对客户区",0,0,SDT_INT,0,NULL },
-	{ "是否命中检查框","",0,0,SDT_BOOL,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "是否命中图片","",0,0,SDT_BOOL,0,AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "横向位置","相对客户区",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "纵向位置","相对客户区",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "是否命中检查框","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "是否命中图片","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
 };
 FucInfo Fn_ListBoxWHitTest = { {
 		/*ccname*/  "命中测试",
@@ -3367,7 +3367,7 @@ EXTERN_C void libstl_ListBoxW_GetItemStringLength(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsGetItemStringLength[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemStringLength = { {
 		/*ccname*/  "取表项文本长度",
@@ -3405,7 +3405,7 @@ EXTERN_C void libstl_ListBoxW_Sort(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 static ARG_INFO s_ArgsSort[] =
 {
-	{ "排序方式","0 - 升序  1 - 降序",0,0,SDT_INT,0,NULL },
+	{ "排序方式","0 - 升序  1 - 降序",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSort = { {
 		/*ccname*/  "排序",
@@ -3449,7 +3449,7 @@ EXTERN_C void libstl_ListBoxW_Sort2(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 static ARG_INFO s_ArgsSort2[] =
 {
-	{ "排序子程序","返回值类型为逻辑型，有两个整数型参数，传入两表项的自定义数值，若第一个参数代表的表项数据大于第二个，则返回真，否则返回假",0,0,_SDT_ALL,0,NULL },
+	{ "排序子程序","返回值类型为逻辑型，有两个整数型参数，传入两表项的自定义数值，若第一个参数代表的表项数据大于第二个，则返回真，否则返回假",0,0,_SDT_ALL,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSort2 = { {
 		/*ccname*/  "自定义排序",
@@ -3485,8 +3485,8 @@ EXTERN_C void libstl_ListBoxW_SwapItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_ArgsSwapItem[] =
 {
-	{ "索引1","",0,0,SDT_INT,0,NULL },
-	{ "索引2","",0,0,SDT_INT,0,NULL },
+	{ "索引1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "索引2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSwapItem = { {
 		/*ccname*/  "交换表项",
@@ -3522,8 +3522,8 @@ EXTERN_C void libstl_ListBoxW_MoveItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_ArgsMoveItem[] =
 {
-	{ "索引1","",0,0,SDT_INT,0,NULL },
-	{ "索引2","",0,0,SDT_INT,0,NULL },
+	{ "索引1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "索引2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWMoveItem = { {
 		/*ccname*/  "移动表项",
@@ -3556,7 +3556,7 @@ EXTERN_C void libstl_ListBoxW_GetItemDisableState(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsGetItemDisableState[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemDisableState = { {
 		/*ccname*/  "取表项禁止状态",
@@ -3591,8 +3591,8 @@ EXTERN_C void libstl_ListBoxW_SetItemDisableState(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsSetItemDisableState[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "是否禁止","",0,0,SDT_BOOL,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "是否禁止","",0,0,SDT_BOOL,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetItemDisableState = { {
 		/*ccname*/  "置表项禁止状态",

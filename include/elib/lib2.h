@@ -1,6 +1,39 @@
 #ifndef __LIB_INF_H
 #define __LIB_INF_H
 
+
+
+#include <iostream>
+#include <type_traits>
+
+
+template <typename T>
+constexpr bool FlagCheck(T value, T Flag) {
+	static_assert(std::is_enum_v<T> || std::is_integral_v<T>, "对于标志验校函数FlagCherk(),禁止使用运算类型或枚举类型以外的类型");
+	if constexpr (std::is_enum_v<T>) {
+		using EnumType = std::underlying_type_t<T>;
+		return (static_cast<EnumType>(value) & static_cast<EnumType>(Flag)) != 0;
+	}
+
+	return (value & Flag) != 0;
+}
+
+template <typename T>
+constexpr auto FlagSet(T value, T Flag) {
+	static_assert(std::is_enum_v<T> || std::is_integral_v<T>, "对于标志验校函数FlagSet(),禁止使用运算类型或枚举类型以外的类型");
+	if constexpr (std::is_enum_v<T>) {
+		using EnumType = std::underlying_type_t<T>;
+		return static_cast <T>(static_cast<EnumType>(value) | static_cast<EnumType>(Flag));
+	}
+	return value | Flag;
+}
+
+
+
+
+
+
+
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
@@ -104,12 +137,12 @@ typedef DATE* PDATE;
 
 
 // 在数据类型中的数组标志,如果某数据类型值此位置1,则表示为此数据类型的数组。
-// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA
+// 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_ARRAY或ArgMark::AS_RECEIVE_ALL_TYPE_DATA
 // 标志的库命令参数说明其为是否为数组数据,其他场合均未使用。因此其他地方均可以忽略本标志。
 #define DT_IS_ARY                       0x20000000
 
 // 在数据类型中的传址标志,如果某数据类型值此位置1,则表示为此数据类型的变量地址。
-// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
+// 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
 // 变量地址,其他场合均未使用。因此其他地方均可以忽略本标志。
 // 本标志与上标志不能共存。
 #define DT_IS_VAR                       0x20000000
@@ -130,6 +163,28 @@ typedef DATA_TYPE* PDATA_TYPE;
 #define LVL_HIGH                    3    // 高级命令
 
 
+
+
+
+
+enum class ArgMark : unsigned int
+{
+	AS_NONE = 0,//无特殊
+	AS_HAS_DEFAULT_VALUE = (1 << 0), // 本参数有默认值,默认值在m_nDefault中说明。本参数在编辑程序时已被处理,编译时不需再处理。
+	AS_DEFAULT_VALUE_IS_EMPTY = (1 << 1),   // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为_SDT_NULL。
+	AS_RECEIVE_VAR = (1 << 2),  // 为本参数提供数据时只能提供单一变量,而不能提供整个变量数组、立即数或命令返回值。运行时所传递过来的参数数据肯定是内容不为数组的变量地址。
+	AS_RECEIVE_VAR_ARRAY = (1 << 3),   // 为本参数提供数据时只能提供整个变量数组,而不能提供单一变量、立即数或命令返回值。
+	AS_RECEIVE_VAR_OR_ARRAY = (1 << 4),   // 为本参数提供数据时只能提供单一变量或整个变量数组,而不能提供立即数或命令返回值。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
+	AS_RECEIVE_ARRAY_DATA = (1 << 5),   // 为本参数提供数据时只能提供数组数据,如不指定本标志,默认为只能提供非数组数据。如指定了本标志,运行时所传递过来的参数数据肯定为数组。
+	AS_RECEIVE_ALL_TYPE_DATA = (1 << 6),   // 为本参数提供数据时可以同时提供非数组或数组数据,与上标志互斥。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
+	AS_RECEIVE_VAR_OR_OTHER = (1 << 9)    // 为本参数提供数据时可以提供单一变量或立即数或命令返回值,不能提供数组。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_VAR来标志其是否为变量地址。
+};
+
+constexpr 
+ArgMark operator|(ArgMark left, ArgMark right) 
+{ return FlagSet(left, right); };
+
+
 //+////////////////////////////////////////////////////////////////////////
 
 // 参数数据提供方式有四种：
@@ -143,7 +198,6 @@ typedef struct
 	LPCSTR          m_szExplain;            // 参数详细解释
 	SHORT           m_shtBitmapIndex;       // 指定图像索引,从1开始,0表示无.
 	SHORT           m_shtBitmapCount;       // 图像数目(用作动画).
-
 	DATA_TYPE       m_dtType;
 
 	// 系统基本类型参数的默认指定值(在编辑程序时已被处理,编译时不需再处理)：
@@ -151,19 +205,28 @@ typedef struct
 	//    2、逻辑型：1等于真,0等于假;
 	//    3、文本型：本变量此时为LPSTR指针,指向默认文本串;
 	//    4、其它所有类型参数(包括自定义类型)一律无默认指定值。
-	INT            m_nDefault;
-
-#define AS_HAS_DEFAULT_VALUE            (1 << 0)    // 本参数有默认值,默认值在m_nDefault中说明。本参数在编辑程序时已被处理,编译时不需再处理。
-#define AS_DEFAULT_VALUE_IS_EMPTY       (1 << 1)    // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为_SDT_NULL。
-#define AS_RECEIVE_VAR                  (1 << 2)    // 为本参数提供数据时只能提供单一变量,而不能提供整个变量数组、立即数或命令返回值。运行时所传递过来的参数数据肯定是内容不为数组的变量地址。
-#define AS_RECEIVE_VAR_ARRAY            (1 << 3)    // 为本参数提供数据时只能提供整个变量数组,而不能提供单一变量、立即数或命令返回值。
-#define AS_RECEIVE_VAR_OR_ARRAY         (1 << 4)    // 为本参数提供数据时只能提供单一变量或整个变量数组,而不能提供立即数或命令返回值。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
-#define AS_RECEIVE_ARRAY_DATA           (1 << 5)    // 为本参数提供数据时只能提供数组数据,如不指定本标志,默认为只能提供非数组数据。如指定了本标志,运行时所传递过来的参数数据肯定为数组。
-#define AS_RECEIVE_ALL_TYPE_DATA        (1 << 6)    // 为本参数提供数据时可以同时提供非数组或数组数据,与上标志互斥。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
-#define AS_RECEIVE_VAR_OR_OTHER         (1 << 9)    // 为本参数提供数据时可以提供单一变量或立即数或命令返回值,不能提供数组。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_VAR来标志其是否为变量地址。
-	DWORD        m_dwState;                // 参数MASK
+	std::intptr_t            m_nDefault;
+	ArgMark        m_dwState;                // 参数MASK
 
 }ARG_INFO, * PARG_INFO;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -693,7 +756,7 @@ typedef struct
 		void** m_ppAryData;            // 数组数据变量,注意：1、写入新值之前必须释放原值(使用NRS_FREE_VAR通知)。2、变量如果为文本或字节集数组,则成员数据指针可能为NULL。不可直接更改*m_ppAryData所指向的内容,只能释放原指针后换入新指针。
 	};
 
-	// 1、当用作传入参数时,如果该参数具有 AS_RECEIVE_VAR_OR_ARRAY 或AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
+	// 1、当用作传入参数时,如果该参数具有 ArgMark::AS_RECEIVE_VAR_OR_ARRAY 或ArgMark::AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
 	// 2、当用作传递参数数据时,如果为空白数据,则为 _SDT_NULL 。
 	DATA_TYPE m_dtDataType;
 

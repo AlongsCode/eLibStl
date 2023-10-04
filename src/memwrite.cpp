@@ -9,7 +9,7 @@ static ARG_INFO Args[] =
 		0,
 		_SDT_ALL,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"内存区域指针",
@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"最大写入长度",
@@ -27,7 +27,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		AS_DEFAULT_VALUE_IS_EMPTY,
+		ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 
 };

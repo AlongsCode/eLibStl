@@ -41,7 +41,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/	0,
 		/*type*/	SDT_TEXT,
 		/*default*/	0,
-		/*state*/	0,
+		/*state*/	ArgMark::AS_NONE,
 			},
 				{
 					/*name*/	"»Øµ÷º¯Êý",
@@ -50,7 +50,7 @@ static ARG_INFO Args[] =
 					/*bmp num*/	0,
 					/*type*/	SDT_SUB_PTR,
 					/*default*/	0,
-					/*state*/	0,
+					/*state*/	ArgMark::AS_NONE,
 						},
 };
 

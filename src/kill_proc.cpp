@@ -161,7 +161,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    _SDT_ALL,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 

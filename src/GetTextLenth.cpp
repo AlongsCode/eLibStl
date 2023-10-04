@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	}
 };
 EXTERN_C void Fn_lenA(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -44,7 +44,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 EXTERN_C void Fn_lenW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)

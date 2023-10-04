@@ -1856,8 +1856,8 @@ EXTERN_C void libstl_ComboBoxW_InsertString(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsInsertString[] =
 {
-	{ "文本","",0,0,SDT_BIN,0,NULL },
-	{ "插入位置","",0,0,SDT_INT,-1,AS_HAS_DEFAULT_VALUE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE },
+	{ "插入位置","",0,0,SDT_INT,-1,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ComboBoxWInsertString = { {
 		/*ccname*/  "插入项目",
@@ -1883,7 +1883,7 @@ EXTERN_C void libstl_ComboBoxW_DelString(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsDelString[] =
 {
-	{ "删除位置","若为-1则删除所有项目",0,0,SDT_INT,0,0 },
+	{ "删除位置","若为-1则删除所有项目",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWDelString = { {
 		/*ccname*/  "删除项目",
@@ -1947,7 +1947,7 @@ EXTERN_C void libstl_ComboBoxW_SetTopIndex(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsSetTopIndex[] =
 {
-	{ "位置","",0,0,SDT_INT,0,NULL }
+	{ "位置","",0,0,SDT_INT,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ComboBoxWSetTopIndex = { {
 		/*ccname*/  "置第一可见项",
@@ -1980,7 +1980,7 @@ EXTERN_C void libstl_ComboBoxW_GetItemlParam(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsGetItemlParam[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ComboBoxWGetItemlParam = { {
 		/*ccname*/  "取项目数值",
@@ -2013,8 +2013,8 @@ EXTERN_C void libstl_ComboBoxW_SetItemlParam(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsSetItemlParam[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "项目数值","",0,0,SDT_INT,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "项目数值","",0,0,SDT_INT,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ComboBoxWSetItemlParam = { {
 		/*ccname*/  "置项目数值",
@@ -2055,7 +2055,7 @@ EXTERN_C void libstl_ComboBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsGetItemString[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWGetItemString = { {
 		/*ccname*/  "取项目文本",
@@ -2090,8 +2090,8 @@ EXTERN_C void libstl_ComboBoxW_SetItemString(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsSetItemString[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "文本","",0,0,SDT_BIN,0,NULL }
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ComboBoxWSetItemString = { {
 		/*ccname*/  "置项目文本",
@@ -2183,9 +2183,9 @@ EXTERN_C void libstl_ComboBoxW_FindString(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsFindString[] =
 {
-	{ "文本","",0,0,SDT_BIN,0,NULL },
-	{ "起始搜寻索引","",0,0,SDT_INT,0,AS_HAS_DEFAULT_VALUE },
-	{ "匹配模式","0 - 包含  1 - 头部  2 - 尾部  3 - 相同",0,0,SDT_INT,0,AS_HAS_DEFAULT_VALUE },
+	{ "文本","",0,0,SDT_BIN,0,ArgMark::AS_NONE },
+	{ "起始搜寻索引","",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "匹配模式","0 - 包含  1 - 头部  2 - 尾部  3 - 相同",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ComboBoxWFindString = { {
 		/*ccname*/  "寻找项目",
@@ -2225,8 +2225,8 @@ EXTERN_C void libstl_ComboBoxW_GetItemColor(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetItemColor[] =
 {
-	{ "索引","",0,0,SDT_INT,0,0 },
-	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,0 },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWGetItemColor = { {
 		/*ccname*/  "取项目颜色",
@@ -2289,9 +2289,9 @@ EXTERN_C void libstl_ComboBoxW_SetItemColor(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetItemColor[] =
 {
-	{ "索引","",0,0,SDT_INT,0,0 },
-	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,0 },
-	{ "颜色","若要保持缺省，传递 #默认色 常量",0,0,SDT_INT,0,0 },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "类型","0 - 背景  1 - 选中背景  2 - 文本  3 - 选中文本",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "颜色","若要保持缺省，传递 #默认色 常量",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSetItemColor = { {
 		/*ccname*/  "置项目颜色",
@@ -2324,7 +2324,7 @@ EXTERN_C void libstl_ComboBoxW_GetItemImageIndex(PMDATA_INF pRetData, INT nArgCo
 }
 static ARG_INFO s_ArgsGetItemImageIndex[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWGetItemImageIndex = { {
 		/*ccname*/  "取项目图片索引",
@@ -2358,8 +2358,8 @@ EXTERN_C void libstl_ComboBoxW_SetItemImageIndex(PMDATA_INF pRetData, INT nArgCo
 }
 static ARG_INFO s_ArgsSetItemImageIndex[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
-	{ "图片索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "图片索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSetItemImageIndex = { {
 		/*ccname*/  "置项目图片索引",
@@ -2391,7 +2391,7 @@ EXTERN_C void libstl_ComboBoxW_InitStorage(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsInitStorage[] =
 {
-	{ "项目数","",0,0,SDT_INT,0,NULL },
+	{ "项目数","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWInitStorage = { {
 		/*ccname*/  "保留内存",
@@ -2417,7 +2417,7 @@ EXTERN_C void libstl_ComboBoxW_GetImageList(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetImageList[] =
 {
-	{ "是否返回非外部图像列表","若本参数为真则返回值可能是控件内部维护的图像列表，绝对不能在外部删除或修改该图像列表",0,0,SDT_BOOL,FALSE,AS_HAS_DEFAULT_VALUE },
+	{ "是否返回非外部图像列表","若本参数为真则返回值可能是控件内部维护的图像列表，绝对不能在外部删除或修改该图像列表",0,0,SDT_BOOL,FALSE,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ComboBoxWGetImageList = { {
 		/*ccname*/  "取图像列表句柄",
@@ -2443,7 +2443,7 @@ EXTERN_C void libstl_ComboBoxW_SetImageList(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetImageList[] =
 {
-	{ "图像列表句柄","该图像列表由调用者维护，控件不会修改或删除",0,0,SDT_INT,0,0 },
+	{ "图像列表句柄","该图像列表由调用者维护，控件不会修改或删除",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSetImageList = { {
 		/*ccname*/  "置图像列表句柄",
@@ -2476,7 +2476,7 @@ EXTERN_C void libstl_ComboBoxW_GetItemStringLength(PMDATA_INF pRetData, INT nArg
 }
 static ARG_INFO s_ArgsGetItemStringLength[] =
 {
-	{ "索引","",0,0,SDT_INT,0,NULL },
+	{ "索引","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWGetItemStringLength = { {
 		/*ccname*/  "取项目文本长度",
@@ -2514,7 +2514,7 @@ EXTERN_C void libstl_ComboBoxW_Sort(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 static ARG_INFO s_ArgsSort[] =
 {
-	{ "排序方式","0 - 升序  1 - 降序",0,0,SDT_INT,0,NULL },
+	{ "排序方式","0 - 升序  1 - 降序",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSort = { {
 		/*ccname*/  "排序",
@@ -2558,7 +2558,7 @@ EXTERN_C void libstl_ComboBoxW_Sort2(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 }
 static ARG_INFO s_ArgsSort2[] =
 {
-	{ "排序子程序","返回值类型为逻辑型，有两个整数型参数，传入两项目的自定义数值，若第一个参数代表的项目数据大于第二个，则返回真，否则返回假",0,0,_SDT_ALL,0,NULL },
+	{ "排序子程序","返回值类型为逻辑型，有两个整数型参数，传入两项目的自定义数值，若第一个参数代表的项目数据大于第二个，则返回真，否则返回假",0,0,_SDT_ALL,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSort2 = { {
 		/*ccname*/  "自定义排序",
@@ -2594,8 +2594,8 @@ EXTERN_C void libstl_ComboBoxW_SwapItem(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsSwapItem[] =
 {
-	{ "索引1","",0,0,SDT_INT,0,NULL },
-	{ "索引2","",0,0,SDT_INT,0,NULL },
+	{ "索引1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "索引2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWSwapItem = { {
 		/*ccname*/  "交换项目",
@@ -2631,8 +2631,8 @@ EXTERN_C void libstl_ComboBoxW_MoveItem(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsMoveItem[] =
 {
-	{ "索引1","",0,0,SDT_INT,0,NULL },
-	{ "索引2","",0,0,SDT_INT,0,NULL },
+	{ "索引1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "索引2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ComboBoxWMoveItem = { {
 		/*ccname*/  "移动项目",

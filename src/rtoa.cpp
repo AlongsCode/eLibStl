@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_DOUBLE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -43,7 +43,7 @@ static ARG_INFO Args2[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_DOUBLE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 

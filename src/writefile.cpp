@@ -11,7 +11,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "欲写入的数据",
@@ -20,7 +20,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 
 };
@@ -80,7 +80,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "欲写入的数据",
@@ -89,7 +89,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 
 };

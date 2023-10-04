@@ -8,7 +8,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},{
 		/*name*/    "是否包含结束符",
 		/*explain*/ ("默认包含结束符"),
@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
