@@ -40,9 +40,9 @@ EXTERN_C void Fn_e_WriteMem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 	{
 		put_errmsg(L"您正向一个负指针/空指针写入数据?!"); return;
 	}
-	if ((pArgInf[0].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
+	if (pArgInf[0].is_dt_flag())//是数组
 	{
-		pArgInf[0].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
+		pArgInf[0].remove_dt_flag(); //去除数组标志
 		if (pArgInf[0].m_dtDataType == SDT_BYTE)//字节数组
 		{
 			pData = elibstl::get_array_element_inf<unsigned char*>(pArgInf[0].m_pAryData, &dwLen);

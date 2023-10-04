@@ -50,7 +50,7 @@ FucInfo cout_w = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,
-		/*ret*/     NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

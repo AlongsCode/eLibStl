@@ -402,9 +402,9 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	for (INT i = 1; i < nArgCount; i++)
 	{
 
-		if ((pArgInf[i].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
+		if (pArgInf[i].is_dt_flag())//是数组
 		{
-			pArgInf[i].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
+			pArgInf[i].remove_dt_flag(); //去除数组标志
 			if (pArgInf[i].m_dtDataType == SDT_TEXT)
 			{
 				size_t dwSize;

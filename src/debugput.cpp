@@ -266,8 +266,8 @@ EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 	for (int i = 0; i < nArgCount; i++)
 	{
 		PMDATA_INF pParam = &pArgInf[i];
-		BOOL bIsArray = ((pParam->m_dtDataType & DT_IS_ARY) != 0);
-		if (bIsArray) pParam->m_dtDataType &= (~DT_IS_ARY);
+		BOOL bIsArray = pParam->is_dt_flag(); 
+		if (bIsArray) pParam->remove_dt_flag();
 		if (!bIsArray) //参数为非数组情况
 		{
 			printParam(str, pParam);

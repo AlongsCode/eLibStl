@@ -1449,7 +1449,7 @@ static ARG_INFO Args[] =
 		/*explain*/ ("创建易语言数据库文件,此创建的有可能不兼容原版命令，但是原版创建的一定兼容新版命令"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    MAKELONG(34, 1),
+		/*type*/    DATA_TYPE::KRNLN_EDB,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_RECEIVE_ARRAY_DATA,
 		},

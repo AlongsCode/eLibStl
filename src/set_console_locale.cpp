@@ -55,7 +55,7 @@ FucInfo set_console_locale = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   NULL,
-		/*ret*/     NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

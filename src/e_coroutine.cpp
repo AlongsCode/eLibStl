@@ -13,9 +13,6 @@ namespace elibstl {
 }
 
 
-
-#define DTP_HCOPROCESS   MAKELONG (5, 0) 
-#define DTP_HCOROUTINE   MAKELONG (9, 0) 
 namespace elibcoroutine {
 	static void* create_coroutine(PFIBER_START_ROUTINE func, void* arg) {
 		//先将线程转换为协程，防止线程在没有转换协程时切换协程
@@ -133,7 +130,7 @@ FucInfo switch_coroutine = { {
 		/*explain*/ ("恢复指定句柄的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     NULL ,
+		/*ret*/     DATA_TYPE::_SDT_NULL ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
