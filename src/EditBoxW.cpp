@@ -1409,7 +1409,7 @@ EXTERN_C void libstl_Edit_GetLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 	int cch = SendMessageW(hWnd, EM_LINELENGTH, SendMessageW(hWnd, EM_LINEINDEX, pArgInf[1].m_int, 0), 0);
 	if (cch)
 	{
-		BYTE* pBuf = elibstl::malloc_array<BYTE>((cch + 1) * sizeof(WCHAR));
+		BYTE* pBuf = elibstl::malloc_wstring(cch);
 		*(WORD*)(pBuf + 8) = cch;// 发送消息前将第一个WORD设置为缓冲区大小
 		SendMessageW(hWnd, EM_GETLINE, pArgInf[1].m_int, (LPARAM)(pBuf + 8));
 		*(((PWSTR)(pBuf + 8)) + cch) = L'\0';// 复制完成后不会添加结尾NULL

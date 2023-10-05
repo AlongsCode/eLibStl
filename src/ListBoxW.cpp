@@ -2555,7 +2555,7 @@ EXTERN_C void libstl_ListBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount, 
 		return;
 	}
 
-	pRetData->m_pBin = elibstl::malloc_array<BYTE>(rsCaption.m_cchText + 1);
+	pRetData->m_pBin = elibstl::malloc_wstring(rsCaption.m_cchText);
 	rsCaption.CopyTo((PWSTR)(pRetData->m_pBin + 8));
 }
 static ARG_INFO s_ArgsGetItemString[] =
@@ -3027,7 +3027,7 @@ EXTERN_C void libstl_ListBoxW_GetItemTip(PMDATA_INF pRetData, INT nArgCount, PMD
 		return;
 	}
 
-	pRetData->m_pBin = elibstl::malloc_array<BYTE>(rsTip.m_cchText + 1);
+	pRetData->m_pBin = elibstl::malloc_wstring(rsTip.m_cchText);
 	rsTip.CopyTo((PWSTR)(pRetData->m_pBin + 8));
 }
 static ARG_INFO s_ArgsGetItemTip[] =

@@ -590,7 +590,7 @@ namespace elibstl {
 
 			// 再次验证文件大小
 			m_file.seekg(0, std::ios::end);
-			size_t fileSize = m_file.tellg();
+			size_t fileSize = (size_t)m_file.tellg();
 
 			if (fileSize < sizeof(edb_header) + sizeof(CHECK_EDB) + allCoLimnsize + allRowsize) {
 				// 文件太小，不可能读取所有列信息和足够的数据
@@ -659,7 +659,7 @@ namespace elibstl {
 
 			// 再次验证文件大小
 			m_file.seekg(0, std::ios::end);
-			size_t fileSize = m_file.tellg();
+			size_t fileSize = (size_t)m_file.tellg();
 
 			if (fileSize < sizeof(edb_header) + sizeof(CHECK_EDB) + allCoLimnsize + allRowsize) {
 				// 文件太小，不可能读取所有列信息和足够的数据
@@ -840,14 +840,14 @@ namespace elibstl {
 			if (m_allCoLimns[nIndex_column].m_ColumnType != ColumnDataType::BYTE_ARRAY && m_allCoLimns[nIndex_column].m_ColumnType != ColumnDataType::REMARK)
 			{
 				/*非字节集和备注型*/
-				if (data.size() >= needsize) {
+				if (data.size() >= (size_t)needsize) {
 					// 长度超过会截断
 					m_file.write(reinterpret_cast<const char*>(data.data()), needsize);
 				}
 				else {
 					// 长度不足会填充
 					m_file.write(reinterpret_cast<const char*>(data.data()), data.size());
-					if (data.size() < needsize) {
+					if (data.size() < (size_t)needsize) {
 						auto padData = new char[needsize - data.size()] { 0 };
 						m_file.write(padData, needsize - data.size());
 						delete[]padData;
@@ -1001,7 +1001,7 @@ namespace elibstl {
 				// 文件无法打开
 				return std::string();
 			}
-			if (nIndex_column < 0 || nIndex_column >= m_allCoLimns.size())
+			if (nIndex_column < 0 || (size_t)nIndex_column >= m_allCoLimns.size())
 			{
 				return std::string();
 			}
@@ -1014,7 +1014,7 @@ namespace elibstl {
 				// 文件无法打开
 				return;
 			}
-			if (nIndex_column < 0 || nIndex_column >= m_allCoLimns.size())
+			if (nIndex_column < 0 || (size_t)nIndex_column >= m_allCoLimns.size())
 			{
 				return;
 			}
@@ -1048,7 +1048,7 @@ namespace elibstl {
 
 
 			std::vector<char> pData_nop(nCount * m_edbInf.m_totalLength, 0);
-			for (size_t i = 0; i < nCount; i++)
+			for (int i = 0; i < nCount; i++)
 			{
 
 				*reinterpret_cast<int*>(&pData_nop[m_edbInf.m_totalLength * i]) = m_edbInf.m_unusedPrimaryKey++;
@@ -1141,7 +1141,7 @@ namespace elibstl {
 		}
 		using ReadCallback = std::function<void(int, const std::vector<uint8_t>&)>;
 		/*异步读取*/
-		inline
+		//inline
 			//	void async_read(int column, int row, ReadCallback callback) {
 			//	// 在新线程中执行读操作并通过回调返回
 			//	std::thread([=]() {
@@ -1275,7 +1275,7 @@ namespace elibstl {
 				std::streampos end = segment.second;
 
 				// 将数据段之前的数据写入临时文件
-				std::vector<char> buffer(start - currentPosition);
+				std::vector<char> buffer((size_t)(start - currentPosition));
 				m_file.read(buffer.data(), start - currentPosition);
 				tempFile.write(buffer.data(), start - currentPosition);
 
@@ -1285,7 +1285,7 @@ namespace elibstl {
 			}
 
 			// 将剩余的数据写入临时文件
-			std::vector<char> buffer(fileSize - currentPosition);
+			std::vector<char> buffer((size_t)(fileSize - currentPosition));
 			m_file.read(buffer.data(), fileSize - currentPosition);
 			tempFile.write(buffer.data(), fileSize - currentPosition);
 
@@ -1494,7 +1494,7 @@ EXTERN_C void Fn_CreateEbds(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgI
 
 	if (nElementCount > 0)
 	{
-		for (DWORD i = 0; i < nElementCount; i++) {
+		for (int i = 0; i < nElementCount; i++) {
 			if (pAryDataBegin[i])
 			{
 				elibstl::ColumnInfo Temp;

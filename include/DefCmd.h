@@ -302,7 +302,7 @@ network_post/*网页访问*/\
 ,Fn_ListBoxWSetItemDisableState/*列表框.置表项禁止状态*/\
 ,edbs_del/*易数据库.删除*/\
 ,edbs_pop/*易数据库.彻底删除*/\
-,edbs_cancel_del/*易数据库,取消删除*/\
+,edbs_cancel_del/*易数据库.取消删除*/\
 ,e_load_windows/*载入窗口*/\
 ,EplVar_structure/*变量.构造*/\
 ,EplVar_copy/*变量.复制*/\

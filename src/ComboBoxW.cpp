@@ -840,7 +840,6 @@ public:
 		if (cy < 400 && m_Info.iType != 0)
 			cy = 400;
 
-		m_SM.SubclassCtrlParent(this);
 		m_hWnd = CreateWindowExW(0, WC_COMBOBOXW, NULL, WS_CHILD | WS_CLIPSIBLINGS | dwStyle | dwCBStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
@@ -2063,7 +2062,7 @@ EXTERN_C void libstl_ComboBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount,
 		return;
 	}
 
-	pRetData->m_pBin = elibstl::malloc_array<BYTE>(rsCaption.m_cchText + 1);
+	pRetData->m_pBin = elibstl::malloc_wstring(rsCaption.m_cchText);
 	rsCaption.CopyTo((PWSTR)(pRetData->m_pBin + 8));
 }
 static ARG_INFO s_ArgsGetItemString[] =
