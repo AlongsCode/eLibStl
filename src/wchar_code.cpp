@@ -11,7 +11,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_SHORT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -49,7 +49,7 @@ static ARG_INFO WArgs2[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "欲取其代码的字符位置",
@@ -58,7 +58,7 @@ static ARG_INFO WArgs2[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 

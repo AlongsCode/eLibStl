@@ -1305,7 +1305,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "参数二",
@@ -1314,7 +1314,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "事件传递方式”",
@@ -1323,7 +1323,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 EXTERN_C void libstl_Label_SendLabelMsg(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)

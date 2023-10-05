@@ -806,7 +806,7 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 static ARG_INFO s_ArgsExtend[] =
 {
-	{ "文件或目录","",0,0,SDT_BIN,0,NULL },
+	{ "文件或目录","",0,0,SDT_BIN,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_DirBoxExtend = { {
 		/*ccname*/  "展开到",

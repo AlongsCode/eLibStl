@@ -1169,7 +1169,7 @@ static ARG_INFO s_ArgsAddText[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditAddText = { {
@@ -1214,7 +1214,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "纵向位置",
@@ -1223,7 +1223,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "行中位置",
@@ -1232,7 +1232,7 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditCharFromPos = { {
@@ -1385,7 +1385,7 @@ static ARG_INFO s_ArgsLineLength[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditLineLength = { {
@@ -1427,7 +1427,7 @@ static ARG_INFO s_ArgsGetLine[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditGetLine = { {
@@ -1463,7 +1463,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收右边距变量",
@@ -1472,7 +1472,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditGetMargins = { {
@@ -1513,7 +1513,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收纵向位置变量",
@@ -1522,7 +1522,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收宽度变量",
@@ -1531,7 +1531,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收高度变量",
@@ -1540,7 +1540,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditGetRect = { {
@@ -1572,7 +1572,7 @@ static ARG_INFO s_ArgsLineFromChar[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditLineFromChar = { {
@@ -1604,7 +1604,7 @@ static ARG_INFO s_ArgsLineIndex[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditLineIndex = { {
@@ -1636,7 +1636,7 @@ static ARG_INFO s_ArgsScroll[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditScroll = { {
@@ -1668,7 +1668,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "垂直滚动行数",
@@ -1677,7 +1677,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditLineScroll = { {
@@ -1713,7 +1713,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "接收横向位置变量",
@@ -1722,7 +1722,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "接收纵向位置变量",
@@ -1731,7 +1731,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_VAR | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditPosFromChar = { {
@@ -1763,7 +1763,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "能否撤销",
@@ -1772,7 +1772,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ FALSE,
-		/*state*/   AS_HAS_DEFAULT_VALUE,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 FucInfo Fn_EditReplaceSel = { {
@@ -1819,7 +1819,7 @@ static ARG_INFO s_ArgsSetMargins[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "右边距",
@@ -1828,7 +1828,7 @@ static ARG_INFO s_ArgsSetMargins[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditSetMargins = { {
@@ -1860,7 +1860,7 @@ static ARG_INFO s_ArgsSetModify[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 FucInfo Fn_EditSetModify = { {
@@ -1899,7 +1899,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "右边",
@@ -1908,7 +1908,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "宽度",
@@ -1917,7 +1917,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "高度",
@@ -1926,7 +1926,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditSetRect = { {
@@ -1979,7 +1979,7 @@ static ARG_INFO s_ArgsSetTabStop[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_RECEIVE_ARRAY_DATA | AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_RECEIVE_ARRAY_DATA | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 FucInfo Fn_EditSetTabStop = { {
@@ -2017,7 +2017,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "内容",
@@ -2026,7 +2026,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "图标类型",
@@ -2035,7 +2035,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_HAS_DEFAULT_VALUE,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 FucInfo Fn_EditSetBallloonTip = { {

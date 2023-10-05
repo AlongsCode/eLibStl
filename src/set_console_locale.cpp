@@ -10,7 +10,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "±‡¬Î∏Ò Ω",
@@ -19,7 +19,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
@@ -55,7 +55,7 @@ FucInfo set_console_locale = { {
 		/*explain*/ (""),
 		/*category*/5,
 		/*state*/   NULL,
-		/*ret*/     NULL,
+		/*ret*/     DATA_TYPE::_SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

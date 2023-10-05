@@ -10,34 +10,37 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
+
+
+
+
 EXTERN_C void Fn_tohalfW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	std::wstring_view
-		text = elibstl::args_to_wsdata(pArgInf, 0);
+	auto text = elibstl::args_to_wsdata(pArgInf, 0);
 	if (text.empty())
 		return;
 
 	std::wstring result;
 	result.reserve(text.size());
 
-	for (auto it = text.begin(); it != text.end(); ++it)
+	for (const auto& it: text)
 	{
-		const size_t upChar = (size_t)*it;
+		auto upChar = static_cast<int>(it);
 
 		if (upChar == 0x3000)
 		{
-			result += L' ';
+			result.push_back(L' ');
 		}
 		else if (upChar >= 65281 && upChar <= 65374)
 		{
-			result += (wchar_t)(upChar - 65248);
+			result.push_back(static_cast<wchar_t>(upChar - 65248));
 		}
 		else
 		{
-			result += *it;
+			result.push_back(it);
 		}
 	}
 	pRetData->m_pBin = elibstl::clone_textw(result);

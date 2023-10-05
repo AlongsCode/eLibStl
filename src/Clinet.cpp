@@ -215,7 +215,7 @@ static ARG_INFO connectArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "服务器端口号",
@@ -224,7 +224,7 @@ static ARG_INFO connectArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_SHORT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 inline string get_ip_this_a() {
@@ -329,7 +329,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "是否返回",
@@ -338,7 +338,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 

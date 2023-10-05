@@ -1,6 +1,42 @@
 #ifndef __LIB_INF_H
 #define __LIB_INF_H
 
+
+
+#include <iostream>
+#include <type_traits>
+#include <windows.h>
+#include <stdio.h>
+#include <math.h>
+#include<assert.h>
+
+template <typename T>
+constexpr bool FlagCheck(T value, T Flag) {
+	static_assert(std::is_enum_v<T> || std::is_integral_v<T>, "对于标志验校函数FlagCherk(),禁止使用运算类型或枚举类型以外的类型");
+	if constexpr (std::is_enum_v<T>) {
+		using EnumType = std::underlying_type_t<T>;
+		return (static_cast<EnumType>(value) & static_cast<EnumType>(Flag)) != 0;
+	}
+
+	return (value & Flag) != 0;
+}
+
+template <typename T>
+constexpr auto FlagSet(T value, T Flag) {
+	static_assert(std::is_enum_v<T> || std::is_integral_v<T>, "对于标志验校函数FlagSet(),禁止使用运算类型或枚举类型以外的类型");
+	if constexpr (std::is_enum_v<T>) {
+		using EnumType = std::underlying_type_t<T>;
+		return static_cast <T>(static_cast<EnumType>(value) | static_cast<EnumType>(Flag));
+	}
+	return value | Flag;
+}
+
+
+
+
+
+
+
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
@@ -8,92 +44,62 @@
 #endif
 
 
-//////////////////////////////////////////////////////////////////////////
-
 // 操作系统类别：
+constexpr auto __OS_WIN = 0x80000000;
+constexpr auto __OS_LINUX = 0x40000000;
+constexpr auto __OS_UNIX = 0x20000000;
+constexpr auto OS_ALL = (__OS_WIN | __OS_LINUX | __OS_UNIX);
 
-#define __OS_WIN        0x80000000
-#define __OS_LINUX      0x40000000
-#define __OS_UNIX       0x20000000
+/*基础数据类型构造*/
+/*用户代替宏MAKELONG (MAKEWORD (a, b),	0x8000),且确保不同编译器不同基础是数据类型长度不同时，同平台下值相同*/
+constexpr auto BaseType(std::uint16_t a, std::uint16_t b)
+{
+	std::uint16_t merged = static_cast<std::uint16_t>((static_cast<std::uint8_t>(a) & 0xff) | (static_cast<std::uint16_t>(static_cast<std::uint8_t>(b) & 0xff) << 8));
+	std::uint32_t result = (static_cast<std::uint32_t>(merged) & 0xffff) | (static_cast<std::uint32_t>(0x8000) << 16);
+	return static_cast<std::int32_t>(result);
+}
 
-#define OS_ALL    (__OS_WIN | __OS_LINUX | __OS_UNIX)
+/*自定义数据类型*/
+constexpr auto UserType(std::uint16_t a, std::uint16_t b)
+{
+	return static_cast<std::uint32_t>((static_cast<std::uint16_t>(a) & 0xFFFF) | (static_cast<std::uint32_t>(static_cast<std::uint16_t>(b) & 0xFFFF) << 16));
+}
 
-//!////////////////////////////////////////////////////////////////////////
+enum  DATA_TYPE : std::int32_t {
+	/*此位置为基础数据类型*/
+	_SDT_NULL = 0,  // 空
+	_SDT_ALL = BaseType(0, 0),  // 通用型
+	SDT_BYTE = BaseType(1, 1),  // uint8
+	SDT_SHORT = BaseType(1, 12),  // int16
+	SDT_INT = BaseType(1, 3),  // int32
+	SDT_INT64 = BaseType(1, 4),  // int64
+	SDT_FLOAT = BaseType(1, 5),  // float
+	SDT_DOUBLE = BaseType(1, 6),  // double
+	SDT_BOOL = BaseType(2, 0),  // int32，但是 C++ 中更好使用 bool
+	SDT_DATE_TIME = BaseType(3, 0),  // double ole时间类型,也为了兼容原版
+	SDT_TEXT = BaseType(4, 0),  // text 文本型
+	SDT_BIN = BaseType(5, 0),  // 字节集 struct ebin
+	SDT_SUB_PTR = BaseType(6, 0),  // 子程序指针
+	SDT_UTEXT = BaseType(7, 0),  // 原位置已被易语言抛弃，这里接替位置代表unicode 字符，默认为utf16
+	SDT_STATMENT = BaseType(8, 0),//子语句型，仅用于库命令定义其参数的数据类型。其数据长度为两个uintptr_t,第一个记录存根子程序地址，第二个记录该子语句所在子程序的变量栈首。
 
-#include <windows.h>
-#include <stdio.h>
-#include <math.h>
-#include<assert.h>
+	/*核心库定义数据类型,代表数据类型在核心库中的索引*/
+	KRNLN_WIN = UserType(1, 1),
+	KRNLN_EDB = UserType(34, 1),
+	/*此位置为用户自定义数据类型位置,代表数据类型在本库中索引*/
+	DTP_HCOPROCESS = UserType(5, 0),
+	DTP_HCOROUTINE = UserType(9, 0),
 
-typedef DATE* PDATE;
+};
 
-//+////////////////////////////////////////////////////////////////////////
-
-// 以下是由系统定义的基本数据类型
-
-#define        _SDT_NULL        (DATA_TYPE)0           // 空数据(内部使用,必须为零)
-
-/*  仅用于库命令定义其参数或返回值的数据类型。
-	1、当用于定义库命令参数时,_SDT_ALL可以匹配所有数据类型(数组类型必须符合要求)。
-	2、由于定义为返回_SDT_ALL数据类型的库命令不允许返回数组或复合数据类型的数据(即用户或库自定义数据类型但不包含窗口或菜单组件),
-		所以_SDT_ALL类型的数据只可能为非数组的系统数据类型或窗口组件、菜单数据类型。*/
-#define        _SDT_ALL        (DATA_TYPE)MAKELONG (MAKEWORD (0, 0), 0x8000)    // (内部使用)
-
-		// 数值,匹配所有类型数字,仅用于库命令定义其参数及返回值的数据类型。
-	//#define _SDT_NUM        (DATA_TYPE)MAKELONG (MAKEWORD (1, 0), 0x8000)        // (内部使用),3.0版本中已经废弃。
-#define SDT_BYTE        (DATA_TYPE)MAKELONG (MAKEWORD (1, 1), 0x8000)        // 字节
-#define SDT_SHORT       (DATA_TYPE)MAKELONG (MAKEWORD (1, 2), 0x8000)        // 短整数
-#define SDT_INT         (DATA_TYPE)MAKELONG (MAKEWORD (1, 3), 0x8000)        // 整数
-#define SDT_INT64       (DATA_TYPE)MAKELONG (MAKEWORD (1, 4), 0x8000)        // 长整数
-#define SDT_FLOAT       (DATA_TYPE)MAKELONG (MAKEWORD (1, 5), 0x8000)        // 小数
-#define SDT_DOUBLE      (DATA_TYPE)MAKELONG (MAKEWORD (1, 6), 0x8000)        // 双精度小数
-#define SDT_BOOL        (DATA_TYPE)MAKELONG (MAKEWORD (2, 0), 0x8000)        // 逻辑
-#define SDT_DATE_TIME   (DATA_TYPE)MAKELONG (MAKEWORD (3, 0), 0x8000)        // 日期时间
-#define SDT_TEXT        (DATA_TYPE)MAKELONG (MAKEWORD (4, 0), 0x8000)        // 文本
-#define SDT_BIN         (DATA_TYPE)MAKELONG (MAKEWORD (5, 0), 0x8000)        // 字节集
-#define SDT_SUB_PTR     (DATA_TYPE)MAKELONG (MAKEWORD (6, 0), 0x8000)        // 子程序指针
-//#define _SDT_VAR_REF    (DATA_TYPE)MAKELONG (MAKEWORD (7, 0), 0x8000)        // 参考,3.0版本中已经废弃。
-
-	/*
-	子语句型,仅用于库命令定义其参数的数据类型。其数据长度为两个INT,第一个记录存根子程序地址,第二个记录该子语句所在子程序的变量栈首。
-	注意在用作库命令参数时,编译器允许其可以接收所有基本数据类型,所以必须首先判断处理
-	调用例子：
-		if (pArgInf->m_dtDataType == SDT_BOOL)
-			return pArgInf->m_bool;
-
-		if (pArgInf->m_dtDataType == SDT_STATMENT)
-		{
-			DWORD dwEBP = pArgInf->m_statment.m_dwSubEBP;
-			DWORD dwSubAdr = pArgInf->m_statment.m_dwStatmentSubCodeAdr;
-			DWORD dwECX, dwEAX;
-
-			_asm
-			{
-				mov eax, dwEBP
-				call dwSubAdr
-				mov dwECX, ecx
-				mov dwEAX, eax
-			}
-
-			if (dwECX == SDT_BOOL)
-				return dwEAX != 0;
-
-			// 释放文本或字节集数据所分配的内存。
-			if (dwECX == SDT_TEXT || dwECX == SDT_BIN)
-				MFree ((void*)dwEAX);
-		}
-
-		GReportError ("用作进行条件判断的子语句参数只能接受逻辑型数据");
-	*/
-#define SDT_STATMENT    (DATA_TYPE)MAKELONG (MAKEWORD (8, 0),    0x8000)
 
 
 	//+////////////////////////////////////////////////////////////////////////
 
 	// 用作区分系统类型、用户自定义类型、库定义数据类型
-#define DTM_SYS_DATA_TYPE_MASK          0x80000000
-#define DTM_USER_DATA_TYPE_MASK         0x40000000
-#define DTM_LIB_DATA_TYPE_MASK          0x00000000
+#define DTM_SYS_DATA_TYPE_MASK          0x80000000//1000 0000 0000 0000 0000 0000 0000 0000
+#define DTM_USER_DATA_TYPE_MASK         0x40000000//0100 0000 0000 0000 0000 0000 0000 0000
+#define DTM_LIB_DATA_TYPE_MASK          0x00000000//000 0000 0000 0000 0000 0000 0000 0000
 
 // 用作细分用户自定义数据类型
 #define UDTM_USER_DECLARE_MASK          0x00000000    // 用户自定义复合数据类型
@@ -104,18 +110,17 @@ typedef DATE* PDATE;
 
 
 // 在数据类型中的数组标志,如果某数据类型值此位置1,则表示为此数据类型的数组。
-// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA
+// 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_ARRAY或ArgMark::AS_RECEIVE_ALL_TYPE_DATA
 // 标志的库命令参数说明其为是否为数组数据,其他场合均未使用。因此其他地方均可以忽略本标志。
-#define DT_IS_ARY                       0x20000000
+#define DT_IS_ARY                       0x20000000//10 0000 0000 0000 0000 0000 0000 0000
 
 // 在数据类型中的传址标志,如果某数据类型值此位置1,则表示为此数据类型的变量地址。
-// 本标志仅用作在运行时为具有AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
+// 本标志仅用作在运行时为具有ArgMark::AS_RECEIVE_VAR_OR_OTHER标志的库命令参数说明其为是否为
 // 变量地址,其他场合均未使用。因此其他地方均可以忽略本标志。
 // 本标志与上标志不能共存。
 #define DT_IS_VAR                       0x20000000
 
-typedef DWORD DATA_TYPE;
-typedef DATA_TYPE* PDATA_TYPE;
+
 
 //+//////////////////////////////////////////////////////////////
 
@@ -128,6 +133,28 @@ typedef DATA_TYPE* PDATA_TYPE;
 #define LVL_SIMPLE                  1    // 初级命令
 #define LVL_SECONDARY               2    // 中级命令
 #define LVL_HIGH                    3    // 高级命令
+
+
+
+
+
+
+enum class ArgMark : unsigned int
+{
+	AS_NONE = 0,//无特殊
+	AS_HAS_DEFAULT_VALUE = (1 << 0), // 本参数有默认值,默认值在m_nDefault中说明。本参数在编辑程序时已被处理,编译时不需再处理。
+	AS_DEFAULT_VALUE_IS_EMPTY = (1 << 1),   // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为_SDT_NULL。
+	AS_RECEIVE_VAR = (1 << 2),  // 为本参数提供数据时只能提供单一变量,而不能提供整个变量数组、立即数或命令返回值。运行时所传递过来的参数数据肯定是内容不为数组的变量地址。
+	AS_RECEIVE_VAR_ARRAY = (1 << 3),   // 为本参数提供数据时只能提供整个变量数组,而不能提供单一变量、立即数或命令返回值。
+	AS_RECEIVE_VAR_OR_ARRAY = (1 << 4),   // 为本参数提供数据时只能提供单一变量或整个变量数组,而不能提供立即数或命令返回值。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
+	AS_RECEIVE_ARRAY_DATA = (1 << 5),   // 为本参数提供数据时只能提供数组数据,如不指定本标志,默认为只能提供非数组数据。如指定了本标志,运行时所传递过来的参数数据肯定为数组。
+	AS_RECEIVE_ALL_TYPE_DATA = (1 << 6),   // 为本参数提供数据时可以同时提供非数组或数组数据,与上标志互斥。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
+	AS_RECEIVE_VAR_OR_OTHER = (1 << 9)    // 为本参数提供数据时可以提供单一变量或立即数或命令返回值,不能提供数组。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_VAR来标志其是否为变量地址。
+};
+
+constexpr 
+ArgMark operator|(ArgMark left, ArgMark right) 
+{ return FlagSet(left, right); };
 
 
 //+////////////////////////////////////////////////////////////////////////
@@ -143,7 +170,6 @@ typedef struct
 	LPCSTR          m_szExplain;            // 参数详细解释
 	SHORT           m_shtBitmapIndex;       // 指定图像索引,从1开始,0表示无.
 	SHORT           m_shtBitmapCount;       // 图像数目(用作动画).
-
 	DATA_TYPE       m_dtType;
 
 	// 系统基本类型参数的默认指定值(在编辑程序时已被处理,编译时不需再处理)：
@@ -151,27 +177,31 @@ typedef struct
 	//    2、逻辑型：1等于真,0等于假;
 	//    3、文本型：本变量此时为LPSTR指针,指向默认文本串;
 	//    4、其它所有类型参数(包括自定义类型)一律无默认指定值。
-	INT            m_nDefault;
-
-#define AS_HAS_DEFAULT_VALUE            (1 << 0)    // 本参数有默认值,默认值在m_nDefault中说明。本参数在编辑程序时已被处理,编译时不需再处理。
-#define AS_DEFAULT_VALUE_IS_EMPTY       (1 << 1)    // 本参数有默认值,默认值为空,与AS_HAS_DEFAULT_VALUE标志互斥,运行时所传递过来的参数数据类型可能为_SDT_NULL。
-#define AS_RECEIVE_VAR                  (1 << 2)    // 为本参数提供数据时只能提供单一变量,而不能提供整个变量数组、立即数或命令返回值。运行时所传递过来的参数数据肯定是内容不为数组的变量地址。
-#define AS_RECEIVE_VAR_ARRAY            (1 << 3)    // 为本参数提供数据时只能提供整个变量数组,而不能提供单一变量、立即数或命令返回值。
-#define AS_RECEIVE_VAR_OR_ARRAY         (1 << 4)    // 为本参数提供数据时只能提供单一变量或整个变量数组,而不能提供立即数或命令返回值。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
-#define AS_RECEIVE_ARRAY_DATA           (1 << 5)    // 为本参数提供数据时只能提供数组数据,如不指定本标志,默认为只能提供非数组数据。如指定了本标志,运行时所传递过来的参数数据肯定为数组。
-#define AS_RECEIVE_ALL_TYPE_DATA        (1 << 6)    // 为本参数提供数据时可以同时提供非数组或数组数据,与上标志互斥。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_ARY来标志其是否为数组。
-#define AS_RECEIVE_VAR_OR_OTHER         (1 << 9)    // 为本参数提供数据时可以提供单一变量或立即数或命令返回值,不能提供数组。如果具有此标志,则传递给库命令参数的数据类型将会通过DT_IS_VAR来标志其是否为变量地址。
-	DWORD        m_dwState;                // 参数MASK
+	std::intptr_t            m_nDefault;
+	ArgMark        m_dwState;                // 参数MASK
 
 }ARG_INFO, * PARG_INFO;
 
-//////////////////////////////////////////////////////////////////////////
 
-#ifndef __GCC_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
 struct CMD_INFO
-#else
-typedef struct
-#endif
 {
 	LPCSTR          m_szName;           // 命令中文名称
 	LPCSTR          m_szEgName;         // 命令英文名称,可以为空或NULL。
@@ -219,23 +249,18 @@ typedef struct
 	WORD            m_wReserved;        // 保留字段
 	SHORT           m_shtUserLevel;     // 命令的用户学习难度级别,本变量的值为级别宏。
 
-#ifndef __GCC_
 	BOOL IsInObj()
 	{
 		return m_shtCategory == -1;
 	}
-#endif
 
 	SHORT           m_shtBitmapIndex;   // 指定图像索引,从1开始,0表示无.
 	SHORT           m_shtBitmapCount;   // 图像数目(用作动画).
 	INT             m_nArgCount;        // 命令的参数数目
 	PARG_INFO       m_pBeginArgInfo;    // 参数起始地址
-#ifndef __GCC_
 };
-#else
-} CMD_INFO;
-#endif
-typedef CMD_INFO* PCMD_INFO;
+
+using PCMD_INFO = CMD_INFO*;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -653,7 +678,7 @@ typedef struct
 #pragma pack (1)    // 设置为以一字节对齐。
 #endif
 
-typedef struct
+struct MDATA_INF
 {
 	union
 	{
@@ -693,14 +718,27 @@ typedef struct
 		void** m_ppAryData;            // 数组数据变量,注意：1、写入新值之前必须释放原值(使用NRS_FREE_VAR通知)。2、变量如果为文本或字节集数组,则成员数据指针可能为NULL。不可直接更改*m_ppAryData所指向的内容,只能释放原指针后换入新指针。
 	};
 
-	// 1、当用作传入参数时,如果该参数具有 AS_RECEIVE_VAR_OR_ARRAY 或AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
+	// 1、当用作传入参数时,如果该参数具有 ArgMark::AS_RECEIVE_VAR_OR_ARRAY 或ArgMark::AS_RECEIVE_ALL_TYPE_DATA 标志, 且为数组数据,则包含数组标志 DT_IS_ARY, 这也是 DT_IS_ARY 标志的唯一使用场合。
 	// 2、当用作传递参数数据时,如果为空白数据,则为 _SDT_NULL 。
 	DATA_TYPE m_dtDataType;
 
+	/*此为打上标记即为符合AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA或AS_RECEIVE_VAR_OR_OTHER的特殊对象(数组,引用\指针)*/
+	inline bool is_dt_flag() {
+		return (static_cast<std::int32_t>(m_dtDataType) & static_cast<std::int32_t>(0x20000000)) == 0x20000000;
+	}
 
+	// 移除标志
+	inline void remove_dt_flag() {
+		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) & ~0x20000000);
+	}
 
-} MDATA_INF;
-typedef MDATA_INF* PMDATA_INF;
+	// 添加标志
+	inline void add_dt_flag() {
+		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) | 0x20000000);
+	}
+
+} ;
+using PMDATA_INF = MDATA_INF*;
 
 #ifndef __GCC_
 #pragma pack (pop, old_value)    // 恢复VC++编译器结构对齐字节数。
@@ -945,6 +983,18 @@ typedef struct
 // 返回当前执行文件名称文本指针。
 #define NRS_GET_EXE_NAME                    2004
 
+
+/*
+参数二为结构体指针
+struct
+	{
+		HUNIT m_uint{ 0 };//组件HUNIT
+		void* m_pCwnd{ nullptr };//父组件CWND
+		BOOL m_bModal{ TRUE };//是否模态
+	}*/
+#define NRS_LOAD_WIN       2005
+
+
 // 取组件对象指针
 // dwParam1为WinForm的ID
 // dwParam2为WinUnit的ID
@@ -974,6 +1024,7 @@ typedef struct
 // dwParam1为该数据的DATA_TYPE,只能为系统数据类型。
 // dwParam2为指向该数组数据的指针。
 #define NRS_FREE_ARY                        2023
+
 
 // 分配指定空间的内存,所有与易程序交互的内存都必须使用本通知分配。
 // dwParam1为欲需求内存字节数。

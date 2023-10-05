@@ -393,7 +393,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/	0,
 		/*type*/	_SDT_ALL,
 		/*default*/	0,
-		/*state*/	AS_RECEIVE_ALL_TYPE_DATA,
+		/*state*/	ArgMark::AS_RECEIVE_ALL_TYPE_DATA,
 			}
 };
 EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -402,9 +402,9 @@ EXTERN_C void elibstl_memfile_write(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	for (INT i = 1; i < nArgCount; i++)
 	{
 
-		if ((pArgInf[i].m_dtDataType & DT_IS_ARY) == DT_IS_ARY)//是数组
+		if (pArgInf[i].is_dt_flag())//是数组
 		{
-			pArgInf[i].m_dtDataType &= ~DT_IS_ARY; //去除数组标志
+			pArgInf[i].remove_dt_flag(); //去除数组标志
 			if (pArgInf[i].m_dtDataType == SDT_TEXT)
 			{
 				size_t dwSize;
@@ -544,7 +544,7 @@ static ARG_INFO Args_mem[] =
 		/*bmp num*/	0,
 		/*type*/	SDT_BIN,
 		/*default*/	0,
-		/*state*/	0,
+		/*state*/	ArgMark::AS_NONE,
 			}
 };
 EXTERN_C void elibstl_memfile_write_mem(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -584,7 +584,7 @@ static ARG_INFO args_read[] =
 		/*bmp num*/	0,
 		/*type*/	SDT_INT,
 		/*default*/	0,
-		/*state*/	NULL,
+		/*state*/	ArgMark::AS_NONE,
 			}
 };
 EXTERN_C void elibstl_memfile_read(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -622,7 +622,7 @@ static ARG_INFO args_seek[] =
 		/*bmp num*/	0,
 		/*type*/	SDT_INT,
 		/*default*/	3,
-		/*state*/	AS_HAS_DEFAULT_VALUE,
+		/*state*/	ArgMark::AS_HAS_DEFAULT_VALUE,
 			},{
 				/*name*/	"移动距离",
 				/*explain*/	"实际长度等于取决于文件长度。",
@@ -630,7 +630,7 @@ static ARG_INFO args_seek[] =
 				/*bmp num*/	0,
 				/*type*/	SDT_INT,
 				/*default*/	0,
-				/*state*/	NULL,
+				/*state*/	ArgMark::AS_NONE,
 					}
 };
 EXTERN_C void elibstl_memfile_seek(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)

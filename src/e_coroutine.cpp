@@ -13,9 +13,6 @@ namespace elibstl {
 }
 
 
-
-#define DTP_HCOPROCESS   MAKELONG (5, 0) 
-#define DTP_HCOROUTINE   MAKELONG (9, 0) 
 namespace elibcoroutine {
 	static void* create_coroutine(PFIBER_START_ROUTINE func, void* arg) {
 		//先将线程转换为协程，防止线程在没有转换协程时切换协程
@@ -54,7 +51,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/  ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "子程序地址",
@@ -63,7 +60,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "参数",
@@ -72,7 +69,7 @@ static ARG_INFO createArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -108,7 +105,7 @@ static ARG_INFO m_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	},
 	{
 		/*name*/    "协程句柄",
@@ -117,7 +114,7 @@ static ARG_INFO m_Args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOPROCESS,
 		/*default*/ 0,
-		/*state*/   NULL,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -133,7 +130,7 @@ FucInfo switch_coroutine = { {
 		/*explain*/ ("恢复指定句柄的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     NULL ,
+		/*ret*/     DATA_TYPE::_SDT_NULL ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -153,7 +150,7 @@ static ARG_INFO m_hCo_args[] =
 		/*bmp num*/ 0,
 		/*type*/    DTP_HCOROUTINE,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 
@@ -275,7 +272,7 @@ static ARG_INFO m_hCo_int_args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   0,
+		/*state*/  ArgMark::AS_NONE,
 	}
 };
 

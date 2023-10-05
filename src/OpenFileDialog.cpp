@@ -93,7 +93,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "过滤器",
@@ -102,7 +102,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/  AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/  ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "初始过滤器",
@@ -111,7 +111,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "初始目录",
 		/*explain*/ ("可以被省略。指定当打开对话框时所自动跳转到的目录，如果被省略，则默认为当前目录。"),
@@ -119,7 +119,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY ,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY ,
 	},
 	{
 		/*name*/    "不改变目录",
@@ -128,7 +128,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "父窗口",
@@ -137,7 +137,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 
 	{
@@ -147,7 +147,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "创建时提示",
 		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
@@ -155,7 +155,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "覆盖时提示",
@@ -164,7 +164,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "默认文件后缀",
 		/*explain*/ ("保存文件时，默认文件后缀"),
@@ -172,7 +172,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "是否启用旧式风格",
 		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
@@ -180,7 +180,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 	,{
 		/*name*/    "默认文件名",
@@ -189,7 +189,7 @@ static ARG_INFO Args[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
@@ -312,7 +312,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "过滤器",
@@ -321,7 +321,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/  AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/  ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "初始过滤器",
@@ -330,7 +330,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "初始目录",
 		/*explain*/ ("可以被省略。指定当打开对话框时所自动跳转到的目录，如果被省略，则默认为当前目录。"),
@@ -338,7 +338,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY ,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY ,
 	},
 	{
 		/*name*/    "不改变目录",
@@ -347,7 +347,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "父窗口",
@@ -356,7 +356,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
 		/*name*/    "对话框类型",
@@ -365,7 +365,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "创建时提示",
 		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
@@ -373,7 +373,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "覆盖时提示",
 		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
@@ -381,7 +381,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/   AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "默认文件后缀",
 		/*explain*/ ("保存文件时，默认文件后缀"),
@@ -389,7 +389,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
 		/*name*/    "是否启用旧式风格",
 		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
@@ -397,7 +397,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 	,{
 		/*name*/    "默认文件名",
@@ -406,7 +406,7 @@ static ARG_INFO WArgs[] =
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
-		/*state*/    AS_DEFAULT_VALUE_IS_EMPTY,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 

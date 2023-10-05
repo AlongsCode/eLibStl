@@ -9,7 +9,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_INT,
 		0,
-		NULL,
+		ArgMark::AS_NONE,
 	},
 	{
 		"是否初始化为零",
@@ -18,7 +18,7 @@ static ARG_INFO Args[] =
 		0,
 		SDT_BOOL,
 		0,
-		AS_DEFAULT_VALUE_IS_EMPTY,
+		ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 
 };

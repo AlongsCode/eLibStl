@@ -174,7 +174,7 @@ EXTERN_C void libstl_MenuEx_Attach(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 static ARG_INFO s_Args_Attach[] =
 {
-	{"菜单句柄", "", 0, 0, SDT_INT, 0, NULL}
+	{"菜单句柄", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE}
 };
 FucInfo Fn_MenuAttach = { {
 		/*ccname*/  "依附句柄",
@@ -226,7 +226,7 @@ EXTERN_C void libstl_MenuEx_SetDelFlag(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_SetDelFlag[] =
 {
-	{"对象析构时是否销毁菜单", "", 0, 0, SDT_BOOL, 0, NULL}
+	{"对象析构时是否销毁菜单", "", 0, 0, SDT_BOOL, 0,ArgMark::AS_NONE}
 };
 FucInfo Fn_MenuSetDelFlag = { {
 		/*ccname*/  "置回收标志",
@@ -337,18 +337,18 @@ EXTERN_C void libstl_MenuEx_InsertItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_InsertItem[] =
 {
-	{"标题", "", 0, 0, SDT_BIN, 0, AS_DEFAULT_VALUE_IS_EMPTY},
-	{"插入位置", "以下两种情况下将插入到菜单末尾：1)该参数为空；2)参数三为真且该参数为负数", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"状态", "#菜单项状态_ 常量，使用 位或() 命令组合状态", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
-	{"ID", "", 0, 0, SDT_INT, 0, 0},
-	{"子菜单句柄", "", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY},
-	{"自定义数值", "", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY},
+	{"标题", "", 0, 0, SDT_BIN, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
+	{"插入位置", "以下两种情况下将插入到菜单末尾：1)该参数为空；2)参数三为真且该参数为负数", 0, 0, SDT_INT, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"状态", "#菜单项状态_ 常量，使用 位或() 命令组合状态", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"ID", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"子菜单句柄", "", 0, 0, SDT_INT, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
+	{"自定义数值", "", 0, 0, SDT_INT, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
 	{"位图句柄", "指定一个位图句柄或图片字节集或 #菜单预设位图_ 常量。"
 			"注意：1)有大量图片需要被复用时不应传递字节集，这会导致性能问题；"
-			"2)若本参数传递了字节集，则菜单Ex对象的生命周期必须持续到菜单被销毁之后，因为本对象内部维护位图句柄。", 0, 0, _SDT_ALL, 0, AS_DEFAULT_VALUE_IS_EMPTY},
-	{"是否为分隔线", "", 0, 0, SDT_BOOL, FALSE, AS_HAS_DEFAULT_VALUE},
-	{"换列选项", "0 - 常规  1 - 另起一列  2 - 另起一列并使用竖线分隔", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
+			"2)若本参数传递了字节集，则菜单Ex对象的生命周期必须持续到菜单被销毁之后，因为本对象内部维护位图句柄。", 0, 0, _SDT_ALL, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
+	{"是否为分隔线", "", 0, 0, SDT_BOOL, FALSE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"换列选项", "0 - 常规  1 - 另起一列  2 - 另起一列并使用竖线分隔", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuInsertItem = { {
 		/*ccname*/  "插入项目",
@@ -375,7 +375,7 @@ EXTERN_C void libstl_MenuEx_CreatePopupMenu(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_Args_CreatePopupMenu[] =
 {
-	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, AS_HAS_DEFAULT_VALUE}
+	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, ArgMark::AS_HAS_DEFAULT_VALUE}
 };
 FucInfo Fn_MenuCreatePopupMenu = { {
 		/*ccname*/  "创建弹出式菜单",
@@ -420,8 +420,8 @@ EXTERN_C void libstl_MenuEx_DeleteItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_DeleteItem[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0,ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuDeleteItem = { {
 		/*ccname*/  "删除项目",
@@ -479,8 +479,8 @@ EXTERN_C void libstl_MenuEx_GetCaption(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_GetCaption[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuGetCaption = { {
 		/*ccname*/  "取标题",
@@ -506,9 +506,9 @@ EXTERN_C void libstl_MenuEx_SetCheck(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 }
 static ARG_INFO s_Args_SetCheck[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"是否选中", "", 0, 0, SDT_BOOL, 0, 0},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"是否选中", "", 0, 0, SDT_BOOL, 0, ArgMark::AS_NONE},
 };
 FucInfo Fn_MenuSetCheck = { {
 		/*ccname*/  "置选中状态",
@@ -534,9 +534,9 @@ EXTERN_C void libstl_MenuEx_GetCheck(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 }
 static ARG_INFO s_Args_GetCheck[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"是否选中", "", 0, 0, SDT_BOOL, 0, 0},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"是否选中", "", 0, 0, SDT_BOOL, 0, ArgMark::AS_NONE},
 };
 FucInfo Fn_MenuGetCheck = { {
 		/*ccname*/  "取选中状态",
@@ -572,11 +572,11 @@ EXTERN_C void libstl_MenuEx_SetRadioCheck(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_Args_SetRadioCheck[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"互斥范围起始位置", "", 0, 0, SDT_INT, 0, 0},
-	{"互斥范围结束位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"是否选中", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"互斥范围起始位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"互斥范围结束位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"是否选中", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuSetRadioCheck = { {
 		/*ccname*/  "置单选状态",
@@ -609,8 +609,8 @@ EXTERN_C void libstl_MenuEx_GetRadioCheck(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_Args_GetRadioCheck[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, AS_DEFAULT_VALUE_IS_EMPTY},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuGetRadioCheck = { {
 		/*ccname*/  "取单选状态",
@@ -642,9 +642,9 @@ EXTERN_C void libstl_MenuEx_SetDefault(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_SetDefault[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"是否默认", "", 0, 0, SDT_BOOL, 0, 0},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"是否默认", "", 0, 0, SDT_BOOL, 0,ArgMark::AS_NONE},
 };
 FucInfo Fn_MenuSetDefault = { {
 		/*ccname*/  "置默认状态",
@@ -672,8 +672,8 @@ EXTERN_C void libstl_MenuEx_GetDefault(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_GetDefault[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuGetDefault = { {
 		/*ccname*/  "取默认状态",
@@ -699,10 +699,10 @@ EXTERN_C void libstl_MenuEx_SetDisable(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_SetDisable[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"是否禁止", "", 0, 0, SDT_BOOL, 0, 0},
-	{"是否灰色", "若此参数为假，则仅禁用项目，而不改变项目的外观，仅当 是否禁止 参数为真时有效", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"是否禁止", "", 0, 0, SDT_BOOL, 0, ArgMark::AS_NONE},
+	{"是否灰色", "若此参数为假，则仅禁用项目，而不改变项目的外观，仅当 是否禁止 参数为真时有效", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuSetDisable = { {
 		/*ccname*/  "置禁止状态",
@@ -732,8 +732,8 @@ EXTERN_C void libstl_MenuEx_GetDisable(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_GetDisable[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuGetDisable = { {
 		/*ccname*/  "取禁止状态",
@@ -759,10 +759,10 @@ EXTERN_C void libstl_MenuEx_SetHilite(PMDATA_INF pRetData, INT nArgCount, PMDATA
 }
 static ARG_INFO s_Args_SetHilite[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"窗口句柄", "", 0, 0, SDT_INT, 0, 0},
-	{"是否高亮", "", 0, 0, SDT_BOOL, 0, 0},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"窗口句柄", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"是否高亮", "", 0, 0, SDT_BOOL, 0, ArgMark::AS_NONE},
 };
 FucInfo Fn_MenuSetHilite = { {
 		/*ccname*/  "置高亮状态",
@@ -787,8 +787,8 @@ EXTERN_C void libstl_MenuEx_GetHilite(PMDATA_INF pRetData, INT nArgCount, PMDATA
 }
 static ARG_INFO s_Args_GetHilite[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuGetHilite = { {
 		/*ccname*/  "取高亮状态",
@@ -857,14 +857,14 @@ EXTERN_C void libstl_MenuEx_TrackPopupMenu(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_Args_TrackPopupMenu[] =
 {
-	{"横向位置", "", 0, 0, SDT_INT, 0, 0},
-	{"纵向位置", "", 0, 0, SDT_INT, 0, 0},
-	{"窗口句柄", "", 0, 0, SDT_INT, 0, 0},
-	{"水平对齐", "0 - 左  1 - 居中  2 - 右", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
-	{"垂直对齐", "0 - 上  1 - 居中  2 - 下", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
-	{"通知选项", "0 - 常规  1 - 不通知父窗口  2 - 返回选中项目ID  3 - 不通知父窗口且返回选中项目ID", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
-	{"动画选项", "0 - 常规  -1 - 禁止动画  1 - 从上到下  2 - 从下到上  4 - 从左到右  8 - 从右到左，使用 位或() 命令做合理组合", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
-	{"鼠标按键选项", "0 - 左右键可选择  1 - 左键可选择", 0, 0, SDT_INT, 0, AS_HAS_DEFAULT_VALUE},
+	{"横向位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"纵向位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"窗口句柄", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"水平对齐", "0 - 左  1 - 居中  2 - 右", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"垂直对齐", "0 - 上  1 - 居中  2 - 下", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"通知选项", "0 - 常规  1 - 不通知父窗口  2 - 返回选中项目ID  3 - 不通知父窗口且返回选中项目ID", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"动画选项", "0 - 常规  -1 - 禁止动画  1 - 从上到下  2 - 从下到上  4 - 从左到右  8 - 从右到左，使用 位或() 命令做合理组合", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"鼠标按键选项", "0 - 左右键可选择  1 - 左键可选择", 0, 0, SDT_INT, 0, ArgMark::AS_HAS_DEFAULT_VALUE},
 };
 FucInfo Fn_MenuTrackPopupMenu = { {
 		/*ccname*/  "弹出跟踪式菜单",
@@ -893,9 +893,9 @@ EXTERN_C void libstl_MenuEx_SetCaption(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_SetCaption[] =
 {
-	{"位置", "", 0, 0, SDT_INT, 0, 0},
-	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, AS_HAS_DEFAULT_VALUE},
-	{"标题", "", 0, 0, SDT_BIN, 0, 0},
+	{"位置", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"位置是否为索引", "", 0, 0, SDT_BOOL, TRUE, ArgMark::AS_HAS_DEFAULT_VALUE},
+	{"标题", "", 0, 0, SDT_BIN, 0, ArgMark::AS_NONE},
 };
 FucInfo Fn_MenuSetCaption = { {
 		/*ccname*/  "置标题",
@@ -922,7 +922,7 @@ EXTERN_C void libstl_MenuEx_CreateMenu(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_Args_CreateMenu[] =
 {
-	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, AS_HAS_DEFAULT_VALUE}
+	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, ArgMark::AS_HAS_DEFAULT_VALUE}
 };
 FucInfo Fn_MenuCreateMenu = { {
 		/*ccname*/  "创建水平菜单",
@@ -946,7 +946,7 @@ EXTERN_C void libstl_MenuEx_SetMenu(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 static ARG_INFO s_Args_SetMenu[] =
 {
-	{"窗口句柄", "", 0, 0, SDT_INT, 0, 0}
+	{"窗口句柄", "", 0, 0, SDT_INT, 0,ArgMark::AS_NONE}
 };
 FucInfo Fn_MenuSetMenu = { {
 		/*ccname*/  "置窗口菜单",
@@ -973,8 +973,8 @@ EXTERN_C void libstl_MenuEx_GetMenu(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 static ARG_INFO s_Args_GetMenu[] =
 {
-	{"窗口句柄", "", 0, 0, SDT_INT, 0, 0},
-	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, AS_HAS_DEFAULT_VALUE}
+	{"窗口句柄", "", 0, 0, SDT_INT, 0, ArgMark::AS_NONE},
+	{"是否依附", "", 0, 0, SDT_BOOL, FALSE, ArgMark::AS_HAS_DEFAULT_VALUE}
 };
 FucInfo Fn_MenuGetMenu = { {
 		/*ccname*/  "取窗口菜单",
@@ -1028,9 +1028,9 @@ EXTERN_C void libstl_MenuEx_SetEventReceiver(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_Args_SetEventReceiver[] =
 {
-	{"窗口句柄", "", 0, 0, SDT_INT, 0, 0},
+	{"窗口句柄", "", 0, 0, SDT_INT, 0,ArgMark::AS_NONE},
 	{"事件接收子程序", "只能接收整数型和子程序指针型，子程序返回值为整数型，有一个整数型参数，"
-			"该参数为菜单ID，返回0跳过默认处理，返回1执行默认处理", 0, 0, _SDT_ALL, 0, 0}
+			"该参数为菜单ID，返回0跳过默认处理，返回1执行默认处理", 0, 0, _SDT_ALL, 0, ArgMark::AS_NONE}
 };
 FucInfo Fn_MenuSetEventReceiver = { {
 		/*ccname*/  "置事件接收器",

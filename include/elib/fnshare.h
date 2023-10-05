@@ -475,11 +475,11 @@ namespace elibstl
 	}
 	//移除数组标志
 	inline void remove_array_flags(PMDATA_INF pArgInf) {
-		pArgInf->m_dtDataType &= ~DT_IS_ARY;
+		pArgInf->remove_dt_flag();
 	}
 	// 添加数组标志
 	inline void add_array_flags(PMDATA_INF pArgInf) {
-		pArgInf->m_dtDataType |= DT_IS_ARY;
+		pArgInf->add_dt_flag();
 	}
 	//取基础类型长度
 	inline size_t get_esys_datatype_size(DATA_TYPE pArgInf)
