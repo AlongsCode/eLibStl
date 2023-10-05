@@ -43,7 +43,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ComboBoxW.cpp" />
     <ClCompile Include="include\ElibHelp.cpp" />
     <ClCompile Include="include\elib\fnshare.cpp" />
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
@@ -64,6 +63,7 @@
     <ClCompile Include="src\Clinet.cpp" />
     <ClCompile Include="src\Code Debug\try_catch.cpp" />
     <ClCompile Include="src\Code Debug\UnicedeEdit.cpp" />
+    <ClCompile Include="src\ComboBoxW.cpp" />
     <ClCompile Include="src\cout_console.cpp" />
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />

@@ -121,7 +121,7 @@ static ATOM s_atomListBoxItemsDesign = 0;
 
 #define CWM_CLRPICKERNOTIFY	WM_USER + 2
 
-static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK WndProc_ComboBoxBoxDesign(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	auto p = (EDLGCTX_COMBOBOXITEMS*)GetWindowLongPtrW(hWnd, 0);
 	switch (uMsg)
@@ -533,7 +533,7 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 
 BOOL ShowComboBoxDesignDlg(BYTE** ppItemsData, SIZE_T* pcbItems, BYTE* pInitData, HIMAGELIST hImageList)
 {
-	auto pCtx = EzDlg::EIDEDlgPreShow<EDLGCTX_COMBOBOXITEMS>(&s_atomListBoxItemsDesign, WCN_LISTBOXDESIGN, WndProc_ListBoxDesign);
+	auto pCtx = EzDlg::EIDEDlgPreShow<EDLGCTX_COMBOBOXITEMS>(&s_atomListBoxItemsDesign, WCN_LISTBOXDESIGN, WndProc_ComboBoxBoxDesign);
 	if (ppItemsData)
 		*ppItemsData = NULL;
 	if (pcbItems)
@@ -624,17 +624,28 @@ private:
 	{
 		switch (uMsg)
 		{
-		case WM_MEASUREITEM:
-		{
-			HWND hCtrl = GetDlgItem(hWnd, wParam);
-			if (!m_CtrlSCInfo.count(hCtrl))
-				break;
-			auto pmis = (MEASUREITEMSTRUCT*)lParam;
-			auto p = m_CtrlSCInfo[hCtrl];
-			pmis->itemHeight = p->m_Info.cyItem;
-			return TRUE;
-		}
-		break;
+		//case WM_MEASUREITEM:
+		//{
+		//	HWND hCtrl = GetDlgItem(hWnd, wParam);
+		//	auto it = m_CtrlSCInfo.find(hCtrl);
+		//	if (it == m_CtrlSCInfo.end())
+		//		break;
+		//	auto pmis = (MEASUREITEMSTRUCT*)lParam;
+		//	auto p = it->second;
+		//	if (pmis->itemID == -1)
+		//	{
+		//		if (p->m_Info.cyComboBox >= 0)
+		//			pmis->itemHeight = p->m_Info.cyComboBox;
+		//	}
+		//	else
+		//	{
+		//		if (p->m_Info.cyItem >= 0)
+		//			pmis->itemHeight = p->m_Info.cyItem;
+		//	}
+
+		//	return TRUE;
+		//}
+		//break;
 
 		case WM_DRAWITEM:
 		{
@@ -807,9 +818,10 @@ public:
 			m_Info.crSelBK = CLR_DEFAULT;
 			m_Info.crSelBK = CLR_DEFAULT;
 			m_Info.crSelText = CLR_DEFAULT;
-			m_Info.cyItem = 16;
+			m_Info.cyItem = -1;
 			m_Info.idxCurrSel = -1;
 			m_Info.iAlignV = 1;
+			m_Info.cyComboBox = -1;
 		}
 
 		m_Info.iVer = DATA_VER_COMBOBOX_1;
@@ -828,16 +840,17 @@ public:
 		if (cy < 400 && m_Info.iType != 0)
 			cy = 400;
 
+		m_SM.SubclassCtrlParent(this);
 		m_hWnd = CreateWindowExW(0, WC_COMBOBOXW, NULL, WS_CHILD | WS_CLIPSIBLINGS | dwStyle | dwCBStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
-		if (!pAllData)
-		{
-			RECT rc;
-			GetClientRect(m_hWnd, &rc);
-			m_Info.cyComboBox = rc.bottom;
-		}
+		//if (!pAllData)
+		//{
+		//	RECT rc;
+		//	GetClientRect(m_hWnd, &rc);
+		//	m_Info.cyComboBox = rc.bottom;
+		//}
 
 		SetRedraw(FALSE);
 		// 设置图像列表
@@ -853,12 +866,12 @@ public:
 			SetCueBanner(m_pszCueBanner);
 
 		InitBase0(pAllData);
-		if (m_Info.cyItem)// 必须在InitBase0之后
-			SetItemHeight(m_Info.cyItem);
+		//if (m_Info.cyItem)// 必须在InitBase0之后
+		//	SetItemHeight(m_Info.cyItem);
 		SetRedraw(TRUE);
 
-		SetComboBoxHeight(m_Info.cyComboBox);
-		SendMessageW(m_hWnd, CB_SETMINVISIBLE, 30, 0);
+		//SetComboBoxHeight(m_Info.cyComboBox);
+		//SendMessageW(m_hWnd, CB_SETMINVISIBLE, 30, 0);
 	}
 
 	~CComboBox()
