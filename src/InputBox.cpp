@@ -76,11 +76,11 @@ namespace elibstl {
 			//#if (style & (DS_SETFONT|DS_SHELLFONT))
 			struct FONTDLG
 			{
-				WORD      pointsize = 8;
+				WORD      pointsize = 9;
 				WORD      weight = 0;
 				BYTE      italic = 0;
 				BYTE      charset = 0;
-				WCHAR     typeface[13] = L"MS Shell Dlg";
+				WCHAR     typeface[19] = L"Microsoft YaHei UI";
 			};
 			struct DLGITEMTEMPLATEEX
 			{

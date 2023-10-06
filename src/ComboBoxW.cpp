@@ -861,8 +861,8 @@ public:
 		SetClr(1, m_Info.crBK);
 		SetSelClr(1, m_Info.crSelBK);
 		SetCurrSel(m_Info.idxCurrSel);
-		if (m_Info.cchCueBanner && m_Info.iType == 0)
-			SetCueBanner(m_pszCueBanner);
+		if (m_Info.cchCueBanner && m_Info.iType != 2)
+			SetCueBannerNoCopy(m_pszCueBanner);
 
 		InitBase0(pAllData);
 		//if (m_Info.cyItem)// 必须在InitBase0之后
@@ -1482,7 +1482,7 @@ public:
 	eStlInline void SetCueBannerNoCopy(PCWSTR psz)
 	{
 		if (!m_bInDesignMode)
-			SendMessageW(m_hWnd, EM_SETCUEBANNER, FALSE, (LPARAM)psz);
+			SendMessageW(GetEditControl(), EM_SETCUEBANNER, FALSE, (LPARAM)psz);
 	}
 
 	void SetCueBanner(PCWSTR psz)
@@ -1502,7 +1502,7 @@ public:
 	eStlInline PCWSTR GetCueBanner(SIZE_T* pcb = NULL)
 	{
 		if (!m_bInDesignMode)
-			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, CB_CUEBANNER_MAXLEN);
+			SendMessageW(GetEditControl(), EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, CB_CUEBANNER_MAXLEN);
 		if (pcb)
 			*pcb = wcslen(m_pszCueBanner);
 		return m_pszCueBanner;
