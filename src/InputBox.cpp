@@ -111,8 +111,11 @@ namespace elibstl {
 				WORD windowClass
 			) {
 				constexpr size_t  gitem_size = sizeof(DLGITEMTEMPLATEEX) + sizeof(WORD);
-				auto lenth = (title.size() + 1) * sizeof(wchar_t);;
-				auto dlg_template = reinterpret_cast<DLGITEMTEMPLATEEX*>(new char[gitem_size + lenth]{ 0 });
+				auto lenth = (title.size() + 1) * sizeof(wchar_t);
+				size_t cbTotal = lenth + gitem_size;
+				if (cbTotal % 4)
+					cbTotal += 2;
+				auto dlg_template = reinterpret_cast<DLGITEMTEMPLATEEX*>(new char[cbTotal]{ 0 });
 				dlg_template->cx = cx;
 				dlg_template->cy = cy;
 				dlg_template->x = x;
@@ -128,7 +131,9 @@ namespace elibstl {
 					wcscpy_s(dlg_template->title, title.size() + 1, title.c_str());
 				}
 
-				m_pData.insert(m_pData.end(), reinterpret_cast<unsigned char*>(dlg_template), reinterpret_cast<unsigned char*>(dlg_template) + gitem_size + lenth);
+				m_pData.insert(m_pData.end(), 
+					reinterpret_cast<unsigned char*>(dlg_template), 
+					reinterpret_cast<unsigned char*>(dlg_template) + cbTotal);
 				delete[]reinterpret_cast<char*>(dlg_template);
 				m_Count++;
 			}
@@ -147,10 +152,16 @@ namespace elibstl {
 				Head.exStyle = 0;
 				Head.windowClass = 0;
 				FONTDLG Font{  };
-				m_pData.insert(m_pData.begin(), reinterpret_cast<unsigned char*>(&Font), reinterpret_cast<unsigned char*>(&Font) + sizeof(Font));
+				m_pData.insert(m_pData.begin(), 
+					reinterpret_cast<unsigned char*>(&Font), 
+					reinterpret_cast<unsigned char*>(&Font) + sizeof(Font));
+				if (title.size() % 2)
+					m_pData.insert(m_pData.begin() + sizeof(Font), { 0,0 });
 				if (!title.empty())
 				{
-					m_pData.insert(m_pData.begin(), const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(title.c_str())), const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(title.c_str())) + (title.size() + 1) * sizeof(wchar_t));
+					m_pData.insert(m_pData.begin(), 
+						const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(title.c_str())), 
+						const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(title.c_str())) + (title.size() + 1) * sizeof(wchar_t));
 				}
 				else
 				{
@@ -158,7 +169,9 @@ namespace elibstl {
 					m_pData.insert(m_pData.begin(), const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(emptystr)), const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(emptystr) + sizeof(wchar_t)));
 
 				}
-				m_pData.insert(m_pData.begin(), reinterpret_cast<unsigned char*>(&Head), reinterpret_cast<unsigned char*>(&Head) + sizeof(Head));
+				m_pData.insert(m_pData.begin(), 
+					reinterpret_cast<unsigned char*>(&Head), 
+					reinterpret_cast<unsigned char*>(&Head) + sizeof(Head));
 
 				m_hDlg = CreateDialogIndirectParamW(g_elibstl_hModule, (DLGTEMPLATE*)m_pData.data(), hParent, DlgProc, reinterpret_cast<LPARAM>(&m_DlgData));
 
@@ -293,7 +306,7 @@ EXTERN_C void libstl_InputBox(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 		Dlg.Add(L"取消(&C)", 1342242816, 151, 30 + MultiLineAdd, 55, 19, IDCANCEL, 0x0080);
 		/////*输入框 */
 		Dlg.Add(init_text, dwStyleEdit, 7, 7, 200, 12 + MultiLineAdd, 58570, 0x0081);
-		///*创建*/
+		/*创建*/
 		Dlg.Create(0, 0, 214, 56 + MultiLineAdd, title, reinterpret_cast<HWND>(hParent));
 
 	}
