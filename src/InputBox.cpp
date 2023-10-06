@@ -17,7 +17,8 @@ namespace elibstl {
 				{
 				case WM_INITDIALOG:
 					::SetWindowLongPtrW(hDlg, GWL_USERDATA, lParam);
-					break;
+					SetFocus(GetDlgItem(hDlg, 58570));
+					return FALSE;
 				case WM_COMMAND:
 				{
 					INT nID = wParam & 0xffff;
