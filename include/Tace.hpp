@@ -133,15 +133,15 @@ namespace elibstl_debug {
 	template <class... T>
 	static void debug_put_elibstl(const std::wstring&file, const int line, T... args)
 	{
-		std::wstringstream msg;
-		msg << L"* \r\n【************此代码来自标准模板库的调试************】\r\n调试代码页:" << file << L"\r\n所在行:" << line<<L"\r\n";
-		std::wstring str{ msg.str() };
-
+		//std::wstringstream msg;
+		//msg << L"* \r\n【************此代码来自标准模板库的调试************】\r\n调试代码页:" << file << L"\r\n所在行:" << line<<L"\r\n";
+		//std::wstring str{ msg.str() };
+		std::wstring str = L"* ";
 		std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
 
 		str.pop_back();
 		str.pop_back();
-		str.append(L"\r\n【***************来自支持库的调试结束***************】\r\n");
+	//str.append(L"\r\n【***************来自支持库的调试结束***************】\r\n");
 		
 		OutputDebugStringW(str.c_str());
 	};

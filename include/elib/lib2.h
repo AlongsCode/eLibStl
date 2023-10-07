@@ -64,7 +64,6 @@ constexpr auto UserType(std::uint16_t a, std::uint16_t b)
 {
 	return static_cast<std::uint32_t>((static_cast<std::uint16_t>(a) & 0xFFFF) | (static_cast<std::uint32_t>(static_cast<std::uint16_t>(b) & 0xFFFF) << 16));
 }
-
 enum  DATA_TYPE : std::int32_t {
 	/*此位置为基础数据类型*/
 	_SDT_NULL = 0,  // 空
@@ -89,7 +88,8 @@ enum  DATA_TYPE : std::int32_t {
 	/*此位置为用户自定义数据类型位置,代表数据类型在本库中索引*/
 	DTP_HCOPROCESS = UserType(5, 0),
 	DTP_HCOROUTINE = UserType(9, 0),
-
+	DTP_EDB = UserType(10, 0),/*弱类型*/
+	DTP_VAR = UserType(20, 0),/*弱类型*/
 };
 
 
@@ -723,15 +723,20 @@ struct MDATA_INF
 	DATA_TYPE m_dtDataType;
 
 	/*此为打上标记即为符合AS_RECEIVE_VAR_OR_ARRAY或AS_RECEIVE_ALL_TYPE_DATA或AS_RECEIVE_VAR_OR_OTHER的特殊对象(数组,引用\指针)*/
-	inline bool is_dt_flag() {
-		return (static_cast<std::int32_t>(m_dtDataType) & static_cast<std::int32_t>(0x20000000)) == 0x20000000;
+	inline bool is_dt_flag() const {
+		return (static_cast<std::int32_t>(m_dtDataType) & static_cast<std::int32_t>(DT_IS_ARY)) == DT_IS_ARY;
 	}
 
 	// 移除标志
 	inline void remove_dt_flag() {
-		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) & ~0x20000000);
+		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) & ~DT_IS_ARY);
 	}
-
+	inline auto ret_type_noflag() const {
+		return static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) & ~DT_IS_ARY);
+	}
+	inline auto ret_int32_type() const {
+		return static_cast<std::int32_t>(m_dtDataType);
+	}
 	// 添加标志
 	inline void add_dt_flag() {
 		m_dtDataType = static_cast<DATA_TYPE>(static_cast<std::int32_t>(m_dtDataType) | 0x20000000);
