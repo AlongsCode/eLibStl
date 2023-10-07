@@ -128,7 +128,25 @@ namespace elibstl {
 			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE:
 				return get_sys_type_value(pArgInf.ret_type_noflag());
 			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE:
-				return 11;/*无返回值类型*/
+				return static_cast<int>(pArgInf.m_dtDataType);/*无返回值类型*/
+				break;
+			case elibstl::EplVar::DTT_IS_LIB_DATA_TYPE:
+				break;
+			default:
+
+				break;
+			}
+		}
+		auto get_type_value() {
+
+			switch (m_dtt)
+			{
+			case elibstl::EplVar::DTT_IS_NULL_DATA_TYPE:
+				return 0;
+			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE:
+				return get_sys_type_value(m_DataType);
+			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE:
+				return static_cast<int>(m_DataType);/*无返回值类型*/
 				break;
 			case elibstl::EplVar::DTT_IS_LIB_DATA_TYPE:
 				break;
@@ -627,6 +645,27 @@ namespace elibstl {
 
 
 
+EXTERN_C void libstl_Var_Type(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::args_to_obj<elibstl::EplVar>(pArgInf);
+	pRetData->m_int = self->get_type_value();
+}
+
+FucInfo Fn_Var_Type = { {
+		/*ccname*/  "类型",
+		/*egname*/  "Type",
+		/*explain*/ "将返回对应数据类型值, 0、#空类型 1、#字节型； 2、#短整数型； 3、#整数型； "
+			  "4、#长整数型； 5、#小数型； 6、#双精度小数型； 7、#逻辑型； 8、#日期时间型； "
+			  "9、#子程序指针型； 10、#文本型。；!!自定义数据类型请使用 \"取运行时数据类型()\"函数返回值",
+	/*category*/-1,
+	/*state*/   NULL,
+	/*ret*/     SDT_INT,
+	/*reserved*/NULL,
+	/*level*/   LVL_SIMPLE,
+	/*bmp inx*/ 0,
+	/*bmp num*/ 0,
+	/*ArgCount*/0,
+	/*arg lp*/   0 },ESTLFNAME(libstl_Var_Set) };
 //static ARG_INFO s_ArgInfo[] =
 //{
 //	/*name*/     "欲转换为字节集的数据",
