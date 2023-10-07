@@ -80,6 +80,7 @@
     <ClCompile Include="src\EditBoxW.cpp" />
     <ClCompile Include="src\Elibdef.cpp" />
     <ClCompile Include="src\e_fnBrowseForFolder.cpp" />
+    <ClCompile Include="src\floor.cpp" />
     <ClCompile Include="src\free.cpp" />
     <ClCompile Include="src\free_console.cpp" />
     <ClCompile Include="src\GetConutEx.cpp" />

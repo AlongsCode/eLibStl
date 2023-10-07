@@ -314,6 +314,8 @@ network_post/*网页访问*/\
 ,Fn_Var_TypeName/*变量.类型名*/\
 ,Fn_Var_Data/*变量.指针*/\
 ,Fn_Var_ToBin/*变量.到字节集*/\
+,Fn_Ceil/*向上取整*/\
+,Fn_Floor/*向下取整*/\
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/
