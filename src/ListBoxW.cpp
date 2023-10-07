@@ -2643,7 +2643,7 @@ EXTERN_C void libstl_ListBoxW_GetSelectedItem(PMDATA_INF pRetData, INT nArgCount
 	int cSeledItems = (int)SendMessageW(hWnd, LB_GETSELCOUNT, 0, 0);
 	if (cSeledItems <= 0)
 	{
-		pRetData->m_pAryData = NULL;
+		pRetData->m_pAryData = elibstl::malloc_array<int>(0);
 		return;
 	}
 

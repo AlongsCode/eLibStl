@@ -183,7 +183,8 @@ namespace elibstl {
 					ShowWindow(m_hDlg, SW_SHOW);
 					UpdateWindow(m_hDlg);
 					MSG msg;
-					while (GetMessage(&msg, NULL, 0, 0)) {
+					while (GetMessageW(&msg, NULL, 0, 0))
+					{
 						if (msg.hwnd == GetDlgItem(m_hDlg, 58570) && msg.message == WM_CHAR) {
 							if (msg.wParam == 13)
 								::SendMessage(m_hDlg, WM_COMMAND, IDOK, 0);
@@ -193,8 +194,13 @@ namespace elibstl {
 							}
 
 						}
-						TranslateMessage(&msg);
-						DispatchMessage(&msg);
+						if (msg.message == WM_KEYDOWN && msg.wParam == VK_ESCAPE)
+							PostMessageW(m_hDlg, WM_COMMAND, MAKEWPARAM(IDCANCEL, BN_CLICKED), (LPARAM)GetDlgItem(m_hDlg, IDOK));
+						if (!IsDialogMessageW(m_hDlg, &msg))
+						{
+							TranslateMessage(&msg);
+							DispatchMessageW(&msg);
+						}
 					}
 				}
 				return m_DlgData.m_bRet;

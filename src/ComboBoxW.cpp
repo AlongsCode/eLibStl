@@ -844,12 +844,12 @@ public:
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		m_SM.OnCtrlCreate(this);
 		m_hParent = hParent;
-		//if (!pAllData)
-		//{
-		//	RECT rc;
-		//	GetClientRect(m_hWnd, &rc);
-		//	m_Info.cyComboBox = rc.bottom;
-		//}
+		if (!pAllData)
+		{
+			RECT rc;
+			GetClientRect(m_hWnd, &rc);
+			m_Info.cyComboBox = rc.bottom;
+		}
 
 		SetRedraw(FALSE);
 		// 设置图像列表
@@ -865,12 +865,12 @@ public:
 			SetCueBannerNoCopy(m_pszCueBanner);
 
 		InitBase0(pAllData);
-		//if (m_Info.cyItem)// 必须在InitBase0之后
-		//	SetItemHeight(m_Info.cyItem);
+		if (m_Info.cyItem)// 必须在InitBase0之后
+			SetItemHeight(m_Info.cyItem);
 		SetRedraw(TRUE);
 
-		//SetComboBoxHeight(m_Info.cyComboBox);
-		//SendMessageW(m_hWnd, CB_SETMINVISIBLE, 30, 0);
+		SetComboBoxHeight(m_Info.cyComboBox);
+		SendMessageW(m_hWnd, CB_SETMINVISIBLE, 30, 0);
 	}
 
 	~CComboBox()
