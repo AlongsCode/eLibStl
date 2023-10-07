@@ -13,9 +13,11 @@ namespace elibstl {
 	inline auto get_arg_runtime_type(MDATA_INF pArgInf) {
 		return pArgInf.m_dtDataType;;
 	}
+
 	struct EplVar
 	{
-
+		/*无标记*/
+		
 
 		// anydata中使用
 		
@@ -55,7 +57,10 @@ namespace elibstl {
 
 		};
 
-
+		enum class REF :char {
+			Ret,
+			Arg,
+		};
 		enum DTT
 		{
 			DTT_IS_NULL_DATA_TYPE = 0,
@@ -71,7 +76,7 @@ namespace elibstl {
 
 
 
-		DTT get_data_type_form(DATA_TYPE dtDataType)
+		static DTT get_data_type_form(DATA_TYPE dtDataType)
 		{
 			if (dtDataType == _SDT_NULL)
 				return DTT_IS_NULL_DATA_TYPE;
@@ -82,6 +87,56 @@ namespace elibstl {
 				DTT_IS_LIB_DATA_TYPE;
 		}
 
+
+		auto get_data_type() const{
+			return m_DataType;
+		}
+		static int get_sys_type_value(DATA_TYPE dataType) {
+			switch (dataType) {
+			case SDT_BYTE:
+				return 1;
+			case SDT_SHORT:
+				return 2;
+			case SDT_INT:
+				return 3;
+			case SDT_INT64:
+				return 4;
+			case SDT_FLOAT:
+				return 5;
+			case SDT_DOUBLE:
+				return 6;
+			case SDT_BOOL:
+				return 7;
+			case SDT_DATE_TIME:
+				return 8;
+			case SDT_SUB_PTR:
+				return 9;
+			case SDT_TEXT:
+				return 10;
+			default:
+				return 0; // 默认值，如果传入的dataType不匹配任何已知的数据类型
+			}
+		}
+
+		static  auto get_type_value(const MDATA_INF& pArgInf) {
+			BOOL blIsAry = pArgInf.is_dt_flag();
+			auto m_dtt = get_data_type_form(pArgInf.ret_type_noflag());
+			switch (m_dtt)
+			{
+			case elibstl::EplVar::DTT_IS_NULL_DATA_TYPE:
+				return 0;
+			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE:
+				return get_sys_type_value(pArgInf.ret_type_noflag());
+			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE:
+				return 11;/*无返回值类型*/
+				break;
+			case elibstl::EplVar::DTT_IS_LIB_DATA_TYPE:
+				break;
+			default:
+
+				break;
+			}
+		}
 		/*储存系统类型*/
 		auto make_sys_data(const MDATA_INF& pArgInf) {
 			if (m_DataType == SDT_TEXT)
@@ -98,21 +153,41 @@ namespace elibstl {
 
 		}
 		/*返回系统类型*/
+		template<REF Tv>
 		auto ret_sys_data(MDATA_INF& pArgInf) {
-			pArgInf.m_dtDataType = m_DataType;
-			if (m_DataType == SDT_TEXT) {
-				auto p = m_data.get();
-				pArgInf.m_pText = elibstl::clone_text(reinterpret_cast<char*>(p.data()));
+			if constexpr (Tv == REF::Ret) {
+				pArgInf.m_dtDataType = m_DataType;
+				if (m_DataType == SDT_TEXT) {
+					auto p = m_data.get();
+					pArgInf.m_pText = elibstl::clone_text(reinterpret_cast<char*>(p.data()));
+				}
+				else if (m_DataType == SDT_BIN) {
+					auto p = m_data.get();
+					pArgInf.m_pBin = elibstl::clone_bin(p.data(), p.size());
+				}
+				else {
+					auto p = m_data.get();
+					memcpy(&pArgInf.m_int64, p.data(), sizeof(pArgInf.m_int64));
+				}
 			}
-			else if (m_DataType == SDT_BIN) {
-				auto p = m_data.get();
-				pArgInf.m_pBin = elibstl::clone_bin(p.data(), p.size());
+			else
+			{
+				if (m_DataType == SDT_TEXT) {
+					auto p = m_data.get();
+					*pArgInf.m_ppText = elibstl::clone_text(reinterpret_cast<char*>(p.data()));
+				}
+				else if (m_DataType == SDT_BIN) {
+					auto p = m_data.get();
+					*pArgInf.m_ppBin = elibstl::clone_bin(p.data(), p.size());
+				}
+				else {
+					auto p = m_data.get();
+					memcpy(pArgInf.m_pInt64, p.data(), sizeof(pArgInf.m_int64));
+				}
 			}
-			else {
-				auto p = m_data.get();
-				memcpy(&pArgInf.m_int64, p.data(), sizeof(pArgInf.m_int64));
-			}
+
 		}
+
 		/*储存用户自定义类型*/
 		auto make_user_data(const MDATA_INF& pArgInf) {
 			/*自定义数据类型基本全部为易语言申请的内存,对于非文本数据会进行拷贝*/
@@ -131,11 +206,22 @@ namespace elibstl {
 			m_data.set(pArgInf.m_pCompoundData, size);
 		}
 		/*返回用户自定义类型*/
+				/*返回系统类型*/
+		template<REF Tv>
 		auto ret_user_data(MDATA_INF& pArgInf) {
-			pArgInf.m_dtDataType = m_DataType;
-			auto p = m_data.get();
-			pArgInf.m_pCompoundData = elibstl::ealloc(p.size());
-			memcpy(pArgInf.m_pCompoundData, p.data(), p.size());
+			if constexpr (Tv == REF::Ret) {
+				pArgInf.m_dtDataType = m_DataType;
+				auto p = m_data.get();
+				pArgInf.m_pCompoundData = elibstl::ealloc(p.size());
+				memcpy(pArgInf.m_pCompoundData, p.data(), p.size());
+			}
+			else
+			{
+				pArgInf.m_dtDataType = m_DataType;
+				auto p = m_data.get();
+				*pArgInf.m_ppCompoundData = elibstl::ealloc(p.size());
+				memcpy(*pArgInf.m_ppCompoundData, p.data(), p.size());
+			}
 		}
 		void set(const MDATA_INF& pArgInf) {
 			BOOL blIsAry = pArgInf.is_dt_flag();
@@ -158,15 +244,21 @@ namespace elibstl {
 			}
 		}
 
-		void get(MDATA_INF& pArgInf) {
+		void get(MDATA_INF& pArgInf,const bool ret=false) {
 			switch (m_dtt)
 			{
-			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE:
-				ret_sys_data(pArgInf);
-				break;
-			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE:
-				ret_sys_data(pArgInf);
-				break;
+			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE: {
+				if (ret)
+					ret_sys_data<REF::Ret>(pArgInf);
+				else
+					ret_sys_data<REF::Arg>(pArgInf);
+			}break;
+			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE: {
+				if (ret)
+					ret_user_data<REF::Ret>(pArgInf);
+				else
+					ret_user_data<REF::Arg>(pArgInf);
+			}break;
 			case elibstl::EplVar::DTT_IS_LIB_DATA_TYPE:
 				break;
 			default:
@@ -174,6 +266,7 @@ namespace elibstl {
 				break;
 			}
 		}
+
 	};
 
 };
@@ -450,7 +543,7 @@ EXTERN_C void libstl_Var_Set(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArg
 }
 static ARG_INFO s_Args_set[] =
 {
-	{"欲置入的值", "支持任意类型", 0, 0, _SDT_ALL, 0, ArgMark::AS_NONE},
+	{"欲置入的值", "支持任意类型,自定义数据类型中指针类型如文本型、自定义数据类型、字节集型都应注意避免超出作用域失效或悬浮指针访问引起的问题,", 0, 0, _SDT_ALL, 0, ArgMark::AS_NONE},
 };
 FucInfo Fn_Var_Set = { {
 		/*ccname*/  "置",
@@ -468,19 +561,38 @@ FucInfo Fn_Var_Set = { {
 EXTERN_C void libstl_Var_Get(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	auto& self = elibstl::args_to_obj<elibstl::EplVar>(pArgInf);
-	self->get(pRetData[0]);
-	if (pArgInf[1].m_dtDataType!=_SDT_NULL)
-		pArgInf[1] = pRetData[0];
+	self->get(pRetData[0],true);
+	
+	if (pArgInf[1].m_dtDataType != _SDT_NULL ) {
+		if (pArgInf[1].m_dtDataType != self->get_data_type())
+		{
+			std::wstringstream err{ };
+			err << L"\n该类型运行时数据类型应为:" 
+				<< static_cast<std::uint32_t>(self->get_data_type()) 
+				<< L"\n但是目前接受类型为:" 
+				<< pArgInf[1].m_dtDataType;
+			put_errmsg(err.str());
+			return;
+		}
+		elibstl::efree(*pArgInf[1].m_ppCompoundData);/*先释放*/
+		self->get(pArgInf[1]);
+	}
+		
 	
 }
 static ARG_INFO s_Args_get[] =
 {
-	{"欲获取的值", "和返回值同为一个指针,系统类型可直接使用返回值", 0, 0, _SDT_ALL, 0, ArgMark::AS_DEFAULT_VALUE_IS_EMPTY| ArgMark::AS_RECEIVE_VAR},
+	{
+		"欲获取的值", 
+		"系统类型可直接使用返回值,复合结构应使用", 0, 0, 
+		_SDT_ALL, 0,
+		ArgMark::AS_DEFAULT_VALUE_IS_EMPTY | ArgMark::AS_RECEIVE_VAR
+	},
 };
 FucInfo Fn_Var_Get = { {
 		/*ccname*/  "取",
 		/*egname*/  "Get",
-		/*explain*/ "取置",
+		/*explain*/ "该参数不应和返回值一起使用，因为其为同一片指针而非拷贝,仅用于无法将通用型赋值的数据代码使用",
 		/*category*/-1,
 		/*state*/   NULL,
 		/*ret*/     _SDT_ALL,

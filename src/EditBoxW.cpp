@@ -798,7 +798,7 @@ public:
 		if (!m_bInDesignMode)
 			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, ED_CUEBANNER_MAXLEN);
 		if (pcb)
-			*pcb = wcslen(m_pszCueBanner);
+			*pcb = wcslen(m_pszCueBanner) * sizeof(wchar_t);
 		return m_pszCueBanner;
 	}
 
