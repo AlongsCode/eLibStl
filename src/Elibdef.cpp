@@ -68,7 +68,7 @@ static LIB_INFO s_LibInfo =
 	/*m_szPhoto*/               "", // 联系电话
 	/*m_szFax*/                 "", // 传真
 	/*m_szEmail*/               "", // 邮箱
-	/*m_szHomePage*/            "", // 主页
+	/*m_szHomePage*/            "https://github.com/AlongsCode/eLibStl", // 主页
 	/*m_szOther*/               "开发测试群：761463364", // 其他信息
 
 	/*m_nDataTypeCount*/		sizeof(g_DataType) / sizeof(g_DataType[0]), // 本库中自定义数据类型的数目
