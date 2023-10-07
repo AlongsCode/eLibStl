@@ -309,7 +309,7 @@ public:
 		{
 			command = L"setaudio " + m_MediaAlias + L" right volume to " + std::to_wstring(rightChannelVolume);
 			rightChannelError = mciSendStringW(command.c_str(), nullptr, 0, nullptr);
-			leftChannelError = leftChannelError && !rightChannelError;
+			leftChannelError = (leftChannelError) && (!rightChannelError);
 		}
 		return leftChannelError;
 	};
@@ -531,13 +531,25 @@ FucInfo Media_structure = { {
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
 	} ,Fn_media_structure ,"Fn_media_structure" };
-
+static ARG_INFO s_CopyArgs[] =
+{
+	{
+		/*name*/    "¿½±´",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/   DTP_VAR,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
 //¸´ÖÆ
 EXTERN_C void fn_media_copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibstl::args_to_obj<eMideaPlay>(pArgInf);
-	const auto rht = static_cast<eMideaPlay*>(*pArgInf[1].m_ppCompoundData);
-	*self = *rht;
+
+	auto& self = elibstl::classhelp::get_this<eMideaPlay>(pArgInf);
+	const auto& rht = elibstl::classhelp::get_other<eMideaPlay>(pArgInf);
+	self = new eMideaPlay{ *rht };
 }
 FucInfo Media_copy = { {
 		/*ccname*/  "",
@@ -550,8 +562,8 @@ FucInfo Media_copy = { {
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/0,
-		/*arg lp*/  NULL,
+		/*ArgCount*/1,
+		/*arg lp*/ s_CopyArgs,
 	} ,fn_media_copy ,"fn_media_copy" };
 
 //Îö¹¹

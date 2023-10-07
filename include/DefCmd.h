@@ -309,7 +309,11 @@ network_post/*网页访问*/\
 ,EplVar_destruct/*变量.析构*/\
 ,Fn_Var_Set/*变量.置*/\
 ,Fn_Var_Get/*变量.取*/\
-
+,Fn_Var_Type/*变量.类型*/\
+,Fn_Var_Size/*变量.长度*/\
+,Fn_Var_TypeName/*变量.类型名*/\
+,Fn_Var_Data/*变量.指针*/\
+,Fn_Var_ToBin/*变量.到字节集*/\
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/

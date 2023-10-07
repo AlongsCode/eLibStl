@@ -1554,10 +1554,8 @@ FucInfo edbs_ex_structure = { {
 //复制
 EXTERN_C void fn_edbs_ex_copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibstl::args_to_obj<elibstl::edb_file>(pArgInf);
-	auto rht = static_cast<elibstl::edb_file*>(*pArgInf[1].m_ppCompoundData);
-	put_errmsg(L"数据库文件读写是唯一的,不应在不同位置创建多个对象读写同一易数据库文件,此会引发超级无敌的异常,编译版本下同样会崩溃!");
-	exit(0);
+	put_errmsg(L"数据库文件读写是唯一的,不应在不同位置创建多个对象读写同一易数据库文件!");
+	return;
 	//*self = *rht;
 }
 FucInfo edbs_ex_copy = { {
