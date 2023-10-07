@@ -493,9 +493,9 @@ public:
 		// SetMultiLine(m_Info.bMultiLine);// 这个函数仅仅更新了m_Info，没有做其他实质性工作
 		SetScrollBar(m_Info.iScrollBar);
 		SetAlign(m_Info.iAlign);
-		SetInputMode(m_Info.iInputMode);
 		if (m_Info.chMask)
 			SetMaskChar(m_Info.chMask);
+		SetInputMode(m_Info.iInputMode);
 		SetTransformMode(m_Info.iTransformMode);
 		SetSelPos(m_Info.iSelPos);
 		SetSelNum(m_Info.iSelNum);
@@ -798,7 +798,7 @@ public:
 		if (!m_bInDesignMode)
 			SendMessageW(m_hWnd, EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, ED_CUEBANNER_MAXLEN);
 		if (pcb)
-			*pcb = wcslen(m_pszCueBanner);
+			*pcb = (wcslen(m_pszCueBanner) + 1) * sizeof(WCHAR);
 		return m_pszCueBanner;
 	}
 
