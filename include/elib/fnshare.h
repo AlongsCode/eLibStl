@@ -50,6 +50,9 @@ namespace elibstl
 	{
 		return reinterpret_cast<T*>(pArgInf[0].m_ppCompoundData[0]);
 	}
+
+
+
 	inline auto ErrorMsgBox(const std::wstring& filePath, const std::wstring& msg) {
 #ifdef _WIN32
 		//std::wstring fileName = std::filesystem::path(filePath).filename();
@@ -843,4 +846,81 @@ namespace elibstl
 	}
 
 #pragma endregion
+}
+
+namespace elibstl::classhelp {
+	/*对象*/
+	template <typename T>
+	auto& get_this(PMDATA_INF pArgInf)
+	{
+		return reinterpret_cast<T*&>(pArgInf[0].m_ppCompoundData[0]);
+	}
+	/*其他对象*/
+	template <typename T>
+	auto& get_other(PMDATA_INF pArgInf)
+	{
+		return reinterpret_cast<T*&>(pArgInf[1].m_ppCompoundData[0]);
+	}
+#ifndef _SPAN_
+	template<typename T>
+	class span {
+	public:
+		span() = default;
+		span(T* ptr, size_t size) : ptr_(ptr), size_(size) {}
+
+		T* data() const { return ptr_; }
+		size_t size() const { return size_; }
+
+	private:
+		T* ptr_{ nullptr };
+		size_t size_{ 0 };
+	};
+#endif
+	class eplarg
+	{
+		PMDATA_INF m_pArgInf{ nullptr };
+		size_t m_size;
+	public:
+		eplarg(PMDATA_INF pArgInf, size_t size) :m_pArgInf(pArgInf), m_size(size) {};
+		auto get_bin(size_t index) -> span<unsigned char> {
+			if (index >= m_size)
+				return {};
+			auto bin = m_pArgInf[index].m_pBin;
+			if (!bin)
+				return  {};
+			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));
+			auto pbuffer = (bin + sizeof(std::uint32_t) * 2);
+			if (lenth > 0)
+				return span<unsigned char>(pbuffer, lenth);
+			return  {};
+		}
+
+	private:
+	public:
+		static 	
+			auto get_bin(PMDATA_INF pArgInf, size_t index) -> span<unsigned char> {
+			auto bin = pArgInf[index].m_pBin;
+			if (!bin)
+				return  {};
+			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));
+			auto pbuffer = (bin + sizeof(std::uint32_t) * 2);
+			if (lenth > 0)
+				return span<unsigned char>(pbuffer, lenth);
+			return  {};
+		}
+		static
+			auto get_bin(MDATA_INF pArgInf) -> span<unsigned char> {
+			auto bin = pArgInf.m_pBin;
+			if (!bin)
+				return  {};
+			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));
+			auto pbuffer = (bin + sizeof(std::uint32_t) * 2);
+			if (lenth > 0)
+				return span<unsigned char>(pbuffer, lenth);
+			return  {};
+		}
+	};
+
+
+
 }
