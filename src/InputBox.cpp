@@ -290,6 +290,9 @@ EXTERN_C void libstl_InputBox(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 		dwStyleEdit |= ES_NUMBER;
 	}
 
+	BOOL bWndEnabled = IsWindowEnabled(reinterpret_cast<HWND>(hParent));
+	if (bWndEnabled && hParent)
+		EnableWindow(reinterpret_cast<HWND>(hParent), FALSE);
 	/*动态对话框模板,网上一点B资料没有*/
 	elibstl::inputbox::MyDlg Dlg;
 	if (!prompt_str.empty())
@@ -318,6 +321,10 @@ EXTERN_C void libstl_InputBox(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 
 	}
 	pRetData->m_bool = Dlg.MessageLoop(nType == 3);
+	if (bWndEnabled && hParent)
+		EnableWindow(reinterpret_cast<HWND>(hParent), TRUE);
+	if (hParent)
+		SetActiveWindow(reinterpret_cast<HWND>(hParent));
 	elibstl::wstring_to_arg(&pArgInf[3], Dlg.GetText());
 }
 static ARG_INFO s_Args_InputBox[] =

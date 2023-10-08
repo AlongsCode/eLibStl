@@ -41,6 +41,7 @@ struct ECOMBOBOXDATA
 	BITBOOL bIntegralHeight : 1;	// 取整控件高度
 	BITBOOL bDisableNoScroll : 1;	// 显示禁止的滚动条
 	BITBOOL bEllipsis : 1;			// 省略号
+	BITBOOL bAutoHeight : 1;		// 自动调整高度
 };
 
 struct CBITEMCOMMINFO
@@ -575,6 +576,8 @@ public:
 	//////////
 	PWSTR m_pszSelText = NULL;
 	PWSTR m_pszCueBanner = new WCHAR[CB_CUEBANNER_MAXLEN];
+	//////////
+	int m_cyCtrl = 0;						// 组合框应当具有的高度
 private:
 	HWND GetEditControl()
 	{
@@ -624,28 +627,32 @@ private:
 	{
 		switch (uMsg)
 		{
-		//case WM_MEASUREITEM:
-		//{
-		//	HWND hCtrl = GetDlgItem(hWnd, wParam);
-		//	auto it = m_CtrlSCInfo.find(hCtrl);
-		//	if (it == m_CtrlSCInfo.end())
-		//		break;
-		//	auto pmis = (MEASUREITEMSTRUCT*)lParam;
-		//	auto p = it->second;
-		//	if (pmis->itemID == -1)
-		//	{
-		//		if (p->m_Info.cyComboBox >= 0)
-		//			pmis->itemHeight = p->m_Info.cyComboBox;
-		//	}
-		//	else
-		//	{
-		//		if (p->m_Info.cyItem >= 0)
-		//			pmis->itemHeight = p->m_Info.cyItem;
-		//	}
-
-		//	return TRUE;
-		//}
-		//break;
+		case WM_MEASUREITEM:
+		{
+			HWND hCtrl = GetDlgItem(hWnd, wParam);
+			auto it = m_CtrlSCInfo.find(hCtrl);
+			if (it == m_CtrlSCInfo.end())
+				break;
+			auto pmis = (MEASUREITEMSTRUCT*)lParam;
+			auto p = it->second;
+			if (pmis->itemID == -1)
+			{
+				if (p->m_Info.cyComboBox >= 0)
+				{
+					pmis->itemHeight = p->m_Info.cyComboBox;
+					return TRUE;
+				}
+			}
+			else
+			{
+				if (p->m_Info.cyItem >= 0)
+				{
+					pmis->itemHeight = p->m_Info.cyItem;
+					return TRUE;
+				}
+			}
+		}
+		break;
 
 		case WM_DRAWITEM:
 		{
@@ -818,10 +825,10 @@ public:
 			m_Info.crSelBK = CLR_DEFAULT;
 			m_Info.crSelBK = CLR_DEFAULT;
 			m_Info.crSelText = CLR_DEFAULT;
-			m_Info.cyItem = -1;
+			m_Info.cyItem = 16;
 			m_Info.idxCurrSel = -1;
 			m_Info.iAlignV = 1;
-			m_Info.cyComboBox = -1;
+			m_Info.cyComboBox = 0;
 		}
 
 		m_Info.iVer = DATA_VER_COMBOBOX_1;
@@ -870,7 +877,6 @@ public:
 		SetRedraw(TRUE);
 
 		SetComboBoxHeight(m_Info.cyComboBox);
-		SendMessageW(m_hWnd, CB_SETMINVISIBLE, 30, 0);
 	}
 
 	~CComboBox()
@@ -1504,7 +1510,7 @@ public:
 		if (!m_bInDesignMode)
 			SendMessageW(GetEditControl(), EM_GETCUEBANNER, (WPARAM)m_pszCueBanner, CB_CUEBANNER_MAXLEN);
 		if (pcb)
-			*pcb = wcslen(m_pszCueBanner);
+			*pcb = (wcslen(m_pszCueBanner) + 1) * sizeof(WCHAR);
 		return m_pszCueBanner;
 	}
 
@@ -1520,6 +1526,16 @@ public:
 	eStlInline int GetComboBoxHeight()
 	{
 		return m_Info.cyComboBox;
+	}
+
+	eStlInline void SetAutoHeight(BOOL b)
+	{
+		m_Info.bAutoHeight = b;
+	}
+
+	eStlInline BOOL GetAutoHeight()
+	{
+		return m_Info.bAutoHeight;
 	}
 
 	eStlInline HGLOBAL FlattenInfo() override
@@ -1635,6 +1651,9 @@ public:
 		case 22:
 			p->SetComboBoxHeight(pPropertyVaule->m_int);
 			break;
+		case 23:
+			p->SetAutoHeight(pPropertyVaule->m_bool);
+			break;
 		}
 
 		return FALSE;
@@ -1722,6 +1741,10 @@ public:
 			break;
 		case 22:
 			pPropertyVaule->m_int = p->GetComboBoxHeight();
+			break;
+		case 23:
+			pPropertyVaule->m_bool = p->GetAutoHeight();
+			break;
 		}
 
 		return TRUE;
@@ -1851,6 +1874,7 @@ static UNIT_PROPERTY s_Member_ComboBox[] =
 	/*020*/  {"纵向对齐方式", "AlignV", "", UD_PICK_INT, UW_OS_WIN,"上边\0""居中\0""下边\0""\0"},
 	/*021*/  {"字体", "Font", "", UD_FONT, UW_OS_WIN , NULL},
 	/*022*/  {"组合框高度", "ComboBoxHeight", "", UD_INT, UW_OS_WIN, NULL},
+	///*023*/  {"自动调整高度", "AutoHeight", "", UD_BOOL, UW_OS_WIN, NULL},
 };
 ///////////////////////////////////方法
 EXTERN_C void libstl_ComboBoxW_InsertString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
