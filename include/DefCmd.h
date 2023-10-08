@@ -318,6 +318,14 @@ network_post/*网页访问*/\
 ,Fn_Floor/*向下取整*/\
 ,Fn_GetVarPtr/*取变量指针*/\
 ,Fn_GetVarDataPtr/*取变量数据指针*/\
+,Fn_CFile_structure/*文件读写.构造*/\
+,Fn_CFile_copy/*文件读写.复制*/\
+,Fn_CFile_destruct/*文件读写.拷贝*/\
+,Fn_CFile_Open/*文件读写.打开*/\
+,Fn_CFile_Close/*文件读写.关闭*/\
+,Fn_CFile_Lock/*文件读写.锁住*/\
+,Fn_CFile_UnLock/*文件读写.解锁*/
+
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/
@@ -352,7 +360,7 @@ CtCommandLink/*命令链接*/\
 ,CtRichEdit/*富文本框*/\
 ,CtComboBox/**/\
 ,epl_class_Var/*强类型动态数组*/\
-
+,Obj_DiskFile/*文件读写类*/\
 
 
 

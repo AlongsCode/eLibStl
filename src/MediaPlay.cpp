@@ -538,7 +538,7 @@ static ARG_INFO s_CopyArgs[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/   DTP_VAR,
+		/*type*/   DATA_TYPE(6),
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}

@@ -117,6 +117,7 @@ void EMemFile::read(size_t wanna_lenth, std::vector<unsigned char>& ret_data)
 		real_size = wanna_lenth;
 	}
 	// 从数据中提取出需要读入的数据，并将当前位置移动到读入位置的后面
+	debug_put(L"调试", wanna_lenth);
 	ret_data.insert(ret_data.end(), m_pData.begin() + m_offset, m_pData.begin() + m_offset + real_size);
 	m_offset += real_size;
 }
@@ -271,12 +272,28 @@ FucInfo Fn_memfile_structure = { {
 		/*arg lp*/  NULL,
 	}  ,ESTLFNAME(elibstl_memfile_structure) };
 
+
+static ARG_INFO s_CopyArgs[] =
+{
+	{
+		/*name*/    "拷贝",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/	(DATA_TYPE)16,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
+	}
+};
+
+
+
 //复制
 EXTERN_C void fn_memfile_copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto& self = elibstl::args_to_obj<EMemFile>(pArgInf);
-	auto rht = static_cast<EMemFile*>(*pArgInf[1].m_ppCompoundData);
-	*self = *rht;
+	auto& self = elibstl::classhelp::get_this<EMemFile>(pArgInf);
+	const auto& rht = elibstl::classhelp::get_other<EMemFile>(pArgInf);
+	self = new EMemFile{ *rht };
 }
 FucInfo Fn_memfile_copy = { {
 		/*ccname*/  "",
@@ -289,8 +306,8 @@ FucInfo Fn_memfile_copy = { {
 		/*level*/   LVL_SIMPLE,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/0,
-		/*arg lp*/  NULL,
+		/*ArgCount*/1,
+		/*arg lp*/  s_CopyArgs,
 	} ,ESTLFNAME(fn_memfile_copy) };
 
 //析构
@@ -591,7 +608,7 @@ EXTERN_C void elibstl_memfile_read(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 {
 	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
 	std::vector<unsigned char> pData;
-	pMemFile->read(pArgInf->m_int, pData);
+	pMemFile->read(pArgInf[1].m_int, pData);
 	pRetData->m_pBin = elibstl::clone_bin(pData.data(), pData.size());
 }
 

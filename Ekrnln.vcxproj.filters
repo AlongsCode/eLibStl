@@ -491,6 +491,9 @@
     <ClCompile Include="src\GetVarPtr.cpp">
       <Filter>源文件\实现\全局命令\其他</Filter>
     </ClCompile>
+    <ClCompile Include="src\EplObj Class\Diskfiles.cpp">
+      <Filter>源文件\组件\通用型\文件读写</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">
