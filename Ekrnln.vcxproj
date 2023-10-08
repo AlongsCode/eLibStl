@@ -84,6 +84,7 @@
     <ClCompile Include="src\free.cpp" />
     <ClCompile Include="src\free_console.cpp" />
     <ClCompile Include="src\GetConutEx.cpp" />
+    <ClCompile Include="src\GetVarPtr.cpp" />
     <ClCompile Include="src\get_clipboard_text.cpp" />
     <ClCompile Include="src\get_cmdline.cpp" />
     <ClCompile Include="src\get_complete_path.cpp" />

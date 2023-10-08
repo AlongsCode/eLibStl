@@ -488,6 +488,9 @@
     <ClCompile Include="src\floor.cpp">
       <Filter>源文件\实现\全局命令\算数运算</Filter>
     </ClCompile>
+    <ClCompile Include="src\GetVarPtr.cpp">
+      <Filter>源文件\实现\全局命令\其他</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

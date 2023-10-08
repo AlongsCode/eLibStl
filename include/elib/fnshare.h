@@ -423,6 +423,7 @@ namespace elibstl
 	{
 		return reinterpret_cast<INT*>(static_cast<char*>(pBase) + dimension * sizeof(INT))[0];
 	}
+
 	inline BYTE* get_array_data_base(void* pBase, int iDimension = 1)
 	{
 		if (pBase)
@@ -911,6 +912,16 @@ namespace elibstl::classhelp {
 		static
 			auto get_bin(MDATA_INF pArgInf) -> span<unsigned char> {
 			auto bin = pArgInf.m_pBin;
+			if (!bin)
+				return  {};
+			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));
+			auto pbuffer = (bin + sizeof(std::uint32_t) * 2);
+			if (lenth > 0)
+				return span<unsigned char>(pbuffer, lenth);
+			return  {};
+		}
+		static
+			auto get_bin(LPBYTE bin) -> span<unsigned char> {
 			if (!bin)
 				return  {};
 			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));

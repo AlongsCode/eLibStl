@@ -316,6 +316,8 @@ network_post/*网页访问*/\
 ,Fn_Var_ToBin/*变量.到字节集*/\
 ,Fn_Ceil/*向上取整*/\
 ,Fn_Floor/*向下取整*/\
+,Fn_GetVarPtr/*取变量指针*/\
+,Fn_GetVarDataPtr/*取变量数据指针*/\
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/
