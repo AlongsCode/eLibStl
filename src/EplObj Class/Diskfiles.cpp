@@ -10,7 +10,7 @@
 #ifdef _WIN32
 namespace elibstl {
 	class CFile{
-		HANDLE 文件句柄{ INVALID_HANDLE_VALUE };
+		HANDLE m_hFile{ INVALID_HANDLE_VALUE };
 	public:
 		BOOL Open(const std::wstring_view& filename,int openmode,int sharemod) {
 			Close(); // 首先关闭已经打开的当前文件
@@ -41,21 +41,21 @@ namespace elibstl {
 			 sa.nLength = sizeof(sa);
 			 sa.lpSecurityDescriptor = NULL;
 			 sa.bInheritHandle = TRUE;
-			 文件句柄 = ::CreateFileW(filename.data(), dwAccess, dwShareMode, &sa, dwCreateFlag, FILE_ATTRIBUTE_NORMAL, NULL);
-			 if (文件句柄 == INVALID_HANDLE_VALUE)
+			 m_hFile = ::CreateFileW(filename.data(), dwAccess, dwShareMode, &sa, dwCreateFlag, FILE_ATTRIBUTE_NORMAL, NULL);
+			 if (m_hFile == INVALID_HANDLE_VALUE)
 				     return FALSE;
 			 return TRUE;
 		}
 		void Close() {
-			if (文件句柄 != INVALID_HANDLE_VALUE )
+			if (m_hFile != INVALID_HANDLE_VALUE )
 			{
-				::CloseHandle(文件句柄);
-				文件句柄 = INVALID_HANDLE_VALUE;
+				::CloseHandle(m_hFile);
+				m_hFile = INVALID_HANDLE_VALUE;
 			}
 		}
 		BOOL Lock(INT64 position, INT64 size, INT time) {
 
-			if (文件句柄 == INVALID_HANDLE_VALUE || size <= 0)
+			if (m_hFile == INVALID_HANDLE_VALUE || size <= 0)
 				return FALSE;
 			const DWORD dwBeginTickCount = GetTickCount();
 			while (TRUE)
@@ -71,24 +71,24 @@ namespace elibstl {
 			return FALSE;
 		}
 		BOOL Unlock(INT64 position, INT64 size) {
-			return ::UnlockFile(文件句柄, (DWORD)position, (DWORD)(position >> 32), (DWORD)size, (DWORD)(size >> 32));
+			return ::UnlockFile(m_hFile, (DWORD)position, (DWORD)(position >> 32), (DWORD)size, (DWORD)(size >> 32));
 		}
-		BOOL  移动读写位置(int 基准移动位置, INT64 移动距离) {
+		BOOL  MoveWrOff(int 基准移动位置, INT64 移动距离) {
 
 			LARGE_INTEGER dis;
 			dis.QuadPart = (ULONGLONG)移动距离;
-			return ::SetFilePointerEx(文件句柄, dis, NULL, (DWORD)基准移动位置);
+			return ::SetFilePointerEx(m_hFile, dis, NULL, (DWORD)基准移动位置);
 		}
-		BOOL 移到文件首() {
-			return (::SetFilePointer(文件句柄, 0, NULL, FILE_BEGIN) != INVALID_SET_FILE_POINTER);
+		BOOL MoveToBegin() {
+			return (::SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN) != INVALID_SET_FILE_POINTER);
 		}
-		BOOL 移到文件尾() {
-			return (::SetFilePointer(文件句柄, 0, NULL, FILE_END) != INVALID_SET_FILE_POINTER);
+		BOOL MoveToEnd() {
+			return (::SetFilePointer(m_hFile, 0, NULL, FILE_END) != INVALID_SET_FILE_POINTER);
 		}
-		LPBYTE 读入字节集(size_t 欲读入数据的尺寸) {
+		LPBYTE ReadBin(size_t 欲读入数据的尺寸) {
 			std::vector<unsigned char> mem;
 			const HANDLE hFile = GetFileHandle();
-			if (文件句柄 != INVALID_HANDLE_VALUE && 欲读入数据的尺寸 > 0)
+			if (m_hFile != INVALID_HANDLE_VALUE && 欲读入数据的尺寸 > 0)
 			{
 				DWORD dwRead = 0;
 
@@ -100,36 +100,36 @@ namespace elibstl {
 			}
 			return elibstl::clone_bin(mem.data(), mem.size());
 		}
-		BOOL 写出字节集(const elibstl::classhelp::span<unsigned char>& 欲写出的字节集数据) {
+		BOOL WriteBin(const elibstl::classhelp::span<unsigned char>& 欲写出的字节集数据) {
 			return WriteData(欲写出的字节集数据.data(), 欲写出的字节集数据.size());
 		}
-		auto 取读写位置() {
-			return (文件句柄 == INVALID_HANDLE_VALUE) ? -1 : MoveAndGetFilePos(FILE_CURRENT);
+		auto GetOffst() {
+			return (m_hFile == INVALID_HANDLE_VALUE) ? -1 : MoveAndGetFilePos(FILE_CURRENT);
 		}
 		auto GetCurrentPos() {
 			return MoveAndGetFilePos(FILE_CURRENT);
 		}
 		BOOL SetCurrentPos(INT64 n64CurrentPos)
 		{
-			if (文件句柄 == INVALID_HANDLE_VALUE)
+			if (m_hFile == INVALID_HANDLE_VALUE)
 				return FALSE;
 			LARGE_INTEGER pos;
 			pos.QuadPart = (ULONGLONG)n64CurrentPos;
-			return ::SetFilePointerEx(文件句柄, pos, NULL, FILE_BEGIN);
+			return ::SetFilePointerEx(m_hFile, pos, NULL, FILE_BEGIN);
 		}
 
 		INT64 MoveAndGetFilePos(DWORD dwMoveMethod)
 		{
-			if (文件句柄 == INVALID_HANDLE_VALUE)
+			if (m_hFile == INVALID_HANDLE_VALUE)
 				return 0;
 			LARGE_INTEGER dis, current_pos;
 			dis.QuadPart = current_pos.QuadPart = 0;
-			return (::SetFilePointerEx(文件句柄, dis, &current_pos, dwMoveMethod) ? (INT64)current_pos.QuadPart : -1);
+			return (::SetFilePointerEx(m_hFile, dis, &current_pos, dwMoveMethod) ? (INT64)current_pos.QuadPart : -1);
 		}
 		/*Unicode*/
-		LPBYTE 读入文本(INT wannasize) {
+		LPBYTE ReadText(INT wannasize) {
 			std::wstring ret;
-			if (文件句柄 != INVALID_HANDLE_VALUE && wannasize != 0)
+			if (m_hFile != INVALID_HANDLE_VALUE && wannasize != 0)
 			{
 				BOOL blpSuceeded = FALSE;
 				do
@@ -154,7 +154,7 @@ namespace elibstl {
 					std::vector<unsigned char> mem;
 					DWORD dwRead = 0;
 					mem.resize(npReadSize);
-					if (::ReadFile(文件句柄, mem.data(), (DWORD)npReadSize, &dwRead, NULL) == FALSE)
+					if (::ReadFile(m_hFile, mem.data(), (DWORD)npReadSize, &dwRead, NULL) == FALSE)
 						break;
 					mem.resize(dwRead);
 					mem.push_back(0);
@@ -172,12 +172,12 @@ namespace elibstl {
 				} while (FALSE);
 
 				if (blpSuceeded == FALSE)
-					::SetFilePointer(文件句柄, 0, NULL, FILE_END);
+					::SetFilePointer(m_hFile, 0, NULL, FILE_END);
 			}
 			return clone_textw(ret);
 
 		}
-		BOOL 写出文本(INT nArgCount, PMDATA_INF pArgInf) {
+		BOOL WriteText(INT nArgCount, PMDATA_INF pArgInf) {
 			DWORD dwNumOfByteRead;
 			auto bRet = TRUE;
 			for (INT i = 1; i < nArgCount; i++)
@@ -187,7 +187,7 @@ namespace elibstl {
 				DWORD dwWritten = 0;
 				if (pData.size() > 0)
 				{
-					if (!::WriteFile(文件句柄, pData.c_str(), dwTextSize, &dwWritten, NULL) || dwWritten != dwTextSize) {
+					if (!::WriteFile(m_hFile, pData.c_str(), dwTextSize, &dwWritten, NULL) || dwWritten != dwTextSize) {
 						bRet = FALSE;
 						break;
 					}
@@ -209,17 +209,17 @@ namespace elibstl {
 		}
 		HANDLE GetFileHandle()const
 		{
-			return 文件句柄;
+			return m_hFile;
 		}
 		/*从易语言写入不了大于DWORD长度的内存,他申请不了*/
 		BOOL WriteData(const void* pData, const int npDataSize)
 		{
 			if (pData == nullptr || npDataSize == 0)
 				return FALSE;
-			if (文件句柄 == INVALID_HANDLE_VALUE)
+			if (m_hFile == INVALID_HANDLE_VALUE)
 				return FALSE;
 			DWORD dwWritten = 0;
-			return (npDataSize == 0 || (::WriteFile(文件句柄, pData, (DWORD)npDataSize, &dwWritten, NULL) && dwWritten == (DWORD)npDataSize));
+			return (npDataSize == 0 || (::WriteFile(m_hFile, pData, (DWORD)npDataSize, &dwWritten, NULL) && dwWritten == (DWORD)npDataSize));
 		}
 
 
@@ -493,7 +493,7 @@ namespace elibstl {
 	LIB_DATA_TYPE_INFO Obj_DiskFile =
 	{
 		"文件读写",
-		"MemFile",
+		"DiskFile",
 		"文件读写",
 		sizeof(s_dtCmdIndexcommobj_memfile_ex) / sizeof(s_dtCmdIndexcommobj_memfile_ex[0]),
 		 s_dtCmdIndexcommobj_memfile_ex,
