@@ -252,7 +252,7 @@ FucInfo Fn_CFile_structure = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
-	} ,fn_CFile_structure ,"Fn_CFile_structure" };
+	} ,ESTLFNAME(fn_CFile_structure) };
 //¸´ÖÆ
 static ARG_INFO s_CopyArgs[] =
 {
