@@ -285,7 +285,7 @@ FucInfo Fn_CFile_copy = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/1,
 		/*arg lp*/ s_CopyArgs,
-	} ,fn_CFile_copy ,"Fn_CFile_copy" };
+	} ,ESTLFNAME(fn_CFile_copy)};
 
 //Îö¹¹
 EXTERN_C void fn_CFile_des(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -311,7 +311,7 @@ FucInfo Fn_CFile_destruct = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/  NULL,
-	} ,fn_CFile_des ,"Fn_CFile_des" };
+	} ,ESTLFNAME(fn_CFile_des) };
 
 
 static ARG_INFO s_OpenArgs[] =
@@ -371,7 +371,7 @@ FucInfo Fn_CFile_Open = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/3,
 		/*arg lp*/ s_OpenArgs,
-	} ,fn_CFile_Open ,"Fn_CFile_Open" };
+	} ,ESTLFNAME(fn_CFile_Open)  };
 EXTERN_C void fn_CFile_Close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
@@ -391,7 +391,7 @@ FucInfo Fn_CFile_Close = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/0,
 		/*arg lp*/ 0,
-	} ,fn_CFile_Close ,"Fn_CFile_Close" };
+	} ,ESTLFNAME(fn_CFile_Close) };
 static ARG_INFO s_LockArgs[] =
 {
 	{
@@ -441,7 +441,7 @@ FucInfo Fn_CFile_Lock = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/3,
 		/*arg lp*/ s_LockArgs,
-	} ,fn_CFile_Lock ,"Fn_CFile_Lock" };
+	} ,ESTLFNAME(fn_CFile_Lock) };
 
 
 static ARG_INFO s_UnLockArgs[] =
@@ -483,7 +483,7 @@ FucInfo Fn_CFile_UnLock = { {
 		/*bmp num*/ 0,
 		/*ArgCount*/2,
 		/*arg lp*/ s_UnLockArgs,
-	} ,fn_CFile_UnLock ,"Fn_CFile_UnLock" };
+	} ,ESTLFNAME(fn_CFile_UnLock) };
 
 static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324};
 
