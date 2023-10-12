@@ -1,55 +1,25 @@
 #include"ElibHelp.h"
 #include"MiniCo/coroutine.h"
 
-static LIB_DATA_TYPE_ELEMENT* m_hCoprocess = nullptr;
-static LIB_DATA_TYPE_ELEMENT* m_hCoroutine = nullptr;
+//static LIB_DATA_TYPE_ELEMENT* m_hCoprocess = nullptr;
+//static LIB_DATA_TYPE_ELEMENT* m_hCoroutine = nullptr;
 namespace elibstl {
 	LIB_DATA_TYPE_INFO hCoprocessD = {
-		  "协程句柄", "hCoprocess", "协程映射的对象ID", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
+		  "协程句柄", "hCoprocess", "协程映射的对象ID", NULL, NULL, LDT_IS_HIDED,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
 	};
 	LIB_DATA_TYPE_INFO hCoroutine = {
-		  "协程调度器", "hCoroutine", "用于协程调度切换", NULL, NULL, NULL,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
+		  "协程调度器", "hCoroutine", "用于协程调度切换", NULL, NULL, LDT_IS_HIDED,NULL ,NULL , NULL,NULL , NULL, NULL, 0,nullptr ,
 	};
 }
 
-
-namespace elibcoroutine {
-	static void* create_coroutine(PFIBER_START_ROUTINE func, void* arg) {
-		//先将线程转换为协程，防止线程在没有转换协程时切换协程
-		ConvertThreadToFiber(NULL);;
-		if (IsBadCodePtr((FARPROC)func)) {
-			return NULL;
-		}
-		void* coroutine_fiber = CreateFiber(0, func, arg);
-		if (coroutine_fiber == NULL) {
-			return NULL;
-		}
-		return coroutine_fiber;
-	}
-	//标准库用不了，妈的烦死了
-	//#include <functional>
-	//void* create_coroutine(void* func, void* arg) {
-	//	std::function<void()> fn = std::bind((void(*)(void*))func, arg);
-	//	auto pfn_fiber = [](void* pfn) -> void
-	//	{
-	//		std::function<void()>* fn = (std::function<void()>*)pfn;
-	//		(*fn)();
-	//	};
-	//	void* coroutine_fiber = CreateFiber(0, (LPFIBER_START_ROUTINE)pfn_fiber, new std::function<void()>(fn));
-	//	if (coroutine_fiber == nullptr) {
-	//		return nullptr;
-	//	}
-	//	return coroutine_fiber;
-	//}
-}
 static ARG_INFO createArgs[] =
 {
 	{
-		/*name*/    "协程调度器",
+		/*name*/    "协程调度器句柄",
 		/*explain*/ ("由“创建协程调度器”返回。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/  ArgMark::AS_NONE,
 	},
@@ -58,7 +28,7 @@ static ARG_INFO createArgs[] =
 		/*explain*/ ("欲执行的子程序指针,函数原型必须为“[无返回值] 函数([整数型]协程调度器,[整数型]参数)”"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_INT,
+		/*type*/    SDT_SUB_PTR,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_NONE,
 	},
@@ -76,18 +46,18 @@ static ARG_INFO createArgs[] =
 
 EXTERN_C void Fn_create_coroutine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_pCompoundData);
-	auto Fun = reinterpret_cast<coroutine_func>(pArgInf[1].m_int);
+	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_int);
+	auto Fun = reinterpret_cast<coroutine_func>(pArgInf[1].m_pdwSubCodeAdr);
 	void* arg = reinterpret_cast<void*>(pArgInf[2].m_int);
-	pRetData->m_pCompoundData = reinterpret_cast<void*>(coroutine_new(pSchedule, Fun, arg));
+	pRetData->m_int = coroutine_new(pSchedule, Fun, arg);
 }
 FucInfo create_coroutine = { {
 		/*ccname*/  ("加入协程"),
 		/*egname*/  ("create_coroutine"),
-		/*explain*/ ("在指定调度器中加入协程,协程是轻量级线程，并返回协程句柄.他的优势是函数执行可记录，类似c里的跨函数跳转，但是更安全可靠，同一个调度器可拥有多个协程，可在调度器中对函数协程进行切换，切换之后记录协程执行位置，下次切入此协程时仍然从记录位置执行。"),
+		/*explain*/ ("在指定调度器中加入协程并返回协程ID,协程是轻量级线程，并返回协程句柄.他的优势是函数执行可记录，类似c里的跨函数跳转，但是更安全可靠，同一个调度器可拥有多个协程，可在调度器中对函数协程进行切换，切换之后记录协程执行位置，下次切入此协程时仍然从记录位置执行。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOPROCESS ,
+		/*ret*/     SDT_INT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -99,20 +69,20 @@ FucInfo create_coroutine = { {
 static ARG_INFO m_Args[] =
 {
 	{
-		/*name*/    "协程调度器",
+		/*name*/    "协程调度器句柄",
 		/*explain*/ ("由“创建协程调度器”返回。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_NONE,
 	},
 	{
-		/*name*/    "协程句柄",
+		/*name*/    "协程ID",
 		/*explain*/ ("由创建协程生成的协程句柄"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOPROCESS,
+		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_NONE,
 	}
@@ -120,14 +90,13 @@ static ARG_INFO m_Args[] =
 
 EXTERN_C void Fn_switch_coroutine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_pCompoundData);
-	int ID = reinterpret_cast<int>(pArgInf[1].m_pCompoundData);
-	coroutine_resume(pSchedule, ID);
+	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_int);
+	coroutine_resume(pSchedule, pArgInf[1].m_int);
 }
 FucInfo switch_coroutine = { {
 		/*ccname*/  ("恢复协程"),
 		/*egname*/  ("coroutine_resume"),
-		/*explain*/ ("恢复指定句柄的协程。"),
+		/*explain*/ ("恢复指定ID的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
 		/*ret*/     DATA_TYPE::_SDT_NULL ,
@@ -144,11 +113,11 @@ FucInfo switch_coroutine = { {
 static ARG_INFO m_hCo_args[] =
 {
 	{
-		/*name*/    "协程调度器",
+		/*name*/    "协程调度器句柄",
 		/*explain*/ ("由创建协程调度器生成的句柄"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    DTP_HCOROUTINE,
+		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_NONE,
 	}
@@ -156,12 +125,12 @@ static ARG_INFO m_hCo_args[] =
 
 EXTERN_C void Fn_is_valid_hCoprocess(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	coroutine_yield(reinterpret_cast<schedule*>(pArgInf[0].m_pCompoundData));
+	coroutine_yield(reinterpret_cast<schedule*>(pArgInf->m_int));
 }
 FucInfo is_valid_hCoprocess = { {
 		/*ccname*/  ("挂起协程"),
 		/*egname*/  ("coroutine_yield"),
-		/*explain*/ ("挂机指定调度器的当前协程。"),
+		/*explain*/ ("挂机指定调度器的当前正在执行的协程。"),
 		/*category*/9,
 		/*state*/   NULL,
 		/*ret*/     _SDT_NULL ,
@@ -177,9 +146,8 @@ FucInfo is_valid_hCoprocess = { {
 
 EXTERN_C void Fn_delete_coroutine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_pCompoundData);
-	int ID = reinterpret_cast<int>(pArgInf[1].m_pCompoundData);
-	pRetData->m_int = coroutine_status(pSchedule, ID);
+	auto pSchedule = reinterpret_cast<schedule*>(pArgInf->m_int);
+	pRetData->m_int = coroutine_status(pSchedule, pArgInf[1].m_int);
 }
 FucInfo delete_coroutine = { {
 		/*ccname*/  ("取协程状态"),
@@ -199,16 +167,16 @@ FucInfo delete_coroutine = { {
 
 EXTERN_C void Fn_get_h_coroutine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	pRetData->m_pCompoundData = reinterpret_cast<void*>(coroutine_running(reinterpret_cast<schedule*>(pArgInf->m_pCompoundData)));
+	pRetData->m_int = coroutine_running(reinterpret_cast<schedule*>(pArgInf->m_int));
 }
 
 FucInfo get_h_coroutine = { {
-		/*ccname*/  ("取当前协程句柄"),
+		/*ccname*/  ("取当前执行协程ID"),
 		/*egname*/  ("get_h_coroutine"),
-		/*explain*/ ("返回指定调度器正在运行的协程。"),
+		/*explain*/ ("返回指定调度器正在运行的协程ID。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOPROCESS ,
+		/*ret*/     SDT_INT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -218,20 +186,18 @@ FucInfo get_h_coroutine = { {
 	} ,Fn_get_h_coroutine ,"Fn_get_h_coroutine" };
 
 
-
-
+/*创建协程调度器*/
 EXTERN_C void Fn_coroutine_open(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	pRetData->m_pCompoundData = coroutine_open();
+	pRetData->m_int = reinterpret_cast<std::uintptr_t> (coroutine_open());
 }
-
 FucInfo e_coroutine_open = { {
 		/*ccname*/  ("创建协程调度器"),
 		/*egname*/  ("coroutine_open"),
-		/*explain*/ ("创建并返回一个新的协程调度器。"),
+		/*explain*/ ("创建并返回一个新的协程调度器句柄。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     DTP_HCOROUTINE ,
+		/*ret*/     SDT_INT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -241,14 +207,13 @@ FucInfo e_coroutine_open = { {
 	} ,Fn_coroutine_open ,"Fn_coroutine_open" };
 
 
-
+/*销毁协程调度器*/
 EXTERN_C void Fn_coroutine_close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-	coroutine_close(reinterpret_cast<schedule*>(pArgInf->m_pCompoundData));
+	coroutine_close(reinterpret_cast<schedule*>(pArgInf->m_int));
 }
-
 FucInfo e_coroutine_close = { {
-		/*ccname*/  ("释放协程调度器"),
+		/*ccname*/  ("销毁协程调度器"),
 		/*egname*/  ("coroutine_close"),
 		/*explain*/ ("关闭并释放协程调度器。"),
 		/*category*/9,
@@ -287,8 +252,8 @@ FucInfo e_hCoi2h = { {
 		/*egname*/  ("hCoi2h"),
 		/*explain*/ ("将协程函数传入的指针转为调度器。"),
 		/*category*/9,
-		/*state*/   NULL,
-		/*ret*/     DTP_HCOROUTINE ,
+		/*state*/   CT_IS_HIDED,
+		/*ret*/     SDT_INT ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
