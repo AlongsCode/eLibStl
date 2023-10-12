@@ -155,7 +155,7 @@ FucInfo delete_coroutine = { {
 		/*explain*/ ("返回指定协程调度器的指定协程的状态。"),
 		/*category*/9,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT ,
+		/*ret*/     DTP_COROUTINE ,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
@@ -264,3 +264,29 @@ FucInfo e_hCoi2h = { {
 
 
 
+static LIB_DATA_TYPE_ELEMENT s_Enum[] =
+{
+	 {SDT_INT, 0, "结束", "COROUTINE_DEAD", NULL, LES_HAS_DEFAULT_VALUE, COROUTINE_DEAD},
+	 {SDT_INT, 0, "就绪", "COROUTINE_READY", NULL, LES_HAS_DEFAULT_VALUE, COROUTINE_READY},
+	 {SDT_INT, 0, "运行中", "COROUTINE_RUNNING", NULL, LES_HAS_DEFAULT_VALUE,COROUTINE_RUNNING},
+	 {SDT_INT, 0, "被挂起", "COROUTINE_SUSPEND", NULL, LES_HAS_DEFAULT_VALUE, COROUTINE_SUSPEND},
+};
+namespace elibstl {
+	LIB_DATA_TYPE_INFO COROUTINE_Type =
+	{
+		"协程状态",
+		"COROUTINE",
+		"当前协程运行状态",
+		NULL,
+		NULL,
+		_DT_OS(__OS_WIN) | LDT_ENUM,
+		0,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		sizeof(s_Enum) / sizeof(s_Enum[0]),
+		s_Enum
+	};
+}
