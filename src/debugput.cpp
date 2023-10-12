@@ -85,7 +85,7 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 	case SDT_DOUBLE:
 		oss << param->m_double << " | "; break;
 	case SDT_BOOL:
-		oss << (param->m_bool ? "true" : "false") << " | "; break;
+		oss << (param->m_bool ? "Õæ" : "¼Ù") << " | "; break;
 	case SDT_TEXT:
 	{
 		const char* pText = param->m_pText;
