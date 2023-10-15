@@ -97,6 +97,12 @@
     <ClCompile Include="src\get_ip_this_w.cpp" />
     <ClCompile Include="src\get_network_types.cpp" />
     <ClCompile Include="src\get_special_folder_path.cpp" />
+    <ClCompile Include="src\HexView\HexView.cpp" />
+    <ClCompile Include="src\HexView\HexView_CmdDef.cpp" />
+    <ClCompile Include="src\HexView\HexView_Control.cpp" />
+    <ClCompile Include="src\HexView\HexView_Function.cpp" />
+    <ClCompile Include="src\HexView\HexView_Jmp.cpp" />
+    <ClCompile Include="src\HexView\HexView_Search.cpp" />
     <ClCompile Include="src\InputBox.cpp" />
     <ClCompile Include="src\InStrRev.cpp" />
     <ClCompile Include="src\gettextpos.cpp" />
@@ -171,6 +177,11 @@
     <ClInclude Include="openlib\ETCP\etcpapi.h" />
     <ClInclude Include="openlib\MiniCo\coroutine.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\HexView\HexView.h" />
+    <ClInclude Include="src\HexView\HexView_Control.h" />
+    <ClInclude Include="src\HexView\HexView_Function.h" />
+    <ClInclude Include="src\HexView\HexView_Jmp.h" />
+    <ClInclude Include="src\HexView\HexView_Search.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc" />
@@ -300,7 +311,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>$(ESTL_DBG_ELIB_PATH___)</OutDir>
+    <OutDir>E:\易语言正式版\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>

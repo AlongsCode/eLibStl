@@ -112,6 +112,12 @@
     <Filter Include="源文件\组件\通用型\弱类型动态变量">
       <UniqueIdentifier>{5feb1e68-a935-4c98-9cf3-344fc6127e95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\HexView">
+      <UniqueIdentifier>{fb3f6f4c-3995-44e9-b69c-643a3d1790ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\HexView\头文件">
+      <UniqueIdentifier>{50bb64a4-ed09-4e4b-b3c6-029938de240e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -158,6 +164,21 @@
     </ClInclude>
     <ClInclude Include="include\GdiplusFlatDef.h">
       <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Function.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Jmp.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Search.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Control.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -493,6 +514,24 @@
     </ClCompile>
     <ClCompile Include="src\EplObj Class\Diskfiles.cpp">
       <Filter>源文件\组件\通用型\文件读写</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Function.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Jmp.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Search.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Control.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_CmdDef.cpp">
+      <Filter>源文件\组件\HexView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
