@@ -272,7 +272,7 @@ static LIB_DATA_TYPE_ELEMENT s_Enum[] =
 	 {SDT_INT, 0, "被挂起", "COROUTINE_SUSPEND", NULL, LES_HAS_DEFAULT_VALUE, COROUTINE_SUSPEND},
 };
 namespace elibstl {
-	LIB_DATA_TYPE_INFO COROUTINE_Type =
+	LIB_DATA_TYPE_INFO Enum_CoRuningType =
 	{
 		"协程状态",
 		"COROUTINE",
