@@ -69,7 +69,7 @@ enum  DATA_TYPE : std::int32_t {
 	_SDT_NULL = 0,  // 空
 	_SDT_ALL = BaseType(0, 0),  // 通用型
 	SDT_BYTE = BaseType(1, 1),  // uint8
-	SDT_SHORT = BaseType(1, 12),  // int16
+	SDT_SHORT = BaseType(1, 2),  // int16
 	SDT_INT = BaseType(1, 3),  // int32
 	SDT_INT64 = BaseType(1, 4),  // int64
 	SDT_FLOAT = BaseType(1, 5),  // float

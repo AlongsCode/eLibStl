@@ -9,6 +9,9 @@
 
 #ifdef _WIN32
 namespace elibstl {
+
+
+
 	class CFile{
 		HANDLE m_hFile{ INVALID_HANDLE_VALUE };
 	public:
@@ -72,6 +75,47 @@ namespace elibstl {
 		}
 		BOOL Unlock(INT64 position, INT64 size) {
 			return ::UnlockFile(m_hFile, (DWORD)position, (DWORD)(position >> 32), (DWORD)size, (DWORD)(size >> 32));
+		}
+		void FSeek(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf) {
+			BOOL bRet = FALSE;
+			DWORD dwMoveMethod;
+			switch (pArgInf[1].m_int)
+			{
+			case 2://#文件尾
+				dwMoveMethod = FILE_END;
+				break;
+			case 3://#现行位置
+				dwMoveMethod = FILE_CURRENT;
+				break;
+			default://#文件首
+				dwMoveMethod = FILE_BEGIN;
+			}
+			LARGE_INTEGER dis;
+			dis.QuadPart = (ULONGLONG)pArgInf[2].m_int64;
+			bRet = ::SetFilePointerEx(m_hFile, dis, NULL, (DWORD)dwMoveMethod);
+			pRetData->m_bool = bRet;
+
+		}
+		BOOL SeekToBegin() {
+			return (::SetFilePointer(m_hFile, 0, NULL, FILE_BEGIN) != INVALID_SET_FILE_POINTER);
+		}
+		BOOL SeekToEnd() {
+			return (::SetFilePointer(m_hFile, 0, NULL, FILE_END) != INVALID_SET_FILE_POINTER);
+		}
+		BOOL WriteBin(INT nArgCount, PMDATA_INF pArgInf) {
+			DWORD dwNumOfByteRead;
+			auto bRet = TRUE;
+			for (INT i = 1; i < nArgCount; i++)
+			{
+				LPBYTE pData = pArgInf[i].m_pBin + 2 * sizeof(INT);
+				INT nLen = pArgInf[i].m_pInt[1];
+				if (WriteFile(m_hFile, pData, nLen, &dwNumOfByteRead, NULL) == FALSE)
+				{
+					bRet = FALSE;
+					break;
+				}
+			}
+			return bRet;
 		}
 		BOOL  MoveWrOff(int 基准移动位置, INT64 移动距离) {
 
@@ -178,7 +222,6 @@ namespace elibstl {
 
 		}
 		BOOL WriteText(INT nArgCount, PMDATA_INF pArgInf) {
-			DWORD dwNumOfByteRead;
 			auto bRet = TRUE;
 			for (INT i = 1; i < nArgCount; i++)
 			{
@@ -485,7 +528,222 @@ FucInfo Fn_CFile_UnLock = { {
 		/*arg lp*/ s_UnLockArgs,
 	} ,ESTLFNAME(fn_CFile_UnLock) };
 
-static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324};
+
+static ARG_INFO s_FSeekArgs[] =
+{
+	{
+		/*name*/    "起始移动位置",
+		/*explain*/ "参数值指定从文件中开始移动的位置。可以为以下常量之一：1、#文件首； 2、#文件尾； 3、#现行位置。如果本参数被省略，默认值为“#文件首”。",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	},
+	{
+		/*name*/    "移动距离",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT64,
+		/*default*/ 0,
+		/*state*/  ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_FSeek(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	self->FSeek(pRetData, nArgCount, pArgInf);
+}
+FucInfo Fn_CFile_FSeek = { {
+		/*ccname*/  "移动读写位置",
+		/*egname*/  "在被打开的文件中，设置下一个读或写操作的位置。成功返回真，失败返回假。",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/2,
+		/*arg lp*/ s_FSeekArgs,
+	} ,ESTLFNAME(fn_CFile_FSeek) };
+
+EXTERN_C void fn_CFile_SeekToBegin(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	self->SeekToBegin();
+}
+FucInfo Fn_CFile_SeekToBegin = { {
+		/*ccname*/  "移到文件首",
+		/*egname*/  "在被打开的文件中，设置下一个读或写操作的位置到文件首。成功返回真，失败返回假。",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_SeekToBegin) };
+
+EXTERN_C void fn_CFile_SeekToEnd(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	self->SeekToEnd();
+}
+FucInfo Fn_CFile_SeekToEnd = { {
+		/*ccname*/  "移到文件尾",
+		/*egname*/  "在被打开的文件中，设置下一个读或写操作的位置到文件首。成功返回真，失败返回假。",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_SeekToEnd) };
+
+
+
+
+
+static ARG_INFO s_ReadBinArgs[] =
+{
+	{
+		/*name*/    "欲读入数据的尺寸",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ -1,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
+	}
+};
+EXTERN_C void fn_CFile_ReadBin(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_pBin = self->ReadBin(pArgInf[1].m_int);
+}
+FucInfo Fn_CFile_ReadBin = { {
+		/*ccname*/  "读入字节集",
+		/*egname*/  "从文件中当前读写位置读取并返回一段字节集数据,实际读入长度(即所返回字节集的尺寸)可能会小于欲读入长度.如果读入失败,将返回一个空字节集并且自动将当前文件读写位置移到文件尾部.",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BIN,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_ReadBinArgs,
+	} ,ESTLFNAME(fn_CFile_ReadBin) };
+
+static ARG_INFO s_WriteBinArgs[] =
+{
+	{
+		/*name*/    "欲写入的数据",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_WriteBin(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool = self->WriteBin(nArgCount,pArgInf);
+}
+FucInfo Fn_CFile_WriteBin = { {
+		/*ccname*/  "写出字节集",
+		/*egname*/  "本命令用作写出一段或数段字节集数据到文件中当前读写位置处。成功返回真，失败返回假。",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   CT_ALLOW_APPEND_NEW_ARG  ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_WriteBinArgs,
+	} ,ESTLFNAME(fn_CFile_WriteBin) };
+
+static ARG_INFO s_ReadTextArgs[] =
+{
+	{
+		/*name*/    "欲读入文本的尺寸",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_ReadText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_pBin = self->ReadText(pArgInf[1].m_int);
+}
+FucInfo Fn_CFile_ReadText = { {
+		/*ccname*/  "读入文本W",
+		/*egname*/  " 从文件中当前读写位置读取并返回一段文本数据,实际读入长度(即返回文本的尺寸)可能会小于欲读入长度.如果该数据中存在字符值0或26(文本结束标志),将仅返回该字符之前的数据(后续读写将跳过该字符).如果读入失败,将返回一个空文本并且自动将当前文件读写位置移到文件尾部.注意: 文本文件的编码格式必须为Unicode(即UTF - 16).",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BIN,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_ReadTextArgs,
+	} ,ESTLFNAME(fn_CFile_ReadText) };
+
+static ARG_INFO s_WriteTextArgs[] =
+{
+	{
+		/*name*/    "欲读入文本的尺寸",
+		/*explain*/ "",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BIN,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_WriteText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool= self->WriteText(nArgCount, pArgInf);
+}
+FucInfo Fn_CFile_WriteText = { {
+		/*ccname*/  "写出文本W",
+		/*egname*/  "本命令用作写出一段或数段文本数据到文件中当前读写位置处。成功返回真，失败返回假。注意: 文本文件的编码格式必须为Unicode(即UTF - 16).",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   CT_ALLOW_APPEND_NEW_ARG ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_WriteTextArgs,
+	} ,ESTLFNAME(fn_CFile_WriteText) };
+
+
+static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324,326,327,328,329,330,331,332};
 
 namespace elibstl {
 

@@ -326,8 +326,13 @@ network_post/*网页访问*/\
 ,Fn_CFile_Lock/*文件读写.锁住*/\
 ,Fn_CFile_UnLock/*文件读写.解锁*/\
 ,Fn_hexview_setdata/*进制框.置数据*/\
-
-
+,Fn_CFile_FSeek/*文件读写.移动读写位置*/\
+,Fn_CFile_SeekToBegin/*文件读写.移到文件首*/\
+, Fn_CFile_SeekToEnd/*文件读写.移到文件尾*/\
+,Fn_CFile_ReadBin/*文件读写.读入字节集*/\
+,Fn_CFile_ReadBin/*文件读写.写出字节集*/\
+,Fn_CFile_ReadText/*文件读写.读入文本W*/\
+,Fn_CFile_WriteText/*文件读写.写出文本W*/
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/
