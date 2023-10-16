@@ -363,7 +363,6 @@ CtCommandLink/*命令链接*/\
 ,CtComboBox/**/\
 ,epl_class_Var/*强类型动态数组*/\
 ,Obj_DiskFile/*文件读写类*/\
-,HexView_control/*16进制编辑器组件*/\
 
 
 
