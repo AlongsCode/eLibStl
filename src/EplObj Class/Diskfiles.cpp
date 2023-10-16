@@ -150,8 +150,13 @@ namespace elibstl {
 		auto GetOffst() {
 			return (m_hFile == INVALID_HANDLE_VALUE) ? -1 : MoveAndGetFilePos(FILE_CURRENT);
 		}
-		auto GetCurrentPos() {
+
+		INT64 GetCurrentPos()const {
 			return MoveAndGetFilePos(FILE_CURRENT);
+		}
+		auto GetCurrent()const {
+			return (m_hFile == INVALID_HANDLE_VALUE ? -1 : GetCurrentPos());
+
 		}
 		BOOL SetCurrentPos(INT64 n64CurrentPos)
 		{
@@ -162,7 +167,7 @@ namespace elibstl {
 			return ::SetFilePointerEx(m_hFile, pos, NULL, FILE_BEGIN);
 		}
 
-		INT64 MoveAndGetFilePos(DWORD dwMoveMethod)
+		INT64 MoveAndGetFilePos(DWORD dwMoveMethod)const
 		{
 			if (m_hFile == INVALID_HANDLE_VALUE)
 				return 0;
@@ -235,6 +240,124 @@ namespace elibstl {
 						break;
 					}
 				}	
+			}
+			return bRet;
+		}
+		INT64 GetSize() {
+			if (m_hFile == NULL)
+				return -1;
+			const INT64 n64CurrentPos = GetCurrentPos();
+			if (n64CurrentPos < 0)
+				return -1;
+			const INT64 n64FileSize = MoveToEndAndGetFileSize();
+			SetCurrentPos(n64CurrentPos);
+			return n64FileSize;
+
+		}
+		INT64 MoveToEndAndGetFileSize() {
+			return MoveAndGetFilePos(FILE_END); 
+		}
+		LPBYTE ReadLine() {
+			auto orgLoc = SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT);
+			if (orgLoc == HFILE_ERROR)
+			{
+				SetFilePointer(m_hFile, 0, NULL, FILE_END);
+				return NULL;
+			}
+
+			DWORD dwNumOfByteRead;
+			INT nLen = GetFileSize(m_hFile, NULL) - orgLoc;
+			std::wstring ret;
+			INT nTLen = 0;
+			for (INT i = 0; i < nLen; i += 4096)
+			{
+				std::wstring tmpMEMSP;
+				tmpMEMSP.resize(4096);
+				INT nRet = ReadFile(m_hFile, tmpMEMSP.data(), min(nLen - i, 4096), &dwNumOfByteRead, 0);
+				if (nRet == FALSE)
+				{
+					SetFilePointer(m_hFile, 0, NULL, FILE_END);
+					break;
+				}
+				BOOL bFind = FALSE;
+				for (DWORD j = 0; j < dwNumOfByteRead; j++)
+				{
+					if (tmpMEMSP[j] == '\0')
+					{
+						bFind = TRUE;
+						dwNumOfByteRead = j;
+						SetFilePointer(m_hFile, orgLoc + nTLen + j, NULL, FILE_BEGIN);
+						break;
+					}
+					else if (tmpMEMSP[j] == '\n')
+					{
+						bFind = TRUE;
+						dwNumOfByteRead = j;
+						SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+						break;
+					}
+					else if (tmpMEMSP[j] == '\r')
+					{
+						if (j + 1 == dwNumOfByteRead)
+						{
+							char szNewline = 0;
+							nRet = ReadFile(m_hFile, &szNewline, 1, &dwNumOfByteRead, 0);//再读一个字节，看看是不是\r\n组合
+							if (szNewline != '\n')
+							{
+								//不是\r\n组合，把读写位置放到\r后面
+								SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+							}
+						}
+						else if (tmpMEMSP[j + 1] == '\n')
+						{
+							SetFilePointer(m_hFile, orgLoc + nTLen + j + 2, NULL, FILE_BEGIN);
+						}
+						else
+						{
+							SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+						}
+						bFind = TRUE;
+						dwNumOfByteRead = j;
+						break;
+					}
+				}
+				tmpMEMSP.resize(dwNumOfByteRead);
+				nTLen += dwNumOfByteRead;
+				ret += tmpMEMSP;
+				if (bFind || dwNumOfByteRead != 4096)
+					break;
+			}
+
+			return elibstl::clone_textw(ret);
+		
+		}
+		BOOL isOpen() const{
+			return m_hFile != INVALID_HANDLE_VALUE;
+		}
+		BOOL WriteLine(INT nArgCount, PMDATA_INF pArgInf) {
+			BOOL bRet = FALSE;
+			DWORD dwNumOfByteRead;
+			bRet = TRUE;
+			for (INT i = 1; i < nArgCount; i++)
+			{
+				std::wstring pData;
+				pData = elibstl::arg_to_wstring(pArgInf, i);
+				if (pData.empty())
+				{
+					WriteFile(m_hFile, L"\r\n", 4, &dwNumOfByteRead, NULL);
+					continue;
+				}
+				auto nLen = pData.size() * sizeof(wchar_t);
+				if (nLen > 0)
+				{
+					if (WriteFile(m_hFile, pData.data(), nLen, &dwNumOfByteRead, NULL))
+						WriteFile(m_hFile, L"\r\n", 4, &dwNumOfByteRead, NULL);
+					else
+						bRet = FALSE;
+				}
+				if (bRet == FALSE)
+					break;
+
 			}
 			return bRet;
 		}
@@ -622,8 +745,8 @@ static ARG_INFO s_ReadBinArgs[] =
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
-		/*default*/ -1,
-		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
 	}
 };
 EXTERN_C void fn_CFile_ReadBin(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -686,8 +809,8 @@ static ARG_INFO s_ReadTextArgs[] =
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
-		/*default*/ 0,
-		/*state*/   ArgMark::AS_NONE,
+		/*default*/ -1,
+		/*state*/   ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 EXTERN_C void fn_CFile_ReadText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -713,11 +836,11 @@ FucInfo Fn_CFile_ReadText = { {
 static ARG_INFO s_WriteTextArgs[] =
 {
 	{
-		/*name*/    "欲读入文本的尺寸",
+		/*name*/    "欲写入的UTF16文本数据,如为非文本数据则自动转换为文本",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/    SDT_BIN,
+		/*type*/    _SDT_ALL,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_NONE,
 	}
@@ -742,8 +865,121 @@ FucInfo Fn_CFile_WriteText = { {
 		/*arg lp*/ s_WriteTextArgs,
 	} ,ESTLFNAME(fn_CFile_WriteText) };
 
+EXTERN_C void fn_CFile_ReadLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_pBin = self->ReadLine();
+}
 
-static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324,326,327,328,329,330,331,332};
+FucInfo Fn_CFile_ReadLine = { {
+		/*ccname*/  "读入一行W",
+		/*egname*/  "本命令用作从文件中当前读写位置读取并返回一行文本数据，行末的回车及换行符将被抛弃。注意: 文本文件的编码格式必须为Unicode(即UTF - 16).",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   _CMD_OS(__OS_WIN) ,
+		/*ret*/ SDT_BIN,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_ReadLine) };
+
+
+static ARG_INFO s_WriteLineArgs[] =
+{
+	{
+		/*name*/    "欲写入的文本行数据",
+		/*explain*/ "参数值如果不为文本类型数据，将自动进行转换，如果无法转换（即数据类型为字节集、子程序指针、库或用户自定义数据类型），则不写出此数据。",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    _SDT_ALL,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_WriteLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool = self->WriteLine(nArgCount, pArgInf);
+}
+FucInfo Fn_CFile_WriteLine = { {
+		/*ccname*/  "写文本行W",
+		/*egname*/  "本命令用作写出一行或多行文本数据到文件中当前读写位置处，每行的尾部将被自动加上回车及换行符。注意: 文本文件的编码格式必须为Unicode(即UTF - 16).",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   CT_ALLOW_APPEND_NEW_ARG ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_WriteLineArgs,
+	} ,ESTLFNAME(fn_CFile_WriteLine) };
+
+EXTERN_C void fn_CFile_isOpen(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool = self->isOpen();
+}
+FucInfo Fn_CFile_isOpen = { {
+		/*ccname*/  "是否已打开",
+		/*egname*/  "用来判断是否已经打开文本文件",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   0 ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_isOpen) };
+
+EXTERN_C void fn_CFile_GetCurrent(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_int64 = self->GetCurrent();
+}
+FucInfo Fn_CFile_GetCurrent = { {
+		/*ccname*/  "取当前读写位置",
+		/*egname*/  "获取当前读写位置,失败返回-1",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   0 ,
+		/*ret*/ SDT_INT64,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_GetCurrent) };
+
+EXTERN_C void fn_CFile_GetSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_int64 = self->GetSize();
+}
+FucInfo Fn_CFile_GetSize = { {
+		/*ccname*/  "取文件大小",
+		/*egname*/  "获取当前文件占用磁盘大小,失败返回-1，单位:(字节)",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   0 ,
+		/*ret*/ SDT_INT64,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/0,
+		/*arg lp*/ nullptr,
+	} ,ESTLFNAME(fn_CFile_GetSize) };
+
+static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324,326,327,328,329,330,331,332,333,334,335,336,337};
 
 namespace elibstl {
 
