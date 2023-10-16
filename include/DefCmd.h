@@ -324,7 +324,9 @@ network_post/*网页访问*/\
 ,Fn_CFile_Open/*文件读写.打开*/\
 ,Fn_CFile_Close/*文件读写.关闭*/\
 ,Fn_CFile_Lock/*文件读写.锁住*/\
-,Fn_CFile_UnLock/*文件读写.解锁*/
+,Fn_CFile_UnLock/*文件读写.解锁*/\
+,Fn_hexview_setdata/*进制框.置数据*/
+
 
 
 /*此下两个完全没必要*/
@@ -361,7 +363,8 @@ CtCommandLink/*命令链接*/\
 ,CtComboBox/**/\
 ,epl_class_Var/*强类型动态数组*/\
 ,Obj_DiskFile/*文件读写类*/\
-,COROUTINE_Type/*协程运行状态*/
+,HexView_control/*16进制编辑器组件*/\
+
 
 
 #pragma endregion
