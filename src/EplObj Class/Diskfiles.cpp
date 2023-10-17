@@ -243,94 +243,114 @@ namespace elibstl {
 			}
 			return bRet;
 		}
-		INT64 GetSize() {
-			if (m_hFile == NULL)
+		INT64 GetSize()const {
+			LARGE_INTEGER fileSize;
+			if (m_hFile == INVALID_HANDLE_VALUE)
 				return -1;
-			const INT64 n64CurrentPos = GetCurrentPos();
-			if (n64CurrentPos < 0)
+			if (::GetFileSizeEx(m_hFile, &fileSize) == FALSE) {
 				return -1;
-			const INT64 n64FileSize = MoveToEndAndGetFileSize();
-			SetCurrentPos(n64CurrentPos);
-			return n64FileSize;
-
+			}
+			return fileSize.QuadPart;
 		}
+
 		INT64 MoveToEndAndGetFileSize() {
 			return MoveAndGetFilePos(FILE_END); 
 		}
-		LPBYTE ReadLine() {
-			auto orgLoc = SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT);
-			if (orgLoc == HFILE_ERROR)
-			{
-				SetFilePointer(m_hFile, 0, NULL, FILE_END);
-				return NULL;
+		auto ReadLineW()->std::wstring {
+			LARGE_INTEGER 
+				orgLoc{ 0 }, /*原始位置*/
+				newLoc{ 0 }, /*用于储存新位置*/
+				nTLen{ 0 };/*用于记录读取总长度*/
+			if (SetFilePointerEx(m_hFile, orgLoc, &newLoc, FILE_CURRENT) == 0) {
+				// 文件指针位置获取失败，移动到文件末尾并返回空字符串
+				SetFilePointerEx(m_hFile, orgLoc, &newLoc, FILE_END);
+				return {};
 			}
-
+			auto nLen = GetSize() - orgLoc.QuadPart;/*剩余长度*/
+			constexpr auto once_max = 4096;/*定义单次读取长度*/
+			constexpr auto once_wchar_max = once_max / sizeof(wchar_t);/*定义单词读取wchar_t字符长度*/
+			
+			std::wstring line;
 			DWORD dwNumOfByteRead;
-			INT nLen = GetFileSize(m_hFile, NULL) - orgLoc;
-			std::wstring ret;
-			INT nTLen = 0;
-			for (INT i = 0; i < nLen; i += 4096)
+			BOOL bFoundNewline = FALSE;
+
+		
+			for (long long i = 0; i < nLen; i += once_max)
 			{
-				std::wstring tmpMEMSP;
-				tmpMEMSP.resize(4096);
-				INT nRet = ReadFile(m_hFile, tmpMEMSP.data(), min(nLen - i, 4096), &dwNumOfByteRead, 0);
+				std::wstring tmp(once_wchar_max, L'\0');
+				const auto needsize = static_cast<DWORD>(min(nLen - i, static_cast<long long>(4096)));
+				auto nRet = ReadFile(m_hFile, tmp.data(), needsize, &dwNumOfByteRead, 0);/*一定不会大于4096,所以可以用ReadFile读*/;
 				if (nRet == FALSE)
 				{
 					SetFilePointer(m_hFile, 0, NULL, FILE_END);
 					break;
 				}
-				BOOL bFind = FALSE;
-				for (DWORD j = 0; j < dwNumOfByteRead; j++)
+				bool bFind{ false };/*用于记录是否匹配到换行符*/
+				DWORD j = 0;/*用于记录这段字符中的索引位置*/
+				for (const auto& ch : tmp )/*遍历这段字符*/
 				{
-					if (tmpMEMSP[j] == '\0')
+					if (ch == L'\0')
 					{
-						bFind = TRUE;
-						dwNumOfByteRead = j;
-						SetFilePointer(m_hFile, orgLoc + nTLen + j, NULL, FILE_BEGIN);
+						bFind = true;/*匹配到结束符*/
+						dwNumOfByteRead = j * sizeof(wchar_t);
+						newLoc.QuadPart = orgLoc.QuadPart + nTLen.QuadPart + j * sizeof(wchar_t);	/*计算新位置:旧位置+先前长度+本次字符长度*/;
+						SetFilePointerEx(m_hFile, newLoc, nullptr, FILE_BEGIN);/*设置新位置*/
 						break;
 					}
-					else if (tmpMEMSP[j] == '\n')
+					else if (ch == L'\n')
 					{
-						bFind = TRUE;
+						
+						bFind = true;/*匹配到换行符*/
 						dwNumOfByteRead = j;
-						SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+						newLoc.QuadPart = orgLoc.QuadPart + nTLen.QuadPart + (j + 1) * sizeof(wchar_t);/*相对于结束符,这段代码需要跳到下一行行首所以+1个字符*/
+						SetFilePointerEx(m_hFile, newLoc, nullptr, FILE_BEGIN); /*设置新位置*/
 						break;
 					}
-					else if (tmpMEMSP[j] == '\r')
-					{
-						if (j + 1 == dwNumOfByteRead)
+					else if (ch == L'\r') {
+						
+						bFind = true;/*匹配到回车*/
+						if (j + 1 == dwNumOfByteRead)/*如果回车是最后一个字符*/
 						{
-							char szNewline = 0;
-							nRet = ReadFile(m_hFile, &szNewline, 1, &dwNumOfByteRead, 0);//再读一个字节，看看是不是\r\n组合
-							if (szNewline != '\n')
+							wchar_t szNewline{ L'\0' };
+							
+							nRet = ReadFile(m_hFile, &szNewline, sizeof(szNewline), &dwNumOfByteRead, 0);//再读两个字节，看看是不是\r\n组合
+							if (nRet == FALSE || szNewline != L'\n')
 							{
 								//不是\r\n组合，把读写位置放到\r后面
-								SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+								newLoc.QuadPart = orgLoc.QuadPart + nTLen.QuadPart + (j + 1) * sizeof(wchar_t);
+								SetFilePointerEx(m_hFile, newLoc, nullptr, FILE_BEGIN); /*设置新位置*/
 							}
 						}
-						else if (tmpMEMSP[j + 1] == '\n')
+						else if (tmp[j + 1] == L'\n')/*不是最后一个字符,且回车后为换行,此位置不用at，是因为一定不会越界*/
 						{
-							SetFilePointer(m_hFile, orgLoc + nTLen + j + 2, NULL, FILE_BEGIN);
+							
+							newLoc.QuadPart = orgLoc.QuadPart + nTLen.QuadPart + (j + 2) * sizeof(wchar_t);
+							SetFilePointerEx(m_hFile, newLoc, nullptr, FILE_BEGIN); /*设置新位置*/
 						}
-						else
+						else/*不是最后一个字符,且回车后不为换行*/
 						{
-							SetFilePointer(m_hFile, orgLoc + nTLen + j + 1, NULL, FILE_BEGIN);
+							// 找到 '\r' 后面不是 '\n'，截断当前行并更新文件指针位置
+							newLoc.QuadPart = orgLoc.QuadPart + nTLen.QuadPart + (j + 1) * sizeof(wchar_t);
+							SetFilePointerEx(m_hFile, newLoc, nullptr, FILE_BEGIN); /*设置新位置*/
 						}
-						bFind = TRUE;
 						dwNumOfByteRead = j;
 						break;
 					}
+					j++;
+					
 				}
-				tmpMEMSP.resize(dwNumOfByteRead);
-				nTLen += dwNumOfByteRead;
-				ret += tmpMEMSP;
-				if (bFind || dwNumOfByteRead != 4096)
+				
+				tmp.resize(dwNumOfByteRead);
+				nTLen.QuadPart += dwNumOfByteRead;
+				line += tmp;
+				if (bFind || dwNumOfByteRead != 4096)//如果找到了换行符或者读取的长度不等于4096，如果实际长度不足也会改变dwNumOfByteRead,则跳出循环
 					break;
+
 			}
 
-			return elibstl::clone_textw(ret);
-		
+			return line;
 		}
+
 		BOOL isOpen() const{
 			return m_hFile != INVALID_HANDLE_VALUE;
 		}
@@ -340,8 +360,7 @@ namespace elibstl {
 			bRet = TRUE;
 			for (INT i = 1; i < nArgCount; i++)
 			{
-				std::wstring pData;
-				pData = elibstl::arg_to_wstring(pArgInf, i);
+				auto pData = elibstl::arg_to_wstring(pArgInf, i);
 				if (pData.empty())
 				{
 					WriteFile(m_hFile, L"\r\n", 4, &dwNumOfByteRead, NULL);
@@ -361,6 +380,142 @@ namespace elibstl {
 			}
 			return bRet;
 		}
+		BOOL RemoveData(INT64 size) {
+			if (m_hFile == INVALID_HANDLE_VALUE || size <= 0)
+				return FALSE;
+			LARGE_INTEGER orgLoc, newLoc;
+			orgLoc.QuadPart = 0;
+			newLoc.QuadPart = 0;
+
+			if (SetFilePointerEx(m_hFile, orgLoc, &newLoc, FILE_CURRENT) == 0)
+				return FALSE;
+
+			auto bRet = TRUE;
+			DWORD dwNumOfByteRead;
+			LARGE_INTEGER fileSize;
+			if (GetFileSizeEx(m_hFile, &fileSize) == FALSE)
+				return FALSE;
+
+			LARGE_INTEGER nBkLen;
+			nBkLen.QuadPart = fileSize.QuadPart - orgLoc.QuadPart - size;
+			LPBYTE pBkData = NULL;
+			if (nBkLen.QuadPart > 0)  // 有残余数据
+			{
+				
+				pBkData = new BYTE[static_cast<size_t>(nBkLen.QuadPart)];
+				LARGE_INTEGER nLen;
+				nLen.QuadPart = size;
+				if (SetFilePointerEx(m_hFile, nLen, NULL, FILE_CURRENT) == 0)  // 后移到
+				{
+					delete[] pBkData;
+					return FALSE;
+				}
+				if (ReadFile(m_hFile, pBkData, static_cast<DWORD>(nBkLen.QuadPart), &dwNumOfByteRead, 0) == FALSE)
+				{
+					delete[] pBkData;
+					return FALSE;
+				}
+				if (SetFilePointerEx(m_hFile, orgLoc, NULL, FILE_BEGIN) == 0)  // 恢复原位置
+				{
+					delete[] pBkData;
+					return FALSE;
+				}
+				if (WriteFile(m_hFile, pBkData, static_cast<DWORD>(nBkLen.QuadPart), &dwNumOfByteRead, NULL))
+				{
+					if (FlushFileBuffers(m_hFile) == FALSE)
+						bRet = FALSE;
+				}
+				else
+					bRet = FALSE;
+				delete[] pBkData;
+			}
+			if (bRet)
+				SetEndOfFile(m_hFile);
+			return bRet;
+		}
+		BOOL InsertStr(INT nArgCount, PMDATA_INF pArgInf) {
+			if (m_hFile == INVALID_HANDLE_VALUE) {
+				// 文件句柄无效
+				return FALSE;
+			}
+
+			LARGE_INTEGER orgLoc, newLoc;
+			orgLoc.QuadPart = 0;
+			newLoc.QuadPart = 0;
+
+			// 将文件指针移动到当前位置
+			if (SetFilePointerEx(m_hFile, orgLoc, &newLoc, FILE_CURRENT) == 0) {
+				// 文件指针移动失败
+				return FALSE;
+			}
+
+			auto bRet = TRUE;
+			DWORD dwNumOfBytesWritten;
+			LARGE_INTEGER fileSize;
+
+			// 获取文件当前大小
+			if (GetFileSizeEx(m_hFile, &fileSize) == FALSE) {
+				// 获取文件大小失败
+				return FALSE;
+			}
+
+			// 计算要保留的数据长度
+			LARGE_INTEGER nBkLen;
+			nBkLen.QuadPart = fileSize.QuadPart - orgLoc.QuadPart;
+			LPBYTE pBkData = nullptr;
+
+			if (nBkLen.QuadPart > 0) {
+				// 有残余数据，读取并保存
+				pBkData = new BYTE[static_cast<size_t>(nBkLen.QuadPart)];
+				if (!ReadFile(m_hFile, pBkData, static_cast<DWORD>(nBkLen.QuadPart), &dwNumOfBytesWritten, nullptr)) {
+					// 读取残余数据失败，释放内存并返回
+					delete[] pBkData;
+					return FALSE;
+				}
+				// 恢复原文件指针位置
+				SetFilePointerEx(m_hFile, orgLoc, nullptr, FILE_BEGIN);
+			}
+
+			for (INT i = 1; i < nArgCount; i++) {
+				auto dataToInsert = elibstl::arg_to_wstring(pArgInf, i);
+				if (dataToInsert.empty()) {
+					continue;  // 跳过空数据
+				}
+
+				INT dataLength = dataToInsert.size() * sizeof(wchar_t);
+
+				if (dataLength > 0) {
+					// 插入数据到文件
+					bRet = WriteFile(m_hFile, dataToInsert.data(), dataLength, &dwNumOfBytesWritten, nullptr);
+				}
+
+				if (bRet == FALSE) {
+					break;  // 写入数据失败，退出循环
+				}
+			}
+
+			if (bRet && pBkData) {
+				// 插入数据后，恢复原文件位置，写回残余数据
+				if (SetFilePointerEx(m_hFile, orgLoc, &newLoc, FILE_CURRENT) == 0) {
+					// 恢复原文件位置失败
+					return FALSE;
+				}
+
+				if (!WriteFile(m_hFile, pBkData, static_cast<DWORD>(nBkLen.QuadPart), &dwNumOfBytesWritten, nullptr)) {
+					// 写回残余数据失败
+					bRet = FALSE;
+				}
+				// 恢复原文件位置
+				SetFilePointerEx(m_hFile, orgLoc, nullptr, FILE_BEGIN);
+			}
+
+			if (pBkData) {
+				delete[] pBkData;
+			}
+
+			return bRet;
+		}
+
 	private: 
 		inline static BOOL s_blpSrand = FALSE;
 		INT randint()
@@ -387,8 +542,7 @@ namespace elibstl {
 			DWORD dwWritten = 0;
 			return (npDataSize == 0 || (::WriteFile(m_hFile, pData, (DWORD)npDataSize, &dwWritten, NULL) && dwWritten == (DWORD)npDataSize));
 		}
-
-
+	
 
 	};
 
@@ -868,7 +1022,7 @@ FucInfo Fn_CFile_WriteText = { {
 EXTERN_C void fn_CFile_ReadLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
-	pRetData->m_pBin = self->ReadLine();
+	pRetData->m_pBin = elibstl::clone_textw(self->ReadLineW());
 }
 
 FucInfo Fn_CFile_ReadLine = { {
@@ -979,7 +1133,70 @@ FucInfo Fn_CFile_GetSize = { {
 		/*arg lp*/ nullptr,
 	} ,ESTLFNAME(fn_CFile_GetSize) };
 
-static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324,326,327,328,329,330,331,332,333,334,335,336,337};
+static ARG_INFO s_RemoveDataArgs[] =
+{
+	{
+		/*name*/    "欲删除的字节",
+		/*explain*/ "是INT64没错,但是易申请不了这么大内存,心里有数就行哈",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_INT64,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_RemoveData(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool = self->RemoveData(pArgInf[1].m_int64);
+}
+FucInfo Fn_CFile_RemoveData = { {
+		/*ccname*/  "删除数据",
+		/*egname*/  R"(本命令用作在文件中当前读写位置处删除一段字节数据，文件后面的数据顺序前移。该文件被打开时必须给予"#读写"或"#改读"权限。注意: 文本文件的编码格式必须为Unicode(即UTF - 16).)",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   NULL ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_RemoveDataArgs,
+	} ,ESTLFNAME(fn_CFile_RemoveData) };
+static ARG_INFO s_InsertStrArgs[] =
+{
+	{
+		/*name*/    "欲插入的文本",
+		/*explain*/ "参数值如果不为文本类型数据，将自动进行转换，如果无法转换（即数据类型为字节集、子程序指针、库或用户自定义数据类型），则不写出此数据。",
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    _SDT_ALL,
+		/*default*/ 0,
+		/*state*/   ArgMark::AS_NONE,
+	}
+};
+EXTERN_C void fn_CFile_InsertStr(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto& self = elibstl::classhelp::get_this<elibstl::CFile>(pArgInf);
+	pRetData->m_bool = self->InsertStr(nArgCount, pArgInf);
+}
+FucInfo Fn_CFile_InsertStr = { {
+		/*ccname*/  "插入文本W",
+		/*egname*/ R"( 本命令用作插入一段或数段文本数据到文件中当前读写位置处。该文件被打开时必须给予"#读写"或"#改读"权限。成功返回真，失败返回假。注意: 文本文件的编码格式必须为Unicode(即UTF - 16).)",
+		/*explain*/ NULL,
+		/*category*/ -1,
+		/*state*/   CT_ALLOW_APPEND_NEW_ARG ,
+		/*ret*/ SDT_BOOL,
+		/*reserved*/0,
+		/*level*/   LVL_SIMPLE,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/1,
+		/*arg lp*/ s_InsertStrArgs,
+	} ,ESTLFNAME(fn_CFile_InsertStr) };
+
+static INT s_dtCmdIndexcommobj_memfile_ex[] = { 318,319 ,320 ,321,322,323,324,326,327,328,329,330,331,332,333,334,335,336,337,338,339};
 
 namespace elibstl {
 

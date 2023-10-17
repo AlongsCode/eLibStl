@@ -337,7 +337,9 @@ network_post/*网页访问*/\
 ,Fn_CFile_WriteLine/*文件读写.写出一行*/\
 ,Fn_CFile_isOpen/*文件读写.是否已打开*/\
 ,Fn_CFile_GetCurrent/*文件读写.取当前读写位置*/\
-, Fn_CFile_GetSize/*文件读写.取文件大小*/
+, Fn_CFile_GetSize/*文件读写.取文件大小*/\
+,Fn_CFile_RemoveData/*文件读写.删除数据*/\
+,Fn_CFile_InsertStr/*文件读写.插入文本*/
 
 /*此下两个完全没必要*/
 /*,g_comp_py_code/*输入字比较W*/
