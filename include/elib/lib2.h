@@ -90,6 +90,7 @@ enum  DATA_TYPE : std::int32_t {
 	//DTP_HCOROUTINE = UserType(9, 0),
 	DTP_EDB = UserType(10, 0),
 	DTP_VAR = UserType(20, 0),/*弱类型*/
+	DTP_CFILE = UserType(21, 0),/*文件读写*/
 	DTP_COROUTINE = UserType(22, 0),/*协程运行状态*/
 };
 

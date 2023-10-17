@@ -15,6 +15,9 @@ namespace elibstl {
 	class CFile{
 		HANDLE m_hFile{ INVALID_HANDLE_VALUE };
 	public:
+		~CFile() {
+			Close();
+		}
 		BOOL Open(const std::wstring_view& filename,int openmode,int sharemod) {
 			Close(); // 首先关闭已经打开的当前文件
 			if (filename.empty())
@@ -581,7 +584,7 @@ static ARG_INFO s_CopyArgs[] =
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*type*/   DTP_VAR,
+		/*type*/   DTP_CFILE,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
