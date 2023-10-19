@@ -328,7 +328,7 @@ network_post/*网页访问*/\
 ,Fn_hexview_setdata/*进制框.置数据*/\
 ,Fn_CFile_FSeek/*文件读写.移动读写位置*/\
 ,Fn_CFile_SeekToBegin/*文件读写.移到文件首*/\
-, Fn_CFile_SeekToEnd/*文件读写.移到文件尾*/\
+,Fn_CFile_SeekToEnd/*文件读写.移到文件尾*/\
 ,Fn_CFile_ReadBin/*文件读写.读入字节集*/\
 ,Fn_CFile_ReadBin/*文件读写.写出字节集*/\
 ,Fn_CFile_ReadText/*文件读写.读入文本W*/\
@@ -337,13 +337,12 @@ network_post/*网页访问*/\
 ,Fn_CFile_WriteLine/*文件读写.写出一行*/\
 ,Fn_CFile_isOpen/*文件读写.是否已打开*/\
 ,Fn_CFile_GetCurrent/*文件读写.取当前读写位置*/\
-, Fn_CFile_GetSize/*文件读写.取文件大小*/\
+,Fn_CFile_GetSize/*文件读写.取文件大小*/\
 ,Fn_CFile_RemoveData/*文件读写.删除数据*/\
-,Fn_CFile_InsertStr/*文件读写.插入文本*/
-
-/*此下两个完全没必要*/
-/*,g_comp_py_code/*输入字比较W*/
-/*,g_comp_py/*发音比较W*/
+,Fn_CFile_InsertStr/*文件读写.插入文本*/\
+,Fn_comp_py_code/*输入字比较W*/\
+,Fn_comp_py/*发音比较W*/\
+,Fn_get_str_py/*取文本拼音W*/
 
 #pragma endregion
 

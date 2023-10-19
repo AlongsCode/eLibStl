@@ -452,9 +452,6 @@
     <ClCompile Include="src\LabelW.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
-    <ClCompile Include="src\PinYin Manipulation\TransPingYin.h">
-      <Filter>源文件\实现\全局命令\拼音处理\字典%28除拼音类外不可引用%29</Filter>
-    </ClCompile>
     <ClCompile Include="src\PinYin Manipulation\PinYin.cpp">
       <Filter>源文件\实现\全局命令\拼音处理</Filter>
     </ClCompile>
