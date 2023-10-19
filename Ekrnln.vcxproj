@@ -125,6 +125,7 @@
     <ClCompile Include="src\OpenFileDialog.cpp" />
     <ClCompile Include="src\open_console.cpp" />
     <ClCompile Include="src\PinYin Manipulation\PinYin.cpp" />
+    <ClCompile Include="src\plug\UnicodeReaplce.cpp" />
     <ClCompile Include="src\prevent_duplicate_execution.cpp" />
     <ClCompile Include="src\Prime.cpp" />
     <ClCompile Include="src\FindText.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="include\elib\mtypes.h" />
     <ClInclude Include="include\elib\PublicIDEFunctions.h" />
     <ClInclude Include="include\elib\untshare.h" />
+    <ClInclude Include="include\EplugHelp.h" />
     <ClInclude Include="include\GdiplusFlatDef.h" />
     <ClInclude Include="include\Tace.hpp" />
     <ClInclude Include="openlib\ETCP\etcpapi.h" />

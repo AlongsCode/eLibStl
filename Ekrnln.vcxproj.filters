@@ -118,6 +118,9 @@
     <Filter Include="源文件\组件\HexView\头文件">
       <UniqueIdentifier>{50bb64a4-ed09-4e4b-b3c6-029938de240e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\插件">
+      <UniqueIdentifier>{336f9501-dbfd-47b0-b898-f687c2ed4a49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="src\HexView\HexView_Control.h">
       <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EplugHelp.h">
+      <Filter>头文件\elibhelp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -529,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="src\HexView\HexView_CmdDef.cpp">
       <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plug\UnicodeReaplce.cpp">
+      <Filter>源文件\插件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

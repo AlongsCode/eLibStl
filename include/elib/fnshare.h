@@ -1,4 +1,5 @@
 #include "lib2.h"
+#include"PublicIDEFunctions.h"
 typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2);
 #ifndef _private
 #define _private  //称识为只私有
@@ -11,6 +12,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<string>
 #include<map>
 #include <cmath>
+
 namespace elibstl
 {
 	/*易库通信,调用易库命令等*/
@@ -850,6 +852,8 @@ namespace elibstl
 }
 
 namespace elibstl::classhelp {
+
+
 	/*对象*/
 	template <typename T>
 	auto& get_this(PMDATA_INF pArgInf)

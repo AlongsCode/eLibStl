@@ -378,3 +378,13 @@ CtCommandLink/*命令链接*/\
 
 
 #pragma endregion
+
+
+
+
+
+#pragma region 插件添加到这
+#define ALL_E_LIB_PLUG \
+Plug_UnicodeBase/*unicode预编译*/
+
+#pragma endregion

@@ -32,6 +32,13 @@ struct FucInfo
 	PFN_EXECUTE_CMD pFuc;
 	const char* FucName;
 };
+
+struct PlugInfo
+{
+	void (*Plugfunc)() {nullptr}; /*点击时触发的属性*/
+	const char* PlugDefStr{ "\0" }; /*插件信息*/
+	size_t PlugSizeStr{ sizeof("\0")}; /*插件字符串大小*/
+};
 #define ESTLFNAME(s) s,#s
 
 extern HMODULE g_elibstl_hModule;
