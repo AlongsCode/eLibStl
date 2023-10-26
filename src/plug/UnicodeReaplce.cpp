@@ -80,7 +80,7 @@ inline std::string ReplaceLstr(const std::string& input) {
 
     // 使用正则表达式匹配L字符串及其内容
 
-    //std::regex pattern(R"(L\s*\(\s*“([^”]*)”\s*,\s*(真|假)?\s*\))"); //服了,ansi中的“似乎和"编"冲突,更换捕获组,找半天没找到BUG
+    //std::regex pattern(R"(L\s*\(\s*“([^”]*)”\s*,\s*(真|假)?\s*\))"); //服了,ansi中的"“"似乎和"编"冲突,更换捕获组,找半天没找到BUG
     std::regex pattern(R"(L\s*\(\s*“(.*?)”\s*,\s*(真|假)?\s*\))");
     std::smatch match;
 

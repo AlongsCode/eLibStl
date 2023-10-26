@@ -342,7 +342,8 @@ network_post/*网页访问*/\
 ,Fn_CFile_InsertStr/*文件读写.插入文本*/\
 ,Fn_comp_py_code/*输入字比较W*/\
 ,Fn_comp_py/*发音比较W*/\
-,Fn_get_str_py/*取文本拼音W*/
+,Fn_get_str_py/*取文本拼音W*/\
+,Fn_is_matching_brackets/*括号否匹配*/
 
 #pragma endregion
 

@@ -68,10 +68,11 @@ namespace elibstl::ideplug {
 	class IdeMessageBox {
 	public:
 		static auto Show(const wchar_t* text, const wchar_t* title = L"ElibStl", UINT type = MB_OK) {
-			HWND hWnd = (HWND)elibstl::NotifySys(NES_GET_MAIN_HWND, 0, 0);
+			static HWND hWnd{ NULL };
+			if (hWnd == NULL)
+				hWnd = reinterpret_cast<HWND>(elibstl::NotifySys(NES_GET_MAIN_HWND, 0, 0));
 			::MessageBoxW(hWnd, text, title, type);
 		}
-
 	};
 }
 

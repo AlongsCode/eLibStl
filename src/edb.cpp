@@ -14,7 +14,7 @@ typedef struct _ColumnInfo//字段信息
 #include<string>
 #include<iostream>
 #include<fstream>
-#include<filesystem>
+//#include<filesystem>
 #include <map>
 #include <unordered_set>
 #include<cstring>
@@ -153,16 +153,19 @@ namespace elibstl {
 		private://成员
 
 			inline static std::string __rename_file_ext(const std::string& fname, const std::string& extname) {
-				if (extname.empty()) {
+				if (fname.empty()) {
 					return fname;
 				}
-				std::filesystem::path filepath(fname);
-				std::string suffix = extname;
-				if (extname[0] != '.') {
-					suffix = "." + suffix;
+				const char* suffix = PathFindExtensionA(fname.c_str());
+				if (suffix != nullptr && strlen(suffix) > 1) {
+					char* newPath = new char[fname.size() + 1];
+					strcpy(newPath, fname.c_str());
+					PathRenameExtensionA(newPath, extname.c_str());
+					delete[] newPath;
+					return newPath;
 				}
-				filepath.replace_extension(suffix);
-				return filepath.string();
+
+				return fname;
 			}
 		public://全局函数
 			static bool create(const std::string& nfilename, double time) {
@@ -515,10 +518,15 @@ namespace elibstl {
 		inline static
 			double
 			__get_nowtm_to_oletm() {
-			auto now = std::chrono::system_clock::now();
+			SYSTEMTIME time;
+			GetLocalTime(&time);
+			double pvtime{ 0.0 };
+			SystemTimeToVariantTime(&time, &pvtime);
+			return pvtime;
+			/*auto now = std::chrono::system_clock::now();
 			auto time_t_now = std::chrono::system_clock::to_time_t(now);
 			auto  t = static_cast<time_t>(time_t_now);
-			return static_cast<double>(25569 + t / 86400.0 + 8.0 / 24.0);
+			return static_cast<double>(25569 + t / 86400.0 + 8.0 / 24.0);*/
 
 		}
 		/*EDBS并不会进行过多限制，但会进行严格的规则审查，不满足则不允许创建*/
@@ -537,19 +545,34 @@ namespace elibstl {
 			}
 			return true;
 		}
-		inline static
-			std::string
-			__rename_file_ext(const std::string& fname, const std::string& extname) {
-			if (extname.empty()) {
+		//inline static
+		//	std::string
+		//	__rename_file_ext(const std::string& fname, const std::string& extname) {
+		//	if (extname.empty()) {
+		//		return fname;
+		//	}
+		//	std::filesystem::path filepath(fname);
+		//	std::string suffix = extname;
+		//	if (extname[0] != '.') {
+		//		suffix = "." + suffix;
+		//	}
+		//	filepath.replace_extension(suffix);
+		//	return filepath.string();
+		//}
+		inline static std::string __rename_file_ext(const std::string& fname, const std::string& extname) {
+			if (fname.empty()) {
 				return fname;
 			}
-			std::filesystem::path filepath(fname);
-			std::string suffix = extname;
-			if (extname[0] != '.') {
-				suffix = "." + suffix;
+			const char* suffix = PathFindExtensionA(fname.c_str());
+			if (suffix != nullptr && strlen(suffix) > 1) {
+				char* newPath = new char[fname.size() + 1];
+				strcpy(newPath, fname.c_str());
+				PathRenameExtensionA(newPath, extname.c_str());
+				delete[] newPath;
+				return newPath;
 			}
-			filepath.replace_extension(suffix);
-			return filepath.string();
+
+			return fname;
 		}
 	public:
 		inline
@@ -2118,7 +2141,7 @@ static ARG_INFO fn_edbs_cancel_del_Args[] =
 {
 	{
 		/*name*/    "字段索引",
-		/*explain*/ ("小于等于0则默认为当前位置"),
+		/*explain*/ "小于等于0则默认为当前位置",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,

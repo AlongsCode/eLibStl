@@ -121,6 +121,9 @@
     <Filter Include="源文件\插件">
       <UniqueIdentifier>{336f9501-dbfd-47b0-b898-f687c2ed4a49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\通用型\FolderMonitor">
+      <UniqueIdentifier>{c162f82c-d7bd-47ba-a46b-c7b3e97ae717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -538,6 +541,12 @@
     </ClCompile>
     <ClCompile Include="src\plug\UnicodeReaplce.cpp">
       <Filter>源文件\插件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\FolderMonitor.cpp">
+      <Filter>源文件\组件\通用型\FolderMonitor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text Manipulation\is_matching_brackets.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

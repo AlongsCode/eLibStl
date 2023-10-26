@@ -71,6 +71,7 @@
     <ClCompile Include="src\edb.cpp" />
     <ClCompile Include="src\EplObj Class\Diskfiles.cpp" />
     <ClCompile Include="src\EplObj Class\eplvar.cpp" />
+    <ClCompile Include="src\EplObj Class\FolderMonitor.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp" />
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp" />
     <ClCompile Include="src\Text Manipulation\extract_shortest_matching_text.cpp" />
+    <ClCompile Include="src\Text Manipulation\is_matching_brackets.cpp" />
     <ClCompile Include="src\Text Manipulation\trim_leading_zeros.cpp" />
     <ClCompile Include="src\tofull.cpp" />
     <ClCompile Include="src\tohalf.cpp" />
