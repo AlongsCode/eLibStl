@@ -4,6 +4,14 @@
 // 版本号, 两个字节记录主版本和次版本号, 两个字节记录日期
 #define HEXVIEW_VERSION MAKELONG(MAKEWORD(1, 0), MAKEWORD(10, 15))
 
+#define HEXVIEW_PROP_BORDER                 0   // 边框, 0=无边框, 1=凹入式, 2=凸出式, 3=浅凹入式, 4=镜框式, 5=单线边框式
+#define HEXVIEW_PROP_TEXTCOLOR              1   // 文本颜色
+#define HEXVIEW_PROP_TEXTBACKCOLOR          2   // 文本背景颜色
+#define HEXVIEW_PROP_BACKCOLOR              3   // 背景颜色
+#define HEXVIEW_PROP_FONT                   4   // 字体属性
+#define HEXVIEW_PROP_EDITABLE               5  // 允许编辑, 本属性指定是否允许编辑
+
+
 #define HEXVIEW_NAMESPACE _hexview
 #define HEXVIEW_NAMESPACE_BEGIN namespace HEXVIEW_NAMESPACE {
 #define HEXVIEW_NAMESPACE_END }
@@ -44,6 +52,7 @@ typedef struct _HEXVIEW_PROPERTY : CONTROL_STRUCT_BASE
     std::vector<BYTE>* data;                // 显示的数据
     std::vector<BYTE>* modi;                // 指定字节是否被修改
 }HEXVIEW_PROPERTY, * PHEXVIEW_PROPERTY, *LPHEXVIEW_PROPERTY;
+
 
 
 HEXVIEW_NAMESPACE_END

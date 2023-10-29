@@ -37,7 +37,7 @@ EXTERN_C void fn_hexview_setdata(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	if ( !pData )
 		return;
 
-	SendMessageW(pData->hWnd, HVM_SETEXTENDEDSTYLE, 0, HVS_READONLY);
+	//SendMessageW(pData->hWnd, HVM_SETEXTENDEDSTYLE, 0, HVS_READONLY);
 
 	int size = 0;
 	LPBYTE pBin = GetAryElementInf_HexView(pArgInf[1].m_pBin, &size);

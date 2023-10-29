@@ -85,6 +85,8 @@ enum Column {
     COLUMN_VALUE
 };
 
+typedef LRESULT( CALLBACK* PFN_HEXVIEW_NOTIFY )( HWND, LPNMHDR, LPVOID );
+
 typedef struct _HEXVIEW {
     int         Line1;              // Start of the COLUMN_DATA
     int         Line2;              // Start of the COLUMN_VALUE
@@ -116,6 +118,10 @@ typedef struct _HEXVIEW {
     int         nJmpMode;           // 跳转模式, 0=从文件开始, 1=当前位置, 2现在位置往上, 3=从文件结束, 高位 = 是否是16进制, 同时接收搜索时选中的模式
     HWND        hAsm;               // 汇编窗口句柄, 如果已经打开就不再打开第二次
     int         asm_ShowMode;       // 汇编显示语法模式, 0=MASM, 0x100=GoAsm, 0x200=Nasm, 0x400=AT, 0x800=IntrinsicMem
+    
+    HWND        hWndParent;         // 创建窗口时的父窗口, 不管父窗口怎么改, 都向这个窗口通知消息
+    PFN_HEXVIEW_NOTIFY pfnNotify;   // 通知事件, 使用这种方式就不用向父窗口投递通知, 可以省去子类化父窗口的操作
+    LPVOID      lpParamNotify;      // 通知事件附加参数
 
     int         ActiveColumn;       // COLUMN_DATA or COLUMN_VALUE
 
@@ -191,6 +197,9 @@ typedef struct _BYTERANGE {
     SIZE_T Max;
 } BYTERANGE, *PBYTERANGE;
 
+
 HWND CreateHexView(DWORD dwExStyle, DWORD dwStyle,
                    int x, int y, int nWidth, int nHeight, HWND hWndParent, LONG_PTR id = 0, LPVOID lpParam = 0);
+
+BOOLEAN HexView_BindNotify(HWND hWnd, PFN_HEXVIEW_NOTIFY pfn, LPVOID lpParam);
 
