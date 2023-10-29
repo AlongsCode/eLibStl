@@ -69,6 +69,7 @@
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\DirBoxW.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\EplDebug\debugbreak.cpp" />
     <ClCompile Include="src\EplObj Class\Diskfiles.cpp" />
     <ClCompile Include="src\EplObj Class\eplvar.cpp" />
     <ClCompile Include="src\EplObj Class\FolderMonitor.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\HexView\HexView_CmdDef.cpp" />
     <ClCompile Include="src\HexView\HexView_Control.cpp" />
     <ClCompile Include="src\HexView\HexView_Function.cpp" />
+    <ClCompile Include="src\HexView\HexView_Help.cpp" />
     <ClCompile Include="src\HexView\HexView_Jmp.cpp" />
     <ClCompile Include="src\HexView\HexView_Search.cpp" />
     <ClCompile Include="src\InputBox.cpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="src\HexView\HexView.h" />
     <ClInclude Include="src\HexView\HexView_Control.h" />
     <ClInclude Include="src\HexView\HexView_Function.h" />
+    <ClInclude Include="src\HexView\HexView_Help.h" />
     <ClInclude Include="src\HexView\HexView_Jmp.h" />
     <ClInclude Include="src\HexView\HexView_Search.h" />
   </ItemGroup>

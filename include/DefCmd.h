@@ -343,8 +343,8 @@ network_post/*网页访问*/\
 ,Fn_comp_py_code/*输入字比较W*/\
 ,Fn_comp_py/*发音比较W*/\
 ,Fn_get_str_py/*取文本拼音W*/\
-,Fn_is_matching_brackets/*括号否匹配*/
-
+,Fn_is_matching_brackets/*括号否匹配*/\
+//, Fn_debugbreak/*断点调试*/
 #pragma endregion
 
 
@@ -375,8 +375,8 @@ CtCommandLink/*命令链接*/\
 ,CtComboBox/**/\
 ,epl_class_Var/*强类型动态数组*/\
 ,Obj_DiskFile/*文件读写类*/\
-,Enum_CoRuningType/*协程运行状态*/
-
+,Enum_CoRuningType/*协程运行状态*/\
+, HexView_control/*进制框*/
 
 #pragma endregion
 

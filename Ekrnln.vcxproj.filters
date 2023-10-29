@@ -189,6 +189,9 @@
     <ClInclude Include="include\EplugHelp.h">
       <Filter>头文件\elibhelp</Filter>
     </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Help.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\elib\fnshare.cpp">
@@ -547,6 +550,12 @@
     </ClCompile>
     <ClCompile Include="src\Text Manipulation\is_matching_brackets.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Help.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplDebug\debugbreak.cpp">
+      <Filter>源文件\实现\全局命令\代码调试</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

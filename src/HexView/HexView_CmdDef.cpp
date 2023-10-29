@@ -9,19 +9,19 @@ using namespace HEXVIEW_NAMESPACE;
 // 返回数组的数据部分首地址及成员数目。 返回的地址不需要额外释放
 inline LPBYTE GetAryElementInf_HexView(void* pAryData, LPINT pnElementCount)
 {
-	if ( pnElementCount )*pnElementCount = 0;
-	if ( !pAryData )return 0;
+	if (pnElementCount)*pnElementCount = 0;
+	if (!pAryData)return 0;
 	LPINT pnData = (LPINT)pAryData;
 	INT nArys = *pnData++;  // 取得维数。
 	// 计算成员数目。
 	INT nElementCount = 1;
-	while ( nArys > 0 )
+	while (nArys > 0)
 	{
 		nElementCount *= *pnData++;
 		nArys--;
 	}
 
-	if ( pnElementCount )
+	if (pnElementCount)
 		*pnElementCount = nElementCount;
 	return (LPBYTE)pnData;
 }
@@ -31,13 +31,13 @@ inline LPBYTE GetAryElementInf_HexView(void* pAryData, LPINT pnElementCount)
 EXTERN_C void fn_hexview_setdata(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	HWND hHexView = elibstl::get_hwnd_from_arg(pArgInf);
-	if ( !hHexView )
+	if (!hHexView)
 		return;
 	PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)GetWindowLongPtrW(hHexView, 0);
-	if ( !pData )
+	if (!pData)
 		return;
 
-	SendMessageW(pData->hWnd, HVM_SETEXTENDEDSTYLE, 0, HVS_READONLY);
+	//SendMessageW(pData->hWnd, HVM_SETEXTENDEDSTYLE, 0, HVS_READONLY);
 
 	int size = 0;
 	LPBYTE pBin = GetAryElementInf_HexView(pArgInf[1].m_pBin, &size);
@@ -47,7 +47,7 @@ EXTERN_C void fn_hexview_setdata(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	data.clear();
 	modi.clear();
 
-	if ( size > 0 )
+	if (size > 0)
 	{
 		data.resize(size);
 		modi.assign(size, 0);
