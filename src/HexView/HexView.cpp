@@ -119,8 +119,12 @@ HexView_SendNotify(
 {
     NmHdr->hwndFrom = hWnd;
     NmHdr->code = Code;
-
-    return SendMessageW(GetParent(hWnd), WM_NOTIFY, 0, (LPARAM)NmHdr);
+    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    if ( !HexView )
+        return 0;
+    if ( HexView->pfnNotify )
+        return HexView->pfnNotify(hWnd, NmHdr, HexView->lpParamNotify);
+    return SendMessageW(HexView->hWndParent, WM_NOTIFY, 0, (LPARAM)NmHdr);
 }
 
 
@@ -877,6 +881,7 @@ LRESULT HexView_OnCreate(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPar
     HexView->ActiveColumn = COLUMN_DATA;
     HexView->ColumnCount = 16;
     HexView->ColumnSecond = HexView->ColumnCount * 3 + 1;
+    HexView->hWndParent = GetParent(hWnd);
 
     HexView->clrTextSel         = RGB(255, 255, 255);
     HexView->clrText1           = RGB(0, 0, 128);
@@ -2101,7 +2106,6 @@ HWND CreateHexView(DWORD dwExStyle, DWORD dwStyle,
                    int x, int y, int nWidth, int nHeight, HWND hWndParent, LONG_PTR id, LPVOID lpParam)
 {
     RegisterClassHexView();
-
     HWND hWnd;
     hWnd = CreateWindowExW(dwExStyle,
                            WC_HEXVIEWW,
@@ -2114,6 +2118,16 @@ HWND CreateHexView(DWORD dwExStyle, DWORD dwStyle,
                            lpParam);
 
     return hWnd;
+}
+
+BOOLEAN HexView_BindNotify(HWND hWnd, PFN_HEXVIEW_NOTIFY pfn, LPVOID lpParam)
+{
+    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    if ( !HexView )
+        return FALSE;
+    HexView->lpParamNotify = lpParam;
+    HexView->pfnNotify = pfn;
+    return TRUE;
 }
 
 BOOLEAN HexView_SelChanged(PHEXVIEW HexView, HWND hWnd)
@@ -2169,7 +2183,7 @@ void HexView_PopupMenu(PHEXVIEW HexView, HWND hWnd)
     AppendMenuW(hMenu, flag_search, ID_HEX_PREV, L"&P.搜索上\tShift + F3");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, L"");
     AppendMenuW(hMenu, MF_STRING, ID_HEX_JMP, L"&G.跳转\tCtrl + G");
-    AppendMenuW(hMenu, asm_flag, ID_HEX_ASM, L"&H.跳转到汇编窗口\tCtrl + Q");
+    //AppendMenuW(hMenu, asm_flag, ID_HEX_ASM, L"&H.跳转到汇编窗口\tCtrl + Q");
 
     POINT pt;
     GetCursorPos(&pt);
