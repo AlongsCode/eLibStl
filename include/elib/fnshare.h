@@ -191,6 +191,56 @@ namespace elibstl
 		return NotifySys(NRS_GET_PRG_TYPE, 0, 0) == PT_DEBUG_RUN_VER;
 	}
 
+
+	inline void    ModiUnitStyle(HWND hWnd, DWORD dwAddStyle, DWORD dwRemoveStyle, BOOL ExStyel = FALSE)
+	{
+		int index = GWL_STYLE;
+		if ( ExStyel ) index = GWL_EXSTYLE;
+		DWORD dwOldStyle = GetWindowLongW(hWnd, index);
+		DWORD dwNewStyle = ( dwOldStyle & ~dwRemoveStyle ) | dwAddStyle;
+		if ( dwNewStyle != dwOldStyle )
+			SetWindowLongW(hWnd, index, dwNewStyle);
+	}
+	inline void    ChangeBorder(HWND hWnd, INT nBorderType)
+	{
+		DWORD dwStyle = NULL, dwExStyle = NULL;
+		switch ( nBorderType )
+		{
+			//case 0:        // 无边框
+			//    dwExStyle = WS_EX_CLIENTEDGE;
+			//    break;
+		case 1:        // 凹入式
+			dwExStyle = WS_EX_CLIENTEDGE;
+			break;
+		case 2:        // 凸出式
+			dwExStyle = WS_EX_DLGMODALFRAME;
+			break;
+		case 3:        // 浅凹入式
+			dwExStyle = WS_EX_STATICEDGE;
+			break;
+		case 4:        // 镜框式
+			dwExStyle = WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME;
+			break;
+		case 5:
+			dwStyle = WS_BORDER;
+			break;
+		}
+		ModiUnitStyle(hWnd, dwExStyle, WS_EX_STATICEDGE | WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME, TRUE);
+		SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+		ModiUnitStyle(hWnd, dwStyle, WS_BORDER, FALSE);
+		SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+
+		//CWnd* pUnit;
+		//pUnit->ModifyStyleEx(WS_EX_STATICEDGE | WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME,
+		//    dwExStyle, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE |
+		//    SWP_FRAMECHANGED | SWP_DRAWFRAME);
+		//pUnit->ModifyStyle(WS_BORDER, dwStyle,
+		//    SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE |
+		//    SWP_FRAMECHANGED | SWP_DRAWFRAME);
+	}
+
 	// 从易语言里申请内存, 单位为字节
 	// 函数命名不要与CRT冲突！
 	inline void* ealloc(int size)
