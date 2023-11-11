@@ -1,70 +1,70 @@
-#include "EcontrolHelp.h"
+﻿#include "EcontrolHelp.h"
 
 #define WCN_LABELW			L"eLibStl.WndClass.LabelW"
 
 ESTL_NAMESPACE_BEGIN
-// ��ǩ
+// 标签
 /*
-* �汾1���ݲ���
-* ELABELDATA�ṹ
-* ��ͼ
+* 版本1数据布局
+* ELABELDATA结构
+* 底图
 */
 #define DATA_VER_LABEL_1	1
 struct ELABELDATA
 {
-	int iVer;				// �汾��
-	DWORD dwReserved;		// ����
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
 
-	SIZE_T cbBKPic;			// ��ͼ��С
-	int iBKPicMode;			// ��ͼģʽ
-	int iAlignH;			// �������
-	int iAlignV;			// �������
-	BOOL bAutoWrap;			// �Զ�����
-	COLORREF crText;		// �ı���ɫ
-	COLORREF crTextBK;		// �ı�������ɫ
-	COLORREF crBK;			// ������ɫ
-	int iGradientMode;		// ���䱳��ģʽ
-	COLORREF crGradient[3];	// ���䱳����ɫ
-	int iEllipsisMode;		// ʡ�Ժ�ģʽ
-	int iPrefixMode;		// ǰ׺ģʽ
-	BOOL bFullWndPic;		// ��ͼ���������ؼ�
-	BOOL bTransparent;		// ͸����ǩ
-	int iMousePassingThrough;// ��괩͸
+	SIZE_T cbBKPic;			// 底图大小
+	int iBKPicMode;			// 底图模式
+	int iAlignH;			// 横向对齐
+	int iAlignV;			// 纵向对齐
+	BOOL bAutoWrap;			// 自动折行
+	COLORREF crText;		// 文本颜色
+	COLORREF crTextBK;		// 文本背景颜色
+	COLORREF crBK;			// 背景颜色
+	int iGradientMode;		// 渐变背景模式
+	COLORREF crGradient[3];	// 渐变背景颜色
+	int iEllipsisMode;		// 省略号模式
+	int iPrefixMode;		// 前缀模式
+	BOOL bFullWndPic;		// 底图尽量充满控件
+	BOOL bTransparent;		// 透明标签
+	int iMousePassingThrough;// 鼠标穿透
 };
 
-// ��ǩ
-// Ϊ��֧��WM_SETTEXT��Ϣ�����ؼ��಻ʹ�û������ñ���ķ�����SetTextW,SetTextA�ȣ�
+// 标签
+// 为了支持WM_SETTEXT消息，本控件类不使用基类设置标题的方法（SetTextW,SetTextA等）
 class CLabel :public elibstl::CCtrlBase
 {
 	SUBCLASS_SMP_MGR_DECL(CLabel)
 private:
 	ELABELDATA m_Info{};
 
-	int m_cxClient = 0, m_cyClient = 0;// �ͻ�����С
-	HDC m_hCDC = NULL;// ��̨����DC
-	HDC m_hcdcHelper = NULL;// ��λͼʹ�õĸ���DC
-	HBITMAP m_hBitmap = NULL;// ��̨����λͼ
-	HGDIOBJ m_hOld1 = NULL/*��̨DC��λͼ���*/, m_hOld2 = NULL/*����DC��λͼ���*/;
+	int m_cxClient = 0, m_cyClient = 0;// 客户区大小
+	HDC m_hCDC = NULL;// 后台兼容DC
+	HDC m_hcdcHelper = NULL;// 画位图使用的辅助DC
+	HBITMAP m_hBitmap = NULL;// 后台兼容位图
+	HGDIOBJ m_hOld1 = NULL/*后台DC旧位图句柄*/, m_hOld2 = NULL/*辅助DC旧位图句柄*/;
 
-	BYTE* m_pBKPicData = NULL;// ��ͼ����
-	HBITMAP m_hbmBK = NULL;// ��ͼ
-	int m_cxBKPic = 0, m_cyBKPic = 0;// ��ͼ��С
+	BYTE* m_pBKPicData = NULL;// 底图数据
+	HBITMAP m_hbmBK = NULL;// 底图
+	int m_cxBKPic = 0, m_cyBKPic = 0;// 底图大小
 
-	int m_cxPic = 0, m_cyPic = 0;// ͼƬ��С
-	RECT m_rcPartPic{};// �����ͼƬ����
-	RECT m_rcPartText{};// ������ı�����
+	int m_cxPic = 0, m_cyPic = 0;// 图片大小
+	RECT m_rcPartPic{};// 缓存的图片矩形
+	RECT m_rcPartText{};// 缓存的文本矩形
 
-	static ATOM m_atomLabel;// ��ǩ��ԭ��
+	static ATOM m_atomLabel;// 标签类原子
 
 	/// <summary>
-	/// ��ǩ�����¼�
+	/// 标签反馈事件
 	/// </summary>
 	/// <param name="wParam"></param>
 	/// <param name="lParam"></param>
 	/// <returns></returns>
 	LRESULT OnFeedback(WPARAM wParam, LPARAM lParam) 
 	{
-		EVENT_ARG_VALUE Arg1, Arg2;
+		EVENT_ARG_VALUE Arg1{}, Arg2{};
 		Arg1.m_inf.m_int = static_cast<int>(wParam);
 		Arg1.m_inf.m_dtDataType = SDT_INT;
 		Arg2.m_inf.m_int = static_cast<int>(lParam);
@@ -76,9 +76,9 @@ private:
 		event.m_arg[1] = Arg2;
 		
 		if (
-			(elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0) != 0)// �ɹ����� 
+			(elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD) & event, 0) != 0)// 成功传递 
 			&&
-			event.m_blHasRetVal == TRUE//���ڷ���ֵ
+			event.m_blHasRetVal == TRUE//存在返回值
 			)
 			return event.m_infRetData.m_int;
 		else
@@ -86,10 +86,10 @@ private:
 	}
 
 	/// <summary>
-	/// ���Ʊ�ǩ��
-	/// ��m_Info.bTransparentΪTRUE�����Զ����ü���DC���ؼ�����
+	/// 绘制标签。
+	/// 若m_Info.bTransparent为TRUE，则自动设置剪辑DC至控件矩形
 	/// </summary>
-	/// <param name="hDC">Ŀ��DC������֮ǰ���Ա����������</param>
+	/// <param name="hDC">目标DC，调用之前属性必须设置完毕</param>
 	void Paint(HDC hDC)
 	{
 		BLENDFUNCTION bf;
@@ -98,18 +98,18 @@ private:
 		bf.SourceConstantAlpha = 255;
 		bf.AlphaFormat = AC_SRC_ALPHA;
 		//
-		// ������
+		// 画背景
 		//
 
-		// ����ɫ����
+		// 画纯色背景
 		RECT rc{ 0,0,m_cxClient,m_cyClient };
 		if (!m_Info.bTransparent)
 			FillRect(hDC, &rc, (HBRUSH)GetStockObject(DC_BRUSH));
 		else
 			IntersectClipRect(hDC, 0, 0, m_cxClient, m_cyClient);
-		// ����ʽ��CS_PARENTDC�ٶȻ��һ�㣬���Ұ�����˵Ӧ���ֶ������Ӵ��ڣ�����Ϊʲô������Ҳû�¡����������������ôд�˰ɣ����涨��
+		// 类样式带CS_PARENTDC速度会快一点，并且按理来说应该手动剪辑子窗口，但是为什么不剪辑也没事。。。反正这里就这么写了吧，按规定来
 
-		// �����䱳�����ͼ
+		// 画渐变背景或底图
 		if (m_Info.iGradientMode != 0)
 		{
 			if (m_Info.iGradientMode <= 4 && m_Info.iGradientMode >= 1)
@@ -119,8 +119,8 @@ private:
 				ULONG uMode;
 				switch (m_Info.iGradientMode)
 				{
-				case 1:// ���ϵ���
-				case 2:// ���µ���
+				case 1:// 从上到下
+				case 2:// 从下到上
 					cr2 = m_Info.crGradient[1];
 					tv[0].x = 0;
 					tv[0].y = 0;
@@ -142,8 +142,8 @@ private:
 						cr3 = m_Info.crGradient[0];
 					}
 					break;
-				case 3:// ������
-				case 4:// ���ҵ���
+				case 3:// 从左到右
+				case 4:// 从右到左
 					cr2 = m_Info.crGradient[1];
 					tv[0].x = 0;
 					tv[0].y = 0;
@@ -197,16 +197,16 @@ private:
 			else
 			{
 				TRIVERTEX tv[4];
-				// ����
+				// 左上
 				tv[0].x = 0;
 				tv[0].y = 0;
-				// ����
+				// 左下
 				tv[1].x = 0;
 				tv[1].y = m_cyClient;
-				// ����
+				// 右上
 				tv[2].x = m_cxClient;
 				tv[2].y = 0;
-				// ����
+				// 右下
 				tv[3].x = m_cxClient;
 				tv[3].y = m_cyClient;
 				COLORREF cr1, cr2, cr3;
@@ -214,8 +214,8 @@ private:
 				GRADIENT_TRIANGLE gt[2];
 				switch (m_Info.iGradientMode)
 				{
-				case 5:// ���ϵ����¨K
-				case 6:// ���µ����ϨI
+				case 5:// 左上到右下↘
+				case 6:// 右下到左上↖
 					gt[0].Vertex1 = 0;
 					gt[0].Vertex2 = 1;
 					gt[0].Vertex3 = 2;
@@ -254,8 +254,8 @@ private:
 					tv[3].Blue = GetBValue(cr3) << 8;
 					tv[3].Alpha = 0xFF << 8;
 					break;
-				case 7:// ���µ����ϨJ
-				case 8:// ���ϵ����¨L
+				case 7:// 左下到右上↗
+				case 8:// 右上到左下↙
 					gt[0].Vertex1 = 1;
 					gt[0].Vertex2 = 0;
 					gt[0].Vertex3 = 3;
@@ -304,7 +304,7 @@ private:
 			SelectObject(m_hcdcHelper, m_hbmBK);
 			switch (m_Info.iBKPicMode)
 			{
-			case 0:// ������
+			case 0:// 居左上
 				if (m_Info.bFullWndPic)
 				{
 					if (!m_cyBKPic || !m_cxBKPic)
@@ -312,7 +312,7 @@ private:
 					int cxRgn, cyRgn;
 
 					cxRgn = m_cyClient * m_cxBKPic / m_cyBKPic;
-					if (cxRgn < m_cxClient)// �ȳ���y���룬��x�����Ƿ��������
+					if (cxRgn < m_cxClient)// 先尝试y对齐，看x方向是否充满窗口
 					{
 						cxRgn = m_cxClient;
 						cyRgn = m_cxClient * m_cyBKPic / m_cxBKPic;
@@ -325,13 +325,13 @@ private:
 				else
 					GdiAlphaBlend(hDC, 0, 0, m_cxBKPic, m_cyBKPic, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
-			case 1:// ƽ��
+			case 1:// 平铺
 				for (int i = 0; i < (m_cxClient - 1) / m_cxBKPic + 1; ++i)
 					for (int j = 0; j < (m_cyClient - 1) / m_cyBKPic + 1; ++j)
 						GdiAlphaBlend(hDC, i * m_cxBKPic, j * m_cyBKPic, m_cxBKPic, m_cyBKPic,
 							m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
-			case 2:// ����
+			case 2:// 居中
 				if (m_Info.bFullWndPic)
 				{
 					if (!m_cyBKPic || !m_cxBKPic)
@@ -340,7 +340,7 @@ private:
 					int x, y;
 
 					cxRgn = m_cyClient * m_cxBKPic / m_cyBKPic;
-					if (cxRgn < m_cxClient)// �ȳ���y���룬��x�����Ƿ��������
+					if (cxRgn < m_cxClient)// 先尝试y对齐，看x方向是否充满窗口
 					{
 						cxRgn = m_cxClient;
 						cyRgn = m_cxClient * m_cyBKPic / m_cxBKPic;
@@ -360,13 +360,13 @@ private:
 					GdiAlphaBlend(hDC, (m_cxClient - m_cxBKPic) / 2, (m_cyClient - m_cyBKPic) / 2, m_cxBKPic, m_cyBKPic,
 						m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
-			case 3:// ����
+			case 3:// 缩放
 				GdiAlphaBlend(hDC, 0, 0, m_cxClient, m_cyClient, m_hcdcHelper, 0, 0, m_cxBKPic, m_cyBKPic, bf);
 				break;
 			}
 		}
 		//
-		// ���ı�
+		// 画文本
 		//
 		UINT uDTFlags = DT_NOCLIP |
 			(m_Info.bAutoWrap ? DT_WORDBREAK : DT_SINGLELINE) |
@@ -380,7 +380,7 @@ private:
 	}
 
 	/// <summary>
-	/// ���㲿������
+	/// 计算部件矩形
 	/// </summary>
 	void CalcPartsRect()
 	{
@@ -398,17 +398,17 @@ private:
 			int cyText = rc.bottom - rc.top;
 			switch (m_Info.iAlignV)
 			{
-			case 0:// �ϱ�
+			case 0:// 上边
 				rc.top = 0;
 				rc.bottom = rc.top + cyText;
 				yPic = rc.top;
 				break;
-			case 1:// �м�
+			case 1:// 中间
 				rc.top = (m_cyClient - cyText) / 2;
 				rc.bottom = rc.top + cyText;
 				yPic = (m_cyClient - m_cyPic) / 2;
 				break;
-			case 2:// �±�
+			case 2:// 下边
 				rc.bottom = m_cyClient;
 				rc.top = rc.bottom - cyText;
 				yPic = m_cyClient - m_cyPic;
@@ -425,17 +425,17 @@ private:
 			int cyText = rc.bottom - rc.top;
 			switch (m_Info.iAlignV)
 			{
-			case 0:// �ϱ�
+			case 0:// 上边
 				rc.top = 0;
 				rc.bottom = rc.top + cyText;
 				yPic = rc.top;
 				break;
-			case 1:// �м�
+			case 1:// 中间
 				rc.top = (m_cyClient - cyText) / 2;
 				rc.bottom = rc.top + cyText;
 				yPic = (m_cyClient - m_cyPic) / 2;
 				break;
-			case 2:// �±�
+			case 2:// 下边
 				rc.bottom = m_cyClient;
 				rc.top = rc.bottom - cyText;
 				yPic = m_cyClient - m_cyPic;
@@ -449,18 +449,18 @@ private:
 		int cxTotal = cxText + m_cxPic;
 		switch (m_Info.iAlignH)
 		{
-		case 0:// ���
+		case 0:// 左边
 			uDTFlags |= DT_LEFT;
 			rc.left = m_cxPic;
 			rc.right = rc.left + cxText;
 			xPic = 0;
 			break;
-		case 1:// �м�
+		case 1:// 中间
 			rc.left = (m_cxClient - cxTotal) / 2 + m_cxPic;
 			rc.right = rc.left + cxText;
 			xPic = rc.left - m_cxPic;
 			break;
-		case 2:// �ұ�
+		case 2:// 右边
 			uDTFlags |= DT_RIGHT;
 			rc.right = m_cxClient - m_cxPic;
 			rc.left = rc.right - cxText;
@@ -479,10 +479,10 @@ private:
 	}
 
 	/// <summary>
-	/// ���ⲿDC���ԡ�
-	/// ������ʹ��SaveDC����DC״̬��Ȼ����ݿؼ���������DC
+	/// 置外部DC属性。
+	/// 函数先使用SaveDC保存DC状态，然后根据控件属性设置DC
 	/// </summary>
-	/// <param name="hDC">Ŀ��DC</param>
+	/// <param name="hDC">目标DC</param>
 	void SetDCAttr(HDC hDC)
 	{
 		SaveDC(hDC);
@@ -504,11 +504,11 @@ private:
 		}
 	}
 
-	// δ��
+	// 未用
 	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) { return 0; }
 
 	/// <summary>
-	/// �ؼ����ڹ���
+	/// 控件窗口过程
 	/// </summary>
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -523,9 +523,9 @@ private:
 			if (p->m_Info.bTransparent)
 				switch (p->m_Info.iMousePassingThrough)
 				{
-				case 0:// ��
+				case 0:// 无
 					break;
-				case 1:// ��͸�հ�����
+				case 1:// 穿透空白区域
 				{
 					POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
 					ScreenToClient(hWnd, &pt);
@@ -533,7 +533,7 @@ private:
 						return HTTRANSPARENT;
 				}
 				break;
-				case 2:// ��͸�����ؼ�
+				case 2:// 穿透整个控件
 					return HTTRANSPARENT;
 				}
 		}
@@ -693,7 +693,7 @@ public:
 			m_Info.crGradient[1] = 0xFFFFFF;
 			m_Info.crGradient[2] = 0x808080;
 
-			elibstl::DupStringForNewDeleteW(m_pszTextW, L"��ǩW");
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"标签W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		m_Info.iVer = DATA_VER_LABEL_1;
@@ -737,8 +737,8 @@ public:
 	}
 
 	/// <summary>
-	/// �ػ���
-	/// ��Ӧʹ�û����Redraw
+	/// 重画。
+	/// 不应使用基类的Redraw
 	/// </summary>
 	void RedrawLabel()
 	{
@@ -759,10 +759,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ñ���ͼƬ
+	/// 置背景图片
 	/// </summary>
-	/// <param name="pPic">ͼƬ�ֽ���</param>
-	/// <param name="cbSize">�ֽ�������</param>
+	/// <param name="pPic">图片字节流</param>
+	/// <param name="cbSize">字节流长度</param>
 	void SetBKPic(BYTE* pPic, SIZE_T cbSize)
 	{
 		m_Info.cbBKPic = cbSize;
@@ -796,10 +796,10 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����ͼƬ
+	/// 取背景图片
 	/// </summary>
-	/// <param name="pcbPic">����ͼƬ���ݳ���</param>
-	/// <returns>ͼƬ���ݣ�Ϊ�����ڲ����У������ͷ�</returns>
+	/// <param name="pcbPic">接收图片数据长度</param>
+	/// <returns>图片数据，为对象内部所有，不可释放</returns>
 	eStlInline BYTE* GetBKPic(int* pcbPic) const
 	{
 		if (pcbPic)
@@ -808,11 +808,11 @@ public:
 	}
 
 	/// <summary>
-	/// ��ͼƬ��
-	/// ��Ӧʹ�û����SetPic
+	/// 置图片。
+	/// 不应使用基类的SetPic
 	/// </summary>
-	/// <param name="pPic">ͼƬ�ֽ���</param>
-	/// <param name="cbSize">�ֽ�������</param>
+	/// <param name="pPic">图片字节流</param>
+	/// <param name="cbSize">字节流长度</param>
 	eStlInline void SetPicLabel(BYTE* pPic, SIZE_T cbSize)
 	{
 		SetPic(pPic, cbSize);
@@ -833,7 +833,7 @@ public:
 	}
 
 	/// <summary>
-	/// �õ�ͼ��ʽ
+	/// 置底图方式
 	/// </summary>
 	eStlInline void SetBKPicMode(int iBKPicMode)
 	{
@@ -846,10 +846,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ö���
+	/// 置对齐
 	/// </summary>
-	/// <param name="bHAlign">�Ƿ�Ϊ�������</param>
-	/// <param name="iAlign">���뷽ʽ</param>
+	/// <param name="bHAlign">是否为横向对齐</param>
+	/// <param name="iAlign">对齐方式</param>
 	eStlInline void SetAlign(BOOL bHAlign, int iAlign)
 	{
 		if (bHAlign)
@@ -868,7 +868,7 @@ public:
 	}
 
 	/// <summary>
-	/// ���Զ�����
+	/// 置自动换行
 	/// </summary>
 	/// <param name="bAutoWrap"></param>
 	/// <returns></returns>
@@ -884,10 +884,10 @@ public:
 	}
 
 	/// <summary>
-	/// ����ɫ
+	/// 置颜色
 	/// </summary>
-	/// <param name="idx">0 = �ı���ɫ  1 = ����  2 = �ı�����</param>
-	/// <param name="cr">��ɫ</param>
+	/// <param name="idx">0 = 文本颜色  1 = 背景  2 = 文本背景</param>
+	/// <param name="cr">颜色</param>
 	void SetClr(int idx, COLORREF cr)
 	{
 		switch (idx)
@@ -928,7 +928,7 @@ public:
 	}
 
 	/// <summary>
-	/// �ý��䷽ʽ
+	/// 置渐变方式
 	/// </summary>
 	eStlInline void SetGradientMode(int iGradientMode)
 	{
@@ -941,7 +941,7 @@ public:
 	}
 
 	/// <summary>
-	/// �ý�����ɫ
+	/// 置渐变颜色
 	/// </summary>
 	eStlInline void SetGradientClr(int idx, COLORREF cr)
 	{
@@ -954,7 +954,7 @@ public:
 	}
 
 	/// <summary>
-	/// ��ʡ�Ժ�ģʽ
+	/// 置省略号模式
 	/// </summary>
 	/// <param name="iEllipsisMode"></param>
 	/// <returns></returns>
@@ -970,7 +970,7 @@ public:
 	}
 
 	/// <summary>
-	/// ��ǰ׺����ģʽ
+	/// 置前缀解释模式
 	/// </summary>
 	/// <param name="iPrefixMode"></param>
 	/// <returns></returns>
@@ -986,7 +986,7 @@ public:
 	}
 
 	/// <summary>
-	/// �õ�ͼ��������
+	/// 置底图充满窗口
 	/// </summary>
 	eStlInline void SetFullWndPic(BOOL bFullWndPic)
 	{
@@ -999,7 +999,7 @@ public:
 	}
 
 	/// <summary>
-	/// ��͸����ǩ
+	/// 置透明标签
 	/// </summary>
 	eStlInline void SetTransparent(BOOL bTransparent)
 	{
@@ -1013,7 +1013,7 @@ public:
 	}
 
 	/// <summary>
-	/// ����괩͸
+	/// 置鼠标穿透
 	/// </summary>
 	/// <param name="iMousePassingThrough"></param>
 	/// <returns></returns>
@@ -1037,10 +1037,10 @@ public:
 		p = (BYTE*)GlobalLock(hGlobal);
 		if (!p)
 			goto Fail;
-		// �ṹ
+		// 结构
 		p += cbBaseData;
 		memcpy(p, &m_Info, sizeof(ELABELDATA));
-		// ��ͼ
+		// 底图
 		p += sizeof(ELABELDATA);
 		memcpy(p, m_pBKPicData, m_Info.cbBKPic);
 		// 
@@ -1061,62 +1061,62 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ����
+		case 0:// 标题
 			SetWindowTextA(p->m_hWnd, pPropertyVaule->m_szText);
 			break;
-		case 1:// ����W
+		case 1:// 标题W
 			SetWindowTextW(p->m_hWnd, (PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 2:// ͼƬ
+		case 2:// 图片
 			p->SetPicLabel(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 3:// ��ͼ
+		case 3:// 底图
 			p->SetBKPic(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 4:// ��ͼ��ʽ
+		case 4:// 底图方式
 			p->SetBKPicMode(pPropertyVaule->m_int);
 			break;
-		case 5:// ����
+		case 5:// 字体
 			p->SetFont((LOGFONTA*)pPropertyVaule->m_int);
 			break;
-		case 6:// �������
+		case 6:// 横向对齐
 			p->SetAlign(TRUE, pPropertyVaule->m_int);
 			break;
-		case 7:// �������
+		case 7:// 纵向对齐
 			p->SetAlign(FALSE, pPropertyVaule->m_int);
 			break;
-		case 8:// �Զ�����
+		case 8:// 自动折行
 			p->SetAutoWrap(pPropertyVaule->m_bool);
 			break;
-		case 9:// �ı���ɫ
-		case 10:// ������ɫ
-		case 11:// �ı�������ɫ
+		case 9:// 文本颜色
+		case 10:// 背景颜色
+		case 11:// 文本背景颜色
 			p->SetClr(nPropertyIndex - 9, pPropertyVaule->m_clr);
 			break;
-		case 12:// ���䱳����ʽ
+		case 12:// 渐变背景方式
 			p->SetGradientMode(pPropertyVaule->m_int);
 			break;
-		case 13:// ���䱳����ɫ1
-		case 14:// ���䱳����ɫ2
-		case 15:// ���䱳����ɫ3
+		case 13:// 渐变背景颜色1
+		case 14:// 渐变背景颜色2
+		case 15:// 渐变背景颜色3
 			p->SetGradientClr(nPropertyIndex - 13, pPropertyVaule->m_clr);
 			break;
-		case 16:// ʡ�Ժŷ�ʽ
+		case 16:// 省略号方式
 			p->SetEllipsisMode(pPropertyVaule->m_bool);
 			break;
-		case 17:// ǰ׺�ַ����ͷ�ʽ
+		case 17:// 前缀字符解释方式
 			p->SetPrefixMode(pPropertyVaule->m_int);
 			break;
-		case 18:// ��ͼ������������
+		case 18:// 底图尽量充满窗口
 			p->SetFullWndPic(pPropertyVaule->m_bool);
 			break;
-		case 19:// �߿�
+		case 19:// 边框
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
-		case 20:// ͸����ǩ
+		case 20:// 透明标签
 			p->SetTransparent(pPropertyVaule->m_bool);
 			break;
-		case 21:// ͸�����
+		case 21:// 透过鼠标
 			p->SetMousePassingThrough(pPropertyVaule->m_int);
 			break;
 		}
@@ -1136,63 +1136,63 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ����
+		case 0:// 标题
 			pPropertyVaule->m_szText = p->GetTextA();
 			break;
-		case 1:// ����W
+		case 1:// 标题W
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 2:// ͼƬ
+		case 2:// 图片
 			pPropertyVaule->m_data.m_pData = p->GetPic(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 3:// ��ͼ
+		case 3:// 底图
 			pPropertyVaule->m_data.m_pData = p->GetBKPic(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 4:// ��ͼ��ʽ
+		case 4:// 底图方式
 			pPropertyVaule->m_int = p->GetBKPicMode();
 			break;
-		case 5:// ����
+		case 5:// 字体
 			pPropertyVaule->m_data.m_pData = p->GetFont();
 			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
 			break;
-		case 6:// �������
+		case 6:// 横向对齐
 			pPropertyVaule->m_int = p->GetAlign(TRUE);
 			break;
-		case 7:// �������
+		case 7:// 纵向对齐
 			pPropertyVaule->m_int = p->GetAlign(FALSE);
 			break;
-		case 8:// �Զ�����
+		case 8:// 自动折行
 			pPropertyVaule->m_bool = p->GetAutoWrap();
 			break;
-		case 9:// �ı���ɫ
-		case 10:// ������ɫ
-		case 11:// �ı�������ɫ
+		case 9:// 文本颜色
+		case 10:// 背景颜色
+		case 11:// 文本背景颜色
 			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 9);
 			break;
-		case 12:// ���䱳����ʽ
+		case 12:// 渐变背景方式
 			pPropertyVaule->m_int = p->GetGradientMode();
 			break;
-		case 13:// ���䱳����ɫ1
-		case 14:// ���䱳����ɫ2
-		case 15:// ���䱳����ɫ3
+		case 13:// 渐变背景颜色1
+		case 14:// 渐变背景颜色2
+		case 15:// 渐变背景颜色3
 			pPropertyVaule->m_clr = p->GetGradientClr(nPropertyIndex - 13);
 			break;
-		case 16:// ʡ�Ժŷ�ʽ
+		case 16:// 省略号方式
 			pPropertyVaule->m_int = p->GetEllipsisMode();
 			break;
-		case 17:// ǰ׺�ַ����ͷ�ʽ
+		case 17:// 前缀字符解释方式
 			pPropertyVaule->m_int = p->GetPrefixMode();
 			break;
-		case 18:// ��ͼ������������
+		case 18:// 底图尽量充满窗口
 			pPropertyVaule->m_bool = p->GetFullWndPic();
 			break;
-		case 19:// �߿�
+		case 19:// 边框
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
-		case 20:// ͸����ǩ
+		case 20:// 透明标签
 			pPropertyVaule->m_bool = p->GetTransparent();
 			break;
-		case 21:// ͸�����
+		case 21:// 透过鼠标
 			pPropertyVaule->m_int = p->GetMousePassingThrough();
 			break;
 		}
@@ -1239,30 +1239,30 @@ ESTL_NAMESPACE_END
 static UNIT_PROPERTY s_Member_LabelW[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=������, 2=Ӣ��������, 3=���Խ���, 4=���Ե���������UD_,5=���Եı�־, 6=˳���¼���еı�ѡ�ı�UW_(����UD_FILE_NAME), ��һ���մ�����
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
-	/*000*/{ "����", "Text", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL },
-	/*001*/{ "����W", "TextW", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL },
-	/*002*/{ "ͼƬ", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
-	/*003*/{ "��ͼ", "BKPicture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
-	/*004*/		{ "��ͼ��ʽ", "BKPicAlign", "", UD_PICK_INT, _PROP_OS(__OS_WIN) | UW_HAS_INDENT, "������\0""ƽ��\0""����\0""����\0""\0" },
-	/*005*/{ "����", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL },
-	/*006*/{ "������뷽ʽ", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "���\0""����\0""�ұ�\0""\0" },
-	/*007*/{ "������뷽ʽ", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "�ϱ�\0""����\0""�±�\0""\0" },
-	/*008*/{ "�Ƿ��Զ�����", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
-	/*009*/{ "�ı���ɫ", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN) , NULL },
-	/*010*/{ "������ɫ", "BKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN) , NULL },
-	/*011*/{ "�ı�������ɫ", "BKClr", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) , NULL },
-	/*012*/{ "���䱳����ʽ", "GradientMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "��\0""���ϵ���\0""���µ���\0""������\0""���ҵ���\0""�����ϵ�����\0""�����µ�����\0""�����µ�����\0""�����ϵ�����\0""\0" },
-	/*013*/		{ "���䱳����ɫ1", "GradientClr1", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
-	/*014*/		{ "���䱳����ɫ2", "GradientClr2", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
-	/*015*/		{ "���䱳����ɫ3", "GradientClr3", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
-	/*016*/{ "ʡ�Ժŷ�ʽ", "EllipsisMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "��ʡ��\0""ĩβʡ��\0""�м�ʡ��\0""ʡ�Ե���\0""\0" },
-	/*017*/{ "ǰ׺�ַ����ͷ�ʽ", "PrefixMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "����\0""������ǰ׺\0""�����»���\0""ֻ��ʾ�»���\0""\0" },
-	/*018*/{ "��ͼ���������ؼ�", "FullWndPic", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
-	/*019*/{ "�߿�", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "�ޱ߿�\0""����ʽ\0""͹��ʽ\0""ǳ����ʽ\0""����ʽ\0""���߱߿�ʽ\0""\0"},
-	/*020*/{ "͸����ǩ", "Transparent", "ʹ��ǩ����͸�����ﵽ������չ����֧�ֿ�һ��͸����ǩ��Ч�������ñ�ģʽ�󽫺��Ա�����ɫ���ԣ������䱳���͵�ͼ��Ȼ��Ч��ע�⣺Ƶ������͸����ǩ��Ӱ���������ܣ�����ǩ��������ͼƬ������н����Ե���˸�����Ӧ����Ƶ������͸����ǩ��", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
-	/*021*/{ "��괩͸��ʽ", "MousePassingThroughMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "��\0""��͸�հ�����\0""��͸�����ؼ�\0""\0" },
+	/*000*/{ "标题", "Text", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL },
+	/*001*/{ "标题W", "TextW", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL },
+	/*002*/{ "图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
+	/*003*/{ "底图", "BKPicture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
+	/*004*/		{ "底图方式", "BKPicAlign", "", UD_PICK_INT, _PROP_OS(__OS_WIN) | UW_HAS_INDENT, "居左上\0""平铺\0""居中\0""缩放\0""\0" },
+	/*005*/{ "字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL },
+	/*006*/{ "横向对齐方式", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左边\0""居中\0""右边\0""\0" },
+	/*007*/{ "纵向对齐方式", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "上边\0""居中\0""下边\0""\0" },
+	/*008*/{ "是否自动折行", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
+	/*009*/{ "文本颜色", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN) , NULL },
+	/*010*/{ "背景颜色", "BKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN) , NULL },
+	/*011*/{ "文本背景颜色", "BKClr", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) , NULL },
+	/*012*/{ "渐变背景方式", "GradientMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无\0""从上到下\0""从下到上\0""从左到右\0""从右到左\0""从左上到右下\0""从右下到左上\0""从左下到右上\0""从右上到左下\0""\0" },
+	/*013*/		{ "渐变背景颜色1", "GradientClr1", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
+	/*014*/		{ "渐变背景颜色2", "GradientClr2", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
+	/*015*/		{ "渐变背景颜色3", "GradientClr3", "", UD_COLOR_TRANS, _PROP_OS(__OS_WIN) | UW_HAS_INDENT , NULL },
+	/*016*/{ "省略号方式", "EllipsisMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无省略\0""末尾省略\0""中间省略\0""省略单词\0""\0" },
+	/*017*/{ "前缀字符解释方式", "PrefixMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "常规\0""不解释前缀\0""隐藏下划线\0""只显示下划线\0""\0" },
+	/*018*/{ "底图尽量充满控件", "FullWndPic", "", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
+	/*019*/{ "边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
+	/*020*/{ "透明标签", "Transparent", "使标签背景透明，达到类似扩展界面支持库一中透明标签的效果。设置本模式后将忽略背景颜色属性，但渐变背景和底图依然有效。注意：频繁更新透明标签会影响程序的性能，若标签还设置了图片，则会有较明显的闪烁，因此应避免频繁更新透明标签。", UD_BOOL, _PROP_OS(__OS_WIN) , NULL },
+	/*021*/{ "鼠标穿透方式", "MousePassingThroughMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN) , "无\0""穿透空白区域\0""穿透整个控件\0""\0" },
 };
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)
@@ -1287,19 +1287,19 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_LabelW(INT nInterfaceNO)
 
 static EVENT_ARG_INFO2 s_EventArgInfo_Label_Feedback[] =
 {
-	 {"����һ", "���÷����¼�ʱ�������ĵ�һ������", 0, SDT_INT},
-	 {"������", "���÷����¼�ʱ�������ĵڶ�������", 0, SDT_INT},
+	 {"参数一", "调用反馈事件时传递来的第一个参数", 0, SDT_INT},
+	 {"参数二", "调用反馈事件时传递来的第而个参数", 0, SDT_INT},
 };
 static EVENT_INFO2 s_Event_Label[] =
 {
-	/*000*/ {"�����¼�", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, SDT_INT},
+	/*000*/ {"反馈事件", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgInfo_Label_Feedback, SDT_INT},
 };
 
 static int s_Fuc[] = { 193 };
 static ARG_INFO s_ArgsSendLabelMsg[] =
 {
 	{
-		/*name*/    "����һ",
+		/*name*/    "参数一",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1308,7 +1308,7 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "������",
+		/*name*/    "参数二",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1317,8 +1317,8 @@ static ARG_INFO s_ArgsSendLabelMsg[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "�¼����ݷ�ʽ��",
-		/*explain*/ "Ϊ������÷��ͷ�ʽ�����¼���Ϣ����ʱ�����һֱ�ȴ����������¼����û��¼������ӳ�������Ϻ�ŷ��أ�Ϊ�������Ͷ�ݷ�ʽ�����¼���Ϣ����ʱ�����ֱ�ӷ����Ҳ��ȴ��û��¼������ӳ�������ϣ��û��¼������ӳ����ڿ���ʱ�����ã��������������ʡ�ԣ�Ĭ�ϲ��÷��ͷ�ʽ�����¼�",
+		/*name*/    "事件传递方式”",
+		/*explain*/ "为真则采用发送方式传递事件消息，此时本命令将一直等待到“反馈事件”用户事件处理子程序处理完毕后才返回，为假则采用投递方式传递事件消息，此时本命令将直接返回且不等待用户事件处理子程序处理完毕（用户事件处理子程序将在空闲时被调用）。如果本参数被省略，默认采用发送方式传递事件",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -1340,9 +1340,9 @@ EXTERN_C void libstl_Label_SendLabelMsg(PMDATA_INF pRetData, INT nArgCount, PMDA
 		PostMessageW(hWnd, WM_EFEEDBACK, arg1, arg2);
 }
 FucInfo Fn_SendLabelMsg = { {
-		/*ccname*/  "���÷����¼�",
+		/*ccname*/  "调用反馈事件",
 		/*egname*/  "SendLabelMsg",
-		/*explain*/ " ������ǩ�ķ����¼����Ե��ô˱�ǩ�ġ������¼����û��¼������ӳ��򣬿��������ڶ��̴߳����н�����Ȩת�Ƶ��������߳���ȥִ�С������û��¼������ӳ��������ص�ֵ�����û����Ӧ���¼������ӳ�������Ͷ�ݷ�ʽ�����¼���Ϣ���������㡣",
+		/*explain*/ " 产生标签的反馈事件，以调用此标签的“反馈事件”用户事件处理子程序，可以用作在多线程处理中将控制权转移到程序主线程上去执行。返回用户事件处理子程序所返回的值，如果没有相应的事件处理子程序或采用投递方式传递事件消息，将返回零。",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -1357,19 +1357,19 @@ FucInfo Fn_SendLabelMsg = { {
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtLabelW =
 {
-	"��ǩW",		//��������
-	"LabelW",	//Ӣ������
-	"",			//˵��
-	1,			//��������
-	s_Fuc,			//��ȫ�ֺ����ж�Ӧ������
+	"标签W",		//中文名称
+	"LabelW",	//英文名称
+	"",			//说明
+	1,			//命令数量
+	s_Fuc,			//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	IDB_LABEL_W,//��ԴID
+	IDB_LABEL_W,//资源ID
 	1,
 	s_Event_Label,
 	ARRAYSIZE(s_Member_LabelW),
 	s_Member_LabelW,
 	libstl_GetInterface_LabelW,
-	0,			//��Ա����
-	NULL		//��Ա��������
+	0,			//成员数量
+	NULL		//成员数据数组
 };
 ESTL_NAMESPACE_END
