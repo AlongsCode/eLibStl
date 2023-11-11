@@ -69,7 +69,7 @@ enum  DATA_TYPE : std::int32_t {
 	_SDT_NULL = 0,  // 空
 	_SDT_ALL = BaseType(0, 0),  // 通用型
 	SDT_BYTE = BaseType(1, 1),  // uint8
-	SDT_SHORT = BaseType(1, 12),  // int16
+	SDT_SHORT = BaseType(1, 2),  // int16
 	SDT_INT = BaseType(1, 3),  // int32
 	SDT_INT64 = BaseType(1, 4),  // int64
 	SDT_FLOAT = BaseType(1, 5),  // float
@@ -86,10 +86,12 @@ enum  DATA_TYPE : std::int32_t {
 	KRNLN_WIN = UserType(1, 1),
 	KRNLN_EDB = UserType(34, 1),
 	/*此位置为用户自定义数据类型位置,代表数据类型在本库中索引*/
-	DTP_HCOPROCESS = UserType(5, 0),
-	DTP_HCOROUTINE = UserType(9, 0),
-	DTP_EDB = UserType(10, 0),/*弱类型*/
+	//DTP_HCOPROCESS = UserType(5, 0),
+	//DTP_HCOROUTINE = UserType(9, 0),
+	DTP_EDB = UserType(10, 0),
 	DTP_VAR = UserType(20, 0),/*弱类型*/
+	DTP_CFILE = UserType(21, 0),/*文件读写*/
+	DTP_COROUTINE = UserType(22, 0),/*协程运行状态*/
 };
 
 

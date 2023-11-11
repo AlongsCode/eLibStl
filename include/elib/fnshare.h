@@ -1,4 +1,5 @@
 #include "lib2.h"
+#include"PublicIDEFunctions.h"
 typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2);
 #ifndef _private
 #define _private  //称识为只私有
@@ -11,6 +12,7 @@ typedef INT(cdecl* PFN_ON_SYS_NOTIFY) (INT nMsg, DWORD dwParam1, DWORD dwParam2)
 #include<string>
 #include<map>
 #include <cmath>
+
 namespace elibstl
 {
 	/*易库通信,调用易库命令等*/
@@ -187,6 +189,56 @@ namespace elibstl
 	inline BOOL is_debug()
 	{
 		return NotifySys(NRS_GET_PRG_TYPE, 0, 0) == PT_DEBUG_RUN_VER;
+	}
+
+
+	inline void    ModiUnitStyle(HWND hWnd, DWORD dwAddStyle, DWORD dwRemoveStyle, BOOL ExStyel = FALSE)
+	{
+		int index = GWL_STYLE;
+		if ( ExStyel ) index = GWL_EXSTYLE;
+		DWORD dwOldStyle = GetWindowLongW(hWnd, index);
+		DWORD dwNewStyle = ( dwOldStyle & ~dwRemoveStyle ) | dwAddStyle;
+		if ( dwNewStyle != dwOldStyle )
+			SetWindowLongW(hWnd, index, dwNewStyle);
+	}
+	inline void    ChangeBorder(HWND hWnd, INT nBorderType)
+	{
+		DWORD dwStyle = NULL, dwExStyle = NULL;
+		switch ( nBorderType )
+		{
+			//case 0:        // 无边框
+			//    dwExStyle = WS_EX_CLIENTEDGE;
+			//    break;
+		case 1:        // 凹入式
+			dwExStyle = WS_EX_CLIENTEDGE;
+			break;
+		case 2:        // 凸出式
+			dwExStyle = WS_EX_DLGMODALFRAME;
+			break;
+		case 3:        // 浅凹入式
+			dwExStyle = WS_EX_STATICEDGE;
+			break;
+		case 4:        // 镜框式
+			dwExStyle = WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME;
+			break;
+		case 5:
+			dwStyle = WS_BORDER;
+			break;
+		}
+		ModiUnitStyle(hWnd, dwExStyle, WS_EX_STATICEDGE | WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME, TRUE);
+		SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+		ModiUnitStyle(hWnd, dwStyle, WS_BORDER, FALSE);
+		SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+
+		//CWnd* pUnit;
+		//pUnit->ModifyStyleEx(WS_EX_STATICEDGE | WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME,
+		//    dwExStyle, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE |
+		//    SWP_FRAMECHANGED | SWP_DRAWFRAME);
+		//pUnit->ModifyStyle(WS_BORDER, dwStyle,
+		//    SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE |
+		//    SWP_FRAMECHANGED | SWP_DRAWFRAME);
 	}
 
 	// 从易语言里申请内存, 单位为字节
@@ -423,6 +475,7 @@ namespace elibstl
 	{
 		return reinterpret_cast<INT*>(static_cast<char*>(pBase) + dimension * sizeof(INT))[0];
 	}
+
 	inline BYTE* get_array_data_base(void* pBase, int iDimension = 1)
 	{
 		if (pBase)
@@ -849,6 +902,8 @@ namespace elibstl
 }
 
 namespace elibstl::classhelp {
+
+
 	/*对象*/
 	template <typename T>
 	auto& get_this(PMDATA_INF pArgInf)
@@ -911,6 +966,16 @@ namespace elibstl::classhelp {
 		static
 			auto get_bin(MDATA_INF pArgInf) -> span<unsigned char> {
 			auto bin = pArgInf.m_pBin;
+			if (!bin)
+				return  {};
+			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));
+			auto pbuffer = (bin + sizeof(std::uint32_t) * 2);
+			if (lenth > 0)
+				return span<unsigned char>(pbuffer, lenth);
+			return  {};
+		}
+		static
+			auto get_bin(LPBYTE bin) -> span<unsigned char> {
 			if (!bin)
 				return  {};
 			size_t lenth = *reinterpret_cast<std::uint32_t*>(bin + sizeof(std::uint32_t));

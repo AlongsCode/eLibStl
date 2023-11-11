@@ -18,6 +18,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 EXTERN_C INT WINAPI LibStl_ProcessNotifyLib(INT nMsg, DWORD dwParam1, DWORD dwParam2);
 
+
 #pragma region 暴露接口
 extern FucInfo
 ALL_E_LIB_CMD;
@@ -28,6 +29,9 @@ ESTL_NAMESPACE_BEGIN
 
 extern LIB_DATA_TYPE_INFO
 ALL_E_LIB_CLASS;
+
+extern PlugInfo
+ALL_E_LIB_PLUG;
 
 //所有命令,此下用于动态添加,只需要将每个obj暴漏的接口添加到下方就好
 std::vector<FucInfo> g_all_cmd = { ALL_E_LIB_CMD };
@@ -43,6 +47,9 @@ std::vector<PFN_EXECUTE_CMD> g_all_pcmd;
 
 //所有类的名字#用于静态编译
 std::vector<const char*> g_cmd_name;
+
+//所有插件信息
+std::vector<PlugInfo> g_all_plug_info = { ALL_E_LIB_PLUG };
 
 static LIB_INFO s_LibInfo =
 {
@@ -98,8 +105,9 @@ static LIB_INFO s_LibInfo =
 	/*m_pBeginCmdInfo*/			0, // 本库中提供的所有命令
 	/*m_pCmdsFunc*/				0, // 指向每个命令的实现代码首地址, 可为NULL
 
-	/*m_pfnRunAddInFn*/         NULL,
-	NULL, // 功能详细介绍(仅限一行60字符), 最后由两个空串结束
+	/*m_pfnRunAddInFn*/         nullptr, // 用于调用点击后插件按钮后执行的函数,索引从0开始
+	nullptr
+	, // 功能详细介绍(仅限一行60字符), 最后由两个空串结束
 
 	/*m_pfnNotify*/             LibStl_ProcessNotifyLib, // 不能为NULL,和易语言通讯的子程序
 
@@ -113,19 +121,40 @@ static LIB_INFO s_LibInfo =
 	/*m_szzDependFiles*/        NULL // 可为NULL, 本库正常运行所需要依赖的其他支持文件
 };
 ESTL_NAMESPACE_END
+#include <mutex>
 
 extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 {
 	using namespace elibstl;
-	//没初始化的话先初始化
-	if (s_LibInfo.m_nCmdCount != g_all_cmd.size())
-	{
-		std::transform(g_all_cmd.begin(), g_all_cmd.end(), std::back_inserter(g_all_cmd_info), [](const auto& elem) { return elem.FucDef; });
-		std::transform(g_all_cmd.begin(), g_all_cmd.end(), std::back_inserter(g_all_pcmd), [](const auto& elem) { return elem.pFuc; });
-		s_LibInfo.m_pBeginCmdInfo = g_all_cmd_info.data();
-		s_LibInfo.m_pCmdsFunc = g_all_pcmd.data();
-		s_LibInfo.m_nCmdCount = g_all_cmd.size();
-	}
+	
+		static
+			std::mutex initMutex;;
+		std::lock_guard<std::mutex> lock(initMutex); // 获取互斥锁
+		
+		//没初始化的话先初始化
+		if (s_LibInfo.m_nCmdCount != g_all_cmd.size())
+		{
+
+			std::transform(g_all_cmd.begin(), g_all_cmd.end(), std::back_inserter(g_all_cmd_info), [](const auto& elem) { return elem.FucDef; });
+			std::transform(g_all_cmd.begin(), g_all_cmd.end(), std::back_inserter(g_all_pcmd), [](const auto& elem) { return elem.pFuc; });
+			s_LibInfo.m_pBeginCmdInfo = g_all_cmd_info.data();
+			s_LibInfo.m_pCmdsFunc = g_all_pcmd.data();
+			s_LibInfo.m_nCmdCount = g_all_cmd.size();
+
+			/*插件部分*/
+			static std::vector<char> pluginfostr;/*因为结束符的原因不太方便使用sstream和string*/
+			for (const auto& temp : g_all_plug_info)
+				std::copy(temp.PlugDefStr, temp.PlugDefStr + temp.PlugSizeStr, std::back_inserter(pluginfostr));/*连同多结束符插入插件信息最后方*/
+			pluginfostr.push_back('\0\0');
+			s_LibInfo.m_szzAddInFnInfo = pluginfostr.data();
+			s_LibInfo.m_pfnRunAddInFn = [](int nAddInFnIndex) -> int {
+				g_all_plug_info.at(nAddInFnIndex).Plugfunc();
+				return 0;
+				};
+			/*用于调用点击后插件按钮后执行的函数,索引从0开始*/
+
+		}
+	
 	return  &s_LibInfo;
 };
 #pragma endregion 暴露接口
@@ -135,6 +164,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 	{
 	case DLL_PROCESS_ATTACH: {
 		g_elibstl_hModule = hModule;
+		
 		break;
 	}
 	case DLL_PROCESS_DETACH:

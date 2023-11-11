@@ -16,7 +16,7 @@ static ARG_INFO Args[] =
 EXTERN_C void Fn_LTrimW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	std::wstring
-		text = std::wstring(elibstl::args_to_wsdata(pArgInf, 0));
+		text = elibstl::arg_to_wstring(pArgInf, 0);
 	if (text.empty())
 	{
 		pRetData->m_pBin = elibstl::clone_textw(text);

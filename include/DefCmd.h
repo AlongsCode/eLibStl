@@ -316,10 +316,34 @@ network_post/*网页访问*/\
 ,Fn_Var_ToBin/*变量.到字节集*/\
 ,Fn_Ceil/*向上取整*/\
 ,Fn_Floor/*向下取整*/\
-
-/*此下两个完全没必要*/
-/*,g_comp_py_code/*输入字比较W*/
-/*,g_comp_py/*发音比较W*/
+,Fn_GetVarPtr/*取变量指针*/\
+,Fn_GetVarDataPtr/*取变量数据指针*/\
+,Fn_CFile_structure/*文件读写.构造*/\
+,Fn_CFile_copy/*文件读写.复制*/\
+,Fn_CFile_destruct/*文件读写.拷贝*/\
+,Fn_CFile_Open/*文件读写.打开*/\
+,Fn_CFile_Close/*文件读写.关闭*/\
+,Fn_CFile_Lock/*文件读写.锁住*/\
+,Fn_CFile_UnLock/*文件读写.解锁*/\
+,Fn_hexview_setdata/*进制框.置数据*/\
+,Fn_CFile_FSeek/*文件读写.移动读写位置*/\
+,Fn_CFile_SeekToBegin/*文件读写.移到文件首*/\
+,Fn_CFile_SeekToEnd/*文件读写.移到文件尾*/\
+,Fn_CFile_ReadBin/*文件读写.读入字节集*/\
+,Fn_CFile_ReadBin/*文件读写.写出字节集*/\
+,Fn_CFile_ReadText/*文件读写.读入文本W*/\
+,Fn_CFile_WriteText/*文件读写.写出文本W*/\
+,Fn_CFile_ReadLine/*文件读写.读入一行*/\
+,Fn_CFile_WriteLine/*文件读写.写出一行*/\
+,Fn_CFile_isOpen/*文件读写.是否已打开*/\
+,Fn_CFile_GetCurrent/*文件读写.取当前读写位置*/\
+,Fn_CFile_GetSize/*文件读写.取文件大小*/\
+,Fn_CFile_RemoveData/*文件读写.删除数据*/\
+,Fn_CFile_InsertStr/*文件读写.插入文本*/\
+,Fn_comp_py_code/*输入字比较W*/\
+,Fn_comp_py/*发音比较W*/\
+,Fn_get_str_py/*取文本拼音W*/\
+,Fn_is_matching_brackets/*括号否匹配*/
 
 #pragma endregion
 
@@ -350,8 +374,18 @@ CtCommandLink/*命令链接*/\
 ,CtRichEdit/*富文本框*/\
 ,CtComboBox/**/\
 ,epl_class_Var/*强类型动态数组*/\
+,Obj_DiskFile/*文件读写类*/\
+,Enum_CoRuningType/*协程运行状态*/\
+,HexView_control/*进制框*/
+
+#pragma endregion
 
 
 
+
+
+#pragma region 插件添加到这
+#define ALL_E_LIB_PLUG \
+Plug_UnicodeBase/*unicode预编译*/
 
 #pragma endregion

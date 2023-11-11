@@ -142,17 +142,16 @@ namespace elibstl {
 
 			switch (m_dtt)
 			{
-			case elibstl::EplVar::DTT_IS_NULL_DATA_TYPE:
-				return 0;
 			case elibstl::EplVar::DTT_IS_SYS_DATA_TYPE:
 				return get_sys_type_value(m_DataType);
 			case elibstl::EplVar::DTT_IS_USER_DATA_TYPE:
 				return static_cast<int>(m_DataType);/*无返回值类型*/
 				break;
 			case elibstl::EplVar::DTT_IS_LIB_DATA_TYPE:
+				return 0;
 				break;
 			default:
-
+				return 0;
 				break;
 			}
 		}

@@ -112,6 +112,18 @@
     <Filter Include="源文件\组件\通用型\弱类型动态变量">
       <UniqueIdentifier>{5feb1e68-a935-4c98-9cf3-344fc6127e95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\HexView">
+      <UniqueIdentifier>{fb3f6f4c-3995-44e9-b69c-643a3d1790ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\HexView\头文件">
+      <UniqueIdentifier>{50bb64a4-ed09-4e4b-b3c6-029938de240e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\插件">
+      <UniqueIdentifier>{336f9501-dbfd-47b0-b898-f687c2ed4a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\FolderMonitor">
+      <UniqueIdentifier>{c162f82c-d7bd-47ba-a46b-c7b3e97ae717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -158,6 +170,27 @@
     </ClInclude>
     <ClInclude Include="include\GdiplusFlatDef.h">
       <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Function.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Jmp.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Search.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Control.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EplugHelp.h">
+      <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HexView\HexView_Help.h">
+      <Filter>源文件\组件\HexView\头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,9 +464,6 @@
     <ClCompile Include="src\LabelW.cpp">
       <Filter>源文件\组件</Filter>
     </ClCompile>
-    <ClCompile Include="src\PinYin Manipulation\TransPingYin.h">
-      <Filter>源文件\实现\全局命令\拼音处理\字典%28除拼音类外不可引用%29</Filter>
-    </ClCompile>
     <ClCompile Include="src\PinYin Manipulation\PinYin.cpp">
       <Filter>源文件\实现\全局命令\拼音处理</Filter>
     </ClCompile>
@@ -487,6 +517,42 @@
     </ClCompile>
     <ClCompile Include="src\floor.cpp">
       <Filter>源文件\实现\全局命令\算数运算</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GetVarPtr.cpp">
+      <Filter>源文件\实现\全局命令\其他</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\Diskfiles.cpp">
+      <Filter>源文件\组件\通用型\文件读写</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Function.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Jmp.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Search.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Control.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_CmdDef.cpp">
+      <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plug\UnicodeReaplce.cpp">
+      <Filter>源文件\插件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\FolderMonitor.cpp">
+      <Filter>源文件\组件\通用型\FolderMonitor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text Manipulation\is_matching_brackets.cpp">
+      <Filter>源文件\实现\全局命令\文本操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_Help.cpp">
+      <Filter>源文件\组件\HexView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

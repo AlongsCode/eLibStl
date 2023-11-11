@@ -85,7 +85,7 @@ static void printParam(std::ostringstream& oss, const PMDATA_INF& param)
 	case SDT_DOUBLE:
 		oss << param->m_double << " | "; break;
 	case SDT_BOOL:
-		oss << (param->m_bool ? "true" : "false") << " | "; break;
+		oss << (param->m_bool ? "真" : "假") << " | "; break;
 	case SDT_TEXT:
 	{
 		const char* pText = param->m_pText;
@@ -261,12 +261,11 @@ static void printParamArray(std::ostringstream& oss, PMDATA_INF pParam)
 
 EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
-
 	std::ostringstream str;
 	for (int i = 0; i < nArgCount; i++)
 	{
 		PMDATA_INF pParam = &pArgInf[i];
-		BOOL bIsArray = pParam->is_dt_flag(); 
+		BOOL bIsArray = pParam->is_dt_flag(); //判断是否为数组
 		if (bIsArray) pParam->remove_dt_flag();
 		if (!bIsArray) //参数为非数组情况
 		{
@@ -277,16 +276,12 @@ EXTERN_C void Fn_debugput(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf
 			printParamArray(str, pParam);
 		}
 	}
+	
 	//把" | "去掉
 	if (str.str().size() >= 3) {
 		str.str(str.str().substr(0, str.str().size() - 3));
 	}
-	MDATA_INF RetData, ArgInf;
-	ArgInf.m_dtDataType = SDT_TEXT;
-	char* pDebugText = elibstl::clone_text(str.str());
-	ArgInf.m_pText = pDebugText;
-	elibstl::CallElibFunc("krnln.fne", "输出调试文本", &RetData, 1, &ArgInf);
-
+	OutputDebugStringA(("* " + str.str()).c_str());
 }
 
 FucInfo e_debugput = { {
@@ -301,7 +296,7 @@ FucInfo e_debugput = { {
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*ArgCount*/1,
-		/*arg lp*/  &Args[0],
+		/*arg lp*/  Args,
 	} ,Fn_debugput ,"Fn_debugput" };
 
 

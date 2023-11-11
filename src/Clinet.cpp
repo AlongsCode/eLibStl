@@ -268,7 +268,7 @@ FucInfo Clinet_connect = { {
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
-		/*ArgCount*/sizeof(connectArgs) / sizeof(connectArgs[0]),
+		/*ArgCount*/2,
 		/*arg lp*/  connectArgs,
 	} ,Fn_Clinet_connect ,"Fn_Clinet_connect" };
 EXTERN_C void Fn_Clinet_close(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
