@@ -195,16 +195,16 @@ namespace elibstl
 	inline void    ModiUnitStyle(HWND hWnd, DWORD dwAddStyle, DWORD dwRemoveStyle, BOOL ExStyel = FALSE)
 	{
 		int index = GWL_STYLE;
-		if (ExStyel) index = GWL_EXSTYLE;
+		if ( ExStyel ) index = GWL_EXSTYLE;
 		DWORD dwOldStyle = GetWindowLongW(hWnd, index);
-		DWORD dwNewStyle = (dwOldStyle & ~dwRemoveStyle) | dwAddStyle;
-		if (dwNewStyle != dwOldStyle)
+		DWORD dwNewStyle = ( dwOldStyle & ~dwRemoveStyle ) | dwAddStyle;
+		if ( dwNewStyle != dwOldStyle )
 			SetWindowLongW(hWnd, index, dwNewStyle);
 	}
 	inline void    ChangeBorder(HWND hWnd, INT nBorderType)
 	{
 		DWORD dwStyle = NULL, dwExStyle = NULL;
-		switch (nBorderType)
+		switch ( nBorderType )
 		{
 			//case 0:        // 无边框
 			//    dwExStyle = WS_EX_CLIENTEDGE;
@@ -635,7 +635,7 @@ namespace elibstl
 					pNewText[nLen] = L'\0';
 
 					return pNewText;
-					};
+				};
 				ret = array_to_string(pArgInf.m_pAryData, szData);
 			}
 			//无论是否转换成功都将添加回数组标志
@@ -779,7 +779,7 @@ namespace elibstl
 					pNewText[nLen] = L'\0';
 
 					return pNewText;
-					};
+				};
 				ret = array_to_string(pArgInf.m_pAryData, szData);
 			}
 			//无论是否转换成功都将添加回数组标志
@@ -854,7 +854,7 @@ namespace elibstl
 			}
 			else if (pArgInf.m_dtDataType == SDT_BIN) {//如果为字节集直接返回就可
 				if (!pArgInf.m_pBin)return {};
-
+	
 				auto p = reinterpret_cast<char*>(pArgInf.m_pBin + sizeof(std::uint32_t) * 2);
 				auto size = *reinterpret_cast<std::uint32_t*>(pArgInf.m_pBin + sizeof(std::uint32_t));
 				if (!p || size <= 2 || *reinterpret_cast<wchar_t*>(p) == L'\0')return {};
@@ -866,7 +866,7 @@ namespace elibstl
 				auto maxsize = static_cast<size_t>(std::ceil(size / 2.0f));
 				std::wstring ret(L'0', maxsize);
 				memcpy(&ret[0], p, size);
-
+				
 				if (ret.back() != L'0')
 					ret.push_back(L'\0');
 				return ret;*/
@@ -952,7 +952,7 @@ namespace elibstl::classhelp {
 
 	private:
 	public:
-		static
+		static 	
 			auto get_bin(PMDATA_INF pArgInf, size_t index) -> span<unsigned char> {
 			auto bin = pArgInf[index].m_pBin;
 			if (!bin)
