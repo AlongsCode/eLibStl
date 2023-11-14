@@ -185,7 +185,7 @@ FucInfo g_get_py_ym = { {
 		/*explain*/ ("返回包含指定汉字指定拼音编码的韵母部分文本。如果指定拼音编码不存在或该汉字此发音无声母，将返回空文本。"),
 		/*category*/16,
 		/*state*/   NULL,
-		/*ret*/     SDT_INT,
+		/*ret*/     SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
 		/*bmp inx*/ 0,

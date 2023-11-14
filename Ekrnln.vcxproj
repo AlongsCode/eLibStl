@@ -317,7 +317,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>E:\易语言正式版\lib\</OutDir>
+    <OutDir>D:\ide\e\lib</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -339,7 +339,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>LibKrnln</TargetName>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>D:\ide\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>
