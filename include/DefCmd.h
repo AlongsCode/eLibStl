@@ -22,7 +22,7 @@ to_lower_w,/*到小写W*/\
 to_full_w,/*到全角W*/\
 to_half_w,/*到半角W*/\
 in_str_rev_w,/*倒找文本W*/\
-split_w,/*分割文本W*/\
+Fn_split_w,/*分割文本W*/\
 get_character_w,/*字符W*/\
 get_char_code_w,/*取代码W*/\
 ltrim_w,/*删收空W*/\
@@ -348,7 +348,9 @@ network_post/*网页访问*/\
 ,Fn_catch_ception/*注册异常函数*/\
 , Fn_process_messages_improved/*取CPU核心数*/\
 ,Fn_get_win_pic/*截图*/\
-,Fn_get_pixel/*取坐标颜色*/
+,Fn_get_pixel/*取坐标颜色*/\
+, Fn_QRcode_encodeString/*生成文本二维码*/\
+,Fn_QRcode_encodeData/*生成数据二维码*/
 
 #pragma endregion
 

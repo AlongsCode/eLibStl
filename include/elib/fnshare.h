@@ -33,8 +33,8 @@ namespace elibstl
 		}
 	};
 
-	inline auto& args_to_ebin(PMDATA_INF pArgInf, size_t index) {
-		return *reinterpret_cast<ebin*>(pArgInf[index].m_pBin);
+	inline auto args_to_ebin(PMDATA_INF pArgInf, size_t index) {
+		return reinterpret_cast<ebin*>(pArgInf[index].m_pBin);
 	}
 
 

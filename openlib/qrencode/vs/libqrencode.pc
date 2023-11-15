@@ -1,0 +1,11 @@
+prefix=C:/Program Files (x86)/QRencode
+exec_prefix=C:/Program Files (x86)/QRencode/bin
+libdir=C:/Program Files (x86)/QRencode/lib
+includedir=C:/Program Files (x86)/QRencode/include
+
+Name: libqrencode
+Description: A QR Code encoding library
+Version: 4.1.1
+Libs: -L${libdir} -lqrencode
+Libs.private: 
+Cflags: -I${includedir}

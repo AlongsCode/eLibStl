@@ -1,0 +1,965 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The system is: Windows - 10.0.22000 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+      生成启动时间为 2023/11/15 20:19:23。
+      
+      节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\3.27.7\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)。
+      PrepareForBuild:
+        正在创建目录“Debug\\”。
+        正在创建目录“Debug\\CompilerIdC.tlog\\”。
+      InitializeBuildStatus:
+        正在创建“Debug\\CompilerIdC.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+        正在对“Debug\\CompilerIdC.tlog\\unsuccessfulbuild”执行 Touch 任务。
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /analyze- /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X86 /SAFESEH Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\3.27.7\\CompilerIdC\\CompilerIdC.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\Hostx64\\x86\\cl.exe
+      FinalizeBuildStatus:
+        正在删除文件“Debug\\CompilerIdC.tlog\\unsuccessfulbuild”。
+        正在对“Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate”执行 Touch 任务。
+      已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\3.27.7\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)的操作。
+      
+      已成功生成。
+          0 个警告
+          0 个错误
+      
+      已用时间 00:00:00.90
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/3.27.7/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-o8g4hz"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-o8g4hz"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-o8g4hz'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_40044.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:24。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-o8g4hz\\cmTC_40044.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_40044.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-o8g4hz\\Debug\\”。
+          正在创建目录“cmTC_40044.dir\\Debug\\cmTC_40044.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_40044.dir\\Debug\\cmTC_40044.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_40044.dir\\Debug\\cmTC_40044.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_40044.dir\\Debug\\\\" /Fd"cmTC_40044.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCCompilerABI.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CMakeCCompilerABI.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_40044.dir\\Debug\\\\" /Fd"cmTC_40044.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.27\\Modules\\CMakeCCompilerABI.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-o8g4hz\\Debug\\cmTC_40044.exe" /INCREMENTAL /ILK:"cmTC_40044.dir\\Debug\\cmTC_40044.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-o8g4hz/Debug/cmTC_40044.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-o8g4hz/Debug/cmTC_40044.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_40044.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_40044.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-o8g4hz\\Debug\\cmTC_40044.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_40044.dir\\Debug\\cmTC_40044.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_40044.dir\\Debug\\cmTC_40044.tlog\\cmTC_40044.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-o8g4hz\\cmTC_40044.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.63
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "CMakeLists.txt:21 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-m7340n"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-m7340n"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-m7340n'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_13c2c.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:25。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\cmTC_13c2c.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_13c2c.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\Debug\\”。
+          正在创建目录“cmTC_13c2c.dir\\Debug\\cmTC_13c2c.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_13c2c.dir\\Debug\\cmTC_13c2c.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_13c2c.dir\\Debug\\cmTC_13c2c.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_13c2c.dir\\Debug\\\\" /Fd"cmTC_13c2c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\src.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          src.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_13c2c.dir\\Debug\\\\" /Fd"cmTC_13c2c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\src.c"
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\src.c(1,10): fatal  error C1083: 无法打开包括文件: “pthread.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\cmTC_13c2c.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\cmTC_13c2c.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\cmTC_13c2c.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\src.c(1,10): fatal  error C1083: 无法打开包括文件: “pthread.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-m7340n\\cmTC_13c2c.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.37
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "CMakeLists.txt:21 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ml74dc"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ml74dc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ml74dc'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_58465.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:26。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\cmTC_58465.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_58465.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\Debug\\”。
+          正在创建目录“cmTC_58465.dir\\Debug\\cmTC_58465.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_58465.dir\\Debug\\cmTC_58465.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_58465.dir\\Debug\\cmTC_58465.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_58465.dir\\Debug\\\\" /Fd"cmTC_58465.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\CheckFunctionExists.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_58465.dir\\Debug\\\\" /Fd"cmTC_58465.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\Debug\\cmTC_58465.exe" /INCREMENTAL /ILK:"cmTC_58465.dir\\Debug\\cmTC_58465.ilk" /NOLOGO pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ml74dc/Debug/cmTC_58465.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ml74dc/Debug/cmTC_58465.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_58465.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: 无法打开文件“pthreads.lib” [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\cmTC_58465.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\cmTC_58465.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\cmTC_58465.vcxproj”(默认目标) (1) ->
+        (Link 目标) -> 
+          LINK : fatal error LNK1104: 无法打开文件“pthreads.lib” [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ml74dc\\cmTC_58465.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.46
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "CMakeLists.txt:21 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-mn9g93"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-mn9g93"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-mn9g93'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_c44eb.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:26。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\cmTC_c44eb.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_c44eb.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\Debug\\”。
+          正在创建目录“cmTC_c44eb.dir\\Debug\\cmTC_c44eb.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_c44eb.dir\\Debug\\cmTC_c44eb.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_c44eb.dir\\Debug\\cmTC_c44eb.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_c44eb.dir\\Debug\\\\" /Fd"cmTC_c44eb.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\CheckFunctionExists.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckFunctionExists.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_c44eb.dir\\Debug\\\\" /Fd"cmTC_c44eb.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\CheckFunctionExists.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\Debug\\cmTC_c44eb.exe" /INCREMENTAL /ILK:"cmTC_c44eb.dir\\Debug\\cmTC_c44eb.ilk" /NOLOGO pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-mn9g93/Debug/cmTC_c44eb.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-mn9g93/Debug/cmTC_c44eb.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_c44eb.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: 无法打开文件“pthread.lib” [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\cmTC_c44eb.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\cmTC_c44eb.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\cmTC_c44eb.vcxproj”(默认目标) (1) ->
+        (Link 目标) -> 
+          LINK : fatal error LNK1104: 无法打开文件“pthread.lib” [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-mn9g93\\cmTC_c44eb.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.42
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "cmake/FindIconv.cmake:66 (check_function_exists)"
+      - "CMakeLists.txt:23 (find_package)"
+    checks:
+      - "Looking for iconv_open"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-nokk62"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-nokk62"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "ICONV_IN_GLIBC"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-nokk62'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_f2fd6.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:27。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_f2fd6.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\Debug\\”。
+          正在创建目录“cmTC_f2fd6.dir\\Debug\\cmTC_f2fd6.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_f2fd6.dir\\Debug\\cmTC_f2fd6.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_f2fd6.dir\\Debug\\cmTC_f2fd6.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=iconv_open /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f2fd6.dir\\Debug\\\\" /Fd"cmTC_f2fd6.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\CheckFunctionExists.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=iconv_open /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f2fd6.dir\\Debug\\\\" /Fd"cmTC_f2fd6.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\Debug\\cmTC_f2fd6.exe" /INCREMENTAL /ILK:"cmTC_f2fd6.dir\\Debug\\cmTC_f2fd6.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-nokk62/Debug/cmTC_f2fd6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-nokk62/Debug/cmTC_f2fd6.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_f2fd6.dir\\Debug\\CheckFunctionExists.obj
+        CheckFunctionExists.obj : error LNK2019: 无法解析的外部符号 _iconv_open，函数 _main 中引用了该符号 [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj]
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\Debug\\cmTC_f2fd6.exe : fatal error LNK1120: 1 个无法解析的外部命令 [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj”(默认目标) (1) ->
+        (Link 目标) -> 
+          CheckFunctionExists.obj : error LNK2019: 无法解析的外部符号 _iconv_open，函数 _main 中引用了该符号 [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj]
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\Debug\\cmTC_f2fd6.exe : fatal error LNK1120: 1 个无法解析的外部命令 [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-nokk62\\cmTC_f2fd6.vcxproj]
+        
+            0 个警告
+            2 个错误
+        
+        已用时间 00:00:00.51
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:35 (check_include_file)"
+    checks:
+      - "Looking for dlfcn.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-drjos9"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-drjos9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_DLFCN_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-drjos9'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_bbd80.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:28。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\cmTC_bbd80.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_bbd80.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\Debug\\”。
+          正在创建目录“cmTC_bbd80.dir\\Debug\\cmTC_bbd80.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_bbd80.dir\\Debug\\cmTC_bbd80.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_bbd80.dir\\Debug\\cmTC_bbd80.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_bbd80.dir\\Debug\\\\" /Fd"cmTC_bbd80.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_bbd80.dir\\Debug\\\\" /Fd"cmTC_bbd80.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\CheckIncludeFile.c"
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “dlfcn.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\cmTC_bbd80.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\cmTC_bbd80.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\cmTC_bbd80.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “dlfcn.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-drjos9\\cmTC_bbd80.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.37
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:36 (check_include_file)"
+    checks:
+      - "Looking for inttypes.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-v1td5h"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-v1td5h"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_INTTYPES_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-v1td5h'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_8254b.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:28。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\cmTC_8254b.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_8254b.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\Debug\\”。
+          正在创建目录“cmTC_8254b.dir\\Debug\\cmTC_8254b.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_8254b.dir\\Debug\\cmTC_8254b.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_8254b.dir\\Debug\\cmTC_8254b.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8254b.dir\\Debug\\\\" /Fd"cmTC_8254b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8254b.dir\\Debug\\\\" /Fd"cmTC_8254b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\Debug\\cmTC_8254b.exe" /INCREMENTAL /ILK:"cmTC_8254b.dir\\Debug\\cmTC_8254b.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-v1td5h/Debug/cmTC_8254b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-v1td5h/Debug/cmTC_8254b.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_8254b.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_8254b.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\Debug\\cmTC_8254b.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_8254b.dir\\Debug\\cmTC_8254b.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_8254b.dir\\Debug\\cmTC_8254b.tlog\\cmTC_8254b.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-v1td5h\\cmTC_8254b.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.56
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:37 (check_include_file)"
+    checks:
+      - "Looking for memory.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-6gbvtp"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-6gbvtp"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_MEMORY_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-6gbvtp'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_74d96.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:29。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\cmTC_74d96.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_74d96.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\Debug\\”。
+          正在创建目录“cmTC_74d96.dir\\Debug\\cmTC_74d96.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_74d96.dir\\Debug\\cmTC_74d96.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_74d96.dir\\Debug\\cmTC_74d96.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_74d96.dir\\Debug\\\\" /Fd"cmTC_74d96.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_74d96.dir\\Debug\\\\" /Fd"cmTC_74d96.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\Debug\\cmTC_74d96.exe" /INCREMENTAL /ILK:"cmTC_74d96.dir\\Debug\\cmTC_74d96.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-6gbvtp/Debug/cmTC_74d96.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-6gbvtp/Debug/cmTC_74d96.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_74d96.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_74d96.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\Debug\\cmTC_74d96.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_74d96.dir\\Debug\\cmTC_74d96.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_74d96.dir\\Debug\\cmTC_74d96.tlog\\cmTC_74d96.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-6gbvtp\\cmTC_74d96.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.58
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:38 (check_include_file)"
+    checks:
+      - "Looking for stdint.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-005c5z"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-005c5z"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_STDINT_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-005c5z'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_2804a.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:30。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\cmTC_2804a.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_2804a.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\Debug\\”。
+          正在创建目录“cmTC_2804a.dir\\Debug\\cmTC_2804a.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_2804a.dir\\Debug\\cmTC_2804a.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_2804a.dir\\Debug\\cmTC_2804a.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_2804a.dir\\Debug\\\\" /Fd"cmTC_2804a.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_2804a.dir\\Debug\\\\" /Fd"cmTC_2804a.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\Debug\\cmTC_2804a.exe" /INCREMENTAL /ILK:"cmTC_2804a.dir\\Debug\\cmTC_2804a.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-005c5z/Debug/cmTC_2804a.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-005c5z/Debug/cmTC_2804a.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_2804a.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_2804a.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\Debug\\cmTC_2804a.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_2804a.dir\\Debug\\cmTC_2804a.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_2804a.dir\\Debug\\cmTC_2804a.tlog\\cmTC_2804a.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-005c5z\\cmTC_2804a.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.57
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:39 (check_include_file)"
+    checks:
+      - "Looking for stdlib.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-qeott1"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-qeott1"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_STDLIB_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-qeott1'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_42575.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:31。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\cmTC_42575.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_42575.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\Debug\\”。
+          正在创建目录“cmTC_42575.dir\\Debug\\cmTC_42575.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_42575.dir\\Debug\\cmTC_42575.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_42575.dir\\Debug\\cmTC_42575.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_42575.dir\\Debug\\\\" /Fd"cmTC_42575.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_42575.dir\\Debug\\\\" /Fd"cmTC_42575.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\Debug\\cmTC_42575.exe" /INCREMENTAL /ILK:"cmTC_42575.dir\\Debug\\cmTC_42575.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-qeott1/Debug/cmTC_42575.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-qeott1/Debug/cmTC_42575.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_42575.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_42575.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\Debug\\cmTC_42575.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_42575.dir\\Debug\\cmTC_42575.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_42575.dir\\Debug\\cmTC_42575.tlog\\cmTC_42575.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-qeott1\\cmTC_42575.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.54
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:40 (check_include_file)"
+    checks:
+      - "Looking for strings.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-wd0rxl"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-wd0rxl"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_STRINGS_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-wd0rxl'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_1a71c.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:31。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\cmTC_1a71c.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_1a71c.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\Debug\\”。
+          正在创建目录“cmTC_1a71c.dir\\Debug\\cmTC_1a71c.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_1a71c.dir\\Debug\\cmTC_1a71c.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_1a71c.dir\\Debug\\cmTC_1a71c.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_1a71c.dir\\Debug\\\\" /Fd"cmTC_1a71c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_1a71c.dir\\Debug\\\\" /Fd"cmTC_1a71c.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\CheckIncludeFile.c"
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “strings.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\cmTC_1a71c.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\cmTC_1a71c.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\cmTC_1a71c.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “strings.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-wd0rxl\\cmTC_1a71c.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.36
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:41 (check_include_file)"
+    checks:
+      - "Looking for string.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-dhg7rf"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-dhg7rf"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_STRING_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-dhg7rf'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_06985.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:32。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\cmTC_06985.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_06985.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\Debug\\”。
+          正在创建目录“cmTC_06985.dir\\Debug\\cmTC_06985.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_06985.dir\\Debug\\cmTC_06985.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_06985.dir\\Debug\\cmTC_06985.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_06985.dir\\Debug\\\\" /Fd"cmTC_06985.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_06985.dir\\Debug\\\\" /Fd"cmTC_06985.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\Debug\\cmTC_06985.exe" /INCREMENTAL /ILK:"cmTC_06985.dir\\Debug\\cmTC_06985.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-dhg7rf/Debug/cmTC_06985.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-dhg7rf/Debug/cmTC_06985.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_06985.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_06985.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\Debug\\cmTC_06985.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_06985.dir\\Debug\\cmTC_06985.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_06985.dir\\Debug\\cmTC_06985.tlog\\cmTC_06985.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-dhg7rf\\cmTC_06985.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.53
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:42 (check_include_file)"
+    checks:
+      - "Looking for getopt.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tpz9dk"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tpz9dk"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_GETOPT_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tpz9dk'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_d1cce.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:33。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\cmTC_d1cce.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_d1cce.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\Debug\\”。
+          正在创建目录“cmTC_d1cce.dir\\Debug\\cmTC_d1cce.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_d1cce.dir\\Debug\\cmTC_d1cce.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_d1cce.dir\\Debug\\cmTC_d1cce.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d1cce.dir\\Debug\\\\" /Fd"cmTC_d1cce.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d1cce.dir\\Debug\\\\" /Fd"cmTC_d1cce.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\CheckIncludeFile.c"
+          CheckIncludeFile.c
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “getopt.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\cmTC_d1cce.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\cmTC_d1cce.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\cmTC_d1cce.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “getopt.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tpz9dk\\cmTC_d1cce.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.36
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:43 (check_include_file)"
+    checks:
+      - "Looking for sys/time.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tx3bci"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tx3bci"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_SYS_TIME_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-tx3bci'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_681a8.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:33。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\cmTC_681a8.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_681a8.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\Debug\\”。
+          正在创建目录“cmTC_681a8.dir\\Debug\\cmTC_681a8.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_681a8.dir\\Debug\\cmTC_681a8.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_681a8.dir\\Debug\\cmTC_681a8.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_681a8.dir\\Debug\\\\" /Fd"cmTC_681a8.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “sys/time.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\cmTC_681a8.vcxproj]
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_681a8.dir\\Debug\\\\" /Fd"cmTC_681a8.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\CheckIncludeFile.c"
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\cmTC_681a8.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\cmTC_681a8.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “sys/time.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-tx3bci\\cmTC_681a8.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.32
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:44 (check_include_file)"
+    checks:
+      - "Looking for time.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ia61ji"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ia61ji"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_TIME_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ia61ji'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_f5271.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:34。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\cmTC_f5271.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_f5271.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\Debug\\”。
+          正在创建目录“cmTC_f5271.dir\\Debug\\cmTC_f5271.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_f5271.dir\\Debug\\cmTC_f5271.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_f5271.dir\\Debug\\cmTC_f5271.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f5271.dir\\Debug\\\\" /Fd"cmTC_f5271.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckIncludeFile.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f5271.dir\\Debug\\\\" /Fd"cmTC_f5271.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\CheckIncludeFile.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\Debug\\cmTC_f5271.exe" /INCREMENTAL /ILK:"cmTC_f5271.dir\\Debug\\cmTC_f5271.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ia61ji/Debug/cmTC_f5271.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-ia61ji/Debug/cmTC_f5271.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_f5271.dir\\Debug\\CheckIncludeFile.obj
+          cmTC_f5271.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\Debug\\cmTC_f5271.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_f5271.dir\\Debug\\cmTC_f5271.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_f5271.dir\\Debug\\cmTC_f5271.tlog\\cmTC_f5271.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-ia61ji\\cmTC_f5271.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.57
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "CMakeLists.txt:45 (check_include_file)"
+    checks:
+      - "Looking for pthread.h"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-fvc9hr"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-fvc9hr"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_PTHREAD_H"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-fvc9hr'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_c3a11.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:35。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\cmTC_c3a11.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_c3a11.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\Debug\\”。
+          正在创建目录“cmTC_c3a11.dir\\Debug\\cmTC_c3a11.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_c3a11.dir\\Debug\\cmTC_c3a11.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_c3a11.dir\\Debug\\cmTC_c3a11.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_c3a11.dir\\Debug\\\\" /Fd"cmTC_c3a11.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\CheckIncludeFile.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_c3a11.dir\\Debug\\\\" /Fd"cmTC_c3a11.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\CheckIncludeFile.c"
+          CheckIncludeFile.c
+        D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “pthread.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\cmTC_c3a11.vcxproj]
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\cmTC_c3a11.vcxproj”(默认目标)的操作 - 失败。
+        
+        生成失败。
+        
+        “D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\cmTC_c3a11.vcxproj”(默认目标) (1) ->
+        (ClCompile 目标) -> 
+          D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\CheckIncludeFile.c(1,10): fatal  error C1083: 无法打开包括文件: “pthread.h”: No such file or directory [D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-fvc9hr\\cmTC_c3a11.vcxproj]
+        
+            0 个警告
+            1 个错误
+        
+        已用时间 00:00:00.36
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:47 (check_function_exists)"
+    checks:
+      - "Looking for strdup"
+    directories:
+      source: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-n52c84"
+      binary: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-n52c84"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_MODULE_PATH: "D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/libqrencode-master/cmake"
+    buildResult:
+      variable: "HAVE_STRDUP"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-n52c84'
+        
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_ecb3b.vcxproj /p:Configuration=Debug /p:Platform=Win32 /p:VisualStudioVersion=17.0 /v:n
+        适用于 .NET Framework MSBuild 版本 17.7.2+d6990bcfa
+        生成启动时间为 2023/11/15 20:19:35。
+        
+        节点 1 上的项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\cmTC_ecb3b.vcxproj”(默认目标)。
+        PrepareForBuild:
+          正在创建目录“cmTC_ecb3b.dir\\Debug\\”。
+          正在创建目录“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\Debug\\”。
+          正在创建目录“cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.tlog\\”。
+        InitializeBuildStatus:
+          正在创建“cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.tlog\\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+          正在对“cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.tlog\\unsuccessfulbuild”执行 Touch 任务。
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=strdup /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_ecb3b.dir\\Debug\\\\" /Fd"cmTC_ecb3b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\CheckFunctionExists.c"
+          用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32825 版
+          CheckFunctionExists.c
+          版权所有(C) Microsoft Corporation。保留所有权利。
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /Oy- /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=strdup /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_ecb3b.dir\\Debug\\\\" /Fd"cmTC_ecb3b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /analyze- /errorReport:queue "D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\CheckFunctionExists.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.37.32822\\bin\\HostX64\\x86\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\Debug\\cmTC_ecb3b.exe" /INCREMENTAL /ILK:"cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-n52c84/Debug/cmTC_ecb3b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/CMakeScratch/TryCompile-n52c84/Debug/cmTC_ecb3b.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_ecb3b.dir\\Debug\\CheckFunctionExists.obj
+          cmTC_ecb3b.vcxproj -> D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\Debug\\cmTC_ecb3b.exe
+        FinalizeBuildStatus:
+          正在删除文件“cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.tlog\\unsuccessfulbuild”。
+          正在对“cmTC_ecb3b.dir\\Debug\\cmTC_ecb3b.tlog\\cmTC_ecb3b.lastbuildstate”执行 Touch 任务。
+        已完成生成项目“D:\\MyProject\\Lib\\epl_lib\\eLibStl\\openlib\\qrencode\\vs\\CMakeFiles\\CMakeScratch\\TryCompile-n52c84\\cmTC_ecb3b.vcxproj”(默认目标)的操作。
+        
+        已成功生成。
+            0 个警告
+            0 个错误
+        
+        已用时间 00:00:00.56
+        
+      exitCode: 0
+...

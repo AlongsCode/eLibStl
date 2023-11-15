@@ -1,0 +1,5 @@
+D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/qrencode.dir
+D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/qrenc.dir
+D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/INSTALL.dir
+D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/ALL_BUILD.dir
+D:/MyProject/Lib/epl_lib/eLibStl/openlib/qrencode/vs/CMakeFiles/ZERO_CHECK.dir

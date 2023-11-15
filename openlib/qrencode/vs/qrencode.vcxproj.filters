@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrencode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrinput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\bitstream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrspec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\rsecc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\split.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mask.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mqrspec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mmask.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrencode_inner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrinput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\bitstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrspec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\rsecc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\split.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mqrspec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\mmask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{92992556-3DBD-3C75-ACAB-4C22F50DDE92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D9244274-2F88-33C3-98F4-19BBCF18B070}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -569,8 +569,8 @@ EXTERN_C void elibstl_memfile_write_mem(PMDATA_INF pRetData, INT nArgCount, PMDA
 	auto& pMemFile = elibstl::args_to_obj<EMemFile>(pArgInf);
 	for (INT i = 1; i < nArgCount; i++)
 	{
-		auto& pData = elibstl::args_to_ebin(pArgInf, i);
-		pMemFile->write(pData.m_data, pData.m_size);
+		auto pData = elibstl::args_to_ebin(pArgInf, i);
+		pMemFile->write(pData->m_data, pData->m_size);
 	}
 }
 

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\vs\CMakeFiles\4f26aa2df815cb8cf6f40bc35993d069\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{77863016-9CB8-36B2-8255-9A386BE071FB}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

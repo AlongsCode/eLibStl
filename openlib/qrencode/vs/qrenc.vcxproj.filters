@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\qrenc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\MyProject\Lib\epl_lib\eLibStl\openlib\qrencode\libqrencode-master\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D9244274-2F88-33C3-98F4-19BBCF18B070}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
