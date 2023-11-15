@@ -83,6 +83,7 @@
     <ClCompile Include="src\EplObj Class\eplvar.cpp" />
     <ClCompile Include="src\EplObj Class\FolderMonitor.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
+    <ClCompile Include="src\EplObj Class\mempe.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
     <ClCompile Include="src\e_call.cpp" />

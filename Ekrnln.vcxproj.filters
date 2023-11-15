@@ -124,6 +124,9 @@
     <Filter Include="源文件\openlib\mini_co">
       <UniqueIdentifier>{01deff0d-0c2c-4f34-ac96-40b4f8a1b7e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\组件\通用型\动态模块">
+      <UniqueIdentifier>{a7238718-d93d-46f0-b575-7e4c86655923}</UniqueIdentifier>
+    </Filter>
     <Filter Include="源文件\openlib\libqrencode">
       <UniqueIdentifier>{25ab63bc-fe40-4fd1-9e14-072047ac7642}</UniqueIdentifier>
     </Filter>
@@ -634,6 +637,9 @@
     </ClCompile>
     <ClCompile Include="src\Other\epl qr code.cpp">
       <Filter>源文件\实现\全局命令\其他</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\mempe.cpp">
+      <Filter>源文件\组件\通用型\动态模块</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

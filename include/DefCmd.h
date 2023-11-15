@@ -350,7 +350,14 @@ network_post/*网页访问*/\
 ,Fn_get_win_pic/*截图*/\
 ,Fn_get_pixel/*取坐标颜色*/\
 , Fn_QRcode_encodeString/*生成文本二维码*/\
-,Fn_QRcode_encodeData/*生成数据二维码*/
+,Fn_QRcode_encodeData/*生成数据二维码*/\
+,Fn_MemoryModule_structure/*构造*/\
+,Fn_MemoryModule_copy/*复制*/\
+,Fn_MemoryModule_destruct/*析构*/\
+,Fn_MemoryModule_LoadLibrary/*载入*/\
+,Fn_MemoryModule_GetProcAddress/*取函数地址*/\
+,Fn_MemoryModule_CallEntryPoint/*运行*/\
+
 
 #pragma endregion
 
@@ -383,7 +390,8 @@ CtCommandLink/*命令链接*/\
 ,epl_class_Var/*强类型动态数组*/\
 ,Obj_DiskFile/*文件读写类*/\
 ,Enum_CoRuningType/*协程运行状态*/\
-,HexView_control/*进制框*/
+,HexView_control/*进制框*/\
+,Obj_MemoryModule/*内存模块类*/
 
 #pragma endregion
 
