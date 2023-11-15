@@ -16,8 +16,11 @@ namespace {
     // 默认异常处理函数
     bool  __stdcall  DefaultExceptionHandler(const char* errorMessage) {
         // 在此处添加默认的异常处理逻辑，例如输出到日志等
-		std::string s = "* 出现未处理的异常,即将暂停程序" ;
-		OutputDebugStringA(s.append(errorMessage).c_str());
+		auto wstr= elibstl::A2W(errorMessage);
+		std::wstring s = L"出现未处理的异常,即将暂停程序" ;
+		
+		put_errmsg(s.append(wstr));
+		delete[]wstr;
         //std::cerr << "Default Exception Handler: " << errorMessage << std::endl;
         return false;  // 返回false表示未处理
     };
@@ -95,6 +98,7 @@ bool ThrowException(const char* errorMessage) {
         if (!handled) {
             // 如果异常未被处理，抛出std::runtime_error异常
 			MDATA_INF RetData{};
+
 			__debugbreak();
 			//elibstl::CallElibFunc("krnln.fne", "暂停", &RetData, 0, nullptr);
            // __debugbreak();
@@ -230,3 +234,4 @@ FucInfo Fn_throw_ception = { {
 		/*ArgCount*/1,
 		/*arg lp*/  Args,
 	} ,efn_throw_ception ,"efn_throw_ception" };
+

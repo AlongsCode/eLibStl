@@ -40,6 +40,7 @@ struct PlugInfo
 	size_t PlugSizeStr{ sizeof("\0")}; /*²å¼þ×Ö·û´®´óÐ¡*/
 };
 #define ESTLFNAME(s) s,#s
+#define ESTLARG(s) std::size(s),s
 
 extern HMODULE g_elibstl_hModule;
 

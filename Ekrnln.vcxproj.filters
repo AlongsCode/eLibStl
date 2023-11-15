@@ -557,6 +557,15 @@
     <ClCompile Include="src\EplDebug\debugbreak.cpp">
       <Filter>源文件\实现\全局命令\代码调试</Filter>
     </ClCompile>
+    <ClCompile Include="src\System processing\ProcessorsSystem.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System processing\get_win_pic.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System processing\get_pixel.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

@@ -147,6 +147,9 @@
     <ClCompile Include="src\get_console_locale.cpp" />
     <ClCompile Include="src\set_env.cpp" />
     <ClCompile Include="src\split.cpp" />
+    <ClCompile Include="src\System processing\get_pixel.cpp" />
+    <ClCompile Include="src\System processing\get_win_pic.cpp" />
+    <ClCompile Include="src\System processing\ProcessorsSystem.cpp" />
     <ClCompile Include="src\Text Manipulation\byte_array_to_string.cpp" />
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp" />
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp" />
