@@ -143,6 +143,7 @@ namespace elibstl::hexview
 
         return false;
     }
+
     // 创建组件
     HUNIT WINAPI ECreate(LPBYTE pAllData, INT cbData, DWORD dwStyle,
                          HWND hParent, UINT nID, HMENU hMenu,
