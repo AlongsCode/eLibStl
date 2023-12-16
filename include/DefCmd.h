@@ -357,7 +357,8 @@ network_post/*网页访问*/\
 ,Fn_MemoryModule_LoadLibrary/*载入*/\
 ,Fn_MemoryModule_GetProcAddress/*取函数地址*/\
 ,Fn_MemoryModule_CallEntryPoint/*运行*/\
-
+,Fn_eStl_GetMd5W/*取数据摘要*/\
+,Fn_eStl_GetMd5A
 
 #pragma endregion
 

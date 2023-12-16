@@ -136,6 +136,9 @@
     <Filter Include="源文件\openlib\libqrencode\src">
       <UniqueIdentifier>{d1f53ce2-0a21-4ec2-a258-e30d75b2192c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\实现\全局命令\数据处理">
+      <UniqueIdentifier>{9f50cdcd-663b-470f-ba1e-e9187f21194c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -640,6 +643,9 @@
     </ClCompile>
     <ClCompile Include="src\EplObj Class\mempe.cpp">
       <Filter>源文件\组件\通用型\动态模块</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Epl Dp\eplMD5.cpp">
+      <Filter>源文件\实现\全局命令\数据处理</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
