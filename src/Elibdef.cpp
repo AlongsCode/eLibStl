@@ -131,7 +131,7 @@ extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 	
 		static
 			std::mutex initMutex;;
-		std::lock_guard<std::mutex> lock(initMutex); // 获取互斥锁
+		std::lock_guard<std::mutex> lock(initMutex); 
 		
 		//没初始化的话先初始化
 		if (s_LibInfo.m_nCmdCount != g_all_cmd.size())
