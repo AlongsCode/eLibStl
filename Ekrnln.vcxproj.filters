@@ -237,6 +237,9 @@
     <ClInclude Include="openlib\qrencode\split.h">
       <Filter>源文件\openlib\libqrencode\include</Filter>
     </ClInclude>
+    <ClInclude Include="include\EKrnln_Version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\elib\fnshare.cpp">
