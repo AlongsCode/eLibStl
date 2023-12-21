@@ -1,4 +1,4 @@
-//���������ͨ�ú��������ͷ�ļ�
+﻿//组件库需用通用函数引入此头文件
 #include "ElibHelp.h"
 #include "GdiplusFlatDef.h"
 #include <CommCtrl.h>
@@ -6,7 +6,7 @@
 #include <Shlwapi.h>
 #include <windowsx.h>
 #include <commoncontrols.h>
-/*�׶���ı�ǩ�����¼�*/
+/*易定义的标签反馈事件*/
 #define WM_EFEEDBACK  32885
 
 
@@ -24,17 +24,17 @@ eStlInline void SetLBText(HWND hLB, int idx, PCWSTR pszText)
 void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData);
 
 /// <summary>
-/// �������塣
+/// 创建字体。
 /// easy font
-/// ��CreateFont wrapper��
+/// （CreateFont wrapper）
 /// </summary>
-/// <param name="pszFontName">������</param>
-/// <param name="nPoint">����</param>
-/// <param name="nWeight">��ϸ��1~1000</param>
-/// <param name="IsItalic">�Ƿ���б</param>
-/// <param name="IsUnderline">�Ƿ��»���</param>
-/// <param name="IsStrikeOut">�Ƿ�ɾ����</param>
-/// <returns>�ɹ�������������ʧ�ܷ���NULL</returns>
+/// <param name="pszFontName">字体名</param>
+/// <param name="nPoint">点数</param>
+/// <param name="nWeight">粗细，1~1000</param>
+/// <param name="IsItalic">是否倾斜</param>
+/// <param name="IsUnderline">是否下划线</param>
+/// <param name="IsStrikeOut">是否删除线</param>
+/// <returns>成功返回字体句柄，失败返回NULL</returns>
 HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic = FALSE, BOOL bUnderline = FALSE, BOOL bStrikeOut = FALSE);
 
 #define ESTL_EZDLG_NAMESPACE_BEGIN namespace EzDlg {
@@ -42,12 +42,12 @@ HFONT EzFont(PCWSTR pszFontName, int iPoint = 9, int iWeight = 400, BOOL bItalic
 
 ESTL_EZDLG_NAMESPACE_BEGIN
 /// <summary>
-/// ���ô������塣
-/// ����ö�ٴ��ڵ������Ӵ��ڲ�Ϥ����������
+/// 设置窗口字体。
+/// 函数枚举窗口的所有子窗口并悉数设置字体
 /// </summary>
-/// <param name="hWnd">���ھ��</param>
-/// <param name="hFont">������</param>
-/// <param name="bRedraw">�Ƿ��ػ�</param>
+/// <param name="hWnd">窗口句柄</param>
+/// <param name="hFont">字体句柄</param>
+/// <param name="bRedraw">是否重画</param>
 eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALSE)
 {
 	EnumChildWindows(hWnd,
@@ -61,12 +61,12 @@ eStlInline void SetFontForWndAndCtrl(HWND hWnd, HFONT hFont, BOOL bRedraw = FALS
 }
 
 /// <summary>
-/// ģ̬�Ի���Ԥ������
-/// �˺�����ģ��ģ̬�Ի���ʹ�á�
-/// ���ø�����
+/// 模态对话框预处理。
+/// 此函数供模拟模态对话框使用。
+/// 禁用父窗口
 /// </summary>
-/// <param name="hParent">������</param>
-/// <returns>���ظ������ڵ��ú���ǰ�Ƿ����ã�����DlgEndModelʱ���ݴ�ֵ</returns>
+/// <param name="hParent">父窗口</param>
+/// <returns>返回父窗口在调用函数前是否启用，调用DlgEndModel时传递此值</returns>
 eStlInline BOOL DlgPreModel(HWND hParent)
 {
 	BOOL bEnabled = IsWindowEnabled(hParent);
@@ -76,13 +76,13 @@ eStlInline BOOL DlgPreModel(HWND hParent)
 }
 
 /// <summary>
-/// ģ̬�Ի��������
-/// �˺�����ģ��ģ̬�Ի���ʹ�ã�����Ӧֱ��ʹ��DestroyWindow��
-/// ���ø����ڲ�ʹ���ý��㡣ע�⣺���ø����ڽ����Ǳ�Ҫ�ģ������������ڽ������ý���Ӷ����´���
+/// 模态对话框结束。
+/// 此函数供模拟模态对话框使用，而不应直接使用DestroyWindow。
+/// 启用父窗口并使其获得焦点。注意：设置父窗口焦点是必要的，否则其他窗口将被设置焦点从而导致错乱
 /// </summary>
-/// <param name="hWnd">�Ի��򴰿�</param>
-/// <param name="hParent">������</param>
-/// <param name="bParentShouldBeEnabled">DlgPreModel�ķ���ֵ</param>
+/// <param name="hWnd">对话框窗口</param>
+/// <param name="hParent">父窗口</param>
+/// <param name="bParentShouldBeEnabled">DlgPreModel的返回值</param>
 eStlInline void DlgEndModel(HWND hWnd, HWND hParent, BOOL bParentShouldBeEnabled)
 {
 	if (bParentShouldBeEnabled)
@@ -92,17 +92,17 @@ eStlInline void DlgEndModel(HWND hWnd, HWND hParent, BOOL bParentShouldBeEnabled
 }
 
 /// <summary>
-/// ģ̬�Ի��򽫱����١�
-/// �˺�����ģ��ģ̬�Ի���ʹ�á�
-/// ��ҪΪ�˷�ֹһЩ���������ʹδͨ��DlgEndModel���ٵĶԻ���ĸ�����Ҳ�ܱ����
+/// 模态对话框将被销毁。
+/// 此函数供模拟模态对话框使用。
+/// 主要为了防止一些意外情况，使未通过DlgEndModel销毁的对话框的父窗口也能被解禁
 /// </summary>
-/// <param name="hWnd">�Ի��򴰿�</param>
-/// <param name="hParent">������</param>
-/// <param name="bParentShouldBeEnabled">DlgPreModel�ķ���ֵ</param>
-/// <returns>�Ի���δͨ��DlgEndModel����ʱ����TRUE�����򷵻�FALSE</returns>
+/// <param name="hWnd">对话框窗口</param>
+/// <param name="hParent">父窗口</param>
+/// <param name="bParentShouldBeEnabled">DlgPreModel的返回值</param>
+/// <returns>对话框未通过DlgEndModel销毁时返回TRUE，否则返回FALSE</returns>
 eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeEnabled)
 {
-	if (bParentShouldBeEnabled && !IsWindowEnabled(hParent))// ��ֹһЩ�����������
+	if (bParentShouldBeEnabled && !IsWindowEnabled(hParent))// 防止一些意外情况。。
 	{
 		EnableWindow(hParent, TRUE);
 		return TRUE;
@@ -111,7 +111,7 @@ eStlInline BOOL DlgModelOnDestroy(HWND hWnd, HWND hParent, BOOL bParentShouldBeE
 		return FALSE;
 }
 
-// IDE�Ի��������Ļ������ݣ����������ı����ɴ�����
+// IDE对话框上下文基础数据，所有上下文必须由此派生
 struct EDLGCTX_BASE
 {
 	HWND hDlg;
@@ -122,14 +122,14 @@ struct EDLGCTX_BASE
 };
 
 /// <summary>
-/// ׼����ʾ��IDE�Ի���
-/// ����ע�ᴰ���ಢΪ�����Ľṹ�����ڴ档
-/// ģ������������Ľṹ����
+/// 准备显示易IDE对话框。
+/// 函数注册窗口类并为上下文结构分配内存。
+/// 模板参数：上下文结构类型
 /// </summary>
-/// <param name="pAtom">��ԭ�Ӿ�̬����ָ��</param>
-/// <param name="pszWndClass">��������</param>
-/// <param name="pfnWndProc">���ڹ���</param>
-/// <returns>����������ָ��</returns>
+/// <param name="pAtom">类原子静态变量指针</param>
+/// <param name="pszWndClass">窗口类名</param>
+/// <param name="pfnWndProc">窗口过程</param>
+/// <returns>返回上下文指针</returns>
 template<class T>
 T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 {
@@ -153,21 +153,21 @@ T* EIDEDlgPreShow(ATOM* pAtom, PCWSTR pszWndClass, WNDPROC pfnWndProc)
 }
 
 /// <summary>
-/// ��ʾ��IDE�Ի���
-/// ��������IDE�����ڣ�Ȼ�󴴽����ڲ�����ģ̬��Ϣѭ����
-/// ע�⣺��Ϣѭ������IsDialogMessageW��֧�ֵ�������
-/// �����򴰿ڷ���DM_GETDEFID��DM_SETDEFID��
-/// �ֱ���ΪWM_USER��WM_USER+1��
-/// Ӧ����ʹ��������ֵ�������Զ�����Ϣ��
+/// 显示易IDE对话框。
+/// 函数禁用IDE主窗口，然后创建窗口并启动模态消息循环。
+/// 注意：消息循环调用IsDialogMessageW以支持导航键，
+/// 它会向窗口发送DM_GETDEFID和DM_SETDEFID，
+/// 分别定义为WM_USER和WM_USER+1，
+/// 应避免使用这两个值来定义自定义消息。
 /// </summary>
-/// <param name="pszWndClass">������</param>
-/// <param name="pszCaption">����</param>
-/// <param name="x">x����ΪCW_USEDEFAULT����ʾ��IDE��������</param>
+/// <param name="pszWndClass">窗口类</param>
+/// <param name="pszCaption">标题</param>
+/// <param name="x">x，若为CW_USEDEFAULT则显示在IDE窗口中央</param>
 /// <param name="y">y</param>
-/// <param name="cx">����</param>
-/// <param name="cy">�߶�</param>
-/// <param name="dwStyle">������ʽ����Ϊ0��ʹ��WS_OVERLAPPEDWINDOW | WS_VISIBLE</param>
-/// <param name="pCtx">������</param>
+/// <param name="cx">宽度</param>
+/// <param name="cy">高度</param>
+/// <param name="dwStyle">窗口样式，若为0则使用WS_OVERLAPPEDWINDOW | WS_VISIBLE</param>
+/// <param name="pCtx">上下文</param>
 void EIDEDlgShow(PCWSTR pszWndClass, PCWSTR pszCaption, int x, int y, int cx, int cy, 
 	DWORD dwStyle, EDLGCTX_BASE* pCtx, HWND hParent = NULL);
 
@@ -188,20 +188,20 @@ LRESULT CALLBACK SubclassProc_TabRepair(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 
 #define SCID_TABREPAIR 20230524'02u
 /// <summary>
-/// Tab�������ƶ��޸�
+/// Tab键焦点移动修复
 /// </summary>
-/// <param name="hWnd">�ؼ����</param>
-/// <returns>�ɹ�����TRUE</returns>
+/// <param name="hWnd">控件句柄</param>
+/// <returns>成功返回TRUE</returns>
 eStlInline BOOL TabRepairInstall(HWND hWnd)
 {
 	return SetWindowSubclass(hWnd, SubclassProc_TabRepair, SCID_TABREPAIR, 0);
 }
 
 /// <summary>
-/// ȡ��Tab�������ƶ��޸�
+/// 取消Tab键焦点移动修复
 /// </summary>
-/// <param name="hWnd">�ؼ����</param>
-/// <returns>�ɹ�����TRUE</returns>
+/// <param name="hWnd">控件句柄</param>
+/// <returns>成功返回TRUE</returns>
 eStlInline BOOL TabRepairUnInstall(HWND hWnd)
 {
 	return RemoveWindowSubclass(hWnd, SubclassProc_TabRepair, SCID_TABREPAIR);
@@ -210,65 +210,65 @@ eStlInline BOOL TabRepairUnInstall(HWND hWnd)
 ESTL_EZDLG_NAMESPACE_END
 
 /// <summary>
-/// ����ͨ���¼���
-/// ��������֪ͨ�ؼ�ͨ���¼��Ĳ���
+/// 发送通用事件。
+/// 向易语言通知控件通用事件的产生
 /// </summary>
 bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam);
 
 /// <summary>
-/// ��¡Unicode�ַ�����
-/// �ڴ�����ͷ���new/delete[]����
+/// 克隆Unicode字符串。
+/// 内存分配释放由new/delete[]进行
 /// </summary>
-/// <param name="pszDst">Ŀ���ַ����������ΪNULL�����Ὣ���ͷ�</param>
-/// <param name="pszSrc">Դ�ַ���</param>
-/// <param name="cchSrc">�ַ���</param>
-/// <returns>���Ƶ��ַ���</returns>
+/// <param name="pszDst">目标字符串，如果不为NULL则函数会将其释放</param>
+/// <param name="pszSrc">源字符串</param>
+/// <param name="cchSrc">字符数</param>
+/// <returns>复制的字符数</returns>
 int DupStringForNewDeleteW(PWSTR& pszDst, PCWSTR pszSrc, int cchSrc = -1);
 
 /// <summary>
-/// ��¡ANSI�ַ�����
-/// �ڴ�����ͷ���new/delete[]����
+/// 克隆ANSI字符串。
+/// 内存分配释放由new/delete[]进行
 /// </summary>
-/// <param name="pszDst">Ŀ���ַ����������ΪNULL�����Ὣ���ͷ�</param>
-/// <param name="pszSrc">Դ�ַ���</param>
-/// <param name="cchSrc">�ַ���</param>
-/// <returns>���Ƶ��ַ���</returns>
+/// <param name="pszDst">目标字符串，如果不为NULL则函数会将其释放</param>
+/// <param name="pszSrc">源字符串</param>
+/// <param name="cchSrc">字符数</param>
+/// <returns>复制的字符数</returns>
 int DupStringForNewDeleteA(PSTR& pszDst, PCSTR pszSrc, int cchSrc = -1);
 
 SIZE_T DupStreamForNewDelete(BYTE*& pDst, PCBYTE pSrc, SIZE_T cbSrc);
 
 /// <summary>
-/// ȡĬ������
+/// 取默认字体
 /// </summary>
-/// <param name="hWnd">�ؼ����ھ��</param>
-/// <returns>Ĭ������LOGFONTA�ṹ</returns>
+/// <param name="hWnd">控件窗口句柄</param>
+/// <returns>默认字体LOGFONTA结构</returns>
 eStlInline LOGFONTA GetEDefLOGFONT(HWND hWnd)
 {
 	LOGFONTA lf{};
 	HDC hDC = GetDC(hWnd);
 	lf.lfHeight = -MulDiv(9, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-	lf.lfWeight = 400;// Ȩ����Ĭ�ϣ���Ȼѡ�����ʱ����ܻ�ֱ��ת�Ƶ�ϸ����
-	strcpy(lf.lfFaceName, "����");
+	lf.lfWeight = 400;// 权重设默认，不然选字体的时候可能会直接转移到细体上
+	strcpy(lf.lfFaceName, "宋体");
 	lf.lfCharSet = GB2312_CHARSET;
 	ReleaseDC(hWnd, hDC);
 	return lf;
 }
  
 /// <summary>
-/// �����
+/// 输入框
 /// </summary>
-/// <param name="ppszInput">������������ָ�룬��ʹ��delete[]�ͷ�</param>
-/// <param name="pszInitContent">�༭���ʼ����</param>
-/// <param name="pszCaption">����</param>
-/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
-BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent = NULL, PCWSTR pszCaption = L"�������ı���");
+/// <param name="ppszInput">接收输入内容指针，需使用delete[]释放</param>
+/// <param name="pszInitContent">编辑框初始内容</param>
+/// <param name="pszCaption">标题</param>
+/// <returns>成功返回TRUE，失败返回FALSE</returns>
+BOOL IntputBox(PWSTR* ppszInput, PCWSTR pszInitContent = NULL, PCWSTR pszCaption = L"请输入文本：");
 
 BOOL ImageListSelectDlg(HIMAGELIST hImageList, int idxInit, int* pidxSel, HWND hParent = NULL);
 
 /// <summary>
-/// �ؼ�ʵ���ࣺ���໯������
+/// 控件实用类：子类化管理器
 /// </summary>
-/// <typeparam name="TC">�ؼ��࣬����ʵ��GetHWND()���������ؿؼ����ھ��</typeparam>
+/// <typeparam name="TC">控件类，必须实现GetHWND()方法，返回控件窗口句柄</typeparam>
 template<class TC>
 class CSubclassMgr
 {
@@ -286,14 +286,14 @@ public:
 	CSubclassMgr() = delete;
 
 	/// <summary>
-	/// ����
+	/// 构造
 	/// </summary>
-	/// <param name="ParentInfo">���������ü�����ϣ��</param>
-	/// <param name="CtrlInfo">�ؼ����ؼ����ϣ��</param>
-	/// <param name="pfnParentSubclass">���������໯����</param>
-	/// <param name="pfnCtrlSubclass">�ؼ����໯����</param>
-	/// <param name="uIDParent">���������໯ID</param>
-	/// <param name="uIDCtrl">�ؼ����໯ID</param>
+	/// <param name="ParentInfo">父窗口引用计数哈希表</param>
+	/// <param name="CtrlInfo">控件到控件类哈希表</param>
+	/// <param name="pfnParentSubclass">父窗口子类化过程</param>
+	/// <param name="pfnCtrlSubclass">控件子类化过程</param>
+	/// <param name="uIDParent">父窗口子类化ID</param>
+	/// <param name="uIDCtrl">控件子类化ID</param>
 	CSubclassMgr(TParentInfo& ParentInfo, TCtrlInfo& CtrlInfo,
 		SUBCLASSPROC pfnParentSubclass, SUBCLASSPROC pfnCtrlSubclass, UINT_PTR uIDParent, UINT_PTR uIDCtrl) :
 		m_ParentInfo(ParentInfo), m_CtrlInfo(CtrlInfo),
@@ -302,9 +302,9 @@ public:
 	~CSubclassMgr() = default;
 
 	/// <summary>
-	/// �ؼ��Ѵ���
+	/// 控件已创建
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	eStlInline void OnCtrlCreate(TC* pClass)
 	{
 		OnCtrlCreate2(pClass);
@@ -312,10 +312,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ؼ��Ѵ�����
-	/// �˷������Կؼ��������໯�������ڷǱ�׼�ؼ�
+	/// 控件已创建。
+	/// 此方法不对控件进行子类化，可用于非标准控件
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	void OnCtrlCreate2(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
@@ -332,10 +332,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ؼ��ĸ������ѱ��ı䡣
-	/// ԭ�ȵĸ��������ò���ȥ������ΪWM_NOTIFY���Ƿ�������ʱ�ĸ����ڣ�WM_COMMAND���Ƿ���ֱ�Ӹ�����
+	/// 控件的父窗口已被改变。
+	/// 原先的父窗口引用不能去掉，因为WM_NOTIFY总是发给创建时的父窗口，WM_COMMAND总是发给直接父窗口
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	void OnParentChanged(TC* pClass)
 	{
 		HWND hParent = GetParent(pClass->GetHWND());
@@ -349,9 +349,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ؼ���������
+	/// 控件将被销毁
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	void OnCtrlDestroy(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
@@ -386,7 +386,7 @@ public:
 	}
 
 	/// <summary>
-	/// �����ڽ�������
+	/// 父窗口将被销毁
 	/// </summary>
 	/// <param name="hParent"></param>
 	void OnParentDestroy(HWND hParent)
@@ -398,10 +398,10 @@ public:
 };
 
 /// <summary>
-/// �ؼ�ʵ���ࣺ���໯��������
-/// ���಻ִ�и��������໯����
+/// 控件实用类：子类化管理器。
+/// 本类不执行父窗口子类化操作
 /// </summary>
-/// <typeparam name="TC">�ؼ��࣬����ʵ��GetHWND()���������ؿؼ����ھ��</typeparam>
+/// <typeparam name="TC">控件类，必须实现GetHWND()方法，返回控件窗口句柄</typeparam>
 template<class TC>
 class CSubclassMgrSimple
 {
@@ -414,20 +414,20 @@ private:
 public:
 	CSubclassMgrSimple() = delete;
 	/// <summary>
-	/// ����
+	/// 构造
 	/// </summary>
-	/// <param name="CtrlInfo">�ؼ����ؼ����ϣ��</param>
-	/// <param name="pfnCtrlSubclass">�ؼ����໯����</param>
-	/// <param name="uIDCtrl">�ؼ����໯ID</param>
+	/// <param name="CtrlInfo">控件到控件类哈希表</param>
+	/// <param name="pfnCtrlSubclass">控件子类化过程</param>
+	/// <param name="uIDCtrl">控件子类化ID</param>
 	CSubclassMgrSimple(TCtrlInfo& CtrlInfo, SUBCLASSPROC pfnCtrlSubclass, UINT_PTR uIDCtrl) :
 		m_CtrlInfo(CtrlInfo), m_pfnCtrlSubclass(pfnCtrlSubclass), m_uIDCtrl(uIDCtrl) {}
 
 	~CSubclassMgrSimple() = default;
 
 	/// <summary>
-	/// �ؼ��Ѵ���
+	/// 控件已创建
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	eStlInline void OnCtrlCreate(TC* pClass)
 	{
 		OnCtrlCreate2(pClass);
@@ -435,10 +435,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ؼ��Ѵ�����
-	/// �˷������Կؼ��������໯�������ڷǱ�׼�ؼ�
+	/// 控件已创建。
+	/// 此方法不对控件进行子类化，可用于非标准控件
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	eStlInline void OnCtrlCreate2(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
@@ -446,9 +446,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ؼ���������
+	/// 控件将被销毁
 	/// </summary>
-	/// <param name="pClass">�ؼ���</param>
+	/// <param name="pClass">控件类</param>
 	eStlInline void OnCtrlDestroy(TC* pClass)
 	{
 		HWND hWnd = pClass->GetHWND();
@@ -508,12 +508,12 @@ void SetFrameType(HWND hWnd, int iFrame);
 int GetFrameType(HWND hWnd);
 
 /// <summary>
-/// �ֽ�����λͼ�����
-/// NAS_GET_HBITMAP�е����⣬��͸�����ض���ɫ�Ҳûȥϸ�о�����������֪��������ԭ��ؼ�������ôд��
+/// 字节流到位图句柄。
+/// NAS_GET_HBITMAP有点问题，半透明像素都有色差，也没去细研究。。。。不知道吴涛在原版控件里是怎么写的
 /// </summary>
-/// <param name="pData">�ֽ���</param>
-/// <param name="cbPic">����</param>
-/// <returns>�ɹ�����λͼ�����ʧ�ܷ���NULL</returns>
+/// <param name="pData">字节流</param>
+/// <param name="cbPic">长度</param>
+/// <returns>成功返回位图句柄，失败返回NULL</returns>
 HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic);
 
 #define ESTL_CLRPICKER_NAMESPACE_BEGIN namespace ClrPicker {
@@ -541,7 +541,7 @@ public:
 	virtual ~CCtrlWnd() {}
 
 	/// <summary>
-	/// �ػ�
+	/// 重画
 	/// </summary>
 	eStlInline void Redraw()
 	{
@@ -550,7 +550,7 @@ public:
 	}
 
 	/// <summary>
-	/// ǿ�����º���ǿͻ���
+	/// 强制重新核算非客户区
 	/// </summary>
 	eStlInline void FrameChanged()
 	{
@@ -558,16 +558,16 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ���ھ��
+	/// 取窗口句柄
 	/// </summary>
-	/// <returns>���ھ��</returns>
+	/// <returns>窗口句柄</returns>
 	eStlInline HWND GetHWND() const
 	{
 		return m_hWnd;
 	}
 
 	/// <summary>
-	/// ȡ�״δ���������
+	/// 取首次创建父窗口
 	/// </summary>
 	eStlInline HWND GetHParent() const
 	{
@@ -580,44 +580,44 @@ public:
 	}
 };
 
-// �ؼ���������
+// 控件基础数据
 /*
-* �汾1���ݲ��֣�
-* ECTRLINFO�ṹ
-* ͼƬ
-* �ı�
+* 版本1数据布局：
+* ECTRLINFO结构
+* 图片
+* 文本
 */
 #define DATA_VER_BASE_1	1
 struct ECTRLINFO
 {
-	int iVer;				// �汾��
-	DWORD dwReserved;		// ����
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
 
-	LOGFONTA Font;			// ����
-	int cchText;			// �ı����ȣ������ڱ�����Ϣ
-	SIZE_T cbPic;			// ͼƬ�ֽ�������
-	int iFrame;				// �߿�
+	LOGFONTA Font;			// 字体
+	int cchText;			// 文本长度，仅用于保存信息
+	SIZE_T cbPic;			// 图片字节流长度
+	int iFrame;				// 边框
 };
-// �ؼ�����
-// ����ֱ��ʵ��������
+// 控件基类
+// 请勿直接实例化此类
 class CCtrlBase :public CCtrlWnd
 {
 protected:
-	// ��ϵͳ���
+	// 易系统相关
 	DWORD m_dwWinFormID = 0;
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
 	UINT m_uID = 0;
 
-	BOOL m_bGpDecodePicInDesignMode = FALSE;// ���ģʽ���Ƿ���GDI+����ͼƬ
+	BOOL m_bGpDecodePicInDesignMode = FALSE;// 设计模式下是否用GDI+解码图片
 
-	HBITMAP m_hbmPic = NULL;// λͼ���
-	HFONT m_hFont = NULL;// ������
-	ECTRLINFO m_Info0{};// ��Ϣ
+	HBITMAP m_hbmPic = NULL;// 位图句柄
+	HFONT m_hFont = NULL;// 字体句柄
+	ECTRLINFO m_Info0{};// 信息
 
-	PSTR m_pszTextA = NULL;// ����A
-	PWSTR m_pszTextW = NULL;// ����W
-	void* m_pPicData = NULL;// ͼƬ����
+	PSTR m_pszTextA = NULL;// 标题A
+	PWSTR m_pszTextW = NULL;// 标题W
+	void* m_pPicData = NULL;// 图片数据
 
 	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent);
 
@@ -634,10 +634,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ñ���A
+	/// 置标题A
 	/// </summary>
-	/// <param name="pszText">�ı�ָ��</param>
-	/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
+	/// <param name="pszText">文本指针</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetTextA(PCSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -653,10 +653,10 @@ public:
 	}
 
 	/// <summary>
-	/// �ñ���W
+	/// 置标题W
 	/// </summary>
-	/// <param name="pszText">�ı�ָ��</param>
-	/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
+	/// <param name="pszText">文本指针</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetTextW(PCWSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -672,11 +672,11 @@ public:
 	}
 
 	/// <summary>
-	/// �ñ���W��
-	/// �˺����������ַ���
+	/// 置标题W。
+	/// 此函数不复制字符串
 	/// </summary>
-	/// <param name="pszText">�ı�ָ�룬��ָ���ں������ý������ؼ���������</param>
-	/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
+	/// <param name="pszText">文本指针，此指针在函数调用结束后归控件对象所有</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetTextNoCopyW(PWSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -693,52 +693,54 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ�ı�W��
-	/// ���ص��ı�Ϊ�����ڲ����У������ͷ�
+	/// 取文本W。
+	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
-	/// <returns>�ı�ָ��</returns>
+	/// <returns>文本指针</returns>
 	PWSTR GetTextW(SIZE_T* pcb = NULL);
 
 	/// <summary>
-	/// ȡ�ı�A��
-	/// ���ص��ı�Ϊ�����ڲ����У������ͷ�
+	/// 取文本A。
+	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
-	/// <returns>�ı�ָ��</returns>
+	/// <returns>文本指针</returns>
 	eStlInline PCSTR GetTextA()
 	{
 		if (!m_bInDesignMode)
 		{
 			int cch = GetWindowTextLengthA(m_hWnd);
+			delete[] m_pszTextA;
 			if (cch)
 			{
-				delete[] m_pszTextA;
 				m_pszTextA = new CHAR[cch + 1];
 				GetWindowTextA(m_hWnd, m_pszTextA, cch + 1);
 			}
+			else
+				m_pszTextA = NULL;
 		}
 
 		return m_pszTextA;
 	}
 
 	/// <summary>
-	/// ��ͼƬ
+	/// 置图片
 	/// </summary>
-	/// <param name="pPic">ͼƬ����</param>
-	/// <param name="cbSize">ͼƬ���ݳ���</param>
+	/// <param name="pPic">图片数据</param>
+	/// <param name="cbSize">图片数据长度</param>
 	void SetPic(void* pPic, int cbSize);
 
 	/// <summary>
-	/// ȡͼƬ��
-	/// ���ص��ı�Ϊ�����ڲ����У������ͷ�
+	/// 取图片。
+	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
-	/// <param name="pcb">ָ�����ͼƬ���ݳ��ȱ�����ָ��</param>
-	/// <returns>ͼƬ����ָ��</returns>
+	/// <param name="pcb">指向接收图片数据长度变量的指针</param>
+	/// <returns>图片数据指针</returns>
 	BYTE* GetPic(int* pcb);
 
 	/// <summary>
-	/// ������
+	/// 置字体
 	/// </summary>
-	/// <param name="plf">LOGFONTAָ��</param>
+	/// <param name="plf">LOGFONTA指针</param>
 	eStlInline void SetFont(LOGFONTA* plf)
 	{
 		if (m_hFont)
@@ -750,9 +752,9 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����
+	/// 取字体
 	/// </summary>
-	/// <returns>LOGFONTAָ�룬Ϊӭ�������Իص��������Ͷ���ΪBYTE*����Ҫ�ͷš�</returns>
+	/// <returns>LOGFONTA指针，为迎合易语言回调参数类型而设为BYTE*，不要释放。</returns>
 	eStlInline BYTE* GetFont()
 	{
 		if (!m_bInDesignMode)
@@ -764,9 +766,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ñ߿�
+	/// 置边框
 	/// </summary>
-	/// <param name="iFrame">�߿�</param>
+	/// <param name="iFrame">边框</param>
 	eStlInline void SetFrame(int iFrame)
 	{
 		m_Info0.iFrame = iFrame;
@@ -775,9 +777,9 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ�߿�
+	/// 取边框
 	/// </summary>
-	/// <returns>�߿�</returns>
+	/// <returns>边框</returns>
 	eStlInline int GetFrame() const
 	{
 		if (m_bInDesignMode)
@@ -787,46 +789,46 @@ public:
 	}
 
 	/// <summary>
-	/// ƽ�滯�������ݡ�
-	/// ��չ����Ӧ����󸽼�
+	/// 平面化基类数据。
+	/// 扩展数据应在其后附加
 	/// </summary>
 	/// <returns></returns>
 	HGLOBAL FlattenInfoBase0(SIZE_T cbExtra = 0u, SIZE_T* pcbBaseData = NULL);
 
 	/// <summary>
-	/// ƽ�滯���ݡ�
-	/// �����������Է����������ԡ�
-	/// �ڴ沼�ֲμ��ļ��ײ����ݰ汾���崦
+	/// 平面化数据。
+	/// 用于向易语言返回所有属性。
+	/// 内存布局参见文件首部数据版本定义处
 	/// </summary>
 	/// <returns></returns>
 	virtual HGLOBAL FlattenInfo() { assert(FALSE); return NULL; }
 };
 
-// �򵥿ؼ���������
+// 简单控件基础数据
 /*
-* �汾1���ݲ��֣�
-* ECTRLINFOSMP�ṹ
+* 版本1数据布局：
+* ECTRLINFOSMP结构
 */
 #define DATA_VER_BASE_SIMPLE_1	1
 struct ECTRLINFOSMP
 {
-	int iVer;				// �汾��
-	DWORD dwReserved;		// ����
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
 
-	int iFrame;				// �߿�
+	int iFrame;				// 边框
 };
-// �򵥿ؼ�����
-// ����ֱ��ʵ��������
+// 简单控件基类
+// 请勿直接实例化此类
 class CCtrlBaseSimple :public CCtrlWnd
 {
 protected:
-	// ��ϵͳ���
+	// 易系统相关
 	DWORD m_dwWinFormID = 0;
 	DWORD m_dwUnitID = 0;
 	BOOL m_bInDesignMode = FALSE;
 	UINT m_uID = 0;
 
-	ECTRLINFOSMP m_Info0{};// ��Ϣ
+	ECTRLINFOSMP m_Info0{};// 信息
 
 	CCtrlBaseSimple() = default;
 	~CCtrlBaseSimple() = default;
@@ -834,16 +836,16 @@ protected:
 	SIZE_T InitBase0(LPVOID pAllData, int cbData, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID, UINT uID, HWND hParent);
 
 	/// <summary>
-	/// ƽ�滯�������ݡ�
-	/// ��չ����Ӧ����󸽼�
+	/// 平面化基类数据。
+	/// 扩展数据应在其后附加
 	/// </summary>
 	/// <returns></returns>
 	HGLOBAL FlattenInfoBase0(SIZE_T cbExtra = 0u, SIZE_T* pcbBaseData = NULL);
 
 	/// <summary>
-	/// �ñ߿�
+	/// 置边框
 	/// </summary>
-	/// <param name="iFrame">�߿�</param>
+	/// <param name="iFrame">边框</param>
 	eStlInline void SetFrame(int iFrame)
 	{
 		m_Info0.iFrame = iFrame;
@@ -852,9 +854,9 @@ protected:
 	}
 
 	/// <summary>
-	/// ȡ�߿�
+	/// 取边框
 	/// </summary>
-	/// <returns>�߿�</returns>
+	/// <returns>边框</returns>
 	eStlInline int GetFrame() const
 	{
 		if (m_bInDesignMode)
@@ -864,50 +866,50 @@ protected:
 	}
 
 	/// <summary>
-	/// ƽ�滯���ݡ�
-	/// �����������Է����������ԡ�
-	/// �ڴ沼�ֲμ��ļ��ײ����ݰ汾���崦
+	/// 平面化数据。
+	/// 用于向易语言返回所有属性。
+	/// 内存布局参见文件首部数据版本定义处
 	/// </summary>
 	/// <returns></returns>
 	virtual HGLOBAL FlattenInfo() { assert(FALSE); return NULL; }
 };
 ESTL_NAMESPACE_END
 
-// �����ؼ��ӿڲ�������
+// 创建控件接口参数定义
 #define STD_ECTRL_CREATE_ARGS \
 	LPVOID pAllData, int cbData, DWORD dwStyle, int x, int y, int cx, int cy, \
 	HWND hParent, UINT nID, BOOL bInDesignMode, DWORD dwWinFormID, DWORD dwUnitID
-// �����ؼ��ӿڲ���
+// 创建控件接口参数
 #define STD_ECTRL_CREATE_REAL_ARGS \
 	pAllData, cbData, dwStyle, x, y, cx, cy, \
 	hParent, nID, bInDesignMode, dwWinFormID, dwUnitID
-// �����Դ����ؼ��ӿڲ������壬����������в�ͬ
+// 易语言创建控件接口参数定义，跟上面的略有不同
 #define STD_EINTF_CREATE_ARGS \
 	LPBYTE pAllData, INT cbData, DWORD dwStyle, HWND hParent, UINT nID, \
 	HMENU hMenu, INT x, INT y, INT cx, INT cy, DWORD dwWinFormID, DWORD dwUnitID, HWND hDesignWnd, BOOL bInDesignMode
-// �������໯�����������Ա
+// 声明子类化管理器所需成员
 #define SUBCLASS_MGR_DECL(Class) \
 	public: \
 		static ::std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
 		static ::std::unordered_map<HWND, int> m_ParentSCInfo; \
 	private: \
 		static ::elibstl::CSubclassMgr<Class> m_SM;
-// ��ʼ�����໯�����������Ա
+// 初始化子类化管理器所需成员
 #define SUBCLASS_MGR_INIT(Class, uIDParent, uIDCtrl) \
 	::std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
 	::std::unordered_map<HWND, int> Class::m_ParentSCInfo{}; \
 	::elibstl::CSubclassMgr<Class> Class::m_SM{ m_ParentSCInfo,m_CtrlSCInfo,ParentSubclassProc,CtrlSubclassProc,uIDParent,uIDCtrl };
-// ���������໯�����������Ա
+// 声明简单子类化管理器所需成员
 #define SUBCLASS_SMP_MGR_DECL(Class) \
 	public: \
 		static ::std::unordered_map<HWND, Class*> m_CtrlSCInfo; \
 	private: \
 		static ::elibstl::CSubclassMgrSimple<Class> m_SM;
-// ��ʼ�������໯�����������Ա
+// 初始化简单子类化管理器所需成员
 #define SUBCLASS_SMP_MGR_INIT(Class, uIDCtrl) \
 	::std::unordered_map<HWND, Class*> Class::m_CtrlSCInfo{}; \
 	::elibstl::CSubclassMgrSimple<Class> Class::m_SM{ m_CtrlSCInfo,CtrlSubclassProc,uIDCtrl };
-// ��鸸�����Ƿ�ı䣬����WM_SHOWWINDOW�£��ؼ���������ʱ�����������еĸ����ھ��ʵ�����Ƕ������ھ����WM_SHOWWINDOWǰ�ᱻ��Ϊ��������
+// 检查父窗口是否改变，放在WM_SHOWWINDOW下，控件在容器中时，创建参数中的父窗口句柄实际上是顶级窗口句柄，WM_SHOWWINDOW前会被改为容器窗口
 #define CHECK_PARENT_CHANGE \
 	if (!p->m_bParentChanged) \
 		if (GetParent(hWnd) != p->m_hParent) \
@@ -922,7 +924,7 @@ ESTL_NAMESPACE_END
 			if (ESTLPRIV_cch_##VarName##___) \
 			{ \
 				VarName = (PWSTR)_malloca((ESTLPRIV_cch_##VarName##___ + 1)*sizeof(WCHAR)); \
-				assert(VarName);/*��������*/ \
+				assert(VarName);/*消除警告*/ \
 				GetWindowTextW((hWnd), VarName, ESTLPRIV_cch_##VarName##___ + 1); \
 			} \
 			else \
@@ -944,7 +946,7 @@ ESTL_NAMESPACE_END
 				else \
 					ESTLPRIV_QDS_cch_##VarName##___ = cchSrc; \
 				VarName = (PWSTR)_malloca((cchSrc + 1) * sizeof(WCHAR)); \
-				assert(VarName);/*��������*/ \
+				assert(VarName);/*消除警告*/ \
 				wcsncpy(VarName, pszSrc, cchSrc); \
 				*(VarName + cchSrc) = L'\0'; \
 			} \

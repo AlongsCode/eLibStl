@@ -1,4 +1,4 @@
-#include "EcontrolHelp.h"
+ï»¿#include "EcontrolHelp.h"
 #pragma comment(lib, "comctl32.lib")
 
 HMODULE g_elibstl_hModule = NULL;
@@ -11,22 +11,22 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	{
 		return;
 	}
-	HDC hdc;			//Éè±¸ÃèÊö±í
+	HDC hdc;			//è®¾å¤‡æè¿°è¡¨
 	int ibits;
-	WORD wbitcount;     //µ±Ç°ÏÔÊ¾·Ö±æÂÊÏÂÃ¿¸öÏñËØËùÕ¼×Ö½ÚÊı
+	WORD wbitcount;     //å½“å‰æ˜¾ç¤ºåˆ†è¾¨ç‡ä¸‹æ¯ä¸ªåƒç´ æ‰€å å­—èŠ‚æ•°
 
-	//Î»Í¼ÖĞÃ¿¸öÏñËØËùÕ¼×Ö½ÚÊı£¬¶¨Òåµ÷É«°å´óĞ¡£¬Î»Í¼ÖĞÏñËØ×Ö½Ú´óĞ¡£¬Î»Í¼ÎÄ¼ş´óĞ¡ £¬Ğ´ÈëÎÄ¼ş×Ö½ÚÊı
+	//ä½å›¾ä¸­æ¯ä¸ªåƒç´ æ‰€å å­—èŠ‚æ•°ï¼Œå®šä¹‰è°ƒè‰²æ¿å¤§å°ï¼Œä½å›¾ä¸­åƒç´ å­—èŠ‚å¤§å°ï¼Œä½å›¾æ–‡ä»¶å¤§å° ï¼Œå†™å…¥æ–‡ä»¶å­—èŠ‚æ•°
 	DWORD dwpalettesize = 0, dwbmbitssize, dwdibsize;
 
-	BITMAP bitmap;				//Î»Í¼ÊôĞÔ½á¹¹
-	BITMAPFILEHEADER bmfhdr;	//Î»Í¼ÎÄ¼şÍ·½á¹¹
-	BITMAPINFOHEADER bi;		//Î»Í¼ĞÅÏ¢Í·½á¹¹
-	LPBITMAPINFOHEADER lpbi;	//Ö¸ÏòÎ»Í¼ĞÅÏ¢Í·½á¹¹
+	BITMAP bitmap;				//ä½å›¾å±æ€§ç»“æ„
+	BITMAPFILEHEADER bmfhdr;	//ä½å›¾æ–‡ä»¶å¤´ç»“æ„
+	BITMAPINFOHEADER bi;		//ä½å›¾ä¿¡æ¯å¤´ç»“æ„
+	LPBITMAPINFOHEADER lpbi;	//æŒ‡å‘ä½å›¾ä¿¡æ¯å¤´ç»“æ„
 
-	//¶¨ÒåÎÄ¼ş£¬·ÖÅäÄÚ´æ¾ä±ú£¬µ÷É«°å¾ä±ú
+	//å®šä¹‰æ–‡ä»¶ï¼Œåˆ†é…å†…å­˜å¥æŸ„ï¼Œè°ƒè‰²æ¿å¥æŸ„
 	HANDLE hdib, hpal, holdpal = NULL;
 
-	//¼ÆËãÎ»Í¼ÎÄ¼şÃ¿¸öÏñËØËùÕ¼×Ö½ÚÊı
+	//è®¡ç®—ä½å›¾æ–‡ä»¶æ¯ä¸ªåƒç´ æ‰€å å­—èŠ‚æ•°
 	hdc = CreateDCW(L"display", NULL, NULL, NULL);
 	ibits = GetDeviceCaps(hdc, BITSPIXEL) * GetDeviceCaps(hdc, PLANES);
 	DeleteDC(hdc);
@@ -44,11 +44,11 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	else
 		wbitcount = 32;
 
-	//¼ÆËãµ÷É«°å´óĞ¡
+	//è®¡ç®—è°ƒè‰²æ¿å¤§å°
 	if (wbitcount <= 8)
 		dwpalettesize = (1 << wbitcount) * sizeof(RGBQUAD);
 
-	//ÉèÖÃÎ»Í¼ĞÅÏ¢Í·½á¹¹
+	//è®¾ç½®ä½å›¾ä¿¡æ¯å¤´ç»“æ„
 	GetObject(hBitmap, sizeof(BITMAP), (LPSTR)&bitmap);
 	bi.biSize = sizeof(BITMAPINFOHEADER);
 	bi.biWidth = bitmap.bmWidth;
@@ -63,7 +63,7 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	bi.biClrImportant = 0;
 
 	dwbmbitssize = ((bitmap.bmWidth * wbitcount + 31) / 32) * 4 * bitmap.bmHeight;
-	//ÎªÎ»Í¼ÄÚÈİ·ÖÅäÄÚ´æ
+	//ä¸ºä½å›¾å†…å®¹åˆ†é…å†…å­˜
 	hdib = GlobalAlloc(GHND, dwbmbitssize + dwpalettesize + sizeof(BITMAPINFOHEADER));
 	if (!hdib)
 		return;
@@ -75,7 +75,7 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	}
 	*lpbi = bi;
 
-	// ´¦Àíµ÷É«°å 
+	// å¤„ç†è°ƒè‰²æ¿ 
 	hpal = GetStockObject(DEFAULT_PALETTE);
 	if (hpal)
 	{
@@ -84,10 +84,10 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 		RealizePalette(hdc);
 	}
 
-	// »ñÈ¡¸Ãµ÷É«°åÏÂĞÂµÄÏñËØÖµ
+	// è·å–è¯¥è°ƒè‰²æ¿ä¸‹æ–°çš„åƒç´ å€¼
 	GetDIBits(hdc, hBitmap, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER) + dwpalettesize, (BITMAPINFO*)lpbi, DIB_RGB_COLORS);
 
-	//»Ö¸´µ÷É«°å 
+	//æ¢å¤è°ƒè‰²æ¿ 
 	if (holdpal)
 	{
 		SelectPalette(hdc, (HPALETTE)holdpal, true);
@@ -95,7 +95,7 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 		::ReleaseDC(NULL, hdc);
 	}
 
-	// ÉèÖÃÎ»Í¼ÎÄ¼şÍ·
+	// è®¾ç½®ä½å›¾æ–‡ä»¶å¤´
 	bmfhdr.bfType = 0x4d42; // "bm"
 	dwdibsize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) +
 		dwpalettesize + dwbmbitssize;
@@ -107,7 +107,7 @@ void GetDataFromHBIT(HBITMAP hBitmap, std::vector<unsigned char>& pData)
 	std::vector<unsigned char> head((unsigned char*)&bmfhdr, (unsigned char*)&bmfhdr + sizeof(BITMAPFILEHEADER));
 	std::vector<unsigned char> body((unsigned char*)lpbi, (unsigned char*)lpbi + dwdibsize);
 
-	//Çå³ı 
+	//æ¸…é™¤ 
 	GlobalUnlock(hdib);
 	GlobalFree(hdib);
 	pData.reserve(head.size() + body.size());
@@ -201,7 +201,7 @@ static LRESULT CALLBACK WndProc_InputBoxEdit(HWND hWnd, UINT uMsg, WPARAM wParam
 	if (uMsg == WM_KEYDOWN)
 		if (wParam == 'A')
 			if (GetKeyState(VK_CONTROL) & 0x80000000)
-				SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + AÈ«Ñ¡
+				SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + Aå…¨é€‰
 
 	return CallWindowProcW((WNDPROC)GetPropW(hWnd, PROP_IDEINPUTBOXEDITPROC), hWnd, uMsg, wParam, lParam);
 }
@@ -260,8 +260,8 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			HANDLE hFile = CreateFileW(szPath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 			if (hFile == INVALID_HANDLE_VALUE)
 			{
-				wsprintfW(szPath, L"´ò¿ªÎÄ¼şÊ§°Ü£¡\n´íÎóÂë£º0x%08X", GetLastError());
-				MessageBoxW(hWnd, szPath, L"´íÎó", MB_ICONERROR);
+				wsprintfW(szPath, L"æ‰“å¼€æ–‡ä»¶å¤±è´¥ï¼\né”™è¯¯ç ï¼š0x%08X", GetLastError());
+				MessageBoxW(hWnd, szPath, L"é”™è¯¯", MB_ICONERROR);
 				return 0;
 			}
 
@@ -269,7 +269,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			GetFileSizeEx(hFile, (LARGE_INTEGER*)&ullSize);
 			if (ullSize >> 32)
 			{
-				MessageBoxW(hWnd, L"ÎÄ¼ş¹ı´ó£¡", L"´íÎó", MB_ICONERROR);
+				MessageBoxW(hWnd, L"æ–‡ä»¶è¿‡å¤§ï¼", L"é”™è¯¯", MB_ICONERROR);
 				CloseHandle(hFile);
 				return 0;
 			}
@@ -290,15 +290,15 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			{
 				uExceptionCode = GetExceptionCode();
 				CloseHandle(hFile);
-				wsprintfW(szPath, L"·ÖÅä%u×Ö½ÚÄÚ´æÊ§°Ü£¡\nÒì³£´úÂë£º0x%08X", dwSize + sizeof(WCHAR), uExceptionCode);
-				MessageBoxW(hWnd, szPath, L"´íÎó", MB_ICONERROR);
+				wsprintfW(szPath, L"åˆ†é…%uå­—èŠ‚å†…å­˜å¤±è´¥ï¼\nå¼‚å¸¸ä»£ç ï¼š0x%08X", dwSize + sizeof(WCHAR), uExceptionCode);
+				MessageBoxW(hWnd, szPath, L"é”™è¯¯", MB_ICONERROR);
 				return 0;
 			}
-			assert(p);// ÏûµôÏÂÃæÄÇ¸ö¾¯¸æ
+			assert(p);// æ¶ˆæ‰ä¸‹é¢é‚£ä¸ªè­¦å‘Š
 			DWORD dwRead;
 			BOOL b = ReadFile(hFile, p, dwSize, &dwRead, NULL);
 			CloseHandle(hFile);
-			if (b)// Ïû³ı¾¯¸æ
+			if (b)// æ¶ˆé™¤è­¦å‘Š
 			{
 				*(p + dwSize / sizeof(WCHAR)) = L'\0';
 				SetWindowTextW(GetDlgItem(hWnd, IDC_ED_INPUT), p);
@@ -351,7 +351,7 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (EDLGCTX_IDEINPUTBOX*)((CREATESTRUCTW*)lParam)->lpCreateParams;
 		SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
-		p->hFont = EzFont(L"Î¢ÈíÑÅºÚ", 10);
+		p->hFont = EzFont(L"å¾®è½¯é›…é»‘", 10);
 		SendMessageW(hWnd, WM_SETFONT, (WPARAM)p->hFont, FALSE);
 		HWND hCtrl;
 		hCtrl = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, p->pszInitContent, WS_CHILD | WS_VISIBLE | ES_MULTILINE,
@@ -359,13 +359,13 @@ static LRESULT CALLBACK WndProc_InputBox(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		SetPropW(hCtrl, PROP_IDEINPUTBOXEDITPROC, (HANDLE)SetWindowLongPtrW(hCtrl, GWLP_WNDPROC, (LONG_PTR)WndProc_InputBoxEdit));
 		ShowScrollBar(hCtrl, SB_VERT, TRUE);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"µ¼ÈëÎÄ±¾(&I)", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å¯¼å…¥æ–‡æœ¬(&I)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn1, cyBtn, hWnd, (HMENU)IDC_BT_READIN, g_elibstl_hModule, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È·¶¨(&O)", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"ç¡®å®š(&O)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_OK, g_elibstl_hModule, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È¡Ïû(&C)", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å–æ¶ˆ(&C)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn2, cyBtn, hWnd, (HMENU)IDC_BT_CANCEL, g_elibstl_hModule, NULL);
 
 		EzDlg::SetFontForWndAndCtrl(hWnd, p->hFont, FALSE);
@@ -444,7 +444,7 @@ static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		if (pnmhdr->idFrom != IDC_LV_IMAGE)
 			break;
 #pragma warning (push)
-#pragma warning (disable:26454)// ¡°ËãÊõÒç³ö¡±
+#pragma warning (disable:26454)// â€œç®—æœ¯æº¢å‡ºâ€
 		switch (pnmhdr->code)
 		{
 		case LVN_GETDISPINFOW:
@@ -457,7 +457,7 @@ static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 			wcsncpy(pnmldi->item.pszText, sz, pnmldi->item.cchTextMax);
 			*(pnmldi->item.pszText + pnmldi->item.cchTextMax) = L'\0';
 		}
-		return 0;// Ã»ÓĞ·µ»ØÖµ
+		return 0;// æ²¡æœ‰è¿”å›å€¼
 
 		case NM_DBLCLK:
 		{
@@ -470,7 +470,7 @@ static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 				EzDlg::EIDEDlgEnd(p);
 			}
 		}
-		return 0;// Ã»ÓĞ·µ»ØÖµ
+		return 0;// æ²¡æœ‰è¿”å›å€¼
 		}
 #pragma warning (pop)
 	}
@@ -516,7 +516,7 @@ static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	{
 		auto p = (EDLGCTX_IDEILSEL*)((CREATESTRUCTW*)lParam)->lpCreateParams;
 		SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
-		p->hFont = EzFont(L"Î¢ÈíÑÅºÚ", 10);
+		p->hFont = EzFont(L"å¾®è½¯é›…é»‘", 10);
 
 		HWND hCtrl, hLV;
 		hLV = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEWW, NULL, 
@@ -525,10 +525,10 @@ static LRESULT CALLBACK WndProc_ILSelDlg(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 		UINT uExLVStyle = LVS_EX_DOUBLEBUFFER;
 		SendMessageW(hLV, LVM_SETEXTENDEDLISTVIEWSTYLE, uExLVStyle, uExLVStyle);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È·¶¨(&O)", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"ç¡®å®š(&O)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn, cyBtn, hWnd, (HMENU)IDC_BT_OK, g_elibstl_hModule, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È¡Ïû(&C)", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å–æ¶ˆ(&C)", WS_CHILD | WS_VISIBLE,
 			0, 0, cxBtn, cyBtn, hWnd, (HMENU)IDC_BT_CANCEL, g_elibstl_hModule, NULL);
 
 		EzDlg::SetFontForWndAndCtrl(hWnd, p->hFont);
@@ -571,7 +571,7 @@ BOOL ImageListSelectDlg(HIMAGELIST hImageList, int idxInit, int* pidxSel, HWND h
 	pCtx->hImageList = hImageList;
 	pCtx->idxInit = idxInit;
 	pCtx->idxRet = -1;
-	EIDEDlgShow(WCN_IDEILSELDLG, L"Ñ¡ÔñÍ¼Æ¬", CW_USEDEFAULT, 0, 560, 500, 0, pCtx, hParent);
+	EIDEDlgShow(WCN_IDEILSELDLG, L"é€‰æ‹©å›¾ç‰‡", CW_USEDEFAULT, 0, 560, 500, 0, pCtx, hParent);
 
 	BOOL bOK = pCtx->bOK;
 	*pidxSel = pCtx->idxRet;
@@ -585,7 +585,7 @@ bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM w
 	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE
 		&& uMsg <= WM_RBUTTONUP || uMsg >= WM_KEYDOWN && uMsg <= WM_CHAR)
 	{
-		//Õâ¼¸¸öÊÂ¼şÈ«²¿×ª·¢¸ø¸¸×é¼ş
+		//è¿™å‡ ä¸ªäº‹ä»¶å…¨éƒ¨è½¬å‘ç»™çˆ¶ç»„ä»¶
 		EVENT_NOTIFY2 event(m_dwWinFormID, m_dwUnitID, 0);
 		INT control_type = 0;
 		if (uMsg != WM_CHAR && uMsg != WM_SETFOCUS && uMsg != WM_KILLFOCUS)
@@ -715,12 +715,12 @@ void SetFrameType(HWND hWnd, int iFrame)
 
 	switch (iFrame)
 	{
-	case 0: break;// ÎŞ±ß¿ò
-	case 1: dwExStyle |= WS_EX_CLIENTEDGE; break;// °¼ÈëÊ½
-	case 2: dwExStyle |= (WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME); break;// Í¹³öÊ½
-	case 3: dwExStyle |= WS_EX_STATICEDGE; break;// Ç³°¼ÈëÊ½
-	case 4: dwExStyle |= (WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE); break;// ¾µ¿òÊ½
-	case 5: dwStyle |= WS_BORDER; break;// µ¥Ïß±ß¿òÊ½
+	case 0: break;// æ— è¾¹æ¡†
+	case 1: dwExStyle |= WS_EX_CLIENTEDGE; break;// å‡¹å…¥å¼
+	case 2: dwExStyle |= (WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME); break;// å‡¸å‡ºå¼
+	case 3: dwExStyle |= WS_EX_STATICEDGE; break;// æµ…å‡¹å…¥å¼
+	case 4: dwExStyle |= (WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE); break;// é•œæ¡†å¼
+	case 5: dwStyle |= WS_BORDER; break;// å•çº¿è¾¹æ¡†å¼
 	}
 
 	SetWindowLongPtrW(hWnd, GWL_STYLE, dwStyle);
@@ -734,19 +734,19 @@ int GetFrameType(HWND hWnd)
 	if (dwExStyle & WS_EX_DLGMODALFRAME)
 	{
 		if (dwExStyle & WS_EX_WINDOWEDGE)
-			return 2;// Í¹³öÊ½
+			return 2;// å‡¸å‡ºå¼
 		if (dwExStyle & WS_EX_CLIENTEDGE)
-			return 4;// ¾µ¿òÊ½
+			return 4;// é•œæ¡†å¼
 	}
 
 	if (dwExStyle & WS_EX_CLIENTEDGE)
-		return 1;// °¼ÈëÊ½
+		return 1;// å‡¹å…¥å¼
 	if (dwExStyle & WS_EX_STATICEDGE)
-		return 3;// Ç³°¼ÈëÊ½
+		return 3;// æµ…å‡¹å…¥å¼
 	if (dwStyle & WS_BORDER)
-		return 5;// µ¥Ïß±ß¿òÊ½
+		return 5;// å•çº¿è¾¹æ¡†å¼
 
-	return 0;// ÎŞ±ß¿ò
+	return 0;// æ— è¾¹æ¡†
 }
 
 HBITMAP make_hbm_gp(BYTE* pData, SIZE_T cbPic)
@@ -792,7 +792,7 @@ struct COLORPICKERCTX
 {
 	UINT uNotifyMsg;
 	COLORREF crCustom;
-	COLORREF crCCDlgCustom[16];// ÔİÊ±±£Áô
+	COLORREF crCCDlgCustom[16];// æš‚æ—¶ä¿ç•™
 };
 
 constexpr struct CPPRESETCOLOR
@@ -802,16 +802,16 @@ constexpr struct CPPRESETCOLOR
 }
 c_ColorPickerPresetClr[] =
 {
-	{CLR_DEFAULT,L"Ä¬ÈÏ"},
-	{0x000000,L"ºÚÉ«"},
-	{0xFFFFFF,L"°×É«"},
-	{0x0000FF,L"ºìÉ«"},
-	{0x00FF00,L"ÂÌÉ«"},
-	{0xFF0000,L"À¶É«"},
-	{0x00FFFF,L"»ÆÉ«"},
-	{0xFF00FF,L"Æ·ºì"},
-	{0xFFFF00,L"ÇàÉ«"},
-	{CLR_INVALID,L"×Ô¶¨Òå..."},
+	{CLR_DEFAULT,L"é»˜è®¤"},
+	{0x000000,L"é»‘è‰²"},
+	{0xFFFFFF,L"ç™½è‰²"},
+	{0x0000FF,L"çº¢è‰²"},
+	{0x00FF00,L"ç»¿è‰²"},
+	{0xFF0000,L"è“è‰²"},
+	{0x00FFFF,L"é»„è‰²"},
+	{0xFF00FF,L"å“çº¢"},
+	{0xFFFF00,L"é’è‰²"},
+	{CLR_INVALID,L"è‡ªå®šä¹‰..."},
 };
 #define CLPIDX_CUSTOM (ARRAYSIZE(c_ColorPickerPresetClr) - 1)
 
@@ -1103,12 +1103,12 @@ HGLOBAL CCtrlBase::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
 	p = (BYTE*)GlobalLock(hGlobal);
 	if (!p)
 		goto FailLock;
-	// ½á¹¹
+	// ç»“æ„
 	memcpy(p, &m_Info0, sizeof(ECTRLINFO));
-	// Í¼Æ¬
+	// å›¾ç‰‡
 	p += sizeof(ECTRLINFO);
 	memcpy(p, m_pPicData, m_Info0.cbPic);
-	// ÎÄ±¾
+	// æ–‡æœ¬
 	p += m_Info0.cbPic;
 	memcpy(p, pszText, cbText);
 	// 
@@ -1125,17 +1125,20 @@ PWSTR CCtrlBase::GetTextW(SIZE_T* pcb)
 	if (!m_bInDesignMode)
 	{
 		int cch = GetWindowTextLengthW(m_hWnd);
+		delete[] m_pszTextW;
 		if (cch)
 		{
-			delete[] m_pszTextW;
 			m_pszTextW = new WCHAR[cch + 1];
 			GetWindowTextW(m_hWnd, m_pszTextW, cch + 1);
 			if (pcb)
 				*pcb = (cch + 1) * sizeof(WCHAR);
 		}
 		else
+		{
+			m_pszTextW = NULL;
 			if (pcb)
 				*pcb = 0u;
+		}
 	}
 	else
 		if (pcb)
@@ -1202,7 +1205,7 @@ HGLOBAL CCtrlBaseSimple::FlattenInfoBase0(SIZE_T cbExtra, SIZE_T* pcbBaseData)
 	p = (BYTE*)GlobalLock(hGlobal);
 	if (!p)
 		goto FailLock;
-	// ½á¹¹
+	// ç»“æ„
 	memcpy(p, &m_Info0, sizeof(ECTRLINFOSMP));
 
 	GlobalUnlock(hGlobal);
