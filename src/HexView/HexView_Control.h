@@ -51,7 +51,8 @@ typedef struct _HEXVIEW_PROPERTY : CONTROL_STRUCT_BASE
     ULONG64         pAddress;               // 显示的地址
     std::vector<BYTE>* data;                // 显示的数据
     std::vector<BYTE>* modi;                // 指定字节是否被修改
-}HEXVIEW_PROPERTY, * PHEXVIEW_PROPERTY, *LPHEXVIEW_PROPERTY;
+}HEXVIEW_PROPERTY, * PHEXVIEW_PROPERTY, * LPHEXVIEW_PROPERTY;
+
 
 
 

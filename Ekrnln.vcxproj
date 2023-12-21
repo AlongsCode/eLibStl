@@ -48,6 +48,15 @@
     <ClCompile Include="openlib\ETCP\etcp.cpp" />
     <ClCompile Include="openlib\ETCP\etcpapi.cpp" />
     <ClCompile Include="openlib\MiniCo\coroutine.c" />
+    <ClCompile Include="openlib\qrencode\bitstream.c" />
+    <ClCompile Include="openlib\qrencode\mask.c" />
+    <ClCompile Include="openlib\qrencode\mmask.c" />
+    <ClCompile Include="openlib\qrencode\mqrspec.c" />
+    <ClCompile Include="openlib\qrencode\qrencode.c" />
+    <ClCompile Include="openlib\qrencode\qrinput.c" />
+    <ClCompile Include="openlib\qrencode\qrspec.c" />
+    <ClCompile Include="openlib\qrencode\rsecc.c" />
+    <ClCompile Include="openlib\qrencode\split.c" />
     <ClCompile Include="src\analog_press.cpp" />
     <ClCompile Include="src\ansiwindow_to_unicodewindow.cpp" />
     <ClCompile Include="src\atomic_addition.cpp" />
@@ -69,10 +78,13 @@
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\DirBoxW.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\Epl Dp\eplMD5.cpp" />
+    <ClCompile Include="src\EplDebug\debugbreak.cpp" />
     <ClCompile Include="src\EplObj Class\Diskfiles.cpp" />
     <ClCompile Include="src\EplObj Class\eplvar.cpp" />
     <ClCompile Include="src\EplObj Class\FolderMonitor.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
+    <ClCompile Include="src\EplObj Class\mempe.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
     <ClCompile Include="src\e_call.cpp" />
@@ -126,6 +138,7 @@
     <ClCompile Include="src\normalization_path.cpp" />
     <ClCompile Include="src\OpenFileDialog.cpp" />
     <ClCompile Include="src\open_console.cpp" />
+    <ClCompile Include="src\Other\epl qr code.cpp" />
     <ClCompile Include="src\PinYin Manipulation\PinYin.cpp" />
     <ClCompile Include="src\plug\UnicodeReaplce.cpp" />
     <ClCompile Include="src\prevent_duplicate_execution.cpp" />
@@ -145,7 +158,10 @@
     <ClCompile Include="src\set_console_title.cpp" />
     <ClCompile Include="src\get_console_locale.cpp" />
     <ClCompile Include="src\set_env.cpp" />
-    <ClCompile Include="src\split.cpp" />
+    <ClCompile Include="src\eplsplit.cpp" />
+    <ClCompile Include="src\System processing\get_pixel.cpp" />
+    <ClCompile Include="src\System processing\get_win_pic.cpp" />
+    <ClCompile Include="src\System processing\ProcessorsSystem.cpp" />
     <ClCompile Include="src\Text Manipulation\byte_array_to_string.cpp" />
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp" />
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp" />
@@ -167,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="include\DefCmd.h" />
     <ClInclude Include="include\EcontrolHelp.h" />
+    <ClInclude Include="include\EKrnln_Version.h" />
     <ClInclude Include="include\ElibHelp.h" />
     <ClInclude Include="include\elib\fnshare.h" />
     <ClInclude Include="include\elib\krnllib.h" />
@@ -180,6 +197,16 @@
     <ClInclude Include="include\Tace.hpp" />
     <ClInclude Include="openlib\ETCP\etcpapi.h" />
     <ClInclude Include="openlib\MiniCo\coroutine.h" />
+    <ClInclude Include="openlib\qrencode\bitstream.h" />
+    <ClInclude Include="openlib\qrencode\mask.h" />
+    <ClInclude Include="openlib\qrencode\mmask.h" />
+    <ClInclude Include="openlib\qrencode\mqrspec.h" />
+    <ClInclude Include="openlib\qrencode\qrencode.h" />
+    <ClInclude Include="openlib\qrencode\qrencode_inner.h" />
+    <ClInclude Include="openlib\qrencode\qrinput.h" />
+    <ClInclude Include="openlib\qrencode\qrspec.h" />
+    <ClInclude Include="openlib\qrencode\rsecc.h" />
+    <ClInclude Include="openlib\qrencode\split.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\HexView\HexView.h" />
     <ClInclude Include="src\HexView\HexView_Control.h" />
@@ -316,7 +343,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>$(ESTL_DBG_ELIB_PATH___)</OutDir>
+    <OutDir>D:\ide\e\lib</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
@@ -338,7 +365,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>LibKrnln</TargetName>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>D:\ide\e\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>

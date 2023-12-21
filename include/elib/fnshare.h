@@ -33,8 +33,8 @@ namespace elibstl
 		}
 	};
 
-	inline auto& args_to_ebin(PMDATA_INF pArgInf, size_t index) {
-		return *reinterpret_cast<ebin*>(pArgInf[index].m_pBin);
+	inline auto args_to_ebin(PMDATA_INF pArgInf, size_t index) {
+		return reinterpret_cast<ebin*>(pArgInf[index].m_pBin);
 	}
 
 
@@ -63,6 +63,14 @@ namespace elibstl
 		int result = ::MessageBoxW(0, error_msg.c_str(), L"出现重大错误", MB_OK | MB_ICONERROR);
 #endif
 	}
+//	inline auto ErrorMsgBox(const std::string& filePath, const std::string& msg) {
+//#ifdef _WIN32
+//		//std::wstring fileName = std::filesystem::path(filePath).filename();
+//		std::string fileName = PathFindFileNameA(filePath.c_str());/*路径不会为空*/
+//		std::string error_msg = "出现运行时异常,已被支持库拦截(编译后不会出现该提示，但同样会处理异常操作,防止重大错误引起崩溃!)\n出错文件：" + fileName + "\n错误信息:" + msg;
+//		int result = ::MessageBoxA(0, error_msg.c_str(), L"出现重大错误", MB_OK | MB_ICONERROR);
+//#endif
+//	}
 #define put_errmsg(x) elibstl::ErrorMsgBox(__FILEW__,x)
 
 	template <typename T>

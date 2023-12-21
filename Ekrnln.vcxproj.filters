@@ -52,17 +52,11 @@
     <Filter Include="源文件\组件\通用型\tcp">
       <UniqueIdentifier>{3172fe02-efab-4d60-860c-c9b5bce4d232}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\组件\通用型\tcp\etcp">
-      <UniqueIdentifier>{809df93a-658c-48b5-9b08-6ec10b5f65a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\组件\通用型\媒体播放">
       <UniqueIdentifier>{4691a7aa-bce6-4ec3-b1fa-27debf983305}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine">
       <UniqueIdentifier>{a2d4a048-773f-4310-8cbb-bbfe73f86c24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\实现\全局命令\进程线程携程\coroutine\mini_co">
-      <UniqueIdentifier>{01deff0d-0c2c-4f34-ac96-40b4f8a1b7e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\实现\全局命令\窗口操作">
       <UniqueIdentifier>{0e8454ea-efd0-4d12-a724-e35b19308d0d}</UniqueIdentifier>
@@ -124,6 +118,27 @@
     <Filter Include="源文件\组件\通用型\FolderMonitor">
       <UniqueIdentifier>{c162f82c-d7bd-47ba-a46b-c7b3e97ae717}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\openlib\etcp">
+      <UniqueIdentifier>{809df93a-658c-48b5-9b08-6ec10b5f65a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\mini_co">
+      <UniqueIdentifier>{01deff0d-0c2c-4f34-ac96-40b4f8a1b7e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\组件\通用型\动态模块">
+      <UniqueIdentifier>{a7238718-d93d-46f0-b575-7e4c86655923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\libqrencode">
+      <UniqueIdentifier>{25ab63bc-fe40-4fd1-9e14-072047ac7642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\libqrencode\include">
+      <UniqueIdentifier>{1f351f09-02ef-4dd7-a925-0f0f9a154f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\libqrencode\src">
+      <UniqueIdentifier>{d1f53ce2-0a21-4ec2-a258-e30d75b2192c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\实现\全局命令\数据处理">
+      <UniqueIdentifier>{9f50cdcd-663b-470f-ba1e-e9187f21194c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\elib\fnshare.h">
@@ -157,7 +172,7 @@
       <Filter>头文件\elibhelp</Filter>
     </ClInclude>
     <ClInclude Include="openlib\ETCP\etcpapi.h">
-      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+      <Filter>源文件\openlib\etcp</Filter>
     </ClInclude>
     <ClInclude Include="include\DefCmd.h">
       <Filter>头文件</Filter>
@@ -166,7 +181,7 @@
       <Filter>头文件\elibhelp</Filter>
     </ClInclude>
     <ClInclude Include="openlib\MiniCo\coroutine.h">
-      <Filter>源文件\实现\全局命令\进程线程携程\coroutine\mini_co</Filter>
+      <Filter>源文件\openlib\mini_co</Filter>
     </ClInclude>
     <ClInclude Include="include\GdiplusFlatDef.h">
       <Filter>头文件\elibhelp</Filter>
@@ -191,6 +206,39 @@
     </ClInclude>
     <ClInclude Include="src\HexView\HexView_Help.h">
       <Filter>源文件\组件\HexView\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\bitstream.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\mask.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\mmask.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\mqrspec.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\qrencode.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\qrencode_inner.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\qrinput.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\qrspec.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\rsecc.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\qrencode\split.h">
+      <Filter>源文件\openlib\libqrencode\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EKrnln_Version.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -251,7 +299,7 @@
     <ClCompile Include="src\InStrRev.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
-    <ClCompile Include="src\split.cpp">
+    <ClCompile Include="src\eplsplit.cpp">
       <Filter>源文件\实现\全局命令\文本操作</Filter>
     </ClCompile>
     <ClCompile Include="src\wchar_code.cpp">
@@ -291,10 +339,10 @@
       <Filter>源文件\实现\全局命令\网络通信</Filter>
     </ClCompile>
     <ClCompile Include="openlib\ETCP\etcp.cpp">
-      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+      <Filter>源文件\openlib\etcp</Filter>
     </ClCompile>
     <ClCompile Include="openlib\ETCP\etcpapi.cpp">
-      <Filter>源文件\组件\通用型\tcp\etcp</Filter>
+      <Filter>源文件\openlib\etcp</Filter>
     </ClCompile>
     <ClCompile Include="src\clear_folder.cpp">
       <Filter>源文件\实现\全局命令\磁盘操作</Filter>
@@ -360,7 +408,7 @@
       <Filter>源文件\组件</Filter>
     </ClCompile>
     <ClCompile Include="openlib\MiniCo\coroutine.c">
-      <Filter>源文件\实现\全局命令\进程线程携程\coroutine\mini_co</Filter>
+      <Filter>源文件\openlib\mini_co</Filter>
     </ClCompile>
     <ClCompile Include="src\e_coroutine.cpp">
       <Filter>源文件\实现\全局命令\进程线程携程\coroutine</Filter>
@@ -553,6 +601,54 @@
     </ClCompile>
     <ClCompile Include="src\HexView\HexView_Help.cpp">
       <Filter>源文件\组件\HexView</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplDebug\debugbreak.cpp">
+      <Filter>源文件\实现\全局命令\代码调试</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System processing\ProcessorsSystem.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System processing\get_win_pic.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System processing\get_pixel.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\bitstream.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\mask.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\mmask.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\mqrspec.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\qrencode.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\qrinput.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\qrspec.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\rsecc.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\qrencode\split.c">
+      <Filter>源文件\openlib\libqrencode\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Other\epl qr code.cpp">
+      <Filter>源文件\实现\全局命令\其他</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EplObj Class\mempe.cpp">
+      <Filter>源文件\组件\通用型\动态模块</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Epl Dp\eplMD5.cpp">
+      <Filter>源文件\实现\全局命令\数据处理</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

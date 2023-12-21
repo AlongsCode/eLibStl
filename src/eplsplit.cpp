@@ -75,7 +75,7 @@ EXTERN_C void Fn_splitW(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 
 }
 
-FucInfo split_w = { {
+FucInfo Fn_split_w = { {
 		/*ccname*/  ("分割文本W"),
 		/*egname*/  ("splitW"),
 		/*explain*/ ("将指定文本进行分割，返回分割后的一维文本数组。"),

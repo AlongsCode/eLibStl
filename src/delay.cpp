@@ -24,29 +24,45 @@ static ARG_INFO Args[] =
 
 
 
-EXTERN_C void Fn_e_delay(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
-{
-	if (pArgInf[0].m_int <= 0) return;
-	auto iEnd = ::GetTickCount64() + pArgInf[0].m_int64;
-	while (1)
-	{
-		elibstl::NotifySys(NRS_DO_EVENTS, 0, 0);
-		elibstl::NotifySys(NRS_DO_EVENTS, 0, 0);
-		if (::GetTickCount64() > iEnd) break;
-
-		elibstl::NotifySys(NRS_DO_EVENTS, 0, 0);
-		elibstl::NotifySys(NRS_DO_EVENTS, 0, 0);
+namespace {
+	void ProcessMessagesImproved() {
+		MSG msg;
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) && msg.message != WM_QUIT) {
+			if (GetMessage(&msg, nullptr, 0, 0)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
 	}
-
 
 }
 
+EXTERN_C void Fn_e_delay(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	if (pArgInf[0].m_int64 <= 0) return;
+	const auto hTimer = ::CreateWaitableTimerW(NULL, FALSE, NULL);
+	if (hTimer == NULL)  return;
+	LARGE_INTEGER liDueTime{};
+	liDueTime.QuadPart = static_cast<std::uint64_t>(-10000) * static_cast<std::uint64_t>(pArgInf[0].m_int64);
+	if (::SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE))
+	{
+		while (true)
+		{
+			const auto dwResult = ::MsgWaitForMultipleObjects(1, &hTimer, FALSE, INFINITE, QS_ALLEVENTS);
+			if (dwResult == WAIT_FAILED || dwResult == WAIT_OBJECT_0)
+				break;
+			ProcessMessagesImproved();
+		}
+	}
+	::CloseHandle(hTimer);
+}
+
 FucInfo _e_delay = { {
-		/*ccname*/  ("延迟Ex"),
+		/*ccname*/  ("界面延迟"),
 		/*egname*/  ("delay"),
 		/*explain*/ ("同延迟的高精度版"),
 		/*category*/11,
-		/*state*/    CT_ALLOW_APPEND_NEW_ARG | CT_DISABLED_IN_RELEASE,
+		/*state*/    NULL,
 		/*ret*/     _SDT_NULL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
