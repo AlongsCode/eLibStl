@@ -1,4 +1,4 @@
-#include"intrin.h"
+﻿#include"intrin.h"
 #include"ElibHelp.h"
 //static std::vector<std::string> OpenManyFileDialog(const char* title, const char* filter, int initFilter, const char* initDir, bool noChangeDir, HWND parentWnd, int openMode)
 //{
@@ -87,8 +87,8 @@ static  std::vector<std::string> split_text(const std::string& text, const  char
 static ARG_INFO Args[] =
 {
 	{
-		/*name*/    "����",
-		/*explain*/ ("ָ���ļ��򿪶Ի���ı��⣬�����ʡ�ԣ���Ĭ��Ϊ�����������򿪵��ļ���"),
+		/*name*/    "标题",
+		/*explain*/ ("指定文件打开对话框的标题，如果被省略，则默认为“请输入欲打开的文件："),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
@@ -96,8 +96,8 @@ static ARG_INFO Args[] =
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "������",
-		/*explain*/ ("�������ı��ɵ��������ɶԵ��ı�����ɣ�ÿ���ı����ĵ�һ��������ʾ��ʽ���磺���ı��ļ���*.txt�������ڶ���ָ��ʵ�ʵĹ���ƥ������磺��*.txt�������и��ı���֮���á�|���Ÿ����������ʡ�ԣ���Ĭ��û�й�����"),
+		/*name*/    "过滤器",
+		/*explain*/ ("过滤器文本由单个或多个成对的文本串组成，每对文本串的第一个描述显示形式，如：“文本文件（*.txt）”；第二个指定实际的过滤匹配符，如：“*.txt”，所有各文本串之间用“|”号隔开。如果被省略，则默认没有过滤器"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
@@ -105,16 +105,16 @@ static ARG_INFO Args[] =
 		/*state*/  ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "��ʼ������",
-		/*explain*/ ("���Ա�ʡ�ԡ������һ�����ṩ����Ч�Ĺ������ı����򱾲�������ָ����ʼ�Ĺ�������0Ϊ��һ���������������ʡ�ԣ���Ĭ��ֵΪ0"),
+		/*name*/    "初始过滤器",
+		/*explain*/ ("可以被省略。如果上一参数提供了有效的过滤器文本，则本参数用作指定初始的过滤器，0为第一个过滤器。如果被省略，则默认值为0"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "��ʼĿ¼",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ�����򿪶Ի���ʱ���Զ���ת����Ŀ¼�������ʡ�ԣ���Ĭ��Ϊ��ǰĿ¼��"),
+		/*name*/    "初始目录",
+		/*explain*/ ("可以被省略。指定当打开对话框时所自动跳转到的目录，如果被省略，则默认为当前目录。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
@@ -122,8 +122,8 @@ static ARG_INFO Args[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY ,
 	},
 	{
-		/*name*/    "���ı�Ŀ¼",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ���ڶԻ���رպ��Ƿ��Զ����ص�����Ի���ǰ���ļ�Ŀ¼�������ʡ�ԣ���Ĭ��ֵΪ�١�"),
+		/*name*/    "不改变目录",
+		/*explain*/ ("可以被省略。指定在对话框关闭后是否自动返回到进入对话框前的文件目录，如果被省略，则默认值为假。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -131,8 +131,8 @@ static ARG_INFO Args[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "������",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ���Ի���ĸ�����,������һ��\"����\"�������ݻ���һ�������ʹ��ھ��.�����ʡ��,Ĭ��Ϊ��."),
+		/*name*/    "父窗口",
+		/*explain*/ ("可以被省略。指定对话框的父窗口,可以是一个\"窗口\"类型数据或者一个整数型窗口句柄.如果被省略,默认为无."),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -141,16 +141,16 @@ static ARG_INFO Args[] =
 	},
 
 	{
-		/*name*/    "�Ի�������",
-		/*explain*/ ("0Ϊ�򿪣�1Ϊ���棬Ĭ��Ϊ0"),
+		/*name*/    "对话框类型",
+		/*explain*/ ("0为打开，1为保存，默认为0"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "����ʱ��ʾ",
-		/*explain*/ ("���Ա�ʡ�ԡ�����ʱ�Ƿ���ʾ.Ĭ��Ϊ��"),
+		/*name*/    "创建时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -158,24 +158,24 @@ static ARG_INFO Args[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "����ʱ��ʾ",
-		/*explain*/ ("���Ա�ʡ�ԡ�����ʱ�Ƿ���ʾ.Ĭ��Ϊ��"),
+		/*name*/    "覆盖时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "Ĭ���ļ���׺",
-		/*explain*/ ("�����ļ�ʱ��Ĭ���ļ���׺"),
+		/*name*/    "默认文件后缀",
+		/*explain*/ ("保存文件时，默认文件后缀"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_TEXT,
 		/*default*/ 0,
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "�Ƿ����þ�ʽ���",
-		/*explain*/ ("�Ƿ����þ�ʽ�Ի�����,Ĭ��Ϊ��"),
+		/*name*/    "是否启用旧式风格",
+		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -183,7 +183,7 @@ static ARG_INFO Args[] =
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 	,{
-		/*name*/    "Ĭ���ļ���",
+		/*name*/    "默认文件名",
 		/*explain*/ (""),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -248,7 +248,7 @@ static std::string OpenFileDialog(const char* title,
 	if (noChangeDir) dwFlags |= OFN_NOCHANGEDIR;
 	if (bOverrideprompt)  dwFlags |= OFN_OVERWRITEPROMPT;
 	if (bOldStyle) dwFlags |= OFN_EXPLORER;
-	//�Ǳ���ģʽ�ļ�������ڣ���Ϊ�ļ�����Ĭ�Ϻ�׺
+	//非保存模式文件必须存在，且为文件增加默认后缀
 
 	if (openMode != 1) {
 		dwFlags |= OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;;
@@ -284,9 +284,9 @@ EXTERN_C void Fn_Open_File_Dialog_A(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 
 FucInfo e_Open_File_Dialog_A = { {
-		/*ccname*/  ("�ļ��Ի���"),
+		/*ccname*/  ("文件对话框"),
 		/*egname*/  (""),
-		/*explain*/ ("��ʾһ���ļ��򿪶Ի��������û�ѡ�����������Ҫ�򿪵��Ѵ����ļ����򱣴��ļ��������û���ѡ��������Ľ���ı�������û�δ����򰴡�ȡ������ť�˳����򷵻�һ�����ı�"),
+		/*explain*/ ("显示一个文件打开对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本。如果用户未输入或按“取消”按钮退出，则返回一个空文本"),
 		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_TEXT,
@@ -306,8 +306,8 @@ FucInfo e_Open_File_Dialog_A = { {
 static ARG_INFO WArgs[] =
 {
 	{
-		/*name*/    "����",
-		/*explain*/ ("ָ���ļ��򿪶Ի���ı��⣬�����ʡ�ԣ���Ĭ��Ϊ�����������򿪵��ļ���"),
+		/*name*/    "标题",
+		/*explain*/ ("指定文件打开对话框的标题，如果被省略，则默认为“请输入欲打开的文件："),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
@@ -315,8 +315,8 @@ static ARG_INFO WArgs[] =
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "������",
-		/*explain*/ ("�������ı��ɵ��������ɶԵ��ı�����ɣ�ÿ���ı����ĵ�һ��������ʾ��ʽ���磺���ı��ļ���*.txt�������ڶ���ָ��ʵ�ʵĹ���ƥ������磺��*.txt�������и��ı���֮���á�|���Ÿ����������ʡ�ԣ���Ĭ��û�й�����"),
+		/*name*/    "过滤器",
+		/*explain*/ ("过滤器文本由单个或多个成对的文本串组成，每对文本串的第一个描述显示形式，如：“文本文件（*.txt）”；第二个指定实际的过滤匹配符，如：“*.txt”，所有各文本串之间用“|”号隔开。如果被省略，则默认没有过滤器"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
@@ -324,16 +324,16 @@ static ARG_INFO WArgs[] =
 		/*state*/  ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "��ʼ������",
-		/*explain*/ ("���Ա�ʡ�ԡ������һ�����ṩ����Ч�Ĺ������ı����򱾲�������ָ����ʼ�Ĺ�������0Ϊ��һ���������������ʡ�ԣ���Ĭ��ֵΪ0"),
+		/*name*/    "初始过滤器",
+		/*explain*/ ("可以被省略。如果上一参数提供了有效的过滤器文本，则本参数用作指定初始的过滤器，0为第一个过滤器。如果被省略，则默认值为0"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "��ʼĿ¼",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ�����򿪶Ի���ʱ���Զ���ת����Ŀ¼�������ʡ�ԣ���Ĭ��Ϊ��ǰĿ¼��"),
+		/*name*/    "初始目录",
+		/*explain*/ ("可以被省略。指定当打开对话框时所自动跳转到的目录，如果被省略，则默认为当前目录。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
@@ -341,8 +341,8 @@ static ARG_INFO WArgs[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY ,
 	},
 	{
-		/*name*/    "���ı�Ŀ¼",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ���ڶԻ���رպ��Ƿ��Զ����ص�����Ի���ǰ���ļ�Ŀ¼�������ʡ�ԣ���Ĭ��ֵΪ�١�"),
+		/*name*/    "不改变目录",
+		/*explain*/ ("可以被省略。指定在对话框关闭后是否自动返回到进入对话框前的文件目录，如果被省略，则默认值为假。"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -350,8 +350,8 @@ static ARG_INFO WArgs[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "������",
-		/*explain*/ ("���Ա�ʡ�ԡ�ָ���Ի���ĸ�����,������һ��\"����\"�������ݻ���һ�������ʹ��ھ��.�����ʡ��,Ĭ��Ϊ��."),
+		/*name*/    "父窗口",
+		/*explain*/ ("可以被省略。指定对话框的父窗口,可以是一个\"窗口\"类型数据或者一个整数型窗口句柄.如果被省略,默认为无."),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -359,40 +359,40 @@ static ARG_INFO WArgs[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "�Ի�������",
-		/*explain*/ ("0Ϊ�򿪣�1Ϊ���棬Ĭ��Ϊ0"),
+		/*name*/    "对话框类型",
+		/*explain*/ ("0为打开，1为保存，默认为0"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "����ʱ��ʾ",
-		/*explain*/ ("���Ա�ʡ�ԡ�����ʱ�Ƿ���ʾ.Ĭ��Ϊ��"),
+		/*name*/    "创建时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "����ʱ��ʾ",
-		/*explain*/ ("���Ա�ʡ�ԡ�����ʱ�Ƿ���ʾ.Ĭ��Ϊ��"),
+		/*name*/    "覆盖时提示",
+		/*explain*/ ("可以被省略。创建时是否提示.默认为真"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "Ĭ���ļ���׺",
-		/*explain*/ ("�����ļ�ʱ��Ĭ���ļ���׺"),
+		/*name*/    "默认文件后缀",
+		/*explain*/ ("保存文件时，默认文件后缀"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "�Ƿ����þ�ʽ���",
-		/*explain*/ ("�Ƿ����þ�ʽ�Ի�����,Ĭ��Ϊ��"),
+		/*name*/    "是否启用旧式风格",
+		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -400,13 +400,22 @@ static ARG_INFO WArgs[] =
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 	,{
-		/*name*/    "Ĭ���ļ���",
+		/*name*/    "默认文件名",
 		/*explain*/ (""),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
+	},
+	{
+		/*name*/    "多选",
+		/*explain*/ (""),
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*type*/    SDT_BOOL,
+		/*default*/ 0,
+		/*state*/    ArgMark::AS_HAS_DEFAULT_VALUE,
 	}
 };
 
@@ -457,7 +466,7 @@ static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter,
 	if (noChangeDir) dwFlags |= OFN_NOCHANGEDIR;
 	if (bOverrideprompt)  dwFlags |= OFN_OVERWRITEPROMPT;
 	if (bOldStyle) dwFlags |= OFN_EXPLORER;
-	//�Ǳ���ģʽ�ļ�������ڣ���Ϊ�ļ�����Ĭ�Ϻ�׺
+	//非保存模式文件必须存在，且为文件增加默认后缀
 
 	if (openMode != 1) {
 		dwFlags |= OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;;
@@ -495,9 +504,9 @@ EXTERN_C void Fn_Open_File_Dialog_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 
 FucInfo e_Open_File_Dialog_W = { {
-		/*ccname*/  ("�ļ��Ի���W"),
+		/*ccname*/  ("文件对话框W"),
 		/*egname*/  (""),
-		/*explain*/ ("��ʾһ���ļ��򿪶Ի��������û�ѡ�����������Ҫ�򿪵��Ѵ����ļ����򱣴��ļ��������û���ѡ��������Ľ���ı�������û�δ����򰴡�ȡ������ť�˳����򷵻�һ�����ı�"),
+		/*explain*/ ("显示一个文件打开对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本。如果用户未输入或按“取消”按钮退出，则返回一个空文本"),
 		/*category*/13,
 		/*state*/   NULL,
 		/*ret*/     SDT_BIN,

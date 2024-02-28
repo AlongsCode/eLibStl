@@ -1,6 +1,6 @@
-/*
+ï»¿/*
 * 2023.5.7
-* FIXME£ºÊäÈëÄ£Ê½ÖĞµÄÊäÈëÈÕÆÚÊ±¼äÎ´ÊµÏÖ
+* FIXMEï¼šè¾“å…¥æ¨¡å¼ä¸­çš„è¾“å…¥æ—¥æœŸæ—¶é—´æœªå®ç°
 */
 #include "EcontrolHelp.h"
 
@@ -12,60 +12,60 @@
 #define ED_CUEBANNER_MAXLEN 260
 
 ESTL_NAMESPACE_BEGIN
-// ±à¼­¿ò
+// ç¼–è¾‘æ¡†
 /*
-* °æ±¾1Êı¾İ²¼¾Ö£º
-* EEDITDATA½á¹¹
-* ÌáÊ¾ÎÄ±¾
+* ç‰ˆæœ¬1æ•°æ®å¸ƒå±€ï¼š
+* EEDITDATAç»“æ„
+* æç¤ºæ–‡æœ¬
 */
 #define DATA_VER_EDIT_1	1// 76B
 #define DATA_VER_EDIT_2	2
 struct EEDITDATA
 {
-	int iVer;				// °æ±¾ºÅ
-	DWORD dwReserved;		// ±£Áô
+	int iVer;				// ç‰ˆæœ¬å·
+	DWORD dwReserved;		// ä¿ç•™
 
-	COLORREF crText;		// ÎÄ±¾ÑÕÉ«
-	COLORREF crTextBK;		// ÎÄ±¾±³¾°É«
-	COLORREF crBK;			// ±à¼­¿ò±³¾°É«
-	BOOL bHideSel;			// Òş²ØÑ¡Ôñ
-	int iMaxLen;			// ×î´óÔÊĞí³¤¶È
-	BOOL bMultiLine;		// ¶àĞĞ
-	int iScrollBar;			// ¹ö¶¯Ìõ
-	int iAlign;				// ¶ÔÆë
-	int iInputMode;			// ÊäÈë·½Ê½
-	WCHAR chMask;			// ÃÜÂëÕÚ¸Ç×Ö·û
-	int iTransformMode;		// ×ª»»·½Ê½
-	int iSelPos;			// ÆğÊ¼Ñ¡ÔñÎ»ÖÃ
-	int iSelNum;			// ±»Ñ¡Ôñ×Ö·ûÊı
-	int cchCueBanner;		// ÌáÊ¾ÎÄ±¾³¤¶È£¬½ö±£´æĞÅÏ¢Ê±ÓĞĞ§
-	BOOL bCueBannerShowAlways;// ×ÜÊÇÏÔÊ¾ÌáÊ¾ÎÄ±¾£¬¼´Ê¹±à¼­¿ò¾ßÓĞ½¹µã
-	BOOL bNoAutoSetRect;	// ÊÇ·ñ½ûÖ¹¿Ø¼şÄÚ²¿ÉèÖÃ¸ñÊ½¾ØĞÎ£¨µ¥ĞĞÊ±£©
-	BOOL bAutoWrap;			// ×Ô¶¯»»ĞĞ
+	COLORREF crText;		// æ–‡æœ¬é¢œè‰²
+	COLORREF crTextBK;		// æ–‡æœ¬èƒŒæ™¯è‰²
+	COLORREF crBK;			// ç¼–è¾‘æ¡†èƒŒæ™¯è‰²
+	BOOL bHideSel;			// éšè—é€‰æ‹©
+	int iMaxLen;			// æœ€å¤§å…è®¸é•¿åº¦
+	BOOL bMultiLine;		// å¤šè¡Œ
+	int iScrollBar;			// æ»šåŠ¨æ¡
+	int iAlign;				// å¯¹é½
+	int iInputMode;			// è¾“å…¥æ–¹å¼
+	WCHAR chMask;			// å¯†ç é®ç›–å­—ç¬¦
+	int iTransformMode;		// è½¬æ¢æ–¹å¼
+	int iSelPos;			// èµ·å§‹é€‰æ‹©ä½ç½®
+	int iSelNum;			// è¢«é€‰æ‹©å­—ç¬¦æ•°
+	int cchCueBanner;		// æç¤ºæ–‡æœ¬é•¿åº¦ï¼Œä»…ä¿å­˜ä¿¡æ¯æ—¶æœ‰æ•ˆ
+	BOOL bCueBannerShowAlways;// æ€»æ˜¯æ˜¾ç¤ºæç¤ºæ–‡æœ¬ï¼Œå³ä½¿ç¼–è¾‘æ¡†å…·æœ‰ç„¦ç‚¹
+	BOOL bNoAutoSetRect;	// æ˜¯å¦ç¦æ­¢æ§ä»¶å†…éƒ¨è®¾ç½®æ ¼å¼çŸ©å½¢ï¼ˆå•è¡Œæ—¶ï¼‰
+	BOOL bAutoWrap;			// è‡ªåŠ¨æ¢è¡Œ
 };
 
 struct EEDITDATA_2
 {
-	int iVer;				// °æ±¾ºÅ
+	int iVer;				// ç‰ˆæœ¬å·
 
-	COLORREF crText;		// ÎÄ±¾ÑÕÉ«
-	COLORREF crTextBK;		// ÎÄ±¾±³¾°É«
-	COLORREF crBK;			// ±à¼­¿ò±³¾°É«
-	int iMaxLen;			// ×î´óÔÊĞí³¤¶È
-	int iScrollBar;			// ¹ö¶¯Ìõ
-	int iAlign;				// ¶ÔÆë
-	int iInputMode;			// ÊäÈë·½Ê½
-	int iTransformMode;		// ×ª»»·½Ê½
-	int iSelPos;			// ÆğÊ¼Ñ¡ÔñÎ»ÖÃ
-	int iSelNum;			// ±»Ñ¡Ôñ×Ö·ûÊı
-	int cchCueBanner;		// ÌáÊ¾ÎÄ±¾³¤¶È£¬½ö±£´æĞÅÏ¢Ê±ÓĞĞ§
-	WCHAR chMask;			// ÃÜÂëÕÚ¸Ç×Ö·û
-	BITBOOL bCueBannerShowAlways : 1;	// ×ÜÊÇÏÔÊ¾ÌáÊ¾ÎÄ±¾£¬¼´Ê¹±à¼­¿ò¾ßÓĞ½¹µã
-	BITBOOL bNoAutoSetRect : 1;			// ÊÇ·ñ½ûÖ¹¿Ø¼şÄÚ²¿ÉèÖÃ¸ñÊ½¾ØĞÎ£¨µ¥ĞĞÊ±£©
-	BITBOOL bAutoWrap : 1;				// ×Ô¶¯»»ĞĞ
-	BITBOOL bHideSel : 1;				// Òş²ØÑ¡Ôñ
-	BITBOOL bMultiLine : 1;				// ¶àĞĞ
-	BITBOOL bCtrlASelAll : 1;			// Ctrl+AÈ«Ñ¡
+	COLORREF crText;		// æ–‡æœ¬é¢œè‰²
+	COLORREF crTextBK;		// æ–‡æœ¬èƒŒæ™¯è‰²
+	COLORREF crBK;			// ç¼–è¾‘æ¡†èƒŒæ™¯è‰²
+	int iMaxLen;			// æœ€å¤§å…è®¸é•¿åº¦
+	int iScrollBar;			// æ»šåŠ¨æ¡
+	int iAlign;				// å¯¹é½
+	int iInputMode;			// è¾“å…¥æ–¹å¼
+	int iTransformMode;		// è½¬æ¢æ–¹å¼
+	int iSelPos;			// èµ·å§‹é€‰æ‹©ä½ç½®
+	int iSelNum;			// è¢«é€‰æ‹©å­—ç¬¦æ•°
+	int cchCueBanner;		// æç¤ºæ–‡æœ¬é•¿åº¦ï¼Œä»…ä¿å­˜ä¿¡æ¯æ—¶æœ‰æ•ˆ
+	WCHAR chMask;			// å¯†ç é®ç›–å­—ç¬¦
+	BITBOOL bCueBannerShowAlways : 1;	// æ€»æ˜¯æ˜¾ç¤ºæç¤ºæ–‡æœ¬ï¼Œå³ä½¿ç¼–è¾‘æ¡†å…·æœ‰ç„¦ç‚¹
+	BITBOOL bNoAutoSetRect : 1;			// æ˜¯å¦ç¦æ­¢æ§ä»¶å†…éƒ¨è®¾ç½®æ ¼å¼çŸ©å½¢ï¼ˆå•è¡Œæ—¶ï¼‰
+	BITBOOL bAutoWrap : 1;				// è‡ªåŠ¨æ¢è¡Œ
+	BITBOOL bHideSel : 1;				// éšè—é€‰æ‹©
+	BITBOOL bMultiLine : 1;				// å¤šè¡Œ
+	BITBOOL bCtrlASelAll : 1;			// Ctrl+Aå…¨é€‰
 };
 
 class CEdit :public elibstl::CCtrlBase
@@ -77,10 +77,10 @@ private:
 	HBRUSH m_hbrEditBK = NULL;
 	PWSTR m_pszSelText = NULL;
 
-	int m_cyText = 0;// ÎÄ±¾¸ß¶È
-	RECT m_rcMargins{};// ËÄ±ß¿ò³ß´ç
+	int m_cyText = 0;// æ–‡æœ¬é«˜åº¦
+	RECT m_rcMargins{};// å››è¾¹æ¡†å°ºå¯¸
 
-	PWSTR m_pszCueBanner = NULL;// ÌáÊ¾ÎÄ±¾£¬Ã»ÓĞ»ñÈ¡³¤¶ÈµÄ½Ó¿Ú£¬ÕâÀï¾Í¹Ì¶¨Îª260¸ö×Ö·û£¨º¬ÖÕÖ¹NULL£©
+	PWSTR m_pszCueBanner = NULL;// æç¤ºæ–‡æœ¬ï¼Œæ²¡æœ‰è·å–é•¿åº¦çš„æ¥å£ï¼Œè¿™é‡Œå°±å›ºå®šä¸º260ä¸ªå­—ç¬¦ï¼ˆå«ç»ˆæ­¢NULLï¼‰
 
 	void UpdateTextInfo()
 	{
@@ -103,18 +103,19 @@ private:
 	{
 		switch (uMsg)
 		{
+		case WM_CTLCOLORSTATIC:
 		case WM_CTLCOLOREDIT:
 		{
 			if (m_CtrlSCInfo.count((HWND)lParam))
 			{
 				auto p = m_CtrlSCInfo[(HWND)lParam];
-				HBRUSH hbr;
+				HBRUSH hbr = (HBRUSH)DefSubclassProc(hWnd, uMsg, wParam, lParam);
 				if (p->m_hbrEditBK)
 					hbr = p->m_hbrEditBK;
-				else
-					hbr = (HBRUSH)DefSubclassProc(hWnd, uMsg, wParam, lParam);
-				SetTextColor((HDC)wParam, p->m_Info.crText);
-				SetBkColor((HDC)wParam, p->m_Info.crTextBK);
+				if (p->m_Info.crText != CLR_DEFAULT)
+					SetTextColor((HDC)wParam, p->m_Info.crText);
+				if (p->m_Info.crTextBK != CLR_DEFAULT)
+					SetBkColor((HDC)wParam, p->m_Info.crTextBK);
 				return (LRESULT)hbr;
 			}
 		}
@@ -144,7 +145,7 @@ private:
 		case WM_KEYDOWN:
 			if (wParam == 'A' && p->m_Info.bCtrlASelAll)
 				if (GetKeyState(VK_CONTROL) & 0x80000000)
-					SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + AÈ«Ñ¡
+					SendMessageW(hWnd, EM_SETSEL, 0, -1);// Ctrl + Aå…¨é€‰
 			break;
 
 		case WM_CHAR:
@@ -162,18 +163,18 @@ private:
 
 			switch (p->m_Info.iInputMode)
 			{
-			case 3:// ÕûÊıÎÄ±¾
-			case 6:// ÊäÈë¶ÌÕûÊı
-			case 7:// ÊäÈëÕûÊı
-			case 8:// ÊäÈë³¤ÕûÊı
+			case 3:// æ•´æ•°æ–‡æœ¬
+			case 6:// è¾“å…¥çŸ­æ•´æ•°
+			case 7:// è¾“å…¥æ•´æ•°
+			case 8:// è¾“å…¥é•¿æ•´æ•°
 				if ((wParam >= L'0' && wParam <= L'9') ||
 					wParam == L'-')
 					break;
 				else
 					return 0;
-			case 4:// Ğ¡ÊıÎÄ±¾
-			case 9:// ÊäÈëĞ¡Êı
-			case 10:// ÊäÈëË«¾«¶ÈĞ¡Êı
+			case 4:// å°æ•°æ–‡æœ¬
+			case 9:// è¾“å…¥å°æ•°
+			case 10:// è¾“å…¥åŒç²¾åº¦å°æ•°
 				if ((wParam >= L'0' && wParam <= L'9') ||
 					wParam == L'-' ||
 					wParam == L'.' ||
@@ -182,7 +183,7 @@ private:
 					break;
 				else
 					return 0;
-			case 5:// ÊäÈë×Ö½Ú
+			case 5:// è¾“å…¥å­—èŠ‚
 				if ((wParam >= L'0' && wParam <= L'9'))
 					break;
 				else
@@ -204,7 +205,7 @@ private:
 			PCWSTR pszCorrectValue = NULL;
 			switch (p->m_Info.iInputMode)
 			{
-			case 5:// ÊäÈë×Ö½Ú
+			case 5:// è¾“å…¥å­—èŠ‚
 				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
 				llValue = _wtoi64(szValue);
 				if (llValue < 0ll)
@@ -214,7 +215,7 @@ private:
 				else
 					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
 				break;
-			case 6:// ÊäÈë¶ÌÕûÊı
+			case 6:// è¾“å…¥çŸ­æ•´æ•°
 				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
 				llValue = _wtoi64(szValue);
 				if (llValue < -32768ll)
@@ -224,7 +225,7 @@ private:
 				else
 					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
 				break;
-			case 7:// ÊäÈëÕûÊı
+			case 7:// è¾“å…¥æ•´æ•°
 				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
 				llValue = _wtoi64(szValue);
 				if (llValue < -2147483648ll)
@@ -234,7 +235,7 @@ private:
 				else
 					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
 				break;
-			case 8:// ÊäÈë³¤ÕûÊı
+			case 8:// è¾“å…¥é•¿æ•´æ•°
 				GetWindowTextW(hWnd, szValue, BUFSIZE_EDITVALUE);
 				llValue = _wtoi64(szValue);
 				if (errno == ERANGE)
@@ -247,7 +248,7 @@ private:
 				else
 					SetWindowTextW(hWnd, std::to_wstring(llValue).c_str());
 				break;
-			case 9:// ÊäÈëĞ¡Êı
+			case 9:// è¾“å…¥å°æ•°
 			{
 				cchText = GetWindowTextLengthW(hWnd);
 				if (!cchText)
@@ -255,7 +256,7 @@ private:
 				pszText = new WCHAR[cchText + 1];
 				GetWindowTextW(hWnd, pszText, cchText + 1);
 				lfValue = _wtof(pszText);
-				if (lfValue < -3.402823466e38)// Êµ¼ÊÉÏÕı¸ºÖµÖĞ¼äÊÇÓĞ¿ÕÏ¶µÄ£¬²»×öÅĞ¶ÏÁË¡£¡£¡£
+				if (lfValue < -3.402823466e38)// å®é™…ä¸Šæ­£è´Ÿå€¼ä¸­é—´æ˜¯æœ‰ç©ºéš™çš„ï¼Œä¸åšåˆ¤æ–­äº†ã€‚ã€‚ã€‚
 					SetWindowTextW(hWnd, L"-3.402823466e38");
 				else if (lfValue < 3.402823466e38)
 					SetWindowTextW(hWnd, L"3.402823466e38");
@@ -265,7 +266,7 @@ private:
 			}
 			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
-			case 10:// ÊäÈëË«¾«¶ÈĞ¡Êı
+			case 10:// è¾“å…¥åŒç²¾åº¦å°æ•°
 			{
 				cchText = GetWindowTextLengthW(hWnd);
 				if (!cchText)
@@ -283,7 +284,7 @@ private:
 			}
 			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
-			case 11:// ÊäÈëÈÕÆÚÊ±¼ä
+			case 11:// è¾“å…¥æ—¥æœŸæ—¶é—´
 				break;
 			}
 
@@ -310,28 +311,28 @@ private:
 				if (wParam)
 				{
 					auto pnccsp = (NCCALCSIZE_PARAMS*)lParam;
-					p->m_rcMargins = pnccsp->rgrc[0];// ±£´æ·Ç¿Í»§Çø³ß´ç
-					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// callÄ¬ÈÏ¹ı³Ì£¬¼ÆËã±ê×¼±ß¿ò³ß´ç
-					// ±£´æ±ß¿ò³ß´ç
+					p->m_rcMargins = pnccsp->rgrc[0];// ä¿å­˜éå®¢æˆ·åŒºå°ºå¯¸
+					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// callé»˜è®¤è¿‡ç¨‹ï¼Œè®¡ç®—æ ‡å‡†è¾¹æ¡†å°ºå¯¸
+					// ä¿å­˜è¾¹æ¡†å°ºå¯¸
 					p->m_rcMargins.left = pnccsp->rgrc[0].left - p->m_rcMargins.left;
 					p->m_rcMargins.top = pnccsp->rgrc[0].top - p->m_rcMargins.top;
 					p->m_rcMargins.right -= pnccsp->rgrc[0].right;
 					p->m_rcMargins.bottom -= pnccsp->rgrc[0].bottom;
-					// ÉÏÏÂÁô¿Õ
+					// ä¸Šä¸‹ç•™ç©º
 					pnccsp->rgrc[0].top += ((pnccsp->rgrc[0].bottom - pnccsp->rgrc[0].top - p->m_cyText) / 2);
 					pnccsp->rgrc[0].bottom = pnccsp->rgrc[0].top + p->m_cyText;
 				}
 				else
 				{
 					auto prc = (RECT*)lParam;
-					p->m_rcMargins = *prc;// ±£´æ·Ç¿Í»§Çø³ß´ç
-					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// callÄ¬ÈÏ¹ı³Ì£¬¼ÆËã±ê×¼±ß¿ò³ß´ç
-					// ±£´æ±ß¿ò³ß´ç
+					p->m_rcMargins = *prc;// ä¿å­˜éå®¢æˆ·åŒºå°ºå¯¸
+					lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);// callé»˜è®¤è¿‡ç¨‹ï¼Œè®¡ç®—æ ‡å‡†è¾¹æ¡†å°ºå¯¸
+					// ä¿å­˜è¾¹æ¡†å°ºå¯¸
 					p->m_rcMargins.left = prc->left - p->m_rcMargins.left;
 					p->m_rcMargins.top = prc->top - p->m_rcMargins.top;
 					p->m_rcMargins.right -= prc->right;
 					p->m_rcMargins.bottom -= prc->bottom;
-					// ÉÏÏÂÁô¿Õ
+					// ä¸Šä¸‹ç•™ç©º
 					prc->top += ((prc->bottom - prc->top - p->m_cyText) / 2);
 					prc->bottom = prc->top + p->m_cyText;
 				}
@@ -342,36 +343,36 @@ private:
 
 		case WM_NCPAINT:
 		{
-			DefSubclassProc(hWnd, uMsg, wParam, lParam);// »­Ä¬ÈÏ±ß¿ò
+			DefSubclassProc(hWnd, uMsg, wParam, lParam);// ç”»é»˜è®¤è¾¹æ¡†
 			if (p->GetMultiLine())
 				return 0;
 
 			RECT rcWnd, rcText;
 			HDC hDC = GetWindowDC(hWnd);
-			// È¡·Ç¿Í»§Çø¾ØĞÎ
+			// å–éå®¢æˆ·åŒºçŸ©å½¢
 			GetWindowRect(hWnd, &rcWnd);
 			rcWnd.right -= rcWnd.left;
 			rcWnd.bottom -= rcWnd.top;
 			rcWnd.left = 0;
 			rcWnd.top = 0;
-			// ÖÆÎÄ±¾¾ØĞÎ
+			// åˆ¶æ–‡æœ¬çŸ©å½¢
 			rcText.left = 0;
 			rcText.top = (rcWnd.bottom - p->m_cyText) / 2;
 			rcText.right = rcWnd.right;
 			rcText.bottom = rcText.top + p->m_cyText;
-			// ·Ç¿Í»§Çø¾ØĞÎ¼õµô±ß¿ò
+			// éå®¢æˆ·åŒºçŸ©å½¢å‡æ‰è¾¹æ¡†
 			rcWnd.left += p->m_rcMargins.left;
 			rcWnd.top += p->m_rcMargins.top;
 			rcWnd.right -= p->m_rcMargins.right;
 			rcWnd.bottom -= p->m_rcMargins.bottom;
-			// Òì»òºÏ²¢£¬¼ô¼­
+			// å¼‚æˆ–åˆå¹¶ï¼Œå‰ªè¾‘
 			HRGN hRgnBK = CreateRectRgnIndirect(&rcWnd);
 			HRGN hRgnText = CreateRectRgnIndirect(&rcText);
 			CombineRgn(hRgnBK, hRgnBK, hRgnText, RGN_XOR);
 			SelectClipRgn(hDC, hRgnBK);
 			DeleteObject(hRgnBK);
 			DeleteObject(hRgnText);
-			// Ìî³ä±³¾°
+			// å¡«å……èƒŒæ™¯
 			FillRect(hDC, &rcWnd, p->m_hbrEditBK);
 			ReleaseDC(hWnd, hDC);
 		}
@@ -393,7 +394,7 @@ private:
 			auto lResult = DefSubclassProc(hWnd, uMsg, wParam, lParam);
 			if (!p->GetMultiLine())
 			{
-				if (lResult == HTNOWHERE)// ĞŞ¸´Ò»ÏÂNCÃüÖĞ²âÊÔ£¬²»È»Éè¼ÆÆ÷Àïµãµ½±ßÉÏµÄÊ±ºòÑ¡²»ÉÏ¿Ø¼ş
+				if (lResult == HTNOWHERE)// ä¿®å¤ä¸€ä¸‹NCå‘½ä¸­æµ‹è¯•ï¼Œä¸ç„¶è®¾è®¡å™¨é‡Œç‚¹åˆ°è¾¹ä¸Šçš„æ—¶å€™é€‰ä¸ä¸Šæ§ä»¶
 					lResult = HTBORDER;
 			}
 			return lResult;
@@ -465,8 +466,9 @@ public:
 			m_Info0.iFrame = 1;
 			m_pszCueBanner = new WCHAR[ED_CUEBANNER_MAXLEN];
 			*m_pszCueBanner = L'\0';
-			m_Info.crTextBK = 0x00FFFFFF;
-			m_Info.crBK = 0x00FFFFFF;
+			m_Info.crTextBK = CLR_DEFAULT;
+			m_Info.crBK = CLR_DEFAULT;
+			m_Info.crText = CLR_DEFAULT;
 			m_Info.bHideSel = TRUE;
 			m_Info.bCtrlASelAll = TRUE;
 		}
@@ -490,7 +492,7 @@ public:
 		SetClr(2, m_Info.crBK);
 		SetHideSel(m_Info.bHideSel);
 		SetMaxLen(m_Info.iMaxLen);
-		// SetMultiLine(m_Info.bMultiLine);// Õâ¸öº¯Êı½ö½ö¸üĞÂÁËm_Info£¬Ã»ÓĞ×öÆäËûÊµÖÊĞÔ¹¤×÷
+		// SetMultiLine(m_Info.bMultiLine);// è¿™ä¸ªå‡½æ•°ä»…ä»…æ›´æ–°äº†m_Infoï¼Œæ²¡æœ‰åšå…¶ä»–å®è´¨æ€§å·¥ä½œ
 		SetScrollBar(m_Info.iScrollBar);
 		SetAlign(m_Info.iAlign);
 		if (m_Info.chMask)
@@ -520,12 +522,14 @@ public:
 		case 2:
 			if (m_hbrEditBK)
 				DeleteObject(m_hbrEditBK);
-			m_hbrEditBK = CreateSolidBrush(cr);
+			if (cr == CLR_DEFAULT)
+				m_hbrEditBK = NULL;
+			else
+				m_hbrEditBK = CreateSolidBrush(cr);
 			m_Info.crBK = cr;
-			SendMessageW(m_hWnd, WM_NCPAINT, 0, 0);
 			break;
 		}
-		Redraw();
+		RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 	}
 
 	eStlInline COLORREF GetClr(int iType)
@@ -564,7 +568,7 @@ public:
 	eStlInline void SetMultiLine(BOOL bMultiLine)
 	{
 		BOOL bOld = m_Info.bMultiLine;
-		m_Info.bMultiLine = bMultiLine;// ²»ĞèÒªĞŞ¸Ä·ç¸ñ£¬ÒòÎª¿Ø¼şÒªÖØĞÂ´´½¨
+		m_Info.bMultiLine = bMultiLine;// ä¸éœ€è¦ä¿®æ”¹é£æ ¼ï¼Œå› ä¸ºæ§ä»¶è¦é‡æ–°åˆ›å»º
 	}
 
 	eStlInline BOOL GetMultiLine()
@@ -639,9 +643,9 @@ public:
 	{
 		m_Info.iInputMode = iInputMode;
 
-		elibstl::ModifyWindowStyle(m_hWnd, ((iInputMode == 1) ? ES_READONLY : 0), ES_READONLY);
+		SendMessageW(m_hWnd, EM_SETREADONLY, (iInputMode == 1), 0);
 
-		if (iInputMode == 2)// ÃÜÂëÊäÈë
+		if (iInputMode == 2)// å¯†ç è¾“å…¥
 			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, L'*', 0);
 		else
 			SendMessageW(m_hWnd, EM_SETPASSWORDCHAR, 0, 0);
@@ -848,10 +852,10 @@ public:
 		p = (BYTE*)GlobalLock(hGlobal);
 		if (!p)
 			goto Fail;
-		// ½á¹¹
+		// ç»“æ„
 		p += cbBaseData;
 		memcpy(p, &m_Info, sizeof(EEDITDATA_2));
-		// ÌáÊ¾ÎÄ±¾
+		// æç¤ºæ–‡æœ¬
 		p += sizeof(EEDITDATA_2);
 		memcpy(p, m_pszCueBanner, cbCueBanner);
 		// 
@@ -872,68 +876,68 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ÄÚÈİ
+		case 0:// å†…å®¹
 			p->SetTextA(pPropertyVaule->m_szText);
 			break;
-		case 1:// ÄÚÈİW
+		case 1:// å†…å®¹W
 			p->SetTextW((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 2:// ±ß¿ò
+		case 2:// è¾¹æ¡†
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
-		case 3:// ÎÄ±¾ÑÕÉ«
-		case 4:// ÎÄ±¾±³¾°ÑÕÉ«
-		case 5:// ±à¼­¿ò±³¾°ÑÕÉ«
+		case 3:// æ–‡æœ¬é¢œè‰²
+		case 4:// æ–‡æœ¬èƒŒæ™¯é¢œè‰²
+		case 5:// ç¼–è¾‘æ¡†èƒŒæ™¯é¢œè‰²
 			p->SetClr(nPropertyIndex - 3, pPropertyVaule->m_clr);
 			break;
-		case 6:// ×ÖÌå
+		case 6:// å­—ä½“
 			p->SetFont((LOGFONTA*)pPropertyVaule->m_data.m_pData);
 			break;
-		case 7:// Òş²ØÑ¡Ôñ
+		case 7:// éšè—é€‰æ‹©
 			p->SetHideSel(pPropertyVaule->m_bool);
 			break;
-		case 8:// ×î´óÔÊĞí³¤¶È
+		case 8:// æœ€å¤§å…è®¸é•¿åº¦
 			p->SetMaxLen(pPropertyVaule->m_int);
 			break;
-		case 9:// ÊÇ·ñÔÊĞí¶àĞĞ
+		case 9:// æ˜¯å¦å…è®¸å¤šè¡Œ
 			p->SetMultiLine(pPropertyVaule->m_bool);
 			return TRUE;
-		case 10:// ¹ö¶¯Ìõ
+		case 10:// æ»šåŠ¨æ¡
 			p->SetScrollBar(pPropertyVaule->m_int);
 			break;
-		case 11:// ¶ÔÆë·½Ê½
+		case 11:// å¯¹é½æ–¹å¼
 			p->SetAlign(pPropertyVaule->m_int);
 			break;
-		case 12:// ÊäÈë·½Ê½
+		case 12:// è¾“å…¥æ–¹å¼
 			p->SetInputMode(pPropertyVaule->m_int);
 			break;
-		case 13:// ÃÜÂëÕÚ¸Ç×Ö·û
+		case 13:// å¯†ç é®ç›–å­—ç¬¦
 			if (pPropertyVaule->m_data.m_nDataSize)
 				p->SetMaskChar(*(PWSTR)pPropertyVaule->m_data.m_pData);
 			else
 				p->SetMaskChar(L'*');
 			break;
-		case 14:// ×ª»»·½Ê½
+		case 14:// è½¬æ¢æ–¹å¼
 			p->SetTransformMode(pPropertyVaule->m_int);
 			break;
-		case 15:// ÆğÊ¼Ñ¡ÔñÎ»ÖÃ
+		case 15:// èµ·å§‹é€‰æ‹©ä½ç½®
 			p->SetSelPos(pPropertyVaule->m_int);
 			break;
-		case 16:// ±»Ñ¡Ôñ×Ö·ûÊı
+		case 16:// è¢«é€‰æ‹©å­—ç¬¦æ•°
 			p->SetSelNum(pPropertyVaule->m_int);
 			break;
-		case 17:// ±»Ñ¡ÔñÎÄ±¾
+		case 17:// è¢«é€‰æ‹©æ–‡æœ¬
 			p->SetSelText((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 18:// ÌáÊ¾ÎÄ±¾
+		case 18:// æç¤ºæ–‡æœ¬
 			p->SetCueBanner((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 19:// ×ÜÊÇÏÔÊ¾ÌáÊ¾ÎÄ±¾
+		case 19:// æ€»æ˜¯æ˜¾ç¤ºæç¤ºæ–‡æœ¬
 			p->SetCueBannerShowAlways(pPropertyVaule->m_bool);
 			break;
-		case 20:// ×Ô¶¯»»ĞĞ
+		case 20:// è‡ªåŠ¨æ¢è¡Œ
 			return p->SetAutoWrap(pPropertyVaule->m_bool);
-		case 21:// Ctrl+AÈ«Ñ¡
+		case 21:// Ctrl+Aå…¨é€‰
 			return p->GetCtrlAToSelAll();
 		}
 
@@ -952,65 +956,65 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ÄÚÈİ
+		case 0:// å†…å®¹
 			pPropertyVaule->m_szText = p->GetTextA();
 			break;
-		case 1:// ÄÚÈİW
+		case 1:// å†…å®¹W
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 2:// ±ß¿ò
+		case 2:// è¾¹æ¡†
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
-		case 3:// ÎÄ±¾ÑÕÉ«
-		case 4:// ÎÄ±¾±³¾°ÑÕÉ«
-		case 5:// ±à¼­¿ò±³¾°ÑÕÉ«
+		case 3:// æ–‡æœ¬é¢œè‰²
+		case 4:// æ–‡æœ¬èƒŒæ™¯é¢œè‰²
+		case 5:// ç¼–è¾‘æ¡†èƒŒæ™¯é¢œè‰²
 			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 3);
 			break;
-		case 6:// ×ÖÌå
+		case 6:// å­—ä½“
 			pPropertyVaule->m_data.m_pData = p->GetFont();
 			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
 			break;
-		case 7:// Òş²ØÑ¡Ôñ
+		case 7:// éšè—é€‰æ‹©
 			pPropertyVaule->m_bool = p->GetHideSel();
 			break;
-		case 8:// ×î´óÔÊĞí³¤¶È
+		case 8:// æœ€å¤§å…è®¸é•¿åº¦
 			pPropertyVaule->m_int = p->GetMaxLen();
 			break;
-		case 9:// ÊÇ·ñÔÊĞí¶àĞĞ
+		case 9:// æ˜¯å¦å…è®¸å¤šè¡Œ
 			pPropertyVaule->m_bool = p->GetMultiLine();
 			break;
-		case 10:// ¹ö¶¯Ìõ
+		case 10:// æ»šåŠ¨æ¡
 			pPropertyVaule->m_int = p->GetScrollBar();
 			break;
-		case 11:// ¶ÔÆë·½Ê½
+		case 11:// å¯¹é½æ–¹å¼
 			pPropertyVaule->m_int = p->GetAlign();
 			break;
-		case 12:// ÊäÈë·½Ê½
+		case 12:// è¾“å…¥æ–¹å¼
 			pPropertyVaule->m_int = p->GetInputMode();
 			break;
-		case 13:// ÃÜÂëÕÚ¸Ç×Ö·û
+		case 13:// å¯†ç é®ç›–å­—ç¬¦
 			pPropertyVaule->m_data.m_pData = (BYTE*)&p->m_Info.chMask;
 			pPropertyVaule->m_data.m_nDataSize = 1;
 			break;
-		case 14:// ×ª»»·½Ê½
+		case 14:// è½¬æ¢æ–¹å¼
 			pPropertyVaule->m_int = p->GetTransformMode();
 			break;
-		case 15:// ÆğÊ¼Ñ¡ÔñÎ»ÖÃ
+		case 15:// èµ·å§‹é€‰æ‹©ä½ç½®
 			pPropertyVaule->m_int = p->GetSelPos();
 			break;
-		case 16:// ±»Ñ¡Ôñ×Ö·ûÊı
+		case 16:// è¢«é€‰æ‹©å­—ç¬¦æ•°
 			pPropertyVaule->m_int = p->GetSelNum();
 			break;
-		case 17:// ±»Ñ¡ÔñÎÄ±¾
+		case 17:// è¢«é€‰æ‹©æ–‡æœ¬
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetSelText((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 18:// ÌáÊ¾ÎÄ±¾
+		case 18:// æç¤ºæ–‡æœ¬
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetCueBanner((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 19:// ×ÜÊÇÏÔÊ¾ÌáÊ¾ÎÄ±¾
+		case 19:// æ€»æ˜¯æ˜¾ç¤ºæç¤ºæ–‡æœ¬
 			pPropertyVaule->m_bool = p->GetCueBannerShowAlways();
 			break;
-		case 20:// ×Ô¶¯»»ĞĞ
+		case 20:// è‡ªåŠ¨æ¢è¡Œ
 			pPropertyVaule->m_bool = p->GetAutoWrap();
 			break;
 		}
@@ -1025,7 +1029,7 @@ public:
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
-		case 1:// ÄÚÈİW
+		case 1:// å†…å®¹W
 		{
 			if (elibstl::IntputBox(&psz, p->GetTextW()))
 			{
@@ -1035,10 +1039,10 @@ public:
 		}
 		break;
 
-		case 13:// ÃÜÂëÕÚ¸Ç×Ö·ûW
+		case 13:// å¯†ç é®ç›–å­—ç¬¦W
 		{
 			WCHAR sz[2]{ p->GetMaskChar(),L'\0' };
-			if (elibstl::IntputBox(&psz, sz, L"ÇëÊäÈëÃÜÂëÕÚ¸Ç×Ö·û£¬½öµÚÒ»¸ö×Ö·ûÓĞĞ§£º"))
+			if (elibstl::IntputBox(&psz, sz, L"è¯·è¾“å…¥å¯†ç é®ç›–å­—ç¬¦ï¼Œä»…ç¬¬ä¸€ä¸ªå­—ç¬¦æœ‰æ•ˆï¼š"))
 			{
 				p->SetMaskChar(*psz);
 				delete psz;
@@ -1047,7 +1051,7 @@ public:
 		}
 		break;
 
-		case 18:// ÌáÊ¾ÎÄ±¾
+		case 18:// æç¤ºæ–‡æœ¬
 		{
 			if (elibstl::IntputBox(&psz, p->GetCueBanner()))
 			{
@@ -1066,9 +1070,9 @@ public:
 		auto p = m_CtrlSCInfo.at(elibstl::get_hwnd_from_hunit(hUnit));
 		switch (nPropertyIndex)
 		{
-		case 13:// ÃÜÂëÕÚ¸Ç×Ö·û
+		case 13:// å¯†ç é®ç›–å­—ç¬¦
 			return p->m_Info.iInputMode == 2;
-		case 20:// ×Ô¶¯»»ĞĞ
+		case 20:// è‡ªåŠ¨æ¢è¡Œ
 			return p->GetMultiLine();
 		}
 
@@ -1116,39 +1120,39 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_EditW(INT nInterfaceNO)
 
 static EVENT_INFO2 s_Event_Edit[] =
 {
-	/*000*/ {"ÄÚÈİ±»¸Ä±ä", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"å†…å®¹è¢«æ”¹å˜", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_Edit[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=ÊôĞÔÃû, 2=Ó¢ÎÄÊôĞÔÃû, 3=ÊôĞÔ½âÊÍ, 4=ÊôĞÔµÄÊı¾İÀàĞÍUD_,5=ÊôĞÔµÄ±êÖ¾, 6=Ë³Ğò¼ÇÂ¼ËùÓĞµÄ±¸Ñ¡ÎÄ±¾UW_(³ı¿ªUD_FILE_NAME), ÒÔÒ»¸ö¿Õ´®½áÊø
+	//1=å±æ€§å, 2=è‹±æ–‡å±æ€§å, 3=å±æ€§è§£é‡Š, 4=å±æ€§çš„æ•°æ®ç±»å‹UD_,5=å±æ€§çš„æ ‡å¿—, 6=é¡ºåºè®°å½•æ‰€æœ‰çš„å¤‡é€‰æ–‡æœ¬UW_(é™¤å¼€UD_FILE_NAME), ä»¥ä¸€ä¸ªç©ºä¸²ç»“æŸ
 
-	/*000*/  {"ÄÚÈİ", "Text", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL},
-	/*001*/  {"ÄÚÈİW", "TextW", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*002*/	 {"±ß¿ò", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ÎŞ±ß¿ò\0""°¼ÈëÊ½\0""Í¹³öÊ½\0""Ç³°¼ÈëÊ½\0""¾µ¿òÊ½\0""µ¥Ïß±ß¿òÊ½\0""\0"},
-	/*003*/  {"ÎÄ±¾ÑÕÉ«", "TextClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*004*/  {"ÎÄ±¾±³¾°ÑÕÉ«", "TextBKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*005*/  {"±à¼­¿ò±³¾°ÑÕÉ«", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*006*/  {"×ÖÌå", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
-	/*007*/  {"Òş²ØÑ¡Ôñ", "HideSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*008*/  {"×î´óÔÊĞí³¤¶È", "MaxLen", "0Îª²»ÏŞÖÆ", UD_INT, _PROP_OS(__OS_WIN),  NULL},
-	/*009*/  {"ÊÇ·ñÔÊĞí¶àĞĞ", "MultiLine", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*010*/  {"¹ö¶¯Ìõ", "ScrollBar", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ÎŞ\0""ºáÏò¹ö¶¯Ìõ\0""×İÏò¹ö¶¯Ìõ\0""ºáÏò¼°×İÏò¹ö¶¯Ìõ\0""\0"},
-	/*011*/  {"¶ÔÆë·½Ê½", "Align", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "×ó¶ÔÆë\0""¾ÓÖĞ\0""ÓÒ¶ÔÆë\0""\0"},
-	/*012*/  {"ÊäÈë·½Ê½", "InputMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),
-					"Í¨³£\0""Ö»¶Á\0""ÃÜÂë\0""ÕûÊıÎÄ±¾\0""Ğ¡ÊıÎÄ±¾\0""ÊäÈë×Ö½Ú\0""ÊäÈë¶ÌÕûÊı\0""ÊäÈëÕûÊı\0""ÊäÈë³¤ÕûÊı\0""ÊäÈëĞ¡Êı\0"
-					"ÊäÈëË«¾«¶ÈĞ¡Êı\0""ÊäÈëÈÕÆÚÊ±¼ä\0""\0"},
-	/*013*/		{"ÃÜÂëÕÚ¸Ç×Ö·ûW", "PasswordChar", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
-	/*014*/  {"×ª»»·½Ê½", "TransformMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ÎŞ\0""´óĞ´µ½Ğ¡Ğ´\0""Ğ¡Ğ´µ½´óĞ´\0""\0"},
-	/*015*/  {"ÆğÊ¼Ñ¡ÔñÎ»ÖÃ", "SelStart", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*016*/  {"±»Ñ¡Ôñ×Ö·ûÊı", "SelCount", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*017*/  {"±»Ñ¡ÔñÎÄ±¾W", "SelText", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_CANNOT_INIT, NULL},
-	/*018*/  {"ÌáÊ¾ÎÄ±¾W", "CueBanner", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*019*/  {"×ÜÊÇÏÔÊ¾ÌáÊ¾ÎÄ±¾", "AlwaysCueBanner", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*020*/  {"×Ô¶¯»»ĞĞ", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*021*/  {"CtrlAÈ«Ñ¡", "CtrlA", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*000*/  {"å†…å®¹", "Text", "", UD_TEXT, _PROP_OS(__OS_WIN), NULL},
+	/*001*/  {"å†…å®¹W", "TextW", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*002*/	 {"è¾¹æ¡†", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "æ— è¾¹æ¡†\0""å‡¹å…¥å¼\0""å‡¸å‡ºå¼\0""æµ…å‡¹å…¥å¼\0""é•œæ¡†å¼\0""å•çº¿è¾¹æ¡†å¼\0""\0"},
+	/*003*/  {"æ–‡æœ¬é¢œè‰²", "TextClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),  NULL},
+	/*004*/  {"æ–‡æœ¬èƒŒæ™¯é¢œè‰²", "TextBKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),  NULL},
+	/*005*/  {"ç¼–è¾‘æ¡†èƒŒæ™¯é¢œè‰²", "BKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),  NULL},
+	/*006*/  {"å­—ä½“", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
+	/*007*/  {"éšè—é€‰æ‹©", "HideSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*008*/  {"æœ€å¤§å…è®¸é•¿åº¦", "MaxLen", "0ä¸ºä¸é™åˆ¶", UD_INT, _PROP_OS(__OS_WIN),  NULL},
+	/*009*/  {"æ˜¯å¦å…è®¸å¤šè¡Œ", "MultiLine", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*010*/  {"æ»šåŠ¨æ¡", "ScrollBar", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "æ— \0""æ¨ªå‘æ»šåŠ¨æ¡\0""çºµå‘æ»šåŠ¨æ¡\0""æ¨ªå‘åŠçºµå‘æ»šåŠ¨æ¡\0""\0"},
+	/*011*/  {"å¯¹é½æ–¹å¼", "Align", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "å·¦å¯¹é½\0""å±…ä¸­\0""å³å¯¹é½\0""\0"},
+	/*012*/  {"è¾“å…¥æ–¹å¼", "InputMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),
+					"é€šå¸¸\0""åªè¯»\0""å¯†ç \0""æ•´æ•°æ–‡æœ¬\0""å°æ•°æ–‡æœ¬\0""è¾“å…¥å­—èŠ‚\0""è¾“å…¥çŸ­æ•´æ•°\0""è¾“å…¥æ•´æ•°\0""è¾“å…¥é•¿æ•´æ•°\0""è¾“å…¥å°æ•°\0"
+					"è¾“å…¥åŒç²¾åº¦å°æ•°\0""è¾“å…¥æ—¥æœŸæ—¶é—´\0""\0"},
+	/*013*/		{"å¯†ç é®ç›–å­—ç¬¦W", "PasswordChar", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_HAS_INDENT,  NULL},
+	/*014*/  {"è½¬æ¢æ–¹å¼", "TransformMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "æ— \0""å¤§å†™åˆ°å°å†™\0""å°å†™åˆ°å¤§å†™\0""\0"},
+	/*015*/  {"èµ·å§‹é€‰æ‹©ä½ç½®", "SelStart", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*016*/  {"è¢«é€‰æ‹©å­—ç¬¦æ•°", "SelCount", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*017*/  {"è¢«é€‰æ‹©æ–‡æœ¬W", "SelText", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN) | UW_CANNOT_INIT, NULL},
+	/*018*/  {"æç¤ºæ–‡æœ¬W", "CueBanner", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*019*/  {"æ€»æ˜¯æ˜¾ç¤ºæç¤ºæ–‡æœ¬", "AlwaysCueBanner", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*020*/  {"è‡ªåŠ¨æ¢è¡Œ", "AutoWrap", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*021*/  {"CtrlAå…¨é€‰", "CtrlA", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
-///////////////////////////////////·½·¨
+///////////////////////////////////æ–¹æ³•
 static INT s_Cmd_Edit[] = { 50,110,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,275 };
 
 EXTERN_C void libstl_Edit_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -1163,8 +1167,8 @@ EXTERN_C void libstl_Edit_AddText(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 static ARG_INFO s_ArgsAddText[] =
 {
 	{
-		/*name*/    "ÎÄ±¾",
-		/*explain*/ ("Óû¼ÓÈëµÄÎÄ±¾"),
+		/*name*/    "æ–‡æœ¬",
+		/*explain*/ ("æ¬²åŠ å…¥çš„æ–‡æœ¬"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BIN,
@@ -1173,9 +1177,9 @@ static ARG_INFO s_ArgsAddText[] =
 	}
 };
 FucInfo Fn_EditAddText = { {
-		/*ccname*/  ("¼ÓÈëÎÄ±¾"),
+		/*ccname*/  ("åŠ å…¥æ–‡æœ¬"),
 		/*egname*/  ("AddText"),
-		/*explain*/ ("½«Ö¸¶¨ÎÄ±¾¼ÓÈëµ½±à¼­¿òÄÚÈİµÄÎ²²¿"),
+		/*explain*/ ("å°†æŒ‡å®šæ–‡æœ¬åŠ å…¥åˆ°ç¼–è¾‘æ¡†å†…å®¹çš„å°¾éƒ¨"),
 		/*category*/-1,
 		/*state*/   CT_ALLOW_APPEND_NEW_ARG,
 		/*ret*/     _SDT_NULL,
@@ -1208,8 +1212,8 @@ EXTERN_C void libstl_Edit_CharFromPos(PMDATA_INF pRetData, INT nArgCount, PMDATA
 static ARG_INFO s_ArgsCharFromPos[] =
 {
 	{
-		/*name*/    "ºáÏòÎ»ÖÃ",
-		/*explain*/ "Ïà¶Ô¿Í»§Çø",
+		/*name*/    "æ¨ªå‘ä½ç½®",
+		/*explain*/ "ç›¸å¯¹å®¢æˆ·åŒº",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1217,8 +1221,8 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*state*/   ArgMark::AS_NONE,
 	},
 	{
-		/*name*/    "×İÏòÎ»ÖÃ",
-		/*explain*/ "Ïà¶Ô¿Í»§Çø",
+		/*name*/    "çºµå‘ä½ç½®",
+		/*explain*/ "ç›¸å¯¹å®¢æˆ·åŒº",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1226,8 +1230,8 @@ static ARG_INFO s_ArgsCharFromPos[] =
 		/*state*/   ArgMark::AS_NONE,
 	},
 	{
-		/*name*/    "ĞĞÖĞÎ»ÖÃ",
-		/*explain*/ "½ÓÊÕ×Ö·ûĞĞÖĞÎ»ÖÃµÄ±äÁ¿£¬Èôº¯ÊıÊ§°Ü£¬Ôò¸Ä±äÁ¿µÄÖµÎª-1",
+		/*name*/    "è¡Œä¸­ä½ç½®",
+		/*explain*/ "æ¥æ”¶å­—ç¬¦è¡Œä¸­ä½ç½®çš„å˜é‡ï¼Œè‹¥å‡½æ•°å¤±è´¥ï¼Œåˆ™æ”¹å˜é‡çš„å€¼ä¸º-1",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1236,9 +1240,9 @@ static ARG_INFO s_ArgsCharFromPos[] =
 	}
 };
 FucInfo Fn_EditCharFromPos = { {
-		/*ccname*/  "È¡×ø±ê´¦×Ö·û",
+		/*ccname*/  "å–åæ ‡å¤„å­—ç¬¦",
 		/*egname*/  "CharFromPos",
-		/*explain*/ "·µ»Ø×Ö·ûÎ»ÖÃ£¬Ê§°Ü·µ»Ø-1",
+		/*explain*/ "è¿”å›å­—ç¬¦ä½ç½®ï¼Œå¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -1257,7 +1261,7 @@ EXTERN_C void libstl_Edit_CanUndo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 
 }
 FucInfo Fn_EditCanUndo = { {
-		/*ccname*/  "ÊÇ·ñ¿É³·Ïú",
+		/*ccname*/  "æ˜¯å¦å¯æ’¤é”€",
 		/*egname*/  "CanUndo",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1277,7 +1281,7 @@ EXTERN_C void libstl_Edit_EmptyUndoBuf(PMDATA_INF pRetData, INT nArgCount, PMDAT
 	SendMessageW(hWnd, EM_EMPTYUNDOBUFFER, 0, 0);
 }
 FucInfo Fn_EditEmptyUndoBuf = { {
-		/*ccname*/  "Çå¿Õ³·Ïú¶ÓÁĞ",
+		/*ccname*/  "æ¸…ç©ºæ’¤é”€é˜Ÿåˆ—",
 		/*egname*/  "EmptyUndoBuf",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1297,9 +1301,9 @@ EXTERN_C void libstl_Edit_GetFirstLine(PMDATA_INF pRetData, INT nArgCount, PMDAT
 	pRetData->m_int = SendMessageW(hWnd, EM_GETFIRSTVISIBLELINE, 0, 0);
 }
 FucInfo Fn_EditGetFirstLine = { {
-		/*ccname*/  "È¡µÚÒ»¿É¼ûĞĞ",
+		/*ccname*/  "å–ç¬¬ä¸€å¯è§è¡Œ",
 		/*egname*/  "GetFirstLine",
-		/*explain*/ "·µ»ØĞĞË÷Òı",
+		/*explain*/ "è¿”å›è¡Œç´¢å¼•",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -1317,7 +1321,7 @@ EXTERN_C void libstl_Edit_GetLineCount(PMDATA_INF pRetData, INT nArgCount, PMDAT
 	pRetData->m_int = SendMessageW(hWnd, EM_GETLINECOUNT, 0, 0);
 }
 FucInfo Fn_EditGetLineCount = { {
-		/*ccname*/  "È¡ĞĞÊı",
+		/*ccname*/  "å–è¡Œæ•°",
 		/*egname*/  "GetLineCount",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1337,7 +1341,7 @@ EXTERN_C void libstl_Edit_GetModify(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	pRetData->m_int = SendMessageW(hWnd, EM_GETMODIFY, 0, 0);
 }
 FucInfo Fn_EditGetModify = { {
-		/*ccname*/  "È¡ĞŞ¸Ä±êÖ¾",
+		/*ccname*/  "å–ä¿®æ”¹æ ‡å¿—",
 		/*egname*/  "GetModify",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1357,9 +1361,9 @@ EXTERN_C void libstl_Edit_HideBallloonTip(PMDATA_INF pRetData, INT nArgCount, PM
 	pRetData->m_bool = SendMessageW(hWnd, EM_HIDEBALLOONTIP, 0, 0);
 }
 FucInfo Fn_EditHideBallloonTip = { {
-		/*ccname*/  "Òş²ØÆøÇòÌáÊ¾",
+		/*ccname*/  "éšè—æ°”çƒæç¤º",
 		/*egname*/  "HideBallloonTip",
-		/*explain*/ "¸Ãº¯ÊıĞèÒªÔÚÇåµ¥ÖĞÖ¸¶¨Comctl6.0",
+		/*explain*/ "è¯¥å‡½æ•°éœ€è¦åœ¨æ¸…å•ä¸­æŒ‡å®šComctl6.0",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -1379,8 +1383,8 @@ EXTERN_C void libstl_Edit_LineLength(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsLineLength[] =
 {
 	{
-		/*name*/    "ĞĞÖĞµÄ×Ö·ûË÷Òı",
-		/*explain*/ "Èô´Ë²ÎÊıÉèÎª-1£¬Ôò·µ»ØÑ¡ÇøËùÔÚ¸÷ĞĞµÄÎ´Ñ¡¶¨×Ö·ûÊı",
+		/*name*/    "è¡Œä¸­çš„å­—ç¬¦ç´¢å¼•",
+		/*explain*/ "è‹¥æ­¤å‚æ•°è®¾ä¸º-1ï¼Œåˆ™è¿”å›é€‰åŒºæ‰€åœ¨å„è¡Œçš„æœªé€‰å®šå­—ç¬¦æ•°",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1389,9 +1393,9 @@ static ARG_INFO s_ArgsLineLength[] =
 	}
 };
 FucInfo Fn_EditLineLength = { {
-		/*ccname*/  "È¡Ä³ĞĞ³¤¶È",
+		/*ccname*/  "å–æŸè¡Œé•¿åº¦",
 		/*egname*/  "LineLength",
-		/*explain*/ "·µ»ØÄ³Ò»ĞĞ×Ö·ûµÄ³¤¶È£¬Èô±à¼­¿òÎªµ¥ĞĞÄ£Ê½£¬Ôò·µ»ØÈ«²¿ÎÄ±¾µÄ³¤¶È£¬Ê§°Ü·µ»Ø0",
+		/*explain*/ "è¿”å›æŸä¸€è¡Œå­—ç¬¦çš„é•¿åº¦ï¼Œè‹¥ç¼–è¾‘æ¡†ä¸ºå•è¡Œæ¨¡å¼ï¼Œåˆ™è¿”å›å…¨éƒ¨æ–‡æœ¬çš„é•¿åº¦ï¼Œå¤±è´¥è¿”å›0",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -1410,9 +1414,9 @@ EXTERN_C void libstl_Edit_GetLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 	if (cch)
 	{
 		BYTE* pBuf = elibstl::malloc_wstring(cch);
-		*(WORD*)(pBuf + 8) = cch;// ·¢ËÍÏûÏ¢Ç°½«µÚÒ»¸öWORDÉèÖÃÎª»º³åÇø´óĞ¡
+		*(WORD*)(pBuf + 8) = cch;// å‘é€æ¶ˆæ¯å‰å°†ç¬¬ä¸€ä¸ªWORDè®¾ç½®ä¸ºç¼“å†²åŒºå¤§å°
 		SendMessageW(hWnd, EM_GETLINE, pArgInf[1].m_int, (LPARAM)(pBuf + 8));
-		*(((PWSTR)(pBuf + 8)) + cch) = L'\0';// ¸´ÖÆÍê³Éºó²»»áÌí¼Ó½áÎ²NULL
+		*(((PWSTR)(pBuf + 8)) + cch) = L'\0';// å¤åˆ¶å®Œæˆåä¸ä¼šæ·»åŠ ç»“å°¾NULL
 		pRetData->m_pBin = pBuf;
 	}
 	else
@@ -1421,7 +1425,7 @@ EXTERN_C void libstl_Edit_GetLine(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 static ARG_INFO s_ArgsGetLine[] =
 {
 	{
-		/*name*/    "ĞĞË÷Òı",
+		/*name*/    "è¡Œç´¢å¼•",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1431,7 +1435,7 @@ static ARG_INFO s_ArgsGetLine[] =
 	}
 };
 FucInfo Fn_EditGetLine = { {
-		/*ccname*/  "È¡ĞĞÎÄ±¾",
+		/*ccname*/  "å–è¡Œæ–‡æœ¬",
 		/*egname*/  "GetLine",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1457,7 +1461,7 @@ EXTERN_C void libstl_Edit_GetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsGetMargins[] =
 {
 	{
-		/*name*/    "½ÓÊÕ×ó±ß¾à±äÁ¿",
+		/*name*/    "æ¥æ”¶å·¦è¾¹è·å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1466,7 +1470,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "½ÓÊÕÓÒ±ß¾à±äÁ¿",
+		/*name*/    "æ¥æ”¶å³è¾¹è·å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1476,7 +1480,7 @@ static ARG_INFO s_ArgsGetMargins[] =
 	}
 };
 FucInfo Fn_EditGetMargins = { {
-		/*ccname*/  "È¡±ß¾à",
+		/*ccname*/  "å–è¾¹è·",
 		/*egname*/  "GetMargins",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1507,7 +1511,7 @@ EXTERN_C void libstl_Edit_GetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 static ARG_INFO s_ArgsGetRect[] =
 {
 	{
-		/*name*/    "½ÓÊÕºáÏòÎ»ÖÃ±äÁ¿",
+		/*name*/    "æ¥æ”¶æ¨ªå‘ä½ç½®å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1516,7 +1520,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "½ÓÊÕ×İÏòÎ»ÖÃ±äÁ¿",
+		/*name*/    "æ¥æ”¶çºµå‘ä½ç½®å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1525,7 +1529,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "½ÓÊÕ¿í¶È±äÁ¿",
+		/*name*/    "æ¥æ”¶å®½åº¦å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1534,7 +1538,7 @@ static ARG_INFO s_ArgsGetRect[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "½ÓÊÕ¸ß¶È±äÁ¿",
+		/*name*/    "æ¥æ”¶é«˜åº¦å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1544,9 +1548,9 @@ static ARG_INFO s_ArgsGetRect[] =
 	}
 };
 FucInfo Fn_EditGetRect = { {
-		/*ccname*/  "È¡ÏÔÊ¾¾ØĞÎ",
+		/*ccname*/  "å–æ˜¾ç¤ºçŸ©å½¢",
 		/*egname*/  "GetRect",
-		/*explain*/ "·µ»Ø×Ö·ûÎ»ÖÃ£¬Ê§°Ü·µ»Ø-1",
+		/*explain*/ "è¿”å›å­—ç¬¦ä½ç½®ï¼Œå¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     _SDT_NULL,
@@ -1566,8 +1570,8 @@ EXTERN_C void libstl_Edit_LineFromChar(PMDATA_INF pRetData, INT nArgCount, PMDAT
 static ARG_INFO s_ArgsLineFromChar[] =
 {
 	{
-		/*name*/    "×Ö·ûË÷Òı",
-		/*explain*/ "Èô¸Ã²ÎÊıÉèÎª-1£¬Ôò·µ»Øµ±Ç°¹â±êËùÔÚĞĞ£¬»òÕß·µ»ØÑ¡¶¨ÄÚÈİËùÔÚĞĞ£¨Èç¹ûÓĞ£©",
+		/*name*/    "å­—ç¬¦ç´¢å¼•",
+		/*explain*/ "è‹¥è¯¥å‚æ•°è®¾ä¸º-1ï¼Œåˆ™è¿”å›å½“å‰å…‰æ ‡æ‰€åœ¨è¡Œï¼Œæˆ–è€…è¿”å›é€‰å®šå†…å®¹æ‰€åœ¨è¡Œï¼ˆå¦‚æœæœ‰ï¼‰",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1576,7 +1580,7 @@ static ARG_INFO s_ArgsLineFromChar[] =
 	}
 };
 FucInfo Fn_EditLineFromChar = { {
-		/*ccname*/  "×Ö·ûÎ»ÖÃµ½ĞĞÊı",
+		/*ccname*/  "å­—ç¬¦ä½ç½®åˆ°è¡Œæ•°",
 		/*egname*/  "LineFromChar",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1598,8 +1602,8 @@ EXTERN_C void libstl_Edit_LineIndex(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 static ARG_INFO s_ArgsLineIndex[] =
 {
 	{
-		/*name*/    "ĞĞË÷Òı",
-		/*explain*/ "Èô¸Ã²ÎÊıÉèÎª-1£¬ÔòÖ¸¶¨µ±Ç°¹â±êËùÔÚĞĞ",
+		/*name*/    "è¡Œç´¢å¼•",
+		/*explain*/ "è‹¥è¯¥å‚æ•°è®¾ä¸º-1ï¼Œåˆ™æŒ‡å®šå½“å‰å…‰æ ‡æ‰€åœ¨è¡Œ",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1608,9 +1612,9 @@ static ARG_INFO s_ArgsLineIndex[] =
 	}
 };
 FucInfo Fn_EditLineIndex = { {
-		/*ccname*/  "È¡Ä³ĞĞµÚÒ»×Ö·ûÎ»ÖÃ",
+		/*ccname*/  "å–æŸè¡Œç¬¬ä¸€å­—ç¬¦ä½ç½®",
 		/*egname*/  "LineIndex",
-		/*explain*/ "Ê§°Ü·µ»Ø-1",
+		/*explain*/ "å¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -1630,8 +1634,8 @@ EXTERN_C void libstl_Edit_Scroll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 static ARG_INFO s_ArgsScroll[] =
 {
 	{
-		/*name*/    "¹ö¶¯²Ù×÷",
-		/*explain*/ "0 - ÏòÉÏÒ»ĞĞ   1 - ÏòÏÂÒ»ĞĞ   2 - ÏòÉÏÒ»Ò³   3 - ÏòÏÂÒ»Ò³",
+		/*name*/    "æ»šåŠ¨æ“ä½œ",
+		/*explain*/ "0 - å‘ä¸Šä¸€è¡Œ   1 - å‘ä¸‹ä¸€è¡Œ   2 - å‘ä¸Šä¸€é¡µ   3 - å‘ä¸‹ä¸€é¡µ",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1640,9 +1644,9 @@ static ARG_INFO s_ArgsScroll[] =
 	}
 };
 FucInfo Fn_EditScroll = { {
-		/*ccname*/  "¹ö¶¯",
+		/*ccname*/  "æ»šåŠ¨",
 		/*egname*/  "Scroll",
-		/*explain*/ "Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "å¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -1662,7 +1666,7 @@ EXTERN_C void libstl_Edit_LineScroll(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsLineScroll[] =
 {
 	{
-		/*name*/    "Ë®Æ½¹ö¶¯×Ö·ûÊı",
+		/*name*/    "æ°´å¹³æ»šåŠ¨å­—ç¬¦æ•°",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1671,7 +1675,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "´¹Ö±¹ö¶¯ĞĞÊı",
+		/*name*/    "å‚ç›´æ»šåŠ¨è¡Œæ•°",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1681,7 +1685,7 @@ static ARG_INFO s_ArgsLineScroll[] =
 	}
 };
 FucInfo Fn_EditLineScroll = { {
-		/*ccname*/  "¹ö¶¯ĞĞ",
+		/*ccname*/  "æ»šåŠ¨è¡Œ",
 		/*egname*/  "LineScroll",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1707,7 +1711,7 @@ EXTERN_C void libstl_Edit_PosFromChar(PMDATA_INF pRetData, INT nArgCount, PMDATA
 static ARG_INFO s_ArgsPosFromChar[] =
 {
 	{
-		/*name*/    "×Ö·ûË÷Òı",
+		/*name*/    "å­—ç¬¦ç´¢å¼•",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1716,7 +1720,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*state*/   ArgMark::AS_NONE,
 	},
 	{
-		/*name*/    "½ÓÊÕºáÏòÎ»ÖÃ±äÁ¿",
+		/*name*/    "æ¥æ”¶æ¨ªå‘ä½ç½®å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1725,7 +1729,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "½ÓÊÕ×İÏòÎ»ÖÃ±äÁ¿",
+		/*name*/    "æ¥æ”¶çºµå‘ä½ç½®å˜é‡",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1735,7 +1739,7 @@ static ARG_INFO s_ArgsPosFromChar[] =
 	}
 };
 FucInfo Fn_EditPosFromChar = { {
-		/*ccname*/  "È¡×Ö·û×ø±ê",
+		/*ccname*/  "å–å­—ç¬¦åæ ‡",
 		/*egname*/  "PosFromChar",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1757,7 +1761,7 @@ EXTERN_C void libstl_Edit_ReplaceSel(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsReplaceSel[] =
 {
 	{
-		/*name*/    "ÓÃ×÷Ìæ»»µÄÎÄ±¾",
+		/*name*/    "ç”¨ä½œæ›¿æ¢çš„æ–‡æœ¬",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1766,7 +1770,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 		/*state*/   ArgMark::AS_NONE,
 	},
 	{
-		/*name*/    "ÄÜ·ñ³·Ïú",
+		/*name*/    "èƒ½å¦æ’¤é”€",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1776,7 +1780,7 @@ static ARG_INFO s_ArgsReplaceSel[] =
 	}
 };
 FucInfo Fn_EditReplaceSel = { {
-		/*ccname*/  "Ìæ»»Ñ¡ÖĞÎÄ±¾",
+		/*ccname*/  "æ›¿æ¢é€‰ä¸­æ–‡æœ¬",
 		/*egname*/  "ReplaceSel",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1813,8 +1817,8 @@ EXTERN_C void libstl_Edit_SetMargins(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsSetMargins[] =
 {
 	{
-		/*name*/    "×ó±ß¾à",
-		/*explain*/ "¿ÕÎª²»ÉèÖÃ£¬-1ÎªÉèÎªÄ¬ÈÏ",
+		/*name*/    "å·¦è¾¹è·",
+		/*explain*/ "ç©ºä¸ºä¸è®¾ç½®ï¼Œ-1ä¸ºè®¾ä¸ºé»˜è®¤",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1822,8 +1826,8 @@ static ARG_INFO s_ArgsSetMargins[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "ÓÒ±ß¾à",
-		/*explain*/ "¿ÕÎª²»ÉèÖÃ£¬-1ÎªÉèÎªÄ¬ÈÏ",
+		/*name*/    "å³è¾¹è·",
+		/*explain*/ "ç©ºä¸ºä¸è®¾ç½®ï¼Œ-1ä¸ºè®¾ä¸ºé»˜è®¤",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1832,7 +1836,7 @@ static ARG_INFO s_ArgsSetMargins[] =
 	}
 };
 FucInfo Fn_EditSetMargins = { {
-		/*ccname*/  "ÖÃ±ß¾à",
+		/*ccname*/  "ç½®è¾¹è·",
 		/*egname*/  "SetMargins",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1854,7 +1858,7 @@ EXTERN_C void libstl_Edit_SetModify(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 static ARG_INFO s_ArgsSetModify[] =
 {
 	{
-		/*name*/    "ÊÇ·ñÒÑĞŞ¸Ä",
+		/*name*/    "æ˜¯å¦å·²ä¿®æ”¹",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1864,7 +1868,7 @@ static ARG_INFO s_ArgsSetModify[] =
 	}
 };
 FucInfo Fn_EditSetModify = { {
-		/*ccname*/  "ÖÃĞŞ¸Ä±êÖ¾",
+		/*ccname*/  "ç½®ä¿®æ”¹æ ‡å¿—",
 		/*egname*/  "SetModify",
 		/*explain*/ "",
 		/*category*/-1,
@@ -1893,7 +1897,7 @@ EXTERN_C void libstl_Edit_SetRect(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF
 static ARG_INFO s_ArgsSetRect[] =
 {
 	{
-		/*name*/    "×ó±ß",
+		/*name*/    "å·¦è¾¹",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1902,7 +1906,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "ÓÒ±ß",
+		/*name*/    "å³è¾¹",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1911,7 +1915,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "¿í¶È",
+		/*name*/    "å®½åº¦",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1920,7 +1924,7 @@ static ARG_INFO s_ArgsSetRect[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "¸ß¶È",
+		/*name*/    "é«˜åº¦",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -1930,9 +1934,9 @@ static ARG_INFO s_ArgsSetRect[] =
 	}
 };
 FucInfo Fn_EditSetRect = { {
-		/*ccname*/  "ÖÃÏÔÊ¾¾ØĞÎ",
+		/*ccname*/  "ç½®æ˜¾ç¤ºçŸ©å½¢",
 		/*egname*/  "SetRect",
-		/*explain*/ "ÈôËÄ¸ö²ÎÊıÈ«Îª¿Õ£¬Ôò½«ÏÔÊ¾¾ØĞÎÖÃ»ØÄ¬ÈÏ",
+		/*explain*/ "è‹¥å››ä¸ªå‚æ•°å…¨ä¸ºç©ºï¼Œåˆ™å°†æ˜¾ç¤ºçŸ©å½¢ç½®å›é»˜è®¤",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     _SDT_NULL,
@@ -1973,8 +1977,8 @@ EXTERN_C void libstl_Edit_SetTabStop(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 static ARG_INFO s_ArgsSetTabStop[] =
 {
 	{
-		/*name*/    "ÖÆ±íÎ»Êı×é",
-		/*explain*/ "ÒÔ¶Ô»°¿òµ¥Î»±íÊ¾µÄÖÆ±íÎ»Êı×é£¬Èô´Ë²ÎÊıÉèÎª¿Õ£¬Ôò½«ÖÆ±íÎ»ÖÃ»ØÄ¬ÈÏ",
+		/*name*/    "åˆ¶è¡¨ä½æ•°ç»„",
+		/*explain*/ "ä»¥å¯¹è¯æ¡†å•ä½è¡¨ç¤ºçš„åˆ¶è¡¨ä½æ•°ç»„ï¼Œè‹¥æ­¤å‚æ•°è®¾ä¸ºç©ºï¼Œåˆ™å°†åˆ¶è¡¨ä½ç½®å›é»˜è®¤",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1983,7 +1987,7 @@ static ARG_INFO s_ArgsSetTabStop[] =
 	}
 };
 FucInfo Fn_EditSetTabStop = { {
-		/*ccname*/  "ÖÃÖÆ±íÎ»",
+		/*ccname*/  "ç½®åˆ¶è¡¨ä½",
 		/*egname*/  "SetTabStop",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2011,7 +2015,7 @@ EXTERN_C void libstl_Edit_SetBallloonTip(PMDATA_INF pRetData, INT nArgCount, PMD
 static ARG_INFO s_ArgsSetBallloonTip[] =
 {
 	{
-		/*name*/    "±êÌâ",
+		/*name*/    "æ ‡é¢˜",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -2020,7 +2024,7 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "ÄÚÈİ",
+		/*name*/    "å†…å®¹",
 		/*explain*/ "",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
@@ -2029,8 +2033,8 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 		/*state*/   ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},
 	{
-		/*name*/    "Í¼±êÀàĞÍ",
-		/*explain*/ "0 - ÎŞÍ¼±ê   1 - ĞÅÏ¢Í¼±ê   2 - ¾¯¸æÍ¼±ê   3 - ´íÎóÍ¼±ê   4 - ´óĞÅÏ¢Í¼±ê   5 - ´ó¾¯¸æÍ¼±ê   6 - ´ó´íÎóÍ¼±ê£¬Ä¬ÈÏ0",
+		/*name*/    "å›¾æ ‡ç±»å‹",
+		/*explain*/ "0 - æ— å›¾æ ‡   1 - ä¿¡æ¯å›¾æ ‡   2 - è­¦å‘Šå›¾æ ‡   3 - é”™è¯¯å›¾æ ‡   4 - å¤§ä¿¡æ¯å›¾æ ‡   5 - å¤§è­¦å‘Šå›¾æ ‡   6 - å¤§é”™è¯¯å›¾æ ‡ï¼Œé»˜è®¤0",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -2039,9 +2043,9 @@ static ARG_INFO s_ArgsSetBallloonTip[] =
 	}
 };
 FucInfo Fn_EditSetBallloonTip = { {
-		/*ccname*/  "µ¯³öÆøÇòÌáÊ¾",
+		/*ccname*/  "å¼¹å‡ºæ°”çƒæç¤º",
 		/*egname*/  "SetBallloonTip",
-		/*explain*/ "¸Ãº¯ÊıĞèÒªÔÚÇåµ¥ÖĞÖ¸¶¨Comctl6.0£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "è¯¥å‡½æ•°éœ€è¦åœ¨æ¸…å•ä¸­æŒ‡å®šComctl6.0ï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2060,9 +2064,9 @@ EXTERN_C void libstl_Edit_Undo(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pA
 
 }
 FucInfo Fn_EditUndo = { {
-		/*ccname*/  "³·Ïú",
+		/*ccname*/  "æ’¤é”€",
 		/*egname*/  "Undo",
-		/*explain*/ "Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "å¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2080,7 +2084,7 @@ EXTERN_C void libstl_Edit_Paste(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF p
 	SendMessageW(hWnd, WM_PASTE, 0, 0);
 }
 FucInfo Fn_EditPaste = { {
-		/*ccname*/  "Õ³Ìù",
+		/*ccname*/  "ç²˜è´´",
 		/*egname*/  "Paste",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2100,9 +2104,9 @@ EXTERN_C void libstl_Edit_Copy(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pA
 	SendMessageW(hWnd, WM_COPY, 0, 0);
 }
 FucInfo Fn_EditCopy = { {
-		/*ccname*/  "¸´ÖÆ",
+		/*ccname*/  "å¤åˆ¶",
 		/*egname*/  "Copy",
-		/*explain*/ "Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "å¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2120,7 +2124,7 @@ EXTERN_C void libstl_Edit_SelAll(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	SendMessageW(hWnd, EM_SETSEL, 0, -1);
 }
 FucInfo Fn_EditSelAll = { {
-		/*ccname*/  "È«Ñ¡",
+		/*ccname*/  "å…¨é€‰",
 		/*egname*/  "SelAll",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2141,7 +2145,7 @@ EXTERN_C void libstl_Edit_Cut(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pAr
 	SendMessageW(hWnd, WM_CUT, 0, 0);
 }
 FucInfo Fn_EditCut = { {
-		/*ccname*/  "¼ôÇĞ",
+		/*ccname*/  "å‰ªåˆ‡",
 		/*egname*/  "Cut",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2156,19 +2160,19 @@ FucInfo Fn_EditCut = { {
 	} ,ESTLFNAME(libstl_Edit_Cut) };
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtEdit = {
-	"±à¼­¿òW",//ÖĞÎÄÃû³Æ
-	"EditW",//Ó¢ÎÄÃû³Æ
-	"Unicode±à¼­¿ò",//ËµÃ÷
-	ARRAYSIZE(s_Cmd_Edit),//ÃüÁîÊıÁ¿
-	s_Cmd_Edit,//ÔÚÈ«¾Öº¯ÊıÖĞ¶ÔÓ¦µÄË÷Òı
-	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//±êÖ¾
-	104,//×ÊÔ´ID
+	"ç¼–è¾‘æ¡†W",//ä¸­æ–‡åç§°
+	"EditW",//è‹±æ–‡åç§°
+	"Unicodeç¼–è¾‘æ¡†",//è¯´æ˜
+	ARRAYSIZE(s_Cmd_Edit),//å‘½ä»¤æ•°é‡
+	s_Cmd_Edit,//åœ¨å…¨å±€å‡½æ•°ä¸­å¯¹åº”çš„ç´¢å¼•
+	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//æ ‡å¿—
+	104,//èµ„æºID
 	ARRAYSIZE(s_Event_Edit),
 	s_Event_Edit,
-	ARRAYSIZE(s_Member_Edit),//ÊôĞÔÊı
-	s_Member_Edit,//ÊôĞÔÖ¸Õë
-	libstl_GetInterface_EditW,//×é¼ş½»»¥×Ó³ÌĞò
-	NULL,//³ÉÔ±ÊıÁ¿
-	NULL//³ÉÔ±Êı¾İÊı×é
+	ARRAYSIZE(s_Member_Edit),//å±æ€§æ•°
+	s_Member_Edit,//å±æ€§æŒ‡é’ˆ
+	libstl_GetInterface_EditW,//ç»„ä»¶äº¤äº’å­ç¨‹åº
+	NULL,//æˆå‘˜æ•°é‡
+	NULL//æˆå‘˜æ•°æ®æ•°ç»„
 };
 ESTL_NAMESPACE_END

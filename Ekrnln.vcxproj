@@ -343,7 +343,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libstl</TargetName>
-    <OutDir>D:\ide\e\lib</OutDir>
+    <OutDir>$(ESTL_DBG_ELIB_PATH___)</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
