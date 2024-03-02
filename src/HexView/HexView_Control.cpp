@@ -26,9 +26,14 @@ namespace elibstl::hexview
     BOOL WINAPI EInputW(HUNIT hUnit, INT nPropertyIndex, BOOL* pblModified, LPVOID pResultExtraData);
     INT WINAPI ENotify(INT nMsg, DWORD dwParam1, DWORD dwParam2);
 
-    LRESULT CALLBACK OnNotify(HWND hWnd, LPNMHDR hdr, LPVOID lpParam);
+    LRESULT CALLBACK OnNotify(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-
+    static char m_pszDefText[] =
+        "elibstl:        "
+        "       761463364"
+        "QQ: 121007124   "
+        "Groud: 20752843 ";
+    const int m_nDefTextSize = sizeof(m_pszDefText) - 1;
 
 }
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_HexView(INT nInterfaceNO)
@@ -127,10 +132,16 @@ namespace elibstl::hexview
             return false;   // 没有处理属性, 返回假, 外部给默认值
         prop.version        = read_int32(pBuf);     // 版本号, 这个不会显示到属性里, 内部使用, 用来判断数据结构的
         prop.border         = read_int32(pBuf);     // 边框, 0=无边框, 1=凹入式, 2=凸出式, 3=浅凹入式, 4=镜框式, 5=单线边框式
-        prop.TextColor      = read_int32(pBuf);     // 文本颜色
-        prop.TextBackColor  = read_int32(pBuf);     // 文本背景颜色
-        prop.BackColor      = read_int32(pBuf);     // 背景颜色
         prop.Editable       = read_int32(pBuf);     // 允许编辑, 本属性指定是否允许编辑
+        prop.columnCount    = read_int32(pBuf);     // 列数
+        prop.is64Address    = read_int32(pBuf);     // 是否使用64位地址显示
+        prop.pAddress       = read_int64(pBuf);     // 显示的地址
+        prop.isDark         = read_int32(pBuf);     // 是否是深色模式
+        prop.size           = read_int32(pBuf);     // 项目数
+        prop.bOwnerData     = read_int32(pBuf);     // 纯虚项目
+
+        prop.clrSize        = read_int32(pBuf);     // 配色占用的尺寸
+        read_struct(pBuf, prop.clr);                // 配色信息
 
         prop.fontSize = read_font(pBuf, prop.font);      // 1. 读取字体, 写入的是A版结构, 以后都使用这个结构, 字体一般用不上W版
         Ctl_SetFontData(prop.font, prop.fontSize, pData->hFont, prop.fontSize ? &prop.font : 0);
@@ -165,27 +176,48 @@ namespace elibstl::hexview
         PHEXVIEW_PROPERTY pData = new HEXVIEW_PROPERTY;
         memset(pData, 0, sizeof(HEXVIEW_PROPERTY));
 
+        bool isGetDefColor = false;
+        DWORD styleCtl = 0;
         if ( !ParsePropData(pData, pAllData, cbData) )
         {
+            isGetDefColor = true;   // 需要获取默认配色, 等组件创建完毕后设置
             HEXVIEW_PROPERTY& prop = *pData;
-            prop.BackColor = RGB(255, 255, 255);
-            prop.TextColor = RGB(0, 0, 0);
+            prop.version = HEXVIEW_VERSION;
             prop.Editable = false;
+            prop.columnCount = 16;
+            prop.is64Address = false;
+            prop.pAddress = 0;
+            prop.clrSize = sizeof(prop.clr);
+            prop.border = 5;
             //prop.TextBackColor = 
-
-            // 默认配色按照下面的颜色值设置
-            //HexView->clrTextSel = RGB(255, 255, 255);
-            //HexView->clrText1 = RGB(0, 0, 128);
-            //HexView->clrText2 = RGB(0, 0, 255);
-            //HexView->clrTextSel1 = RGB(255, 255, 127);
-            //HexView->clrTextSel2 = RGB(255, 255, 0);
-            //HexView->clrTextAddress = RGB(0, 0, 0);
-            //HexView->clrLine = RGB(204, 206, 219);
-            //HexView->clrTextBackground = RGB(255, 255, 255);
-            //HexView->clrSelTextBack = RGB(8, 36, 107);
-            //HexView->clrModifiedText = RGB(255, 0, 0);
-            //HexView->clrModifiedTextSel = RGB(0, 255, 255);
         }
+        DWORD dwExStyle = 0;
+        switch (pData->border)
+        {
+            //case 0:        // 无边框
+            //    dwExStyle = WS_EX_CLIENTEDGE;
+            //    break;
+        case 1:        // 凹入式
+            dwExStyle = WS_EX_CLIENTEDGE;
+            break;
+        case 2:        // 凸出式
+            dwExStyle = WS_EX_DLGMODALFRAME;
+            break;
+        case 3:        // 浅凹入式
+            dwExStyle = WS_EX_STATICEDGE;
+            break;
+        case 4:        // 镜框式
+            dwExStyle = WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME;
+            break;
+        case 5:
+            dwStyle |= WS_BORDER;
+            break;
+        }
+
+        styleCtl = (pData->Editable ? 0 : HVS_READONLY);
+        styleCtl |= (pData->is64Address ? HVS_ADDRESS64 : 0);
+        styleCtl |= (pData->isDark ? HVS_DARMMODE : 0);
+
         pData->hDesignWnd = hDesignWnd;
         pData->hWndParent = hParent;
         pData->id = nID;
@@ -193,16 +225,37 @@ namespace elibstl::hexview
         pData->dwUnitID = dwUnitID;
         pData->blInDesignMode = bInDesignMode;
         pData->style = dwStyle;
-        pData->styleCtl = 0;
-        pData->styleEx = 0;
+        pData->styleCtl = styleCtl;
+        pData->styleEx = dwExStyle;
         pData->hUnit = 0;
-        pData->data = new std::vector<BYTE>;
-        pData->modi = new std::vector<BYTE>;
-        pData->hWnd = CreateHexView(0, dwStyle | WS_VISIBLE | WS_CHILD,
+        if (!pData->bOwnerData)
+        {
+            // 不是虚项目就设置项目缓冲区
+            pData->data = new std::vector<BYTE>;
+            pData->modi = new std::vector<bool>;
+        }
+
+        LPCSTR fmt = pData->is64Address ? "0x%016llX" : "0x%08X";
+        sprintf_s(pData->addr_buf, fmt, pData->pAddress);
+
+        pData->hWnd = CreateHexView(dwExStyle, dwStyle | WS_VISIBLE | WS_CHILD,
                                       x, y, cx, cy, hParent, nID, pData);
-        
-        SetWindowLongPtrW(pData->hWnd, 0, (LONG_PTR)pData);
-        HexView_BindNotify(pData->hWnd, OnNotify, pData);
+        SendMessageW(pData->hWnd, HVM_SETEXTENDEDSTYLE, 0, pData->styleCtl);
+
+        if (isGetDefColor)
+            SendMessageW(pData->hWnd, HVM_GETCOLOR, 0, (LPARAM)&pData->clr);
+        else if (!pData->isDark)
+            SendMessageW(pData->hWnd, HVM_SETCOLOR, 0, (LPARAM)&pData->clr);
+        if(pData->columnCount != 16)
+            SendMessageW(pData->hWnd, HVM_SETCOLUMNCOUNT, 0, (LPARAM)pData->columnCount);
+
+        SetHexViewData(pData->hWnd, pData);
+        HexView_BindNotify(pData->hWnd, OnNotify);
+        if (pData->blInDesignMode)
+        {
+            // 调试模式, 设置一个默认的值
+            SendMessageW(pData->hWnd, HVM_SETITEMCOUNT, 1, (LPARAM)m_nDefTextSize);
+        }
         return elibstl::make_cwnd(pData->hWnd);
     }
 
@@ -210,10 +263,9 @@ namespace elibstl::hexview
     // 通知某属性数据被用户修改
     BOOL WINAPI EChange(HUNIT hUnit, INT nPropertyIndex, UNIT_PROPERTY_VALUE* pPropertyVaule, PSTR* ppszTipText)
     {
-        return false;
         HWND hHexView = elibstl::get_hwnd_from_hunit(hUnit);
         if ( !hHexView ) return 0;
-        PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)GetWindowLongPtrW(hHexView, 0);
+        PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
         if ( !pData ) return 0;
         HEXVIEW_PROPERTY& prop = *pData;
 
@@ -223,28 +275,116 @@ namespace elibstl::hexview
             prop.border = min(max(0, pPropertyVaule->m_int), 5);
             elibstl::ChangeBorder(pData->hWnd, prop.border);
             break;
-        case HEXVIEW_PROP_TEXTCOLOR:    // 文本颜色
-            prop.TextColor = pPropertyVaule->m_int;
-            InvalidateRect(pData->hWnd, 0, 0);
+        case HEXVIEW_PROP_EDITABLE:     // 允许编辑, 本属性指定是否允许编辑
+        {
+            prop.Editable = pPropertyVaule->m_int;
+            DWORD styleCtl = (DWORD)SendMessageW(hHexView, HVM_GETEXTENDEDSTYLE, 0, 0);
+            prop.styleCtl = styleCtl;
+            if (prop.Editable)
+                styleCtl &= ~HVS_READONLY;
+            else
+                styleCtl |= HVS_READONLY;
+            if (prop.styleCtl != styleCtl)
+            {
+                prop.styleCtl = styleCtl;
+                SendMessageW(hHexView, HVM_SETEXTENDEDSTYLE, 1, prop.styleCtl);
+            }
             break;
-        case HEXVIEW_PROP_TEXTBACKCOLOR:// 文本背景颜色
-            prop.TextBackColor = pPropertyVaule->m_int;
-            InvalidateRect(pData->hWnd, 0, 0);
+        }
+        case HEXVIEW_PROP_COLUMNCOUNT:  // 列数
+            SendMessageW(hHexView, HVM_SETCOLUMNCOUNT, 1, pPropertyVaule->m_int);
+            prop.columnCount = SendMessageW(hHexView, HVM_GETCOLUMNCOUNT, 0, 0);
             break;
-        case HEXVIEW_PROP_BACKCOLOR:    // 背景颜色
-            prop.BackColor = pPropertyVaule->m_int;
-            InvalidateRect(pData->hWnd, 0, 0);
+        case HEXVIEW_PROP_IS64ADDR:     // 否使用64位地址显示
+        {
+            prop.is64Address = pPropertyVaule->m_int;
+            DWORD styleCtl = (DWORD)SendMessageW(hHexView, HVM_GETEXTENDEDSTYLE, 0, 0);
+            prop.styleCtl = styleCtl;
+            if (prop.is64Address)
+                styleCtl |= HVS_ADDRESS64;
+            else
+                styleCtl &= ~HVS_ADDRESS64;
+
+            LPCSTR fmt = prop.is64Address ? "0x%016llX" : "0x%08X";
+            sprintf_s(prop.addr_buf, fmt, prop.pAddress);
+
+            if (prop.styleCtl != styleCtl)
+            {
+                prop.styleCtl = styleCtl;
+                SendMessageW(hHexView, HVM_SETEXTENDEDSTYLE, 1, prop.styleCtl);
+            }
             break;
+        }
+        case HEXVIEW_PROP_ADDRESS:      // 显示在左边的地址
+        {
+            LPCSTR str = pPropertyVaule->m_szText;
+            if (!str || !*str)
+            {
+                prop.pAddress = 0;
+            }
+            else
+            {
+                if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))  // 0x开头, 是16进制
+                    sscanf_s(str, "0x%016llX", &prop.pAddress);
+                else
+                    prop.pAddress = (ULONG64)atoll(str);
+            }
+            LPCSTR fmt = prop.is64Address ? "0x%016llX" : "0x%08X";
+            sprintf_s(prop.addr_buf, fmt, prop.pAddress);
+            InvalidateRect(hHexView, 0, 0);
+            break;
+        }
+        case HEXVIEW_PROP_ISDARK:       // 是否使用深色模式
+            prop.isDark = pPropertyVaule->m_int;
+            SendMessageW(hHexView, HVM_SETDARKMODE, 1, prop.isDark);
+            break;
+        case HEXVIEW_PROP_COLOR:        // 配色
+        {
+            int copySize = pPropertyVaule->m_data.m_nDataSize;
+            if (copySize > sizeof(prop.clr))
+                copySize = sizeof(prop.clr);
+
+            memcpy(&prop.clr, pPropertyVaule->m_data.m_pData, copySize);
+            SendMessageW(hHexView, HVM_SETCOLOR, 1, (LPARAM)&prop.clr);
+            break;
+        }
         case HEXVIEW_PROP_FONT:         // 字体属性
         {
             Ctl_SetFontData(prop.font, prop.fontSize, pData->hFont, (LPLOGFONTA)pPropertyVaule->m_data.m_pData);
             SendMessageW(pData->hWnd, WM_SETFONT, (WPARAM)pData->hFont, 1);
-            //InvalidateRect(pData->hWnd, 0, 0);
             break;
         }
-        case HEXVIEW_PROP_EDITABLE:     // 允许编辑, 本属性指定是否允许编辑
-            prop.Editable = pPropertyVaule->m_int;
+        case HEXVIEW_PROP_ITEMCOUNT:    // 项目数
+        {
+            //TODO 需要设置项目数, 根据是否是虚项目设置
+            //prop.size = pPropertyVaule->m_int;
             break;
+        }
+        case HEXVIEW_PROP_OWNERDATA:    // 纯虚项目
+        {
+            prop.bOwnerData = pPropertyVaule->m_int;
+            if (!prop.blInDesignMode)
+            {
+                // 不是调试状态, 那就清除项目信息
+                if (prop.bOwnerData)
+                {
+                    if (prop.data) delete prop.data;
+                    if (prop.modi) delete prop.modi;
+                    prop.data = 0;
+                    prop.modi = 0;
+                }
+                else
+                {
+                    if (!prop.data) prop.data = new std::vector<BYTE>;
+                    if (!prop.modi) prop.modi = new std::vector<bool>;
+                    prop.data->clear();
+                    prop.modi->clear();
+                    prop.data->resize(prop.size);
+                    prop.modi->resize(prop.size);
+                }
+            }
+            break;
+        }
         default:
             break;
         }
@@ -254,10 +394,9 @@ namespace elibstl::hexview
     // 取全部属性数据
     HGLOBAL WINAPI EGetAlldata(HUNIT hUnit)
     {
-        return 0;
         HWND hHexView = elibstl::get_hwnd_from_hunit(hUnit);
         if ( !hHexView ) return 0;
-        PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)GetWindowLongPtrW(hHexView, 0);
+        PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
         if ( !pData ) return 0;
         HEXVIEW_PROPERTY& prop = *pData;
 
@@ -268,10 +407,16 @@ namespace elibstl::hexview
 
         size += write_int32(buffer, HEXVIEW_VERSION     );  // 版本号, 每次写入的都是最新版的版本号
         size += write_int32(buffer, prop.border         );  // 边框, 0=无边框, 1=凹入式, 2=凸出式, 3=浅凹入式, 4=镜框式, 5=单线边框式
-        size += write_int32(buffer, prop.TextColor      );  // 文本颜色
-        size += write_int32(buffer, prop.TextBackColor  );  // 文本背景颜色
-        size += write_int32(buffer, prop.BackColor      );  // 背景颜色
         size += write_int32(buffer, prop.Editable       );  // 允许编辑, 本属性指定是否允许编辑
+        size += write_int32(buffer, prop.columnCount    );  // 列数
+        size += write_int32(buffer, prop.is64Address    );  // 是否使用64位地址显示
+        size += write_int64(buffer, prop.pAddress       );  // 显示的地址
+        size += write_int32(buffer, prop.isDark         );  // 是否是深色模式
+        size += write_int32(buffer, prop.size           );  // 项目数
+        size += write_int32(buffer, prop.bOwnerData     );  // 纯虚项目
+
+        size += write_int32(buffer, prop.clrSize        );  // 配色占用的尺寸
+        size += write_data(buffer, &prop.clr, sizeof(prop.clr));  // 配色信息
 
         size += write_font(buffer, &prop.font, prop.fontSize);  // 写入字体, 写入的是A版结构, 以后都使用这个结构, 字体一般用不上W版
 
@@ -304,10 +449,9 @@ namespace elibstl::hexview
         // 比如说, 编辑框窗口单元的"内容"属性, 设计时必须返回内部所保存的值
         // 而运行时就必须调用 GetWindowText 去实时获取
 
-        return false;
         HWND hHexView = elibstl::get_hwnd_from_hunit(hUnit);
         if ( !hHexView ) return 0;
-        PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)GetWindowLongPtrW(hHexView, 0);
+        PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
         if ( !pData ) return 0;
         HEXVIEW_PROPERTY& prop = *pData;
 
@@ -316,15 +460,56 @@ namespace elibstl::hexview
         case HEXVIEW_PROP_BORDER:       // 边框, 0=无边框, 1=凹入式, 2=凸出式, 3=浅凹入式, 4=镜框式, 5=单线边框式
             pPropertyVaule->m_int = prop.border;
             break;
-        case HEXVIEW_PROP_TEXTCOLOR:    // 文本颜色
-            pPropertyVaule->m_int = prop.TextColor;
+        case HEXVIEW_PROP_EDITABLE:     // 允许编辑, 本属性指定是否允许编辑
+        {
+            if (prop.blInDesignMode)
+            {
+                pPropertyVaule->m_int = prop.Editable;
+            }
+            else
+            {
+                prop.styleCtl = (DWORD)SendMessageW(hHexView, HVM_GETEXTENDEDSTYLE, 0, 0);
+                const bool isReadOnly = (prop.styleCtl & HVS_READONLY) == HVS_READONLY;
+                prop.Editable = isReadOnly == false;
+            }
             break;
-        case HEXVIEW_PROP_TEXTBACKCOLOR:// 文本背景颜色
-            pPropertyVaule->m_int = prop.TextBackColor;
+        }
+        case HEXVIEW_PROP_COLUMNCOUNT:  // 列数
+        {
+            if (!prop.blInDesignMode)
+                prop.columnCount = SendMessageW(hHexView, HVM_GETCOLUMNCOUNT, 0, 0);
+            
+            pPropertyVaule->m_int = prop.columnCount;
             break;
-        case HEXVIEW_PROP_BACKCOLOR:    // 背景颜色
-            pPropertyVaule->m_int = prop.BackColor;
+        }
+        case HEXVIEW_PROP_IS64ADDR:     // 否使用64位地址显示
+        {
+            if (!prop.blInDesignMode)
+            {
+                prop.styleCtl = (DWORD)SendMessageW(hHexView, HVM_GETEXTENDEDSTYLE, 0, 0);
+                prop.is64Address = (prop.styleCtl & HVS_ADDRESS64) == HVS_ADDRESS64;
+            }
+            pPropertyVaule->m_int = prop.is64Address;
             break;
+        }
+        case HEXVIEW_PROP_ADDRESS:      // 显示在左边的地址
+        {
+            pPropertyVaule->m_szText = prop.addr_buf;
+            break;
+        }
+        case HEXVIEW_PROP_ISDARK:       // 是否使用深色模式
+        {
+            if (!prop.blInDesignMode)
+                prop.isDark = (BOOL)SendMessageW(hHexView, HVM_GETDARKMODE, 0, 0);
+            pPropertyVaule->m_int = prop.isDark;
+            break;
+        }
+        case HEXVIEW_PROP_COLOR:        // 配色
+        {
+            pPropertyVaule->m_data.m_nDataSize = sizeof(prop.clr);
+            pPropertyVaule->m_data.m_pData = (LPBYTE)&prop.clr;
+            break;
+        }
         case HEXVIEW_PROP_FONT:         // 字体属性
         {
             if ( prop.fontSize > 0 )
@@ -334,9 +519,13 @@ namespace elibstl::hexview
             }
             break;
         }
-        case HEXVIEW_PROP_EDITABLE:     // 允许编辑, 本属性指定是否允许编辑
-            pPropertyVaule->m_int = prop.Editable;
+        case HEXVIEW_PROP_ITEMCOUNT:    // 项目数
+            pPropertyVaule->m_int = prop.size;
             break;
+        case HEXVIEW_PROP_OWNERDATA:    // 纯虚项目
+            pPropertyVaule->m_int = prop.bOwnerData;
+            break;
+
         default:
             break;
         }
@@ -349,7 +538,25 @@ namespace elibstl::hexview
         // 用作设置类型为UD_CUSTOMIZE的单元属性
         // 如果需要重新创建该单元才能修改单元外形, 请返回真
         // pblModified 不为NULL, 请在其中返回是否被用户真正修改(便于易语言IDE建立UNDO记录)
-
+        HWND hHexView = elibstl::get_hwnd_from_hunit(hUnit);
+        if (!hHexView) return 0;
+        PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
+        if (!pData) return 0;
+        HEXVIEW_PROPERTY& prop = *pData;
+        switch (nPropertyIndex)
+        {
+        case HEXVIEW_PROP_COLOR:    // 配色信息, 弹出配色窗口
+        {
+            *pblModified = HexView_Dialog_Color(pData);
+            if (*pblModified)
+                SendMessageW(hHexView, HVM_SETCOLOR, 1, (LPARAM)&pData->clr);
+            
+            return false;
+            break;
+        }
+        default:
+            return false;
+        }
         return 0;
     }
 
@@ -375,59 +582,133 @@ namespace elibstl::hexview
         return 0;
     }
 
-    LRESULT CALLBACK OnNotify(HWND hWnd, LPNMHDR hdr, LPVOID lpParam)
+    // 搜索数据
+    inline BOOL _search_bin(PNMHEXSEARCH search, PHEXVIEW_PROPERTY pData)
     {
-        PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)lpParam;
+        SIZE_T index = search->start;
+        std::vector<BYTE>& data = *pData->data;
+        if (index >= data.size())
+            return FALSE;   // 越界了
+
+        LPBYTE pBase = (LPBYTE)(&data[0]);
+        LPBYTE pEnd = pBase + data.size();
+        LPBYTE pStart = pBase + index;
+        int size = (int)(DWORD)search->nSize;
+        LPBYTE pFind = search->pSearch;
+
+        if (search->end == 0)
+        {
+            // 倒序搜索
+            if (pStart + size > pEnd)
+                pStart = pEnd - size;
+            while (pStart >= pBase)
+            {
+                if (memcmp(pStart, pFind, size) == 0)
+                {
+                    search->pos = pStart - pBase;
+                    return TRUE;
+                }
+                pStart--;
+            }
+            return FALSE;
+        }
+
+        // 正序搜索
+        while (pStart + size <= pEnd)
+        {
+            if (memcmp(pStart, pFind, size) == 0)
+            {
+                search->pos = pStart - pBase;
+                return TRUE;
+            }
+            pStart++;
+        }
+
+        return FALSE;
+    }
+
+
+    LRESULT CALLBACK OnNotify(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+    {
+        LPNMHDR hdr = (LPNMHDR)lParam;
+        HWND hHexView = hdr->hwndFrom;
+        PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
 
         switch ( hdr->code )
         {
         case HVN_SEARCH:    // 搜索项目
-            //return _search_bin((PNMHEXSEARCH)lParam, mem);
+            return _search_bin((PNMHEXSEARCH)lParam, pData);
+            break;
         case HVN_GETDISPINFO:
         {
             PNMHVDISPINFO DispInfo = (PNMHVDISPINFO)hdr;
             const SIZE_T index = DispInfo->Item.NumberOfItem;
-            std::vector<BYTE>& data = *pData->data;
-            std::vector<BYTE>& modi = *pData->modi;
-            if ( index >= data.size() )
-                break;  // 越界了
-
-            LPBYTE pBase = (LPBYTE)( &data[index] );
-            if ( DispInfo->Item.Mask & HVIF_ADDRESS )
+            if (DispInfo->Item.Mask & HVIF_ADDRESS)
             {
                 DispInfo->Item.Address = (ULONG64)pData->pAddress + index;
             }
-            if ( DispInfo->Item.Mask & HVIF_BYTE )
+
+            if (pData->blInDesignMode && pData->size == 0)
             {
-                DispInfo->Item.Value = *pBase;
-                DispInfo->Item.State = ( modi[index] ) ? HVIS_MODIFIED : 0;
+                if (index >= m_nDefTextSize)
+                    break;  // 越界了
+                DispInfo->Item.Value = m_pszDefText[index];
+                DispInfo->Item.State = 0;
+                break;
+            }
+            if (pData->bOwnerData)
+            {
+                // 虚项目, 触发个事件让用户返回数据
+            }
+            else
+            {
+                std::vector<BYTE>& data = *pData->data;
+                std::vector<bool>& modi = *pData->modi;
+                if (index >= data.size())
+                    break;  // 越界了
+
+                LPBYTE pBase = (LPBYTE)(&data[index]);
+                if (DispInfo->Item.Mask & HVIF_BYTE)
+                {
+                    DispInfo->Item.Value = *pBase;
+                    DispInfo->Item.State = (modi[index]) ? HVIS_MODIFIED : 0;
+                }
             }
             break;
         }
         case HVN_ITEMCHANGING:
         {
+            if (pData->blInDesignMode)
+                break;
             PNMHEXVIEW HexView = (PNMHEXVIEW)hdr;
             const SIZE_T index = HexView->Item.NumberOfItem;
-            std::vector<BYTE>& data = *pData->data;
-            std::vector<BYTE>& modi = *pData->modi;
-            if ( index >= data.size() )
-                break;  // 越界了
-            LPBYTE pBase = (LPBYTE)( &data[index] );
-            *pBase = HexView->Item.Value;
-            modi[index] = true;    // 记录这个成员已经修改
+            if (pData->bOwnerData)
+            {
+
+            }
+            else
+            {
+                std::vector<BYTE>& data = *pData->data;
+                std::vector<bool>& modi = *pData->modi;
+                if (index >= data.size())
+                    break;  // 越界了
+                LPBYTE pBase = (LPBYTE)(&data[index]);
+                *pBase = HexView->Item.Value;
+                modi[index] = true;    // 记录这个成员已经修改
+            }
             break;
         }
-        case HVN_COPYDATA:
-        {
-            PNMHEXCOPYDATA arg = (PNMHEXCOPYDATA)hdr;
-            std::vector<BYTE>& data = *pData->data;
-            size_t size = data.size();
-            if ( arg->nSize > size )
-                arg->nSize = size;
-            arg->Address = (ULONG64)pData->pAddress;
-            memcpy(arg->pBuf, &data[0], arg->nSize);
-            return 1;
-        }
+        //case HVN_COPYDATA:  // 汇编那使用, 把数据拷贝到传递进来的缓冲区里, 这里没有使用到
+        //{
+        //    PNMHEXCOPYDATA arg = (PNMHEXCOPYDATA)hdr;
+        //    std::vector<BYTE>& data = *pData->data;
+        //    size_t size = data.size();
+        //    if ( arg->nSize > size )
+        //        arg->nSize = size;
+        //    arg->Address = (ULONG64)pData->pAddress;
+        //    memcpy(arg->pBuf, &data[0], arg->nSize);
+        //    return 1;
+        //}
         default:
             return 0;
         }
@@ -472,36 +753,18 @@ namespace elibstl
     
 
         /*000*/ {"边框", "border", NULL, UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
-        
-        /*001*/ {"文本颜色1", "TextColor1", "文本颜色, 第一个格子的颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL },
-        /*002*/ {"文本颜色2", "TextColor2", "文本颜色, 第二个格子的颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL },
-        /*003*/ {"文本选中颜色1", "TextColorSel1", "文本选中颜色, 第一个格子的颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL },
-        /*004*/ {"文本选中颜色2", "TextColorSel2", "文本选中颜色, 第二个格子的颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL },
-        
-        /*005*/ {"背景颜色", "BackColor", "背景颜色", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL },
-        /*006*/ {"文本选中背景色", "TextBackColorSel", "选中文本背景颜色", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL },
-        
-        /*007*/ {"文本颜色_文本区", "clrText_text", "右边字符用", UD_COLOR, _PROP_OS(__OS_WIN), NULL },
-        /*008*/ {"文本地址颜色", "TextColorAddress", "左边地址的文本颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
+        /*001*/ {"允许编辑", "Editable", "是否允许编辑, 默认不可编辑", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+        /*002*/ {"列数", "columnCount", "每行显示多少个16进制值", UD_INT, _PROP_OS(__OS_WIN), "16\0""32\0""64\0"},
+        /*003*/ {"显示长地址", "is64Address", "是否使用64位地址显示", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+        /*004*/ {"显示地址", "Address", "显示在左边的地址, 10进制必须0x开头", UD_TEXT, _PROP_OS(__OS_WIN), NULL},
 
-        /*009*/ {"已修改文本颜色", "clrModifiedText", "修改过的文本颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
-        /*010*/ {"已修改文本选中颜色", "clrModifiedTextSel", "修改过的文本颜色, 选中的颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
-        /*011*/ {"线条颜色", "clrLine", "线条颜色", UD_COLOR, _PROP_OS(__OS_WIN), NULL},
-        
-        /*012*/ {"字体", "font", "非等宽字体会显示异常, 请选择等宽字体", UD_FONT, _PROP_OS(__OS_WIN), NULL },
-        /*013*/ {"允许编辑", "Editable", "是否允许编辑, 默认不可编辑", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+        /*005*/ {"深色模式", "isDark", "是否使用深色模式", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
+        /*006*/ {"配色", "color", "组件的配色信息", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL },
 
-    //COLORREF    clrTextSel;         // 文本颜色, 选中的文本颜色, 右边字符用
-    //COLORREF    clrTextAddress;     // 文本颜色, 左边地址的颜色
-    //COLORREF    clrText1;           // 文本颜色, 第一个格子的颜色
-    //COLORREF    clrText2;           // 文本颜色, 第二个格子的颜色
-    //COLORREF    clrTextSel1;        // 选中文本颜色, 第一个格子的颜色
-    //COLORREF    clrTextSel2;        // 选中文本颜色, 第二个格子的颜色
-    //COLORREF    clrTextBackground;  // 文本背景颜色
-    //COLORREF    clrSelTextBack;     // 选中文本背景颜色
-    //COLORREF    clrModifiedText;    // 修改过的文本颜色
-    //COLORREF    clrModifiedTextSel; // 修改过的文本颜色, 选中的颜色
-    //COLORREF    clrLine;            // 线条颜色, 包括边框色
+
+        /*007*/ {"字体", "font", "非等宽字体会显示异常, 请选择等宽字体", UD_FONT, _PROP_OS(__OS_WIN) | UW_IS_HIDED, NULL },
+        /*008*/ {"项目数", "nItemCount", "需要显示多少个16进制", UD_INT, _PROP_OS(__OS_WIN) | UW_IS_HIDED, NULL },
+        /*009*/ {"虚项目", "OwnerData", "所有显示的项目都是虚拟的, 组件内部不保存任何数据, 跟虚表一样, 改变足够属性后原有数据将清空", UD_INT, _PROP_OS(__OS_WIN) | UW_IS_HIDED, NULL },
         
     };
     //1=中文名字,2=英文名字,3=详细解释,4=命令数量,5=索引值,6=标志 LDT_

@@ -1,7 +1,7 @@
 #include "HexView.h"
-#include "HexView_Search.h"
-#include "HexView_Jmp.h"
-#include "HexView_Function.h"
+#include <CJumpBox.h>
+#include <CSearchBox.h>
+//#include "AsmView.h"
 
 #include <WindowsX.h>
 #include <CommDlg.h>
@@ -55,7 +55,42 @@ void HexView_Search_Next(PHEXVIEW HexView, HWND hWnd);
 void HexView_Search_Prev(PHEXVIEW HexView, HWND hWnd);
 void HexView_Jmp_pos(PHEXVIEW HexView, HWND hWnd, SIZE_T start, SIZE_T end);
 void HexView_Jmp(PHEXVIEW HexView, HWND hWnd);
-//void HexView_Asm(PHEXVIEW HexView, HWND hWnd);
+void HexView_Asm(PHEXVIEW HexView, HWND hWnd);
+
+
+typedef struct HEXVIEW_DATA_STRUCT
+{
+    CSearchBox  search;
+    CJumpBox    jmp;
+    std::vector<BYTE> arr;
+    HEXVIEW_DATA_STRUCT()
+    {
+        search.SetSearchMode(SEARCH_MODE_HEX);
+        search.SetCaption(L"搜索");
+        search.SetTips(L"");
+
+        jmp.SetCaption(L"跳转到...");
+        const LPCWSTR pszRadio1 = L"文件开始(&B)";
+        const LPCWSTR pszRadio2 = L"现在位置";
+        const LPCWSTR pszRadio3 = L"现在位置往上";
+        const LPCWSTR pszRadio4 = L"文件结尾(&E)";
+        jmp.SetRadioText(JUMPBOX_MODE_START, pszRadio1);
+        jmp.SetRadioText(JUMPBOX_MODE_NOW, pszRadio2);
+        jmp.SetRadioText(JUMPBOX_MODE_NOW_PREV, pszRadio3);
+        jmp.SetRadioText(JUMPBOX_MODE_END, pszRadio4);
+    }
+    ~HEXVIEW_DATA_STRUCT()
+    {
+
+    }
+
+
+    inline void Release()
+    {
+
+    }
+
+}*PHEXVIEW_DATA_STRUCT;
 
 
 inline LRESULT HexView_Wparam_InvalidateRect(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -75,16 +110,41 @@ LRESULT HexView_GetSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam
 LRESULT HexView_SetColumnCount(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
 LRESULT HexView_GetColumnCount(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
 
-LRESULT HexView_SetTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+
+
+
 LRESULT HexView_SetBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
-LRESULT HexView_SetSelBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
-LRESULT HexView_SetModifiedColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetBkColor(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetBkColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetBkColorSel(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetLineColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetLineColor(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetModifyTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetModifyTextColor(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetModifyTextColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetModifyTextColorSel(PHEXVIEW HexView, HWND hWnd);
 
+LRESULT HexView_SetAddrTextColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetAddrTextColorSel(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetCharTextSelColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetCharTextSelColor(PHEXVIEW HexView, HWND hWnd);
 
-LRESULT HexView_GetTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
-LRESULT HexView_GetBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
-LRESULT HexView_GetSelBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
-LRESULT HexView_GetModifiedColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_SetColorText1(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetColorText1(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetColorText2(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetColorText2(PHEXVIEW HexView, HWND hWnd);
+
+LRESULT HexView_SetColorTextSel1(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetColorTextSel1(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_SetColorTextSel2(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetColorTextSel2(PHEXVIEW HexView, HWND hWnd);
+
+LRESULT HexView_SetDarkMode(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
+LRESULT HexView_GetDarkMode(PHEXVIEW HexView, HWND hWnd);
+LRESULT HexView_GetColor(PHEXVIEW HexView, PHEXVIEW_COLOR pClr);
+LRESULT HexView_SetColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, PHEXVIEW_COLOR pClr);
+
+void HexView_SwitchDarkMode(PHEXVIEW HexView, HWND hWnd, BOOL isDraw);
 
 
 LRESULT HexView_OnCreate(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam);
@@ -117,14 +177,16 @@ HexView_SendNotify(
     _In_ LPNMHDR NmHdr
     )
 {
+    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, 0);
     NmHdr->hwndFrom = hWnd;
     NmHdr->code = Code;
-    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-    if ( !HexView )
-        return 0;
-    if ( HexView->pfnNotify )
-        return HexView->pfnNotify(hWnd, NmHdr, HexView->lpParamNotify);
-    return SendMessageW(HexView->hWndParent, WM_NOTIFY, 0, (LPARAM)NmHdr);
+    NmHdr->idFrom = (UINT_PTR)GetWindowLongPtrW(hWnd, GWLP_ID);
+    HWND HParent = GetParent(hWnd);
+
+    if (HexView && HexView->pfnNotify)
+        return HexView->pfnNotify(HParent, WM_NOTIFY, (WPARAM)NmHdr->idFrom, (LPARAM)NmHdr);
+
+    return SendMessageW(HParent, WM_NOTIFY, (WPARAM)NmHdr->idFrom, (LPARAM)NmHdr);
 }
 
 
@@ -425,7 +487,7 @@ int HexView_GetSelText(PHEXVIEW HexView, HWND hWnd, LPWSTR buf, int bufSize, int
 void HexView_DrawAddress(HDC hdc, PHEXVIEW HexView, NMHVDISPINFO* DispInfo, int top)
 {
     wchar_t Buffer[32]; // 把字节转成字符用的缓冲区
-    SetTextColor(hdc, HexView->clrTextAddress);
+    SetTextColor(hdc, HexView->clr.clrTextAddress);
 
     const LPCWSTR fmt = ( HexView->ExStyle & HVS_ADDRESS64 ) ? L"0x%016I64X" : L"0x%08X";
     StringCchPrintfW(Buffer, _countof(Buffer), fmt, DispInfo->Item.Address);
@@ -534,7 +596,7 @@ HexView_DrawLine(
         BOOLEAN isSel = ( HexView->Flags & HVF_SELECTED ) && ( i >= SelectionStart && i <= SelectionEnd );
         if ( isSel )
         {
-            SetBkColor(hdcMem, HexView->clrSelTextBack);
+            SetBkColor(hdcMem, HexView->clr.clrBackSel);
 
             if (i != SelectionEnd && i != NumberOfItem + ( HexView->ColumnCount - 1))
             {
@@ -547,15 +609,15 @@ HexView_DrawLine(
                 ExtTextOutW(hdcMem, 0, top, ETO_OPAQUE, &rc, NULL, 0, NULL);
             }
             // 选中使用其他文本颜色
-            const COLORREF clrText = ( DispInfo.Item.State & HVIS_MODIFIED ) ? HexView->clrModifiedTextSel :
-                ( ( i % 2 == 0 ) ? HexView->clrTextSel1 : HexView->clrTextSel2 );
+            const COLORREF clrText = ( DispInfo.Item.State & HVIS_MODIFIED ) ? HexView->clr.clrModifyTextSel :
+                ( ( i % 2 == 0 ) ? HexView->clr.clrTextSel1 : HexView->clr.clrTextSel2 );
             SetTextColor(hdcMem, clrText);
         }
         else
         {
-            SetBkColor(hdcMem, HexView->clrTextBackground);
-            const COLORREF clrText = ( DispInfo.Item.State & HVIS_MODIFIED ) ? HexView->clrModifiedText :
-                ( ( i % 2 == 0 ) ? HexView->clrText1 : HexView->clrText2 );
+            SetBkColor(hdcMem, HexView->clr.clrBack);
+            const COLORREF clrText = ( DispInfo.Item.State & HVIS_MODIFIED ) ? HexView->clr.clrModifyText :
+                ( ( i % 2 == 0 ) ? HexView->clr.clrText1 : HexView->clr.clrText2 );
             SetTextColor(hdcMem, clrText);
         }
 
@@ -563,7 +625,7 @@ HexView_DrawLine(
         HexView_DrawHexValue(hdcMem, HexView, Position1, &DispInfo, top);
 
         // 绘画右边的字符
-        SetTextColor(hdcMem, isSel ? HexView->clrTextSel : HexView->clrTextAddress);
+        SetTextColor(hdcMem, isSel ? HexView->clr.clrTextSelChar : HexView->clr.clrTextAddress);
         HexView_DrawCharValue(hdcMem, HexView, Position2, &DispInfo, top);
 
 
@@ -595,12 +657,12 @@ HexView_Paint(
     hdcMem = CreateCompatibleDC(hdc);
     hbmMem = CreateCompatibleBitmap(hdc, HexView->WidthView, HexView->HeightChar);
 
-    hPen = CreatePen(PS_SOLID, 1, HexView->clrLine);
+    hPen = CreatePen(PS_SOLID, 1, HexView->clr.clrLine);
     hOld = SelectObject(hdcMem, hbmMem);
     hOldPen = SelectObject(hdcMem, hPen);
     hOldFont = SelectObject(hdcMem, HexView->hFont);
 
-    clrBk = SetBkColor(hdcMem, HexView->clrTextBackground);
+    clrBk = SetBkColor(hdcMem, HexView->clr.clrBack);
     int top = 0;
 
     for (NumberOfLine = 0; NumberOfLine <= HexView->VisibleLines; NumberOfLine++)
@@ -870,30 +932,18 @@ HexView_SetNumberOfItem(
 LRESULT HexView_OnCreate(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
     HexView = (PHEXVIEW)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(HEXVIEW));
-
     if ( !HexView )
     {
         return -1;
     }
-
-    SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)HexView);
+    HexView->pBoxData = new HEXVIEW_DATA_STRUCT;
+    SetWindowLongPtrW(hWnd, 0, (LONG_PTR)HexView);
 
     HexView->ActiveColumn = COLUMN_DATA;
     HexView->ColumnCount = 16;
     HexView->ColumnSecond = HexView->ColumnCount * 3 + 1;
-    HexView->hWndParent = GetParent(hWnd);
 
-    HexView->clrTextSel         = RGB(255, 255, 255);
-    HexView->clrText1           = RGB(0, 0, 128);
-    HexView->clrText2           = RGB(0, 0, 255);
-    HexView->clrTextSel1        = RGB(255, 255, 127);
-    HexView->clrTextSel2        = RGB(255, 255, 0);
-    HexView->clrTextAddress     = RGB(0, 0, 0);
-    HexView->clrLine            = RGB(204, 206, 219);
-    HexView->clrTextBackground  = RGB(255, 255, 255);
-    HexView->clrSelTextBack     = RGB(8, 36, 107);
-    HexView->clrModifiedText    = RGB(255, 0, 0);
-    HexView->clrModifiedTextSel = RGB(0, 255, 255);
+    HexView_SwitchDarkMode(HexView, hWnd, false);
 
     SendMessageW(hWnd, WM_SETFONT, 0, 0);
     return 0;
@@ -1079,9 +1129,9 @@ LRESULT HexView_OnCommand(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
     case ID_HEX_JMP:            // 跳转 Ctrl+G
         HexView_Jmp(HexView, hWnd);
         break;
-    //case ID_HEX_ASM:            // 跳转到汇编窗口 Ctrl+Q
-    //    HexView_Asm(HexView, hWnd);
-    //    break;
+    case ID_HEX_ASM:            // 跳转到汇编窗口 Ctrl+Q
+        HexView_Asm(HexView, hWnd);
+        break;
     default:
         break;
     }
@@ -1286,13 +1336,13 @@ LRESULT HexView_OnKeyDown(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
         HexView_Jmp(HexView, hWnd);
         break;
     }
-    //case 'Q':   // 跳转到汇编窗口
-    //{
-    //    if ( !IsCtrlKeyDown )
-    //        break;
-    //    HexView_Asm(HexView, hWnd);
-    //    break;
-    //}
+    case 'Q':   // 跳转到汇编窗口
+    {
+        if ( !IsCtrlKeyDown )
+            break;
+        HexView_Asm(HexView, hWnd);
+        break;
+    }
     case VK_TAB:
     {
         switch (HexView->ActiveColumn)
@@ -1596,7 +1646,7 @@ LRESULT HexView_OnNcPaint(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
     const int cxScreen = rc.right - rc.left;
     const int cyScreen = rc.bottom - rc.top;
     HDC hdc = GetWindowDC(hWnd);
-    HPEN hPen = CreatePen(PS_SOLID, 1, HexView->clrLine);
+    HPEN hPen = CreatePen(PS_SOLID, 1, HexView->clr.clrLine);
 
     HGDIOBJ hOldPen = SelectObject(hdc, hPen);
     HGDIOBJ hOldBrush = SelectObject(hdc, GetStockBrush(NULL_BRUSH));
@@ -1801,8 +1851,9 @@ LRESULT HexView_OnDestroy(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
         {
             DeleteObject(HexView->hFont);
         }
-        HexView_FreeList(HexView->pNode);
-        HexView_FreeList(HexView->pNodeJmp);
+
+        PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+        delete pBox;
         HeapFree(GetProcessHeap(), 0, HexView);
     }
     return 0;
@@ -1813,10 +1864,22 @@ LRESULT HexView_OnDestroy(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
 
 LRESULT HexView_SetExtendStyle(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-    DWORD ret = HexView->ExStyle;
-    HexView->ExStyle = (DWORD)lParam;
+    DWORD styleNew = (DWORD)lParam;
+    DWORD oldStyle = HexView->ExStyle;
+    BOOL isDarkModeOld = (oldStyle & HVS_DARMMODE) == HVS_DARMMODE;
+    BOOL isDarkModeNew = (styleNew & HVS_DARMMODE) == HVS_DARMMODE;
+
+    BOOL isOld64Addr = (oldStyle & HVS_ADDRESS64) == HVS_ADDRESS64;
+    BOOL isNew64Addr = (styleNew & HVS_ADDRESS64) == HVS_ADDRESS64;
+    HexView->ExStyle = styleNew;
+    if (isDarkModeOld != isDarkModeNew)
+        HexView_SwitchDarkMode(HexView, hWnd, false);
+    if (isNew64Addr != isOld64Addr)
+        HexView_SetPositionOfColumns(HexView);
+
     HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
-    return ret;
+
+    return oldStyle;
 }
 LRESULT HexView_GetExtendStyle(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
@@ -1939,52 +2002,223 @@ LRESULT HexView_GetColumnCount(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARA
 }
 
 
-LRESULT HexView_SetTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
-    COLORREF ret = HexView->clrText1;
-    HexView->clrText1 = (COLORREF)lParam;
-    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
-    return ret;
-}
+
 LRESULT HexView_SetBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-    COLORREF ret = HexView->clrTextBackground;
-    HexView->clrTextBackground = (COLORREF)lParam;
+    COLORREF ret = HexView->clr.clrBack;
+    HexView->clr.clrBack = (COLORREF)lParam;
     HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
     return ret;
 }
-LRESULT HexView_SetSelBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT HexView_GetBkColor(PHEXVIEW HexView, HWND hWnd)
 {
-    COLORREF ret = HexView->clrSelTextBack;
-    HexView->clrSelTextBack = (COLORREF)lParam;
+    return (LRESULT)HexView->clr.clrBack;
+}
+
+LRESULT HexView_SetBkColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrBackSel;
+    HexView->clr.clrBackSel = (COLORREF)lParam;
     HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
     return ret;
 }
-LRESULT HexView_SetModifiedColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT HexView_GetBkColorSel(PHEXVIEW HexView, HWND hWnd)
 {
-    COLORREF ret = HexView->clrModifiedText;
-    HexView->clrModifiedText = (COLORREF)lParam;
+    return (LRESULT)HexView->clr.clrBackSel;
+}
+
+LRESULT HexView_SetLineColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrLine;
+    HexView->clr.clrLine = (COLORREF)lParam;
     HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
     return ret;
+}
+LRESULT HexView_GetLineColor(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrLine;
+}
+
+LRESULT HexView_SetModifyTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrModifyText;
+    HexView->clr.clrModifyText = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetModifyTextColor(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrModifyText;
+}
+
+LRESULT HexView_SetModifyTextColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrModifyTextSel;
+    HexView->clr.clrModifyTextSel = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetModifyTextColorSel(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrModifyTextSel;
+}
+
+LRESULT HexView_SetAddrTextColorSel(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrTextAddress;
+    HexView->clr.clrTextAddress = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetAddrTextColorSel(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrTextAddress;
+}
+
+LRESULT HexView_SetCharTextSelColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrTextSelChar;
+    HexView->clr.clrTextSelChar = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetCharTextSelColor(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrTextSelChar;
+}
+
+LRESULT HexView_SetColorText1(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrText1;
+    HexView->clr.clrText1 = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetColorText1(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrText1;
+}
+
+LRESULT HexView_SetColorText2(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    COLORREF ret = HexView->clr.clrText2;
+    HexView->clr.clrText2 = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
+}
+LRESULT HexView_GetColorText2(PHEXVIEW HexView, HWND hWnd)
+{
+    return (LRESULT)HexView->clr.clrText2;
 }
 
 
-LRESULT HexView_GetTextColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+
+LRESULT HexView_SetColorTextSel1(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-    return (LRESULT)HexView->clrText1;
+    COLORREF ret = HexView->clr.clrTextSel1;
+    HexView->clr.clrTextSel1 = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
 }
-LRESULT HexView_GetBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT HexView_GetColorTextSel1(PHEXVIEW HexView, HWND hWnd)
 {
-    return (LRESULT)HexView->clrTextBackground;
+    return (LRESULT)HexView->clr.clrTextSel1;
 }
-LRESULT HexView_GetSelBkColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+
+LRESULT HexView_SetColorTextSel2(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-    return (LRESULT)HexView->clrSelTextBack;
+    COLORREF ret = HexView->clr.clrTextSel2;
+    HexView->clr.clrTextSel2 = (COLORREF)lParam;
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return ret;
 }
-LRESULT HexView_GetModifiedColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT HexView_GetColorTextSel2(PHEXVIEW HexView, HWND hWnd)
 {
-    return (LRESULT)HexView->clrModifiedText;
+    return (LRESULT)HexView->clr.clrTextSel2;
 }
+
+LRESULT HexView_SetDarkMode(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    DWORD oldStyle = HexView->ExStyle;
+    BOOL isDarkMode = (HexView->ExStyle & HVS_DARMMODE) == HVS_DARMMODE;
+    if (lParam)
+        HexView->ExStyle |= HVS_DARMMODE;
+    else
+        HexView->ExStyle &= ~HVS_DARMMODE;
+
+    HexView_SwitchDarkMode(HexView, hWnd, false);
+
+    if (oldStyle != HexView->ExStyle)   // 两次样式相等就不重画
+        HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, lParam);
+    return isDarkMode;
+}
+LRESULT HexView_GetDarkMode(PHEXVIEW HexView, HWND hWnd)
+{
+    BOOL isDarkMode = (HexView->ExStyle & HVS_DARMMODE) == HVS_DARMMODE;
+    return isDarkMode;
+}
+LRESULT HexView_GetColor(PHEXVIEW HexView, PHEXVIEW_COLOR pClr)
+{
+    if (!pClr)
+        return 0;
+    memcpy(pClr, &HexView->clr, sizeof(HexView->clr));
+    return true;
+}
+LRESULT HexView_SetColor(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, PHEXVIEW_COLOR pClr)
+{
+    if (!pClr)
+        return 0;
+    memcpy(&HexView->clr, pClr, sizeof(HexView->clr));
+    HexView_Wparam_InvalidateRect(HexView, hWnd, wParam, 0);
+    return true;
+}
+
+
+static void HexView_GetDefColor(HEXVIEW_COLOR* pClr, bool isDark)
+{
+    if (isDark)
+    {
+        pClr->clrTextSelChar     = RGB(255, 255, 255);
+        pClr->clrText1           = RGB(202, 207, 221);
+        pClr->clrText2           = RGB(215, 210, 196);
+        pClr->clrTextSel1        = RGB(255, 255, 127);
+        pClr->clrTextSel2        = RGB(255, 255, 0);
+        pClr->clrTextAddress     = RGB(222, 222, 222);
+        pClr->clrLine            = RGB(63, 63, 70);
+        pClr->clrBack            = RGB(31, 31, 31);
+        pClr->clrBackSel         = RGB(39, 80, 121);
+        pClr->clrModifyText      = RGB(255, 0, 0);
+        pClr->clrModifyTextSel   = RGB(0, 255, 255);
+    }
+    else
+    {
+        pClr->clrTextSelChar     = RGB(255, 255, 255);
+        pClr->clrText1           = RGB(0, 0, 128);
+        pClr->clrText2           = RGB(0, 0, 255);
+        pClr->clrTextSel1        = RGB(255, 255, 127);
+        pClr->clrTextSel2        = RGB(255, 255, 0);
+        pClr->clrTextAddress     = RGB(0, 0, 0);
+        pClr->clrLine            = RGB(204, 206, 219);
+        pClr->clrBack            = RGB(255, 255, 255);
+        pClr->clrBackSel         = RGB(8, 36, 107);
+        pClr->clrModifyText      = RGB(255, 0, 0);
+        pClr->clrModifyTextSel   = RGB(0, 255, 255);
+    }
+}
+
+void HexView_SwitchDarkMode(PHEXVIEW HexView, HWND hWnd, BOOL isDraw)
+{
+    BOOL isDarkMode = (HexView->ExStyle & HVS_DARMMODE) == HVS_DARMMODE;
+
+    HexView_GetDefColor(&HexView->clr, isDarkMode);
+
+    if (isDraw)
+        InvalidateRect(hWnd, NULL, FALSE);
+
+}
+
+
+
 
 
 
@@ -1999,7 +2233,7 @@ HexViewProc(
     )
 {
     PHEXVIEW HexView;
-    HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, 0);
 
     switch (message)
     {
@@ -2060,22 +2294,68 @@ HexViewProc(
         return HexView_SetColumnCount(HexView, hWnd, wParam, lParam);
     case HVM_GETCOLUMNCOUNT:
         return HexView_GetColumnCount(HexView, hWnd, wParam, lParam);
-    case HVM_SETTEXTCOLOR:
-        return HexView_SetTextColor(HexView, hWnd, wParam, lParam);
-    case HVM_SETBKCOLOR:
+
+
+        //////////////////////////////////////////////////////////////////////////
+        // 下面开始是设置/获取颜色
+
+    case HVM_SETCLRBK:              // 设置背景颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
         return HexView_SetBkColor(HexView, hWnd, wParam, lParam);
-    case HVM_SETSELBKCOLOR:
-        return HexView_SetSelBkColor(HexView, hWnd, wParam, lParam);
-    case HVM_SETMODIFIEDCOLOR:
-        return HexView_SetModifiedColor(HexView, hWnd, wParam, lParam);
-    case HVM_GETTEXTCOLOR:
-        return HexView_GetTextColor(HexView, hWnd, wParam, lParam);
-    case HVM_GETBKCOLOR:
-        return HexView_GetBkColor(HexView, hWnd, wParam, lParam);
-    case HVM_GETSELBKCOLOR:
-        return HexView_GetSelBkColor(HexView, hWnd, wParam, lParam);
-    case HVM_GETMODIFIEDCOLOR:
-        return HexView_GetModifiedColor(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRBK:              // 获取背景颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetBkColor(HexView, hWnd);
+    case HVM_SETCLRBK_SEL:          // 设置选中区域的背景颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetBkColorSel(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRBK_SEL:          // 获取选中区域的背景颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetBkColorSel(HexView, hWnd);
+    case HVM_SETCLRLINE:            // 设置线条颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetLineColor(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRLINE:            // 获取线条颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetLineColor(HexView, hWnd);
+    case HVM_SETCLRMODIFYTEXT:      // 设置已修改文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetModifyTextColor(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRMODIFYTEXT:      // 获取已修改文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetModifyTextColor(HexView, hWnd);
+    case HVM_SETCLRMODIFYTEXT_SEL:  // 设置选中区域已修改文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetModifyTextColorSel(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRMODIFYTEXT_SEL:  // 获取选中区域已修改文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetModifyTextColorSel(HexView, hWnd);
+
+    case HVM_SETCLRTEXTADDR:        // 设置左边地址和右边字符的文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetAddrTextColorSel(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXTADDR:        // 获取左边地址和右边字符的文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetAddrTextColorSel(HexView, hWnd);
+    case HVM_SETCLRTEXTSELCHAR:     // 设置右边选中时字符的文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetCharTextSelColor(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXTSELCHAR:     // 获取右边选中时字符的文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetCharTextSelColor(HexView, hWnd);
+
+    case HVM_SETCLRTEXT1:           // 设置第一个格子文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetColorText1(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXT1:           // 获取第一个格子文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetColorText1(HexView, hWnd);
+    case HVM_SETCLRTEXT2:           // 设置第二个格子文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetColorText2(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXT2:           // 获取第二个格子文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetColorText2(HexView, hWnd);
+    case HVM_SETCLRTEXT1_SEL:       // 设置第一个格子选中文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetColorTextSel1(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXT1_SEL:       // 获取第一个格子选中文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetColorTextSel1(HexView, hWnd);
+    case HVM_SETCLRTEXT2_SEL:       // 设置第二个格子选中文本颜色, wParam = 是否重画, lParam = 要设置的颜色, 返回设置前的颜色
+        return HexView_SetColorTextSel2(HexView, hWnd, wParam, lParam);
+    case HVM_GETCLRTEXT2_SEL:       // 获取第二个格子选中文本颜色, 忽略 wParam和lParam, 返回对应颜色
+        return HexView_GetColorTextSel2(HexView, hWnd);
+
+        //////////////////////////////////////////////////////////////////////////
+
+    case HVM_SETDARKMODE:           // 设置深色模式, wParam = 是否重画, lParam = 是否设置深色模式
+        return HexView_SetDarkMode(HexView, hWnd, wParam, lParam);
+    case HVM_GETDARKMODE:           // 获取当前视图是否为深色模式
+        return HexView_GetDarkMode(HexView, hWnd);
+    case HVM_GETCOLOR:              // 获取当前配色信息, wParam未使用, lParam = HEXVIEW_COLOR 结构指针
+        return HexView_GetColor(HexView, (PHEXVIEW_COLOR)lParam);
+    case HVM_SETCOLOR:              // 设置当前配色信息, wParam是否重画, lParam = HEXVIEW_COLOR 结构指针
+        return HexView_SetColor(HexView, hWnd, wParam, (PHEXVIEW_COLOR)lParam);
 
     default:
         return DefWindowProcW(hWnd, message, wParam, lParam);
@@ -2097,7 +2377,7 @@ void RegisterClassHexView()
     wcex.hInstance      = GetModuleHandleW(NULL);
     wcex.hCursor        = LoadCursor(NULL, IDC_IBEAM);
     wcex.lpszClassName  = WC_HEXVIEWW;
-    wcex.cbWndExtra     = 20;
+    wcex.cbWndExtra     = 16;   // 存放额外的结构用的
 
     atom = RegisterClassExW(&wcex);
 }
@@ -2106,6 +2386,7 @@ HWND CreateHexView(DWORD dwExStyle, DWORD dwStyle,
                    int x, int y, int nWidth, int nHeight, HWND hWndParent, LONG_PTR id, LPVOID lpParam)
 {
     RegisterClassHexView();
+
     HWND hWnd;
     hWnd = CreateWindowExW(dwExStyle,
                            WC_HEXVIEWW,
@@ -2120,12 +2401,11 @@ HWND CreateHexView(DWORD dwExStyle, DWORD dwStyle,
     return hWnd;
 }
 
-BOOLEAN HexView_BindNotify(HWND hWnd, PFN_HEXVIEW_NOTIFY pfn, LPVOID lpParam)
+BOOLEAN HexView_BindNotify(HWND hWnd, WNDPROC pfn)
 {
-    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-    if ( !HexView )
+    PHEXVIEW HexView = (PHEXVIEW)GetWindowLongPtrW(hWnd, 0);
+    if (!HexView)
         return FALSE;
-    HexView->lpParamNotify = lpParam;
     HexView->pfnNotify = pfn;
     return TRUE;
 }
@@ -2148,7 +2428,10 @@ void HexView_PopupMenu(PHEXVIEW HexView, HWND hWnd)
     const BOOLEAN isSel = ( HexView->Flags & HVF_SELECTED ) != 0;
     const BOOLEAN isSelAll = start == 0 && end == HexView->TotalItems;
     const int disabled = isSel ? MF_STRING : MF_DISABLED;
-    const int flag_search = ( HexView->pSearchData && HexView->nSearchSize ) ? MF_STRING : MF_DISABLED;
+
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    LPCWSTR pSearchData = pBox->search.GetResult();
+    const int flag_search = ( pSearchData && *pSearchData) ? MF_STRING : MF_DISABLED;
     const int sel_all = isSelAll ? MF_DISABLED : MF_STRING;
     const int asm_flag = IsWindow(HexView->hAsm) ? MF_DISABLED : MF_STRING;;
 
@@ -2180,7 +2463,7 @@ void HexView_PopupMenu(PHEXVIEW HexView, HWND hWnd)
     AppendMenuW(hMenu, sel_all, ID_HEX_SELALL, L"&A.全选\tCtrl + A");
     AppendMenuW(hMenu, MF_STRING, ID_HEX_SEARCH, L"&F.搜索\tCtrl + F");
     AppendMenuW(hMenu, flag_search, ID_HEX_NEXT, L"&N.搜索下一个\tF3");
-    AppendMenuW(hMenu, flag_search, ID_HEX_PREV, L"&P.搜索上\tShift + F3");
+    AppendMenuW(hMenu, flag_search, ID_HEX_PREV, L"&P.搜索上一个\tShift + F3");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, L"");
     AppendMenuW(hMenu, MF_STRING, ID_HEX_JMP, L"&G.跳转\tCtrl + G");
     //AppendMenuW(hMenu, asm_flag, ID_HEX_ASM, L"&H.跳转到汇编窗口\tCtrl + Q");
@@ -2222,31 +2505,18 @@ BOOLEAN HexView_Copy(PHEXVIEW HexView, HWND hWnd, int fmt)
     return ret;
 }
 
-// 重新调整搜索数据缓冲区
-inline LPBYTE HexView_Search_Resize(PHEXVIEW HexView, size_t newSize)
-{
-    if ( HexView->nSearchBufSize >= (int)newSize )
-        return HexView->pSearchData;    // 缓冲区还足够, 不需要重新分配
-
-    // 缓冲区不够, 重新分配
-    if ( HexView->pSearchData )
-        HexViewFree(HexView->pSearchData);
-    if ( newSize < 100 )
-        newSize = 100;
-    HexView->pSearchData = (LPBYTE)HexViewAlloc(newSize, true);
-    HexView->nSearchBufSize = (int)(DWORD)newSize;
-    return HexView->pSearchData;
-}
-
+// 搜索时输入了16进制就走到这里, 需要把输入的16进制转换成字节然后存到内存中
+// 搜索下一个和上一个的时候会使用到
 // 16进制文本转换成字节数据, 每两个字符转成一个字节, 直接写入到结构里, 会释放旧数据
 inline void HexView_Search_HexToBin(PHEXVIEW HexView)
 {
-    LPCWSTR pStr = HexView->pSearchText;
-    size_t len = wcslen(pStr);
-    HexView_Search_Resize(HexView, len);
-    LPBYTE p = HexView->pSearchData;
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
 
-    HexView->nSearchSize = 0;
+    LPCWSTR pStr = pBox->search.GetResult();
+    size_t len = wcslen(pStr);
+
     auto pfn_isHex = [](wchar_t ch)
     {
         // a-f, A-F, 0-9 是这些字符就返回真
@@ -2275,77 +2545,112 @@ inline void HexView_Search_HexToBin(PHEXVIEW HexView)
 
         DWORD num = 0;
         swscanf_s(buf, L"%02X", &num);
-        p[HexView->nSearchSize++] = (BYTE)num;
+        arr.push_back((BYTE)num);
         if ( ch == 0 )
             break;
     }
+
 }
-// 转换到ansi编码
+
+// 转换到ansi编码, 搜索那点击了确认, 然后走到这里
 inline void HexView_Search_ToAnsi(PHEXVIEW HexView)
 {
-    LPCWSTR unicode = HexView->pSearchText;
-    size_t len = wcslen(unicode);
-    int aLen = WideCharToMultiByte(936, 0, unicode, (int)len, 0, 0, 0, 0) + 1;
-    LPBYTE szStr = HexView_Search_Resize(HexView, aLen);
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
 
-    WideCharToMultiByte(936, 0, unicode, (int)len, (LPSTR)szStr, aLen, 0, 0);
-    
-    HexView->nSearchSize = aLen - 1;
+    LPCWSTR pStr = pBox->search.GetResult();
+    size_t len = wcslen(pStr);
+    int aLen = WideCharToMultiByte(936, 0, pStr, (int)len, 0, 0, 0, 0) + 1;
+
+    arr.resize(aLen);
+    LPBYTE szStr = &arr[0];
+    WideCharToMultiByte(936, 0, pStr, (int)len, (LPSTR)szStr, aLen, 0, 0);
+
 }
-// 把10进制的数转换成字节
+// 把10进制的数转换成字节, 搜索确认后走到的这里
 inline void HexView_Search_10ToBin(PHEXVIEW HexView)
 {
-    LONG64 ret = _wtoll(HexView->pSearchText);
-    LPBYTE ptr = HexView_Search_Resize(HexView, sizeof(ret));
-    int* arr = (int*)( &ret );
-    HexView->nSearchSize = 4;
-    if ( arr[1] )
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
+
+    LPCWSTR pStr = pBox->search.GetResult();
+
+    LONG64 ret = _wtoll(pStr);
+    int* pInt = (int*)( &ret );
+    int size = sizeof(LONG32);
+    if (pInt[1])
     {
         // 高位有值, 那就是64位数值, 8个字节
-        HexView->nSearchSize = 8;
+        size = sizeof(LONG64);
     }
-    memcpy(ptr, arr, HexView->nSearchSize);
+    arr.resize(size);
+    memcpy(&arr[0], pInt, size);
 }
 // 把浮点数转成字节
 inline void HexView_Search_FloatToBin(PHEXVIEW HexView)
 {
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
+
+    LPCWSTR pStr = pBox->search.GetResult();
+
     wchar_t* _Eptr;
-    float f = (float)wcstod(HexView->pSearchText, &_Eptr);
-    LPBYTE ptr = HexView_Search_Resize(HexView, sizeof(f));
-    memcpy(ptr, &f, sizeof(f));
-    HexView->nSearchSize = sizeof(f);
+    float f = (float)wcstod(pStr, &_Eptr);
+    const int size = sizeof(float);
+    arr.resize(size);
+    memcpy(&arr[0], &f, size);
 }
 // 把双浮点数转成字节
 inline void HexView_Search_DoubleToBin(PHEXVIEW HexView)
 {
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
+
+    LPCWSTR pStr = pBox->search.GetResult();
+
     wchar_t* _Eptr;
-    double f = wcstod(HexView->pSearchText, &_Eptr);
-    LPBYTE ptr = HexView_Search_Resize(HexView, sizeof(f));
-    memcpy(ptr, &f, sizeof(f));
-    HexView->nSearchSize = sizeof(f);
+    double f = (double)wcstod(pStr, &_Eptr);
+    const int size = sizeof(double);
+    arr.resize(size);
+    memcpy(&arr[0], &f, size);
+
 }
 // 转换到unicode编码, 本来就是Unicode, 这里拷贝一份
 inline void HexView_Search_ToUnicode(PHEXVIEW HexView)
 {
-    LPCWSTR unicode = HexView->pSearchText;
-    size_t len = wcslen(unicode) * sizeof(wchar_t); // 不分配结束标志
-    LPBYTE szStr = HexView_Search_Resize(HexView, len);
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
 
-    memcpy(szStr, unicode, len);
-    HexView->nSearchSize = (int)(DWORD)len;
+    LPCWSTR pStr = pBox->search.GetResult();
+    size_t len = wcslen(pStr) * sizeof(wchar_t); // 不分配结束标志
+    arr.resize(len);
+
+    memcpy(&arr[0], pStr, len);
 }
 
 inline BOOLEAN _search_find(PHEXVIEW HexView, HWND hWnd, SIZE_T start, SIZE_T end, LPCWSTR text)
 {
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    std::vector<BYTE>& arr = pBox->arr;
+    arr.clear();
+    int nSearchSize = (int)arr.size();
+    if (nSearchSize)
+        return FALSE;
+    LPBYTE pSearchData = nSearchSize > 0 ? &arr[0] : 0;
     NMHEXSEARCH search = { 0 };
-    search.nSize    = HexView->nSearchSize;
-    search.pSearch  = HexView->pSearchData;
+    search.nSize    = nSearchSize;
+    search.pSearch  = pSearchData;
     search.start    = start;
     search.end      = end;
     BOOLEAN isSearch = (BOOLEAN)HexView_SendNotify(hWnd, HVN_SEARCH, (LPNMHDR)&search);
     if ( isSearch )
     {
-        HexView_Jmp_pos(HexView, hWnd, search.pos, search.pos + HexView->nSearchSize);
+        HexView_Jmp_pos(HexView, hWnd, search.pos, search.pos + nSearchSize);
     }
     else
     {
@@ -2357,49 +2662,31 @@ inline BOOLEAN _search_find(PHEXVIEW HexView, HWND hWnd, SIZE_T start, SIZE_T en
 
 void HexView_Search(PHEXVIEW HexView, HWND hWnd)
 {
-    HEXSEARCH arg = { 0 };
-    arg.hParent = hWnd;
-    arg.szCaption = L"搜索";
-    arg.szTips = L"";
-    arg.listText = HexView->pNode;
-    arg.nMode = HexView->nSearchMode;
-    arg.windowType = HEXSEARCH_WINDOWTYPE_HEX;
+    PHEXVIEW_DATA_STRUCT box = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    CSearchBox& search = box->search;
 
-    int ret = HexView_Search_Dialog(&arg);
+    if ( !search.Show(hWnd)) return; // 对话框取消了搜索
 
-    if ( !ret || !arg.pRet ) return; // 对话框取消了搜索
-
-    // 走到这就是搜索框输入了搜索的数据
-
-    // 先枚举一下链表, 看看有没有重复项, 有的话把重复项拿出来放到第一个位置
-    if ( !HexView_AdjustListOrder(&HexView->pNode, arg.pRet) )
-    {
-        // 链表里没有重复项, 那就新建一个节点
-        // 没有相同的数据, 那就把这个数据放到第一个节点
-        HexView->pNode = HexView_NewNode(arg.pRet, HexView->pNode);
-    }
-
-    HexView->pSearchText = arg.pRet;
-    HexView->nSearchMode = arg.nMode;
+    int nMode = search.GetHexMode();
     // 把文本转换成需要搜索的数据
-    switch ( arg.nMode )
+    switch (nMode)
     {
-    case 0: // 十六进制
+    case SEARCH_HEXMODE_HEX: // 十六进制
         HexView_Search_HexToBin(HexView);
         break;
-    case 1: // ansi字符串
+    case SEARCH_HEXMODE_ANSI: // ansi字符串
         HexView_Search_ToAnsi(HexView);
         break;
-    case 2: // 10进制
+    case SEARCH_HEXMODE_DEC: // 10进制
         HexView_Search_10ToBin(HexView);
         break;
-    case 3: // Unicode字符串
+    case SEARCH_HEXMODE_UNICODE: // Unicode字符串
         HexView_Search_ToUnicode(HexView);
         break;
-    case 4: // 单精度浮点数
+    case SEARCH_HEXMODE_FLOAT: // 单精度浮点数
         HexView_Search_FloatToBin(HexView);
         break;
-    case 5: // 双精度浮点数
+    case SEARCH_HEXMODE_DOUBLE: // 双精度浮点数
         HexView_Search_DoubleToBin(HexView);
         break;
     default:
@@ -2414,24 +2701,24 @@ void HexView_Search(PHEXVIEW HexView, HWND hWnd)
 void _search_msgbox(PHEXVIEW HexView, HWND hWnd, LPCWSTR text, SIZE_T start)
 {
     // 没有搜索到数据
-
+    PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    int nMode = pBox->search.GetHexMode();
     LPCWSTR mode = L"";
-
-    switch ( HexView->nSearchMode)
+    switch (nMode)
     {
-    case 1: // ansi字符串
+    case SEARCH_HEXMODE_ANSI: // ansi字符串
         mode = L"ANSI 字符串";
         break;
-    case 2: // 10进制
+    case SEARCH_HEXMODE_DEC: // 10进制
         mode = L"10进制";
         break;
-    case 3: // Unicode字符串
+    case SEARCH_HEXMODE_UNICODE: // Unicode字符串
         mode = L"Unicode字符串";
         break;
-    case 4: // 单精度浮点数
+    case SEARCH_HEXMODE_FLOAT: // 单精度浮点数
         mode = L"单精度浮点数";
         break;
-    case 5: // 双精度浮点数
+    case SEARCH_HEXMODE_DOUBLE: // 双精度浮点数
         mode = L"双精度浮点数";
         break;
     default:
@@ -2443,14 +2730,14 @@ void _search_msgbox(PHEXVIEW HexView, HWND hWnd, LPCWSTR text, SIZE_T start)
     DispInfo.Item.Mask = HVIF_ADDRESS;
     DispInfo.Item.NumberOfItem = start;
     HexView_SendNotify(hWnd, HVN_GETDISPINFO, (LPNMHDR)&DispInfo);
-
-    size_t len = wcslen(HexView->pSearchText) + 260;
+    LPCWSTR pSearchText = pBox->search.GetResult();
+    size_t len = wcslen(pSearchText) + 260;
     LPWSTR dbg = (LPWSTR)HexViewAlloc(len * sizeof(wchar_t));
     swprintf_s(dbg, len,
                L"搜索模式: %s\r\n"
                L"搜索文本: \"%s\"\r\n"
                L"从 0x%016llX 开始%s搜索\r\n\r\n"
-               L"未搜索到匹配数据", mode, HexView->pSearchText, DispInfo.Item.Address, text);
+               L"未搜索到匹配数据", mode, pSearchText, DispInfo.Item.Address, text);
     MessageBoxW(hWnd, dbg, L"没有搜索到数据", 0);
     HexViewFree(dbg);
 }
@@ -2489,30 +2776,15 @@ void HexView_Jmp_pos(PHEXVIEW HexView, HWND hWnd, SIZE_T start, SIZE_T end)
 void HexView_Jmp(PHEXVIEW HexView, HWND hWnd)
 {
     SIZE_T start = min(HexView->SelectionStart, HexView->SelectionEnd);
-    HEXJMP arg      = { 0 };
-    arg.hParent     = hWnd;
-    arg.szCaption   = L"跳转到...";
-    arg.listText    = HexView->pNodeJmp;
-    arg.nMode       = HexView->nJmpMode;
-    arg.pos         = start;
-    arg.isAsm       = false;
 
-    int ret = HexView_Jmp_Dialog(&arg);
+    PHEXVIEW_DATA_STRUCT box = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
+    CJumpBox& jmp = box->jmp;
+    
+    if (!jmp.Show())
+        return; // 取消了操作
 
-    if ( !ret || !arg.pRet ) return; // 对话框取消了搜索
-
-    // 走到这就是搜索框输入了搜索的数据
-
-    // 先枚举一下链表, 看看有没有重复项, 有的话把重复项拿出来放到第一个位置
-    if ( !HexView_AdjustListOrder(&HexView->pNodeJmp, arg.pRet) )
-    {
-        // 链表里没有重复项, 那就新建一个节点
-        // 没有相同的数据, 那就把这个数据放到第一个节点
-        HexView->pNodeJmp = HexView_NewNode(arg.pRet, HexView->pNodeJmp);
-    }
-
-    int mode = LOWORD(arg.nMode);
-    SIZE_T retPos = (SIZE_T)arg.pos;
+    int mode = jmp.GetMode();
+    SIZE_T retPos = (SIZE_T)jmp.GetResultNumber();
     SIZE_T pos = 0;
     if ( mode == 0 )    // 文件开始
     {
@@ -2540,40 +2812,38 @@ void HexView_Jmp(PHEXVIEW HexView, HWND hWnd)
             pos = ( retPos > 0 ) ? 0 : HexView->TotalItems - 1;
     }
 
-    HexView->nJmpMode = arg.nMode;
     HexView_Jmp_pos(HexView, hWnd, pos, pos + 1);
 }
-//
-//void HexView_Asm(PHEXVIEW HexView, HWND hWnd)
-//{
-//    if ( IsWindow(HexView->hAsm) )
-//        return;
-//    NMHEXCOPYDATA arg = { 0 };
-//    arg.nSize = HexView->TotalItems;
-//    arg.pBuf = HexViewAlloc(arg.nSize, true);
-//    if ( HexView_SendNotify(hWnd, HVN_COPYDATA, (LPNMHDR)&arg) )
-//    {
-//        SIZE_T start = min(HexView->SelectionStart, HexView->SelectionEnd);
-//        ASMVIEW_LOAD asm_arg = { 0 };
-//        asm_arg.hParent = hWnd;
-//        asm_arg.szCaption = L"汇编查看器";
-//        asm_arg.pData = arg.pBuf;
-//        asm_arg.nSize = arg.nSize;
-//        asm_arg.address = arg.Address;
-//        asm_arg.offset = start;
-//        asm_arg.pShowMode = &HexView->asm_ShowMode;
-//        asm_arg.hFont = HexView->hFont;
-//
-//        HexView->hAsm = AsmView_Load(&asm_arg);
-//        if ( !HexView->hAsm )
-//        {
-//            MessageBoxW(hWnd, L"打开汇编查看器失败", L"错误", 0);
-//        }
-//    }
-//    else
-//    {
-//        MessageBoxW(hWnd, L"获取数据失败, 无法查看汇编", L"错误", 0);
-//    }
-//    HexViewFree(arg.pBuf);
-//}
 
+
+void HexView_Asm(PHEXVIEW HexView, HWND hWnd)
+{
+    //if ( IsWindow(HexView->hAsm) )
+    //    return;
+    //NMHEXCOPYDATA arg = { 0 };
+    //arg.nSize = HexView->TotalItems;
+    //arg.pBuf = HexViewAlloc(arg.nSize, true);
+    //if ( HexView_SendNotify(hWnd, HVN_COPYDATA, (LPNMHDR)&arg) )
+    //{
+    //    SIZE_T start = min(HexView->SelectionStart, HexView->SelectionEnd);
+    //    ASMVIEW_LOAD asm_arg = { 0 };
+    //    asm_arg.hParent = hWnd;
+    //    asm_arg.szCaption = L"汇编查看器";
+    //    asm_arg.pData = arg.pBuf;
+    //    asm_arg.nSize = arg.nSize;
+    //    asm_arg.address = arg.Address;
+    //    asm_arg.offset = start;
+    //    asm_arg.nShowMode = HexView->asm_ShowMode;
+    //    asm_arg.hFont = HexView->hFont;
+    //    HexView->hAsm = AsmView_Load(&asm_arg);
+    //    if ( !HexView->hAsm )
+    //    {
+    //        MessageBoxW(hWnd, L"打开汇编查看器失败", L"错误", 0);
+    //    }
+    //}
+    //else
+    //{
+    //    MessageBoxW(hWnd, L"获取数据失败, 无法查看汇编", L"错误", 0);
+    //}
+    //HexViewFree(arg.pBuf);
+}

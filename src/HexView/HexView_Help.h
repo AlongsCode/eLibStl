@@ -14,11 +14,22 @@ PVOID GetDataFromHunit(HUNIT hUnit);
 PVOID UpdateDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWnd, PVOID pData);
 PVOID SetDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWnd, PVOID pData);
 
-
-
+// 读取数据, 返回读取后的地址
+inline LPBYTE read_data(LPBYTE& buf, LPVOID pData, int size)
+{
+    BYTE ret = ((BYTE*)buf)[0];
+    memcpy(pData, buf, size);
+    buf += size;
+    return buf;
+}
+// 读取结构, 返回读取后的地址
+template<typename T> inline LPBYTE read_struct(LPBYTE& buf, T& data)
+{
+    return read_data(buf, &data, sizeof(data));
+}
 inline BYTE read_int08(LPBYTE& buf)
 {
-    BYTE ret = ( (BYTE*)buf )[0];
+    BYTE ret = ((BYTE*)buf)[0];
     buf += sizeof(BYTE);
     return ret;
 }
