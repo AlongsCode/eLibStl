@@ -578,12 +578,6 @@
     <ClCompile Include="src\HexView\HexView_Function.cpp">
       <Filter>源文件\组件\HexView</Filter>
     </ClCompile>
-    <ClCompile Include="src\HexView\HexView_Jmp.cpp">
-      <Filter>源文件\组件\HexView</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HexView\HexView_Search.cpp">
-      <Filter>源文件\组件\HexView</Filter>
-    </ClCompile>
     <ClCompile Include="src\HexView\HexView_Control.cpp">
       <Filter>源文件\组件\HexView</Filter>
     </ClCompile>
@@ -649,6 +643,9 @@
     </ClCompile>
     <ClCompile Include="src\Epl Dp\eplMD5.cpp">
       <Filter>源文件\实现\全局命令\数据处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HexView\HexView_CustomData.cpp">
+      <Filter>源文件\组件\HexView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

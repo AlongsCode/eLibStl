@@ -113,10 +113,9 @@
     <ClCompile Include="src\HexView\HexView.cpp" />
     <ClCompile Include="src\HexView\HexView_CmdDef.cpp" />
     <ClCompile Include="src\HexView\HexView_Control.cpp" />
+    <ClCompile Include="src\HexView\HexView_CustomData.cpp" />
     <ClCompile Include="src\HexView\HexView_Function.cpp" />
     <ClCompile Include="src\HexView\HexView_Help.cpp" />
-    <ClCompile Include="src\HexView\HexView_Jmp.cpp" />
-    <ClCompile Include="src\HexView\HexView_Search.cpp" />
     <ClCompile Include="src\InputBox.cpp" />
     <ClCompile Include="src\InStrRev.cpp" />
     <ClCompile Include="src\gettextpos.cpp" />
@@ -386,7 +385,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgExe|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
-    <OutDir>$(ESTL_DBG_ELIB_PATH___)</OutDir>
+    <OutDir>d:\e\lib\</OutDir>
     <TargetExt>.fne</TargetExt>
     <TargetName>libstl</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>

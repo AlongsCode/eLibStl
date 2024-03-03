@@ -33,7 +33,7 @@ EXTERN_C void fn_hexview_setdata(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 	HWND hHexView = elibstl::get_hwnd_from_arg(pArgInf);
 	if (!hHexView)
 		return;
-	PHEXVIEW_PROPERTY pData = (PHEXVIEW_PROPERTY)GetWindowLongPtrW(hHexView, 0);
+    PHEXVIEW_PROPERTY pData = GetHexViewData(hHexView);
 	if (!pData)
 		return;
 
@@ -41,17 +41,22 @@ EXTERN_C void fn_hexview_setdata(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF 
 
 	int size = 0;
 	LPBYTE pBin = GetAryElementInf_HexView(pArgInf[1].m_pBin, &size);
-	std::vector<BYTE>& data = *pData->data;
-	std::vector<BYTE>& modi = *pData->modi;
+	pData->size = size;
 
-	data.clear();
-	modi.clear();
-
-	if (size > 0)
+	if (!pData->bOwnerData)
 	{
-		data.resize(size);
-		modi.assign(size, 0);
-		memcpy(&data[0], pBin, size);
+		std::vector<BYTE>& data = *pData->data;
+		std::vector<bool>& modi = *pData->modi;
+
+		data.clear();
+		modi.clear();
+
+		if (size > 0)
+		{
+			data.resize(size);
+			modi.assign(size, 0);
+			memcpy(&data[0], pBin, size);
+		}
 	}
 	SendMessageW(pData->hWnd, HVM_SETITEMCOUNT, 1, (LPARAM)size);
 	//InvalidateRect(hHexView, 0, 0);
