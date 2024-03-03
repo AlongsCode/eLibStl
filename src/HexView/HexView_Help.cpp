@@ -91,5 +91,42 @@ PVOID SetDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWn
     return 0;
 }
 
+// 调用易语言的事件, 返回易语言返回的结果
+// data = 要对哪个组件投递事件
+// nDeal = 处理结果, 参考返回易语言是否处理了这个事件, E_EVENT_DEAL 枚举常量
+// iEvent = 事件索引, EVENT_INFO2 这个数组的索引, 数组是所有事件, 索引对应事件
+int CallEEvent(PCONTROL_STRUCT_BASE data, int& nDeal, int iEvent, int nArgCount, ...)
+{
+    HWND hWnd = (HWND)elibstl::NotifySys(NAS_GET_HWND_OF_CWND_OBJECT, data->hUnit, 0);
+    if (!hWnd || !IsWindow(hWnd))
+        return 0;
+    if (nArgCount > 12)
+    {
+#ifdef _DEBUG
+        _DBG_BREAK_MSG("事件参数数量超过12个");
+#endif
+        return 0;
+    }
+    EVENT_NOTIFY2 eventInfo(data->dwWinFormID, data->dwUnitID, iEvent);
+    eventInfo.m_nArgCount = nArgCount;
+
+    va_list list;
+    va_start(list, nArgCount);
+    for (int i = 0; i < nArgCount; i++)
+    {
+        eventInfo.m_arg[i].m_inf.m_dtDataType = SDT_INT;
+        eventInfo.m_arg[i].m_inf.m_int = va_arg(list, int);
+    }
+    va_end(list);
+    INT ret = elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&eventInfo, 0);
+    nDeal = E_EVENT_DEAL_NONE;
+    if (ret != 0)
+        nDeal = E_EVENT_DEAL_DEAL;
+    if (eventInfo.m_blHasRetVal)
+        nDeal |= E_EVENT_DEAL_RET;
+
+    return eventInfo.m_infRetData.m_int;
+}
+
 HEXVIEW_NAMESPACE_END
 

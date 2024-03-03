@@ -16,6 +16,10 @@
 #define HEXVIEW_PROP_OWNERDATA              9   // 纯虚项目
 
 
+#define HEXVIEW_EVENT_ITEMCHANGED           0   // 项目被修改, 3个参数,项目索引,修改后,修改前, 返回是否允许修改, 虚项目有特别处理
+#define HEXVIEW_EVENT_SHOWINFO              1   // 即将显示, 4个参数, 项目索引,项目值,是否被修改,显示的地址
+
+
 #define HEXVIEW_NAMESPACE _hexview
 #define HEXVIEW_NAMESPACE_BEGIN namespace HEXVIEW_NAMESPACE {
 #define HEXVIEW_NAMESPACE_END }

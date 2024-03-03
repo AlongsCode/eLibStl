@@ -583,7 +583,7 @@ namespace elibstl::hexview
     }
 
     // 搜索数据
-    inline BOOL _search_bin(PNMHEXSEARCH search, PHEXVIEW_PROPERTY pData)
+    inline static BOOL _search_bin(PNMHEXSEARCH search, PHEXVIEW_PROPERTY pData)
     {
         SIZE_T index = search->start;
         std::vector<BYTE>& data = *pData->data;
@@ -656,16 +656,14 @@ namespace elibstl::hexview
                 DispInfo->Item.State = 0;
                 break;
             }
-            if (pData->bOwnerData)
+            if (!pData->bOwnerData)
             {
-                // 虚项目, 触发个事件让用户返回数据
-            }
-            else
-            {
+                // 不是虚项目, 内部处理
+                if (index >= pData->size || !pData->data || !pData->modi)
+                    break;  // 越界了
+
                 std::vector<BYTE>& data = *pData->data;
                 std::vector<bool>& modi = *pData->modi;
-                if (index >= data.size())
-                    break;  // 越界了
 
                 LPBYTE pBase = (LPBYTE)(&data[index]);
                 if (DispInfo->Item.Mask & HVIF_BYTE)
@@ -674,6 +672,35 @@ namespace elibstl::hexview
                     DispInfo->Item.State = (modi[index]) ? HVIS_MODIFIED : 0;
                 }
             }
+            int deal = 0;
+            int value = (int)DispInfo->Item.Value;
+            int isChange = __query(DispInfo->Item.State, HVIS_MODIFIED);
+
+            EVENT_NOTIFY2 eventInfo(pData->dwWinFormID, pData->dwUnitID, HEXVIEW_EVENT_SHOWINFO);
+            eventInfo.m_arg[0].m_inf.m_dtDataType = SDT_INT;
+            eventInfo.m_arg[0].m_inf.m_int = index;
+
+            eventInfo.m_arg[1].m_inf.m_dtDataType = SDT_INT;
+            eventInfo.m_arg[1].m_inf.m_pInt = &value;
+
+            eventInfo.m_arg[2].m_inf.m_dtDataType = SDT_INT;
+            eventInfo.m_arg[2].m_inf.m_pInt = &isChange;
+
+            eventInfo.m_arg[3].m_inf.m_dtDataType = SDT_INT64;
+            eventInfo.m_arg[3].m_inf.m_pInt64 = (INT64*)&DispInfo->Item.Address;
+            eventInfo.m_nArgCount = 4;
+
+            int ret = elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&eventInfo, 0);
+            if (eventInfo.m_blHasRetVal)
+            {
+                // 用户处理了返回值, 现在没有处理返回值
+            }
+            DispInfo->Item.Value = (BYTE)value;
+            if (isChange)
+                DispInfo->Item.State |= HVIS_MODIFIED;
+            else
+                DispInfo->Item.State &= ~HVIS_MODIFIED;
+
             break;
         }
         case HVN_ITEMCHANGING:
@@ -681,20 +708,33 @@ namespace elibstl::hexview
             if (pData->blInDesignMode)
                 break;
             PNMHEXVIEW HexView = (PNMHEXVIEW)hdr;
-            const SIZE_T index = HexView->Item.NumberOfItem;
-            if (pData->bOwnerData)
+            const int index = (int)HexView->Item.NumberOfItem;
+            const int value = (int)HexView->Item.Value;
+            int deal = 0;
+            LPBYTE pBase = 0;
+            int value_old = 0;
+            if (!pData->bOwnerData)
             {
-
-            }
-            else
-            {
-                std::vector<BYTE>& data = *pData->data;
-                std::vector<bool>& modi = *pData->modi;
-                if (index >= data.size())
+                // 不是虚项目, 从内部的数组获取数据
+                if (index >= pData->size || !pData->data || !pData->modi)
                     break;  // 越界了
-                LPBYTE pBase = (LPBYTE)(&data[index]);
+                std::vector<BYTE>& data = *pData->data;
+                pBase = (LPBYTE)(&data[index]);
+                value_old = *pBase;
+            }
+
+            int ret = CallEEvent(pData, deal, HEXVIEW_EVENT_ITEMCHANGED, 3, index, value, value_old);
+            if (ret == 0 && __query(deal, E_EVENT_DEAL_RET))
+            {
+                // 用户有返回数据, 并且是返回了0, 不处理
+                break;
+            }
+            if (pBase)
+            {
+                // 不是虚项目, 内部记录数据
                 *pBase = HexView->Item.Value;
-                modi[index] = true;    // 记录这个成员已经修改
+                std::vector<bool>& modi = *pData->modi;
+                modi[index] = true;
             }
             break;
         }
@@ -724,11 +764,31 @@ namespace elibstl
 
     // 命令索引, 在HexView_CmdDef.cpp里定义
     static INT s_dtCmdIndexcommobj_HexView[] = { 325 };
+    // 事件参数, 所有事件参数都写到这里, 使用的时候 数组名 + 偏移就行了
+    static EVENT_ARG_INFO2 s_eventArgInfo_HexView[] =
+    {
+        //1=参数名称,2=参数介绍,3=是否参考,4=参数类型SDT_    
+
+        /*000*/ {"项目索引", "索引从0开始", 0, SDT_INT},
+        /*001*/ {"修改后的值", "修改后的值", 0, SDT_INT},
+        /*002*/ {"修改前的值", "修改前的值, \"虚项目\" 属性为真时, 这个值永远为0", 0, SDT_INT},
+
+        /*003*/ {"项目索引", "索引从0开始", 0, SDT_INT},
+        /*004*/ {"项目值", "将要显示的值, 如果修改这个值, 则最终显示的就是这个值", EAS_BY_REF, SDT_INT},
+        /*005*/ {"是否被修改", "为真则这个值显示时使用 修改过的文本颜色 来显示", EAS_BY_REF, SDT_BOOL},
+        /*006*/ {"显示的地址", "左边显示的地址", EAS_BY_REF, SDT_INT64},
+
+    };
 
     // 事件
     static EVENT_INFO2 s_Event_HexView[] =
     {
-        /*000*/ {"事件待编辑", "等待加这个功能", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+        //1=事件名称,2=事件详细解释,3=返回值类型,EV_RETURN_ 绝对不能定义成返回文本、字节集、复合类型等需要空间释放代码的数据类型
+        //4=事件的参数数目,5=事件参数,6=返回值类型
+        /*000*/ {"项目被修改", "允许只读为真时, 输入数据后会触发这个事件\r\n"
+                    "    \"虚项目\" 属性为真时返回值无意义, 为假时返回0则不允许修改, 返回非0允许修改", _EVENT_OS(OS_ALL) | EV_IS_VER2, 3, s_eventArgInfo_HexView + 0, SDT_INT},
+        /*001*/ {"项目即将显示", "需要获取到项目的时候会触发这个事件, 此事件触发频率很高, 不建议在这个事件下做太复杂的操作\r\n"
+                    "    目前返回值无意义, 保留给后续版本使用", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_eventArgInfo_HexView + 3, SDT_INT},
         
     };
 

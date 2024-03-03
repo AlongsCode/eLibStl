@@ -2515,6 +2515,8 @@ inline void HexView_Search_HexToBin(PHEXVIEW HexView)
     arr.clear();
 
     LPCWSTR pStr = pBox->search.GetResult();
+    if (_wcsnicmp(pStr, L"0x", 2) == 0)
+        pStr += 2;
     size_t len = wcslen(pStr);
 
     auto pfn_isHex = [](wchar_t ch)
@@ -2637,9 +2639,8 @@ inline BOOLEAN _search_find(PHEXVIEW HexView, HWND hWnd, SIZE_T start, SIZE_T en
 {
     PHEXVIEW_DATA_STRUCT pBox = (PHEXVIEW_DATA_STRUCT)HexView->pBoxData;
     std::vector<BYTE>& arr = pBox->arr;
-    arr.clear();
     int nSearchSize = (int)arr.size();
-    if (nSearchSize)
+    if (!nSearchSize)
         return FALSE;
     LPBYTE pSearchData = nSearchSize > 0 ? &arr[0] : 0;
     NMHEXSEARCH search = { 0 };
