@@ -66,6 +66,9 @@
 #define HVN_ITEMSEL             (WMN_FIRST - 2)     // 选中数据, NMHEXSEL 结构
 #define HVN_SEARCH              (WMN_FIRST - 3)     // 搜索数据, NMHEXSEARCH 结构
 #define HVN_COPYDATA            (WMN_FIRST - 4)     // 拷贝数据, NMHEXCOPYDATA 结构
+#define HVN_POPUPMENU           (WMN_FIRST - 5)     // 弹出菜单, NMMENUPOPUP 结构, 返回是否拦截
+#define HVN_MENUSELING          (WMN_FIRST - 6)     // 菜单项即将被选择, NMMENUSEL 结构, 返回是否拦截
+#define HVN_MENUSELED           (WMN_FIRST - 7)     // 菜单项已经被选择, NMMENUSEL 结构
 
 
 //
@@ -195,6 +198,17 @@ typedef struct _NMHEXVIEW {
     NMHDR NmHdr;
     HVITEM Item;
 } NMHEXVIEW, * PNMHEXVIEW;
+
+typedef struct _NMMENUPOPUP {
+    NMHDR NmHdr;
+    HMENU hMenu;
+    POINT pt;
+} NMMENUPOPUP, * PNMMENUPOPUP;
+
+typedef struct _NMMENUSEL {
+    NMHDR NmHdr;
+    LONG_PTR id;
+} NMMENUSEL, * PNMMENUSEL;
 
 typedef struct _NMHEXSEL
 {

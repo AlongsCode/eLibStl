@@ -17,7 +17,11 @@
 
 
 #define HEXVIEW_EVENT_ITEMCHANGED           0   // 项目被修改, 3个参数,项目索引,修改后,修改前, 返回是否允许修改, 虚项目有特别处理
-#define HEXVIEW_EVENT_SHOWINFO              1   // 即将显示, 4个参数, 项目索引,项目值,是否被修改,显示的地址
+#define HEXVIEW_EVENT_SHOWINFO              1   // 即将显示, 4个参数, 项目索引,&项目值,&是否被修改,&显示的地址
+#define HEXVIEW_EVENT_SEARCH                2   // 搜索项目, 5个参数, 起始位置, 结束位置,被搜索数据指针,被搜索数据尺寸,&找到位置
+#define HEXVIEW_EVENT_POPUPMENU             3   // 即将弹出菜单, 1个参数, 菜单句柄, 返回是否允许弹出菜单
+#define HEXVIEW_EVENT_MENUSELING            4   // 菜单即将选择, 1个参数, 菜单id, 返回是否继续执行
+#define HEXVIEW_EVENT_MENUSELED             5   // 菜单被选择, 1个参数, 菜单id
 
 
 #define HEXVIEW_NAMESPACE _hexview

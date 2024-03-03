@@ -118,8 +118,8 @@ static LIB_INFO s_LibInfo =
 	//  第一个为SuperTemplate名称(仅限一行30字符), 第二个为详细介绍(不限), 
 	//  最后由两个空串结束。
 	/*m_szzSuperTemplateInfo*/  NULL, // 模板 可为NULL
-	/*m_nLibConstCount*/        0, // 本库预先定义的所有常量数量
-	/*m_pLibConst*/             0, // 本库预先定义的所有常量
+	/*m_nLibConstCount*/        LibStl_GetConstSize(), // 本库预先定义的所有常量数量
+	/*m_pLibConst*/             LibStl_GetConstInfo(), // 本库预先定义的所有常量
 	/*m_szzDependFiles*/        NULL // 可为NULL, 本库正常运行所需要依赖的其他支持文件
 };
 ESTL_NAMESPACE_END

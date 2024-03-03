@@ -78,6 +78,7 @@
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\DirBoxW.cpp" />
     <ClCompile Include="src\edb.cpp" />
+    <ClCompile Include="src\ELibConstInfo.cpp" />
     <ClCompile Include="src\Epl Dp\eplMD5.cpp" />
     <ClCompile Include="src\EplDebug\debugbreak.cpp" />
     <ClCompile Include="src\EplObj Class\Diskfiles.cpp" />

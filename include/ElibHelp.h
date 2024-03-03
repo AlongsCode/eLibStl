@@ -88,6 +88,9 @@ eStlInline bool isUnicode(const unsigned char* data, size_t length) {
 	return true;
 }
 
+PLIB_CONST_INFO LibStl_GetConstInfo();
+int LibStl_GetConstSize();
+
 /// <summary>
 /// Unicode到ANSI，使用默认代码页
 /// </summary>

@@ -1074,6 +1074,13 @@ LRESULT HexView_OnCommand(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
     const int id = LOWORD(wParam);
     const int code = HIWORD(wParam);
     HWND hChild = (HWND)lParam;
+    NMMENUSEL menu_sel = { 0 };
+    menu_sel.id = wParam;
+
+    // lParam == 0是菜单事件
+    if (lParam == 0 && HexView_SendNotify(hWnd, HVN_MENUSELING, &menu_sel.NmHdr) != 0)
+        return 0;   // 用户返回了拦截直接返回
+
     switch ( id )
     {
     case ID_HEX_COPY:           // 直接复制, Ctrl+C 的结果
@@ -1135,6 +1142,8 @@ LRESULT HexView_OnCommand(PHEXVIEW HexView, HWND hWnd, WPARAM wParam, LPARAM lPa
     default:
         break;
     }
+    if (lParam == 0)
+        HexView_SendNotify(hWnd, HVN_MENUSELED, &menu_sel.NmHdr);
     return 0;
 }
 
@@ -2468,9 +2477,11 @@ void HexView_PopupMenu(PHEXVIEW HexView, HWND hWnd)
     AppendMenuW(hMenu, MF_STRING, ID_HEX_JMP, L"&G.跳转\tCtrl + G");
     //AppendMenuW(hMenu, asm_flag, ID_HEX_ASM, L"&H.跳转到汇编窗口\tCtrl + Q");
 
-    POINT pt;
-    GetCursorPos(&pt);
-    TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, 0);
+    NMMENUPOPUP pt = { 0 };
+    pt.hMenu = hMenu;
+    GetCursorPos(&pt.pt);
+    if (HexView_SendNotify(hWnd, HVN_POPUPMENU, &pt.NmHdr) == 0)
+        TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.pt.x, pt.pt.y, 0, hWnd, 0);
     DestroyMenu(hMenu);
 
 }
@@ -2565,7 +2576,8 @@ inline void HexView_Search_ToAnsi(PHEXVIEW HexView)
     size_t len = wcslen(pStr);
     int aLen = WideCharToMultiByte(936, 0, pStr, (int)len, 0, 0, 0, 0) + 1;
 
-    arr.resize(aLen);
+    arr.reserve(aLen);
+    arr.resize(len);
     LPBYTE szStr = &arr[0];
     WideCharToMultiByte(936, 0, pStr, (int)len, (LPSTR)szStr, aLen, 0, 0);
 

@@ -256,7 +256,8 @@ namespace elibstl::hexview
             // 调试模式, 设置一个默认的值
             SendMessageW(pData->hWnd, HVM_SETITEMCOUNT, 1, (LPARAM)m_nDefTextSize);
         }
-        return elibstl::make_cwnd(pData->hWnd);
+        pData->hUnit = elibstl::make_cwnd(pData->hWnd);
+        return pData->hUnit;
     }
 
 
@@ -637,8 +638,21 @@ namespace elibstl::hexview
         switch ( hdr->code )
         {
         case HVN_SEARCH:    // 搜索项目
-            return _search_bin((PNMHEXSEARCH)lParam, pData);
-            break;
+        {
+            PNMHEXSEARCH search = (PNMHEXSEARCH)lParam;
+            int deal = 0;
+            int start = (int)search->start;
+            int end = (int)search->end;
+            int size = (int)search->nSize;
+            int ret = CallEEvent(pData, deal, HEXVIEW_EVENT_SEARCH, 5, start, end, search->pSearch, size, &search->pos);
+            if (!__query(ret, E_EVENT_DEAL_RET))
+                ret = -1;   // 用户没有返回, 那就设置为支持库内部处理
+
+            if (ret >= 0)
+                return ret; // 大于等于0就是搜索事件已经搜索到结果了
+
+            return _search_bin(search, pData);
+        }
         case HVN_GETDISPINFO:
         {
             PNMHVDISPINFO DispInfo = (PNMHVDISPINFO)hdr;
@@ -749,6 +763,26 @@ namespace elibstl::hexview
         //    memcpy(arg->pBuf, &data[0], arg->nSize);
         //    return 1;
         //}
+        case HVN_POPUPMENU:       // 即将弹出菜单, NMMENUPOPUP 结构, 返回是否拦截
+        {
+            PNMMENUPOPUP info = (PNMMENUPOPUP)lParam;
+            int deal = 0;
+            int ret = CallEEvent(pData, deal, HEXVIEW_EVENT_POPUPMENU, 3, info->hMenu, &info->pt.x, &info->pt.y);
+            if (__query(ret, E_EVENT_DEAL_RET) && ret == 0)
+                return 1;   // 用户返回了拦截, 这里返回1, 拦截通知
+            break;
+        }
+        case HVN_MENUSELING:      // 菜单即将选择, NMMENUSEL 结构, 返回是否拦截
+        case HVN_MENUSELED:       // 菜单被选择, NMMENUSEL 结构
+        {
+            PNMMENUSEL info = (PNMMENUSEL)lParam;
+            const int iEvent = hdr->code == HEXVIEW_EVENT_MENUSELING ? HEXVIEW_EVENT_MENUSELING : HEXVIEW_EVENT_MENUSELED;
+            int deal = 0;
+            int ret = CallEEvent(pData, deal, iEvent, 1, info->id);
+            if (iEvent == HEXVIEW_EVENT_MENUSELING && __query(ret, E_EVENT_DEAL_RET) && ret == 0)
+                return 1;   // 用户返回了拦截, 这里返回1, 拦截通知
+            break;
+        }
         default:
             return 0;
         }
@@ -778,6 +812,17 @@ namespace elibstl
         /*005*/ {"是否被修改", "为真则这个值显示时使用 修改过的文本颜色 来显示", EAS_BY_REF, SDT_BOOL},
         /*006*/ {"显示的地址", "左边显示的地址", EAS_BY_REF, SDT_INT64},
 
+        /*007*/ {"起始位置", "如果是Ctrl+F则是当前鼠标所在项目, F3是当前项目+1, Shift+F3是当前项目-1", 0, SDT_INT},
+        /*008*/ {"结束位置", "结束位置", 0, SDT_INT},
+        /*009*/ {"被搜索的数据指针", "指针到字节集/指针到xxx 可以得到数据, 看搜索的是什么数据", 0, SDT_INT},
+        /*010*/ {"被搜索的数据尺寸", "被搜索的数据指针 的数据大小, 指针到字节集(被搜索的数据指针, 被搜索的数据尺寸) 就是被搜索的数据", 0, SDT_INT},
+        /*011*/ {"找到位置", "如果找到了位置需要把找到的位置赋值给这个参数", EAS_BY_REF, SDT_INT},
+
+        /*012*/ {"菜单句柄", "菜单句柄", 0, SDT_INT},
+        /*013*/ {"x", "菜单横向位置", EAS_BY_REF, SDT_INT},
+        /*014*/ {"y", "菜单纵向位置", EAS_BY_REF, SDT_INT},
+        /*015*/ {"菜单ID", "菜单ID", 0, SDT_INT},
+
     };
 
     // 事件
@@ -789,7 +834,33 @@ namespace elibstl
                     "    \"虚项目\" 属性为真时返回值无意义, 为假时返回0则不允许修改, 返回非0允许修改", _EVENT_OS(OS_ALL) | EV_IS_VER2, 3, s_eventArgInfo_HexView + 0, SDT_INT},
         /*001*/ {"项目即将显示", "需要获取到项目的时候会触发这个事件, 此事件触发频率很高, 不建议在这个事件下做太复杂的操作\r\n"
                     "    目前返回值无意义, 保留给后续版本使用", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_eventArgInfo_HexView + 3, SDT_INT},
-        
+        /*002*/ {"搜索项目", "搜索事件, 把起始/结束位置和被搜索的数据传递到事件内, 由事件内返回是否搜索到数据\r\n"
+            "    返回0则表示没有搜索到数据, 返回正整数表示已经找到, 需要把位置赋值给 找到位置 参数, 返回负整数表示让支持库内部处理, 不返回则支持库内部处理", _EVENT_OS(OS_ALL) | EV_IS_VER2, 5, s_eventArgInfo_HexView + 7, SDT_INT},
+        /*003*/ {"即将弹出菜单", "即将弹出菜单时触发事件, 可以增加菜单项, 不建议删除菜单项, 返回是否允许弹出菜单", _EVENT_OS(OS_ALL) | EV_IS_VER2, 3, s_eventArgInfo_HexView + 12, SDT_BOOL},
+        /*004*/ {"菜单即将选择", "所有菜单即将被选择都触发这个事件, 十六进制框内部使用的菜单ID请参考 #十六进制框菜单_ 开头的常量\r\n"
+                    "    返回真则内部不继续处理, 返回假或者没有返回值则内部继续处理", _EVENT_OS(OS_ALL) | EV_IS_VER2, 1, s_eventArgInfo_HexView + 15, SDT_BOOL},
+        /*005*/ {"菜单被选择", "所有菜单被选择都触发这个事件, 十六进制框内部使用的菜单ID请参考下表\r\n"
+                    "        1000 = 直接复制, Ctrl+C 的结果 \r\n"
+                    "        1001 = 复制16进制 \r\n"
+                    "        1002 = 复制16进制, 不用空格隔开 \r\n"
+                    "        1003 = 复制16进制, 用C语言的格式, 0xFF,  \r\n"
+                    "        1004 = 复制16进制, 用汇编的格式, 0FFh,  \r\n"
+                    "        1005 = 复制10进制 \r\n"
+                    "        1006 = 复制10进制, 中间没有字符分隔 \r\n"
+                    "        1100 = 直接复制, Ctrl+C 的结果 \r\n"
+                    "        1101 = 复制16进制 \r\n"
+                    "        1102 = 复制16进制, 不用空格隔开 \r\n"
+                    "        1103 = 复制16进制, 用C语言的格式, 0xFF,  \r\n"
+                    "        1104 = 复制16进制, 用汇编的格式, 0FFh,  \r\n"
+                    "        1105 = 复制10进制 \r\n"
+                    "        1106 = 复制10进制, 中间没有字符分隔 \r\n"
+                    "        1200 = 全选 Ctrl+A \r\n"
+                    "        1201 = 搜索 Ctrl+F \r\n"
+                    "        1202 = 搜索下一个 N \r\n"
+                    "        1203 = 搜索上一个 P \r\n"
+                    "        1300 = 跳转 Ctrl+G \r\n"
+        , _EVENT_OS(OS_ALL) | EV_IS_VER2, 1, s_eventArgInfo_HexView + 15, _SDT_NULL},
+
     };
 
     // 属性
@@ -847,4 +918,5 @@ namespace elibstl
         0,
         0
     };
+
 }
