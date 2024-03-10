@@ -1,4 +1,4 @@
-#include"EcontrolHelp.h"
+﻿#include"EcontrolHelp.h"
 
 #pragma warning(disable:4996)
 
@@ -10,129 +10,129 @@
 #define SCID_CMDLINKPARENT	20230425'06u
 
 #define BTN_COMM_PROP \
-	/*000*/{ "ͼƬ", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL}, \
-	/*001*/{ "�Ƿ�ͬʱ��ʾͼƬ���ı�", "IsShowPicAndText", "�޷�Ԥ������Ҫͨ�������6.0", UD_BOOL, _PROP_OS(__OS_WIN), NULL }, \
-	/*002*/{ "����", "Text", "��ť����������ʱ֧�����259���ַ����������й�����û������", UD_TEXT, _PROP_OS(__OS_WIN), NULL }, \
-	/*003*/{ "����W", "TextW", "��ť����������ʱ֧�����259���ַ����������й�����û������", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL }, \
-	/*004*/{ "������뷽ʽ", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "���\0""����\0""�ұ�\0""\0" }, \
-	/*005*/{ "������뷽ʽ", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "�ϱ�\0""����\0""�±�\0""\0" }, \
-	/*006*/{ "����", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL }
+	/*000*/{ "图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL}, \
+	/*001*/{ "是否同时显示图片和文本", "IsShowPicAndText", "无法预览，需要通用组件库6.0", UD_BOOL, _PROP_OS(__OS_WIN), NULL }, \
+	/*002*/{ "标题", "Text", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_TEXT, _PROP_OS(__OS_WIN), NULL }, \
+	/*003*/{ "标题W", "TextW", "按钮标题在设置时支持最大259个字符，代码运行过程中没有限制", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL }, \
+	/*004*/{ "横向对齐方式", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "左边\0""居中\0""右边\0""\0" }, \
+	/*005*/{ "纵向对齐方式", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "上边\0""居中\0""下边\0""\0" }, \
+	/*006*/{ "字体", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL }
 
 #define BTN_COMM_GETPROP \
-	case 0:/*ͼƬ*/ \
+	case 0:/*图片*/ \
 		pPropertyVaule->m_data.m_pData = p->GetPic(&pPropertyVaule->m_data.m_nDataSize); \
 		break; \
-	case 1:/*�Ƿ�ͬʱ��ʾͼƬ���ı�*/ \
+	case 1:/*是否同时显示图片和文本*/ \
 		pPropertyVaule->m_bool = p->GetTextImageShowing(); \
 		break; \
-	case 2:/*����*/ \
+	case 2:/*标题*/ \
 		pPropertyVaule->m_szText = p->GetTextA(); \
 		break; \
-	case 3:/*����W*/ \
+	case 3:/*标题W*/ \
 		pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize); \
 		break; \
-	case 4:/*�������*/ \
+	case 4:/*横向对齐*/ \
 		pPropertyVaule->m_int = p->GetAlign(TRUE); \
 		break; \
-	case 5:/*�������*/ \
+	case 5:/*纵向对齐*/ \
 		pPropertyVaule->m_int = p->GetAlign(FALSE); \
 		break; \
-	case 6:/*����*/ \
+	case 6:/*字体*/ \
 		pPropertyVaule->m_data.m_pData = p->GetFont(); \
 		pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA); \
 		break;
 
 #define BTN_COMM_SETPROP \
-	case 0:/*ͼƬ*/ \
+	case 0:/*图片*/ \
 		p->SetPicBtn(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize); \
 		break; \
-	case 1:/*�Ƿ�ͬʱ��ʾͼƬ���ı�*/ \
+	case 1:/*是否同时显示图片和文本*/ \
 		p->SetTextImageShowing(pPropertyVaule->m_bool); \
 		break; \
-	case 2:/*����*/ \
+	case 2:/*标题*/ \
 		p->SetTextA(pPropertyVaule->m_szText); \
 		break; \
-	case 3:/*����W*/ \
+	case 3:/*标题W*/ \
 		p->SetTextW((PCWSTR)pPropertyVaule->m_data.m_pData); \
 		break; \
-	case 4:/*�������*/ \
+	case 4:/*横向对齐*/ \
 		p->SetAlign(TRUE, pPropertyVaule->m_int); \
 		break; \
-	case 5:/*�������*/ \
+	case 5:/*纵向对齐*/ \
 		p->SetAlign(FALSE, pPropertyVaule->m_int); \
 		break; \
-	case 6:/*����*/ \
+	case 6:/*字体*/ \
 		p->SetFont((LOGFONTA*)pPropertyVaule->m_int); \
 		break;
 
 ESTL_NAMESPACE_BEGIN
-// ��������
+// 基础数据
 /*
-* �汾1���ݲ��֣�
-* EBUTTONDATA�ṹ
-* ͼƬ
-* �ı�
+* 版本1数据布局：
+* EBUTTONDATA结构
+* 图片
+* 文本
 */
 #define DATA_VER_BTN_1	1
 struct EBUTTONDATA
 {
-	int iVer;				// �汾��
-	DWORD dwReserved;		// ����
+	int iVer;				// 版本号
+	DWORD dwReserved;		// 保留
 
-	int iAlignH;				// �������
-	int iAlignV;				// �������
-	BOOL bShowTextAndImage;	// �Ƿ�ͬʱ��ʾͼƬ���ı�
+	int iAlignH;				// 横向对齐
+	int iAlignV;				// 纵向对齐
+	BOOL bShowTextAndImage;	// 是否同时显示图片和文本
 };
 
-// ��ͨ��ť
+// 普通按钮
 /*
-* �汾1���ݲ��֣�
-* EBUTTONDATA_PUSHBTN�ṹ
+* 版本1数据布局：
+* EBUTTONDATA_PUSHBTN结构
 */
 #define DATA_VER_BTN_PUSHBTN_1	1
 struct EBUTTONDATA_PUSHBTN
 {
-	int iVer;				// �汾
+	int iVer;				// 版本
 
-	int iType;				// ����
-	int iDef;				// �Ƿ�Ĭ��
+	int iType;				// 类型
+	int iDef;				// 是否默认
 };
 
-// ѡ��򣨵�ѡ����ѡ����̬��ѡ��
+// 选择框（单选、复选、三态复选）
 /*
-* �汾1���ݲ��֣�
-* EBUTTONDATA_CHECKBTN�ṹ
+* 版本1数据布局：
+* EBUTTONDATA_CHECKBTN结构
 */
 #define DATA_VER_BTN_CHECKBTN_1	1
 struct EBUTTONDATA_CHECKBTN
 {
-	int iVer;				// �汾
+	int iVer;				// 版本
 
-	int iType;				// ����
-	int iCheckState;		// ѡ��״̬
-	BOOL bPushLike;			// ��ť��ʽ
-	BOOL bFlat;				// ƽ��
-	BOOL bLeftText;			// �������
+	int iType;				// 类型
+	int iCheckState;		// 选择状态
+	BOOL bPushLike;			// 按钮形式
+	BOOL bFlat;				// 平面
+	BOOL bLeftText;			// 标题居左
 };
 
-// ��������
+// 命令链接
 /*
-* �汾1���ݲ��֣�
-* EBUTTONDATA_CMDLINK�ṹ
-* ע���ı�
+* 版本1数据布局：
+* EBUTTONDATA_CMDLINK结构
+* 注释文本
 */
 #define DATA_VER_BTN_CMDLINK_1	1
 struct EBUTTONDATA_CMDLINK
 {
-	int iVer;				// �汾
+	int iVer;				// 版本
 
-	int cchNote;			// ע���ı����ȣ������ڱ�����Ϣ
-	BOOL bShieldIcon;		// �Ƿ����ͼ��
-	int iDef;				// Ĭ��
+	int cchNote;			// 注释文本长度，仅用于保存信息
+	BOOL bShieldIcon;		// 是否盾牌图标
+	int iDef;				// 默认
 };
 
-// ��ť���ࡣ
-// ����ֱ��ʵ��������
+// 按钮基类。
+// 请勿直接实例化此类
 class CButton :public elibstl::CCtrlBase
 {
 protected:
@@ -190,9 +190,9 @@ public:
 	virtual ~CButton() {}
 
 	/// <summary>
-	/// ��ͼƬ�ı�ͬʱ��ʾ
+	/// 置图片文本同时显示
 	/// </summary>
-	/// <param name="bShowTextAndImage">�Ƿ�ͬʱ��ʾ</param>
+	/// <param name="bShowTextAndImage">是否同时显示</param>
 	void SetTextImageShowing(BOOL bShowTextAndImage)
 	{
 		m_Info.bShowTextAndImage = bShowTextAndImage;
@@ -208,19 +208,19 @@ public:
 	}
 
 	/// <summary>
-	/// ȡͼƬ�ı�ͬʱ��ʾ
+	/// 取图片文本同时显示
 	/// </summary>
-	/// <returns>�Ƿ�ͬʱ��ʾ</returns>
+	/// <returns>是否同时显示</returns>
 	eStlInline BOOL GetTextImageShowing() const
 	{
 		return m_Info.bShowTextAndImage;
 	}
 
 	/// <summary>
-	/// �ö���
+	/// 置对齐
 	/// </summary>
-	/// <param name="bHAlign">�Ƿ�ˮƽ����</param>
-	/// <param name="iAlign">���룬�μ����Զ���</param>
+	/// <param name="bHAlign">是否水平对齐</param>
+	/// <param name="iAlign">对齐，参见属性定义</param>
 	void SetAlign(BOOL bHAlign, int iAlign)
 	{
 		DWORD dwStyle = GetWindowLongPtrW(m_hWnd, GWL_STYLE);
@@ -251,10 +251,10 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����
+	/// 取对齐
 	/// </summary>
-	/// <param name="bHAlign">�Ƿ�ˮƽ����</param>
-	/// <returns>���룬�μ����Զ���</returns>
+	/// <param name="bHAlign">是否水平对齐</param>
+	/// <returns>对齐，参见属性定义</returns>
 	eStlInline int GetAlign(BOOL bHAlign) const
 	{
 		if (m_bInDesignMode)
@@ -291,11 +291,11 @@ public:
 	}
 
 	/// <summary>
-	/// ��ͼƬ��
-	/// �ض��ڰ�ť����Ӧʹ�û��෽��
+	/// 置图片。
+	/// 特定于按钮，不应使用基类方法
 	/// </summary>
-	/// <param name="pPic">ͼƬ�ֽ���ָ��</param>
-	/// <param name="cbSize">�ֽ�������</param>
+	/// <param name="pPic">图片字节流指针</param>
+	/// <param name="cbSize">字节流长度</param>
 	/// <returns></returns>
 	eStlInline void SetPicBtn(void* pPic, int cbSize)
 	{
@@ -312,8 +312,8 @@ public:
 	}
 
 	/// <summary>
-	/// ƽ�滯�������ݡ�
-	/// ��չ����Ӧ����󸽼�
+	/// 平面化基类数据。
+	/// 扩展数据应在其后附加
 	/// </summary>
 	/// <returns></returns>
 	eStlInline HGLOBAL FlattenInfoBase(SIZE_T cbExtra = 0u, SIZE_T* pcbBaseData = NULL)
@@ -336,7 +336,7 @@ public:
 	}
 };
 
-// ��ͨ��ť
+// 普通按钮
 class CPushButton :public CButton
 {
 	SUBCLASS_MGR_DECL(CPushButton)
@@ -344,7 +344,7 @@ private:
 	EBUTTONDATA_PUSHBTN m_InfoEx{};
 
 	/// <summary>
-	/// ������
+	/// 被单击
 	/// </summary>
 	eStlInline void OnClick()
 	{
@@ -353,7 +353,7 @@ private:
 	}
 
 	/// <summary>
-	/// ������ͷ������
+	/// 下拉箭头被单击
 	/// </summary>
 	eStlInline void OnDropDownClick()
 	{
@@ -375,7 +375,7 @@ private:
 		{
 			auto p = (NMHDR*)lParam;
 #pragma warning(push)
-#pragma warning(disable:26454)// �������
+#pragma warning(disable:26454)// 算术溢出
 			if (p->code == BCN_DROPDOWN)
 				if (m_CtrlSCInfo.count(p->hwndFrom))
 					m_CtrlSCInfo[p->hwndFrom]->OnDropDownClick();
@@ -406,7 +406,7 @@ private:
 			break;
 		}
 
-		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -419,7 +419,7 @@ public:
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_PUSHBTN));
 		else
 		{
-			elibstl::DupStringForNewDeleteW(m_pszTextW, L"��ťW");
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"按钮W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		m_InfoEx.iVer = DATA_VER_BTN_PUSHBTN_1;
@@ -436,9 +436,9 @@ public:
 	}
 
 	/// <summary>
-	/// ������
+	/// 置类型
 	/// </summary>
-	/// <param name="iType">���ͣ��μ����Զ���</param>
+	/// <param name="iType">类型，参见属性定义</param>
 	void SetType(int iType)
 	{
 		m_InfoEx.iType = iType;
@@ -461,18 +461,18 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����
+	/// 取类型
 	/// </summary>
-	/// <returns>���ͣ��μ����Զ���</returns>
+	/// <returns>类型，参见属性定义</returns>
 	eStlInline int GetType() const
 	{
 		return m_InfoEx.iType;
 	}
 
 	/// <summary>
-	/// ���Ƿ�Ĭ��
+	/// 置是否默认
 	/// </summary>
-	/// <param name="iDef">�Ƿ�Ĭ�ϣ��μ����Զ���</param>
+	/// <param name="iDef">是否默认，参见属性定义</param>
 	void SetDef(int iDef)
 	{
 		m_InfoEx.iDef = iDef;
@@ -493,9 +493,9 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ�Ƿ�Ĭ��
+	/// 取是否默认
 	/// </summary>
-	/// <returns>�Ƿ�Ĭ�ϣ��μ����Զ���</returns>
+	/// <returns>是否默认，参见属性定义</returns>
 	eStlInline int GetDef() const
 	{
 		return m_InfoEx.iDef;
@@ -531,11 +531,11 @@ public:
 		{
 			BTN_COMM_SETPROP
 
-		case 7:// Ĭ��
+		case 7:// 默认
 			p->SetDef(pPropertyVaule->m_int);
 			break;
 
-		case 8:// ����
+		case 8:// 类型
 			p->SetType(pPropertyVaule->m_int);
 			break;
 		}
@@ -557,11 +557,11 @@ public:
 		{
 			BTN_COMM_GETPROP
 
-		case 7:// Ĭ��
+		case 7:// 默认
 			pPropertyVaule->m_int = p->GetDef();
 			break;
 
-		case 8:// ����
+		case 8:// 类型
 			pPropertyVaule->m_int = p->GetType();
 			break;
 		}
@@ -602,7 +602,7 @@ public:
 };
 SUBCLASS_MGR_INIT(CPushButton, SCID_PUSHBTNPARENT, SCID_PUSHBTN)
 
-// ѡ���
+// 选择框
 class CCheckButton :public CButton
 {
 	SUBCLASS_MGR_DECL(CCheckButton)
@@ -610,7 +610,7 @@ private:
 	EBUTTONDATA_CHECKBTN m_InfoEx{};
 
 	/// <summary>
-	/// ������
+	/// 被单击
 	/// </summary>
 	eStlInline void OnClick()
 	{
@@ -654,7 +654,7 @@ private:
 			break;
 		}
 
-		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -668,7 +668,7 @@ public:
 		else
 		{
 			m_Info.iAlignH = 0;
-			elibstl::DupStringForNewDeleteW(m_pszTextW, L"ѡ���W");
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"选择框W");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
@@ -676,9 +676,9 @@ public:
 		m_hWnd = CreateWindowExW(0, WC_BUTTONW, m_pszTextW, WS_CHILD | WS_CLIPSIBLINGS | BS_AUTORADIOBUTTON | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		/*
-		* ��һ��ר���ڵ�ѡ��ť��״̬����BST_DONTCLICK��
-		* ���δ�������״̬����ô��ťÿ�λ�ý��㶼�����BN_CLICKED��
-		* ����BM_SETDONTCLICK��������ֹ�¼���������
+		* 有一个专用于单选按钮的状态叫做BST_DONTCLICK，
+		* 如果未设置这个状态，那么按钮每次获得焦点都会产生BN_CLICKED，
+		* 发送BM_SETDONTCLICK设置它防止事件错误生成
 		*/
 		SendMessageW(m_hWnd, BM_SETDONTCLICK, TRUE, 0);
 		m_SM.OnCtrlCreate(this);
@@ -695,9 +695,9 @@ public:
 	}
 
 	/// <summary>
-	/// ������
+	/// 置类型
 	/// </summary>
-	/// <param name="iType">����</param>
+	/// <param name="iType">类型</param>
 	void SetType(int iType)
 	{
 		m_InfoEx.iType = iType;
@@ -709,7 +709,7 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����
+	/// 取类型
 	/// </summary>
 	int GetType()
 	{
@@ -726,9 +726,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ü���״̬
+	/// 置检查框状态
 	/// </summary>
-	/// <param name="iState">״̬</param>
+	/// <param name="iState">状态</param>
 	eStlInline void SetCheckState(int iState)
 	{
 		m_InfoEx.iCheckState = iState;
@@ -736,7 +736,7 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����״̬
+	/// 取检查框状态
 	/// </summary>
 	int GetCheckState()
 	{
@@ -752,9 +752,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ð�ť��ʽ
+	/// 置按钮形式
 	/// </summary>
-	/// <param name="bPushLike">�Ƿ�Ϊ��ť��ʽ</param>
+	/// <param name="bPushLike">是否为按钮形式</param>
 	eStlInline void SetPushLike(BOOL bPushLike)
 	{
 		m_InfoEx.bPushLike = bPushLike;
@@ -763,7 +763,7 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ��ť��ʽ
+	/// 取按钮形式
 	/// </summary>
 	/// <returns></returns>
 	eStlInline BOOL GetPushLike()
@@ -775,9 +775,9 @@ public:
 	}
 
 	/// <summary>
-	/// ��ƽ����ʽ
+	/// 置平面形式
 	/// </summary>
-	/// <param name="bFlat">�Ƿ�Ϊƽ����ʽ</param>
+	/// <param name="bFlat">是否为平面形式</param>
 	eStlInline void SetFlat(BOOL bFlat)
 	{
 		m_InfoEx.bFlat = bFlat;
@@ -786,7 +786,7 @@ public:
 	}
 
 	/// <summary>
-	/// ȡƽ����ʽ
+	/// 取平面形式
 	/// </summary>
 	eStlInline BOOL GetFlat()
 	{
@@ -797,9 +797,9 @@ public:
 	}
 
 	/// <summary>
-	/// ���ı�����
+	/// 置文本居左
 	/// </summary>
-	/// <param name="bLeftText">�Ƿ��ı�����</param>
+	/// <param name="bLeftText">是否文本居左</param>
 	eStlInline void SetLeftText(BOOL bLeftText)
 	{
 		m_InfoEx.bLeftText = bLeftText;
@@ -808,7 +808,7 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ�ı�����
+	/// 取文本居左
 	/// </summary>
 	/// <returns></returns>
 	eStlInline BOOL GetLeftText()
@@ -849,27 +849,27 @@ public:
 		{
 			BTN_COMM_SETPROP
 
-		case 7:// ����
+		case 7:// 类型
 			p->SetType(pPropertyVaule->m_int);
 			break;
 
-		case 8:// ѡ��
+		case 8:// 选中
 			p->SetCheckState(pPropertyVaule->m_int);
 			break;
 
-		case 9:// ��ť��ʽ
+		case 9:// 按钮形式
 			p->SetPushLike(pPropertyVaule->m_bool);
 			break;
 
-		case 10:// ƽ��
+		case 10:// 平面
 			p->SetFlat(pPropertyVaule->m_bool);
 			break;
 
-		case 11:// �������
+		case 11:// 标题居左
 			p->SetLeftText(pPropertyVaule->m_bool);
 			break;
 
-		case 12:// �߿�
+		case 12:// 边框
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
 		}
@@ -891,27 +891,27 @@ public:
 		{
 			BTN_COMM_GETPROP
 
-		case 7:// ����
+		case 7:// 类型
 			pPropertyVaule->m_int = p->GetType();
 			break;
 
-		case 8:// ѡ��
+		case 8:// 选中
 			pPropertyVaule->m_int = p->GetCheckState();
 			break;
 
-		case 9:// ��ť��ʽ
+		case 9:// 按钮形式
 			pPropertyVaule->m_bool = p->GetPushLike();
 			break;
 
-		case 10:// ƽ��
+		case 10:// 平面
 			pPropertyVaule->m_bool = p->GetFlat();
 			break;
 
-		case 11:// �������
+		case 11:// 标题居左
 			pPropertyVaule->m_bool = p->GetLeftText();
 			break;
 
-		case 12:// �߿�
+		case 12:// 边框
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
 		}
@@ -951,16 +951,16 @@ public:
 };
 SUBCLASS_MGR_INIT(CCheckButton, SCID_CHECKBTNPARENT, SCID_CHECKBTN)
 
-// ��������
+// 命令链接
 class CCommandLink :public CButton
 {
 	SUBCLASS_MGR_DECL(CCommandLink)
 private:
 	EBUTTONDATA_CMDLINK m_InfoEx{};
-	PWSTR m_pszNote;// ע���ı�
+	PWSTR m_pszNote;// 注释文本
 
 	/// <summary>
-	/// ������
+	/// 被单击
 	/// </summary>
 	eStlInline void OnClick()
 	{
@@ -1001,7 +1001,7 @@ private:
 			break;
 		}
 
-		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -1014,7 +1014,7 @@ public:
 			memcpy(&m_InfoEx, (BYTE*)pAllData + cbBaseData, sizeof(EBUTTONDATA_CMDLINK));
 		else
 		{
-			elibstl::DupStringForNewDeleteW(m_pszTextW, L"��������");
+			elibstl::DupStringForNewDeleteW(m_pszTextW, L"命令链接");
 			m_pszTextA = elibstl::W2A(m_pszTextW);
 		}
 		m_InfoEx.iVer = DATA_VER_BTN_CHECKBTN_1;
@@ -1044,10 +1044,10 @@ public:
 	}
 
 	/// <summary>
-	/// ��ע���ı�
+	/// 置注释文本
 	/// </summary>
-	/// <param name="pszText">�ı�ָ��</param>
-	/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
+	/// <param name="pszText">文本指针</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetNote(PCWSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -1066,11 +1066,11 @@ public:
 	}
 
 	/// <summary>
-	/// ��ע���ı���
-	/// �������������ڴ�
+	/// 置注释文本。
+	/// 本方法不复制内存
 	/// </summary>
-	/// <param name="pszText">�ı�ָ�룬������new/delete[]����</param>
-	/// <returns>�ɹ�����TRUE��ʧ�ܷ���FALSE</returns>
+	/// <param name="pszText">文本指针，必须由new/delete[]管理</param>
+	/// <returns>成功返回TRUE，失败返回FALSE</returns>
 	eStlInline BOOL SetNoteNoCopy(PWSTR pszText)
 	{
 		if (m_bInDesignMode)
@@ -1084,10 +1084,10 @@ public:
 	}
 
 	/// <summary>
-	/// ȡע���ı���
-	/// ���ص��ı�Ϊ�����ڲ����У������ͷ�
+	/// 取注释文本。
+	/// 返回的文本为对象内部所有，不可释放
 	/// </summary>
-	/// <returns>�ı�ָ��</returns>
+	/// <returns>文本指针</returns>
 	PWSTR GetNote()
 	{
 		if (!m_bInDesignMode)
@@ -1107,9 +1107,9 @@ public:
 	}
 
 	/// <summary>
-	/// �ö���ͼ��
+	/// 置盾牌图标
 	/// </summary>
-	/// <param name="bShieldIcon">�Ƿ�Ϊ����ͼ��</param>
+	/// <param name="bShieldIcon">是否为盾牌图标</param>
 	eStlInline void SetShieldIcon(BOOL bShieldIcon)
 	{
 		m_InfoEx.bShieldIcon = bShieldIcon;
@@ -1117,18 +1117,18 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ����ͼ��
+	/// 取盾牌图标
 	/// </summary>
 	/// <returns></returns>
 	eStlInline BOOL GetShieldIcon()
 	{
-		return m_InfoEx.bShieldIcon;// �������ֻ���ò���ȡ.....�Ѽ�¼��ֵ���ػ�ȥ��
+		return m_InfoEx.bShieldIcon;// 这个东西只能置不能取.....把记录的值返回回去吧
 	}
 
 	/// <summary>
-	/// ���Ƿ�Ĭ��
+	/// 置是否默认
 	/// </summary>
-	/// <param name="iDef">�Ƿ�Ĭ�ϣ��μ����Զ���</param>
+	/// <param name="iDef">是否默认，参见属性定义</param>
 	void SetDef(int iDef)
 	{
 		m_InfoEx.iDef = iDef;
@@ -1143,9 +1143,9 @@ public:
 	}
 
 	/// <summary>
-	/// ȡ�Ƿ�Ĭ��
+	/// 取是否默认
 	/// </summary>
-	/// <returns>�Ƿ�Ĭ�ϣ��μ����Զ���</returns>
+	/// <returns>是否默认，参见属性定义</returns>
 	eStlInline int GetDef() const
 	{
 		return m_InfoEx.iDef;
@@ -1169,10 +1169,10 @@ public:
 		p = (BYTE*)GlobalLock(hGlobal);
 		if (!p)
 			goto Fail;
-		// �ṹ
+		// 结构
 		p += cbBaseData;
 		memcpy(p, &m_InfoEx, sizeof(EBUTTONDATA_CMDLINK));
-		// ע���ı�
+		// 注释文本
 		p += sizeof(EBUTTONDATA_CMDLINK);
 		if (m_pszNote)
 			memcpy(p, m_pszNote, m_InfoEx.cchNote * sizeof(WCHAR));
@@ -1199,19 +1199,19 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:/*ͼƬ*/
+		case 0:/*图片*/
 			p->SetPicBtn(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 1:/*����*/
+		case 1:/*标题*/
 			p->SetTextA(pPropertyVaule->m_szText);
 			break;
-		case 2:/*����W*/
+		case 2:/*标题W*/
 			p->SetTextW((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 3:// ע���ı�
+		case 3:// 注释文本
 			p->SetNote((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 4:// �Ƿ����ͼ��
+		case 4:// 是否盾牌图标
 			p->SetShieldIcon(pPropertyVaule->m_bool);
 			break;
 		}
@@ -1231,19 +1231,19 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:/*ͼƬ*/
+		case 0:/*图片*/
 			pPropertyVaule->m_data.m_pData = p->GetPic(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 1:/*����*/
+		case 1:/*标题*/
 			pPropertyVaule->m_szText = p->GetTextA();
 			break;
-		case 2:/*����W*/
+		case 2:/*标题W*/
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetTextW((SIZE_T*)&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 3:// ע���ı�
+		case 3:// 注释文本
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetNote();
 			break;
-		case 4:// �Ƿ����ͼ��
+		case 4:// 是否盾牌图标
 			pPropertyVaule->m_bool = p->GetShieldIcon();
 			break;
 		}
@@ -1257,7 +1257,7 @@ public:
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
-		case 2:// ����W
+		case 2:// 标题W
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetTextW()))
@@ -1268,7 +1268,7 @@ public:
 		}
 		return FALSE;
 
-		case 3:// ע���ı�
+		case 3:// 注释文本
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetNote()))
@@ -1298,56 +1298,56 @@ public:
 };
 SUBCLASS_MGR_INIT(CCommandLink, SCID_CMDLINKPARENT, SCID_CMDLINK)
 ESTL_NAMESPACE_END
-/////////////////////////////��ͨ��ť
+/////////////////////////////普通按钮
 static EVENT_INFO2 s_Event_PushBtn[] =
 {
-	/*000*/ {"��ť������", "����ť������ʱ����", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
-	/*001*/ {"������ͷ������", "��������ͷ������ʱ����", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"按钮被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*001*/ {"下拉箭头被单击", "当下拉箭头被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_PushBtn[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=������, 2=Ӣ��������, 3=���Խ���, 4=���Ե���������UD_,5=���Եı�־, 6=˳���¼���еı�ѡ�ı�UW_(����UD_FILE_NAME), ��һ���մ�����
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
 	BTN_COMM_PROP,
-	/*007*/ {"Ĭ��", "Def", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ͨ��\0""Ĭ��\0""\0"},
-	/*008*/ {"����", "Type", "�޷�Ԥ������������Ҫ���嵥��ָ��Comctl6.0", UD_PICK_INT, _PROP_OS(__OS_WIN), "��ͨ��ť\0""��ְ�ť\0""\0"},
+	/*007*/ {"默认", "Def", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "通常\0""默认\0""\0"},
+	/*008*/ {"类型", "Type", "无法预览。该属性需要在清单中指定Comctl6.0", UD_PICK_INT, _PROP_OS(__OS_WIN), "普通按钮\0""拆分按钮\0""\0"},
 };
-///////////////////////////////ѡ���
+///////////////////////////////选择框
 static EVENT_INFO2 s_Event_CheckBtn[] =
 {
-	/*000*/ {"������", "��ѡ��򱻵���ʱ����", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"被单击", "当选择框被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_CheckBtn[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=������, 2=Ӣ��������, 3=���Խ���, 4=���Ե���������UD_,5=���Եı�־, 6=˳���¼���еı�ѡ�ı�UW_(����UD_FILE_NAME), ��һ���մ�����
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
 	BTN_COMM_PROP,
-	/*007*/ {"����", "Type", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "��ѡ��\0""��ѡ��\0""��̬��ѡ��\0""\0"},
-	/*008*/ {"ѡ��", "CheckState", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "δѡ��\0""ѡ��\0""��ѡ��\0""\0"},
-	/*009*/ {"��ť��ʽ", "IsBtnLike", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*010*/ {"ƽ��", "IsFlat", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*011*/ {"�������", "IsTextLeft", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*012*/ {"�߿�", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "�ޱ߿�\0""����ʽ\0""͹��ʽ\0""ǳ����ʽ\0""����ʽ\0""���߱߿�ʽ\0""\0"},
+	/*007*/ {"类型", "Type", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "单选框\0""复选框\0""三态复选框\0""\0"},
+	/*008*/ {"选中", "CheckState", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "未选中\0""选中\0""半选中\0""\0"},
+	/*009*/ {"按钮形式", "IsBtnLike", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*010*/ {"平面", "IsFlat", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*011*/ {"标题居左", "IsTextLeft", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*012*/ {"边框", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "无边框\0""凹入式\0""凸出式\0""浅凹入式\0""镜框式\0""单线边框式\0""\0"},
 };
-/////////////////////////////��������
+/////////////////////////////命令链接
 static EVENT_INFO2 s_Event_CmdLink[] =
 {
-	/*000*/ {"������", "����ť������ʱ����", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"被单击", "当按钮被单击时触发", _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_CmdLink[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=������, 2=Ӣ��������, 3=���Խ���, 4=���Ե���������UD_,5=���Եı�־, 6=˳���¼���еı�ѡ�ı�UW_(����UD_FILE_NAME), ��һ���մ�����
+	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
 
-	/*000*/ {"ͼƬ", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
-	/*001*/ {"����","Text","",UD_TEXT,_PROP_OS(__OS_WIN),NULL },
-	/*002*/ {"����W","TextW","",UD_CUSTOMIZE,_PROP_OS(__OS_WIN),NULL },
-	/*003*/ {"ע���ı�","Note","",UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*004*/ {"�Ƿ�Ϊ����ͼ��", "IsShieldIcon", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
+	/*000*/ {"图片", "Picture", "", UD_PIC, _PROP_OS(__OS_WIN), NULL},
+	/*001*/ {"标题","Text","",UD_TEXT,_PROP_OS(__OS_WIN),NULL },
+	/*002*/ {"标题W","TextW","",UD_CUSTOMIZE,_PROP_OS(__OS_WIN),NULL },
+	/*003*/ {"注释文本","Note","",UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*004*/ {"是否为盾牌图标", "IsShieldIcon", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL },
 };
-/////////////////////////////����
+/////////////////////////////方法
 static int s_Cmd_PushBtn[] = { 120 };
 
 EXTERN_C void libstl_Button_GetIdealSize(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -1370,8 +1370,8 @@ Fail:
 static ARG_INFO s_Args_GetIdealSize[] =
 {
 	{
-		/*name*/    "����",
-		/*explain*/ "���ܿ��ȵı�����������ǰ������Ϊ0���������ֵָ��Ϊ��ť�Ŀ��ȣ����Դ�ֵΪ��׼��������߶�",
+		/*name*/    "宽度",
+		/*explain*/ "接受宽度的变量，若调用前变量不为0，则变量的值指定为按钮的宽度，将以此值为基准计算理想高度",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1379,8 +1379,8 @@ static ARG_INFO s_Args_GetIdealSize[] =
 		/*state*/   ArgMark::AS_RECEIVE_VAR,
 	},
 	{
-		/*name*/    "�߶�",
-		/*explain*/ "���ܸ߶ȵı���",
+		/*name*/    "高度",
+		/*explain*/ "接受高度的变量",
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_INT,
@@ -1390,9 +1390,9 @@ static ARG_INFO s_Args_GetIdealSize[] =
 };
 
 FucInfo Fn_BtnGetIdealSize = { {
-		/*ccname*/  ("ȡ����ߴ�"),
+		/*ccname*/  ("取理想尺寸"),
 		/*egname*/  ("GetIdealSize"),
-		/*explain*/ ("ȡ��ť����ߴ硣��������Ҫ���嵥��ָ��Comctl6.0"),
+		/*explain*/ ("取按钮理想尺寸。本命令需要在清单中指定Comctl6.0"),
 		/*category*/-1,
 		/*state*/   NULL,
 		/*ret*/     SDT_BOOL,
@@ -1403,7 +1403,7 @@ FucInfo Fn_BtnGetIdealSize = { {
 		/*ArgCount*/ARRAYSIZE(s_Args_GetIdealSize),
 		/*arg lp*/  s_Args_GetIdealSize,
 	} ,libstl_Button_GetIdealSize ,"libstl_Button_GetIdealSize" };
-/////////////////////////////ȡ�ӿ�
+/////////////////////////////取接口
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ButtonW(INT nInterfaceNO)
 {
 	switch (nInterfaceNO)
@@ -1463,59 +1463,59 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_CommandLink(INT nInterfaceNO)
 	}
 	return NULL;
 }
-/////////////////////////////���Ͷ���
+/////////////////////////////类型定义
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtButtonW =
 {
-	"��ťW",				//��������
-	"ButtonW",			//Ӣ������
-	"Unicode��ť",		//˵��
+	"按钮W",				//中文名称
+	"ButtonW",			//英文名称
+	"Unicode按钮",		//说明
 	ARRAYSIZE(s_Cmd_PushBtn),
 	s_Cmd_PushBtn,
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	IDB_BUTTON_W,				//��ԴID
+	IDB_BUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_PushBtn),
 	s_Event_PushBtn,
 	ARRAYSIZE(s_Member_PushBtn),
 	s_Member_PushBtn,
 	libstl_GetInterface_ButtonW,
-	0,					//��Ա����
-	NULL				//��Ա��������
+	0,					//成员数量
+	NULL				//成员数据数组
 };
 
 LIB_DATA_TYPE_INFO CtCheckButtonW =
 {
-	"ѡ���W",			//��������
-	"CheckButtonW",		//Ӣ������
-	"Unicodeѡ��򣨵�ѡ����ѡ����̬��ѡ��",//˵��
-	0,					//��������
-	0,					//��ȫ�ֺ����ж�Ӧ������
+	"选择框W",			//中文名称
+	"CheckButtonW",		//英文名称
+	"Unicode选择框（单选、复选、三态复选）",//说明
+	0,					//命令数量
+	0,					//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	IDB_CHECKBUTTON_W,				//��ԴID
+	IDB_CHECKBUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_CheckBtn),
 	s_Event_CheckBtn,
 	ARRAYSIZE(s_Member_CheckBtn),
 	s_Member_CheckBtn,
 	libstl_GetInterface_CheckButtonW,
-	0,					//��Ա����
-	NULL				//��Ա��������
+	0,					//成员数量
+	NULL				//成员数据数组
 };
 
 LIB_DATA_TYPE_INFO CtCommandLink =
 {
-	"�������Ӱ�ť",		//��������
-	"CommandLink",		//Ӣ������
-	"�������Ӱ�ť",		//˵��
-	0,					//��������
-	0,					//��ȫ�ֺ����ж�Ӧ������
+	"命令链接按钮",		//中文名称
+	"CommandLink",		//英文名称
+	"命令链接按钮",		//说明
+	0,					//命令数量
+	0,					//在全局函数中对应的索引
 	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,
-	IDB_COMLINKBUTTON_W,				//��ԴID
+	IDB_COMLINKBUTTON_W,				//资源ID
 	ARRAYSIZE(s_Event_CmdLink),
 	s_Event_CmdLink,
 	ARRAYSIZE(s_Member_CmdLink),
 	s_Member_CmdLink,
 	libstl_GetInterface_CommandLink,
-	0,					//��Ա����
-	NULL				//��Ա��������
+	0,					//成员数量
+	NULL				//成员数据数组
 };
 ESTL_NAMESPACE_END

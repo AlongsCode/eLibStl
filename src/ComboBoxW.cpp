@@ -789,7 +789,7 @@ private:
 			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 		}
 
-		SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:

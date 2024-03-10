@@ -1,30 +1,30 @@
-#include "EcontrolHelp.h"
+ï»¿#include "EcontrolHelp.h"
 
 #define SCID_DIRBOX			20230527'03u
 #define SCID_DIRBOXPARENT	20230527'04u
 
 ESTL_NAMESPACE_BEGIN
-// Ä¿Â¼¿ò
+// ç›®å½•æ¡†
 /*
-* °æ±¾1Êı¾İ²¼¾Ö£º
-* EDIRBOXDATA½á¹¹
+* ç‰ˆæœ¬1æ•°æ®å¸ƒå±€ï¼š
+* EDIRBOXDATAç»“æ„
 */
 #define DATA_VER_DIRBOX_1	1
 struct EDIRBOXDATA
 {
-	int iVer;				// °æ±¾ºÅ
-	DWORD dwReserved;		// ±£Áô
+	int iVer;				// ç‰ˆæœ¬å·
+	DWORD dwReserved;		// ä¿ç•™
 
-	COLORREF crBKClr;		// ±³¾°ÑÕÉ«
-	int cchDir;				// Ä¿Â¼×Ö·ûÊı£¬È«³ÌÎ¬»¤´ËÖµ
-	BITBOOL bHasButton : 1;			// ¼Ó¼õºÅ
-	BITBOOL bHasLine : 1;			// Á¬Ïß
-	BITBOOL bFullRowSel : 1;		// ÕûĞĞÑ¡Ôñ
-	BITBOOL bFadeInOutExpandos : 1;	// µ­Èëµ­³ö¼Ó¼õºÅ
-	BITBOOL bCheckBox : 1;			// ¸´Ñ¡¿ò
-	BITBOOL bFile : 1;				// ÏÔÊ¾ÎÄ¼ş
-	BITBOOL bNoCache : 1;			// ½ûÖ¹»º´æÄÚÈİ
-	BITBOOL bTrackSelect : 1;		// ÈÈµã¸ú×Ù
+	COLORREF crBKClr;		// èƒŒæ™¯é¢œè‰²
+	int cchDir;				// ç›®å½•å­—ç¬¦æ•°ï¼Œå…¨ç¨‹ç»´æŠ¤æ­¤å€¼
+	BITBOOL bHasButton : 1;			// åŠ å‡å·
+	BITBOOL bHasLine : 1;			// è¿çº¿
+	BITBOOL bFullRowSel : 1;		// æ•´è¡Œé€‰æ‹©
+	BITBOOL bFadeInOutExpandos : 1;	// æ·¡å…¥æ·¡å‡ºåŠ å‡å·
+	BITBOOL bCheckBox : 1;			// å¤é€‰æ¡†
+	BITBOOL bFile : 1;				// æ˜¾ç¤ºæ–‡ä»¶
+	BITBOOL bNoCache : 1;			// ç¦æ­¢ç¼“å­˜å†…å®¹
+	BITBOOL bTrackSelect : 1;		// çƒ­ç‚¹è·Ÿè¸ª
 };
 
 #define DBITEMFLAG_HASCHILDPATH 1
@@ -57,7 +57,7 @@ public:
 			TVITEMEXW tvi;
 			switch (((NMHDR*)lParam)->code)
 			{
-			case TVN_ITEMEXPANDEDA:// Ò»¶¨ÒªÊÇA°æ
+			case TVN_ITEMEXPANDEDA:// ä¸€å®šè¦æ˜¯Aç‰ˆ
 			{
 				if (pnmtv->action == TVE_EXPAND)
 				{
@@ -195,7 +195,7 @@ public:
 		break;
 		}
 
-		SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -522,11 +522,11 @@ public:
 		p = (BYTE*)GlobalLock(hGlobal);
 		if (!p)
 			goto Fail;
-		// ½á¹¹
+		// ç»“æ„
 		p += cbBaseData;
 		memcpy(p, &m_Info, sizeof(EDIRBOXDATA));
 		p += sizeof(EDIRBOXDATA);
-		// Ä¿Â¼
+		// ç›®å½•
 		memcpy(p, m_pszDir, m_Info.cchDir * sizeof(WCHAR));
 		// 
 		GlobalUnlock(hGlobal);
@@ -546,40 +546,40 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// Ä¿Â¼
+		case 0:// ç›®å½•
 			p->SetDir((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 1:// ±ß¿ò
+		case 1:// è¾¹æ¡†
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
-		case 2:// ±³¾°ÑÕÉ«
+		case 2:// èƒŒæ™¯é¢œè‰²
 			p->SetBKClr(pPropertyVaule->m_clr);
 			break;
-		case 3:// ¼Ó¼õºÅ
+		case 3:// åŠ å‡å·
 			p->SetHasButton(pPropertyVaule->m_bool);
 			break;
-		case 4:// Á¬Ïß
+		case 4:// è¿çº¿
 			p->SetHasLine(pPropertyVaule->m_bool);
 			break;
-		case 5:// ÕûĞĞÑ¡Ôñ
+		case 5:// æ•´è¡Œé€‰æ‹©
 			p->SetFullRowSel(pPropertyVaule->m_bool);
 			break;
-		case 6:// ¼Ó¼õºÅµ­Èëµ­³ö
+		case 6:// åŠ å‡å·æ·¡å…¥æ·¡å‡º
 			p->SetFadeInOutExpandos(pPropertyVaule->m_bool);
 			break;
-		case 7:// ¸´Ñ¡¿ò
+		case 7:// å¤é€‰æ¡†
 			p->SetCheckBox(pPropertyVaule->m_bool);
 			return TRUE;
-		case 8:// ÏÔÊ¾·½Ê½
+		case 8:// æ˜¾ç¤ºæ–¹å¼
 			p->SetFileShowing(pPropertyVaule->m_bool);
 			break;
-		case 9:// ×ÖÌå
+		case 9:// å­—ä½“
 			p->SetFont((LOGFONTA*)pPropertyVaule->m_data.m_pData);
 			break;
-		case 10:// ½ûÖ¹»º´æÄÚÈİ
+		case 10:// ç¦æ­¢ç¼“å­˜å†…å®¹
 			p->SetNoCache(pPropertyVaule->m_bool);
 			break;
-		case 11:// ÈÈµã¸ú×Ù
+		case 11:// çƒ­ç‚¹è·Ÿè¸ª
 			p->SetTrackSel(pPropertyVaule->m_bool);
 			break;
 		}
@@ -599,41 +599,41 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// Ä¿Â¼
+		case 0:// ç›®å½•
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetDir(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 1:// ±ß¿ò
+		case 1:// è¾¹æ¡†
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
-		case 2:// ±³¾°ÑÕÉ«
+		case 2:// èƒŒæ™¯é¢œè‰²
 			pPropertyVaule->m_clr = p->GetBKClr();
 			break;
-		case 3:// ¼Ó¼õºÅ
+		case 3:// åŠ å‡å·
 			pPropertyVaule->m_bool = p->GetHasButton();
 			break;
-		case 4:// Á¬Ïß
+		case 4:// è¿çº¿
 			pPropertyVaule->m_bool = p->GetHasLine();
 			break;
-		case 5:// ÕûĞĞÑ¡Ôñ
+		case 5:// æ•´è¡Œé€‰æ‹©
 			pPropertyVaule->m_bool = p->GetFullRowSel();
 			break;
-		case 6:// ¼Ó¼õºÅµ­Èëµ­³ö
+		case 6:// åŠ å‡å·æ·¡å…¥æ·¡å‡º
 			pPropertyVaule->m_bool = p->GetFadeInOutExpandos();
 			break;
-		case 7:// ¸´Ñ¡¿ò
+		case 7:// å¤é€‰æ¡†
 			pPropertyVaule->m_bool = p->GetCheckBox();
 			break;
-		case 8:// ÏÔÊ¾·½Ê½
+		case 8:// æ˜¾ç¤ºæ–¹å¼
 			pPropertyVaule->m_bool = p->GetFileShowing();
 			break;
-		case 9:// ×ÖÌå
+		case 9:// å­—ä½“
 			pPropertyVaule->m_data.m_pData = p->GetFont();
 			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
 			break;
-		case 10:// ½ûÖ¹»º´æÄÚÈİ
+		case 10:// ç¦æ­¢ç¼“å­˜å†…å®¹
 			pPropertyVaule->m_bool = p->GetNoCache();
 			break;
-		case 11:// ÈÈµã¸ú×Ù
+		case 11:// çƒ­ç‚¹è·Ÿè¸ª
 			pPropertyVaule->m_bool = p->GetTrackSel();
 			break;
 		}
@@ -647,7 +647,7 @@ public:
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
-		case 0:// Ä¿Â¼
+		case 0:// ç›®å½•
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetDir(NULL)))
@@ -706,25 +706,25 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_DirBoxW(INT nInterfaceNO)
 
 static EVENT_INFO2 s_Event_DirBox[] =
 {
-	/*000*/ {"µ±Ç°Ñ¡ÖĞÏî±»¸Ä±ä", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"å½“å‰é€‰ä¸­é¡¹è¢«æ”¹å˜", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_DirBox[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=ÊôĞÔÃû, 2=Ó¢ÎÄÊôĞÔÃû, 3=ÊôĞÔ½âÊÍ, 4=ÊôĞÔµÄÊı¾İÀàĞÍUD_,5=ÊôĞÔµÄ±êÖ¾, 6=Ë³Ğò¼ÇÂ¼ËùÓĞµÄ±¸Ñ¡ÎÄ±¾UW_(³ı¿ªUD_FILE_NAME), ÒÔÒ»¸ö¿Õ´®½áÊø
+	//1=å±æ€§å, 2=è‹±æ–‡å±æ€§å, 3=å±æ€§è§£é‡Š, 4=å±æ€§çš„æ•°æ®ç±»å‹UD_,5=å±æ€§çš„æ ‡å¿—, 6=é¡ºåºè®°å½•æ‰€æœ‰çš„å¤‡é€‰æ–‡æœ¬UW_(é™¤å¼€UD_FILE_NAME), ä»¥ä¸€ä¸ªç©ºä¸²ç»“æŸ
 
-	/*000*/  {"Ä¿Â¼", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*001*/	 {"±ß¿ò", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ÎŞ±ß¿ò\0""°¼ÈëÊ½\0""Í¹³öÊ½\0""Ç³°¼ÈëÊ½\0""¾µ¿òÊ½\0""µ¥Ïß±ß¿òÊ½\0""\0"},
-	/*002*/  {"±³¾°ÑÕÉ«", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
-	/*003*/  {"¼Ó¼õºÅ", "HasButton", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*004*/  {"Á¬Ïß", "HasLine", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*005*/  {"ÕûĞĞÑ¡Ôñ", "FullRowSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*006*/  {"¼Ó¼õºÅµ­Èëµ­³ö", "FadeInOutExpandos", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*007*/  {"¸´Ñ¡¿ò", "CheckBox", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*008*/	 {"°üº¬ÎÄ¼ş", "ShowFile", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*009*/	 {"×ÖÌå", "Font", "", UD_FONT, _PROP_OS(__OS_WIN), NULL},
-	/*010*/  {"½ûÖ¹»º´æÄÚÈİ", "DisableContentCache", "±¾ÊôĞÔÎªÕæÊ±Ã¿´ÎÊÕËõÕ¹¿ªÄ¿Â¼¶¼»áÖØĞÂ»ñÈ¡×ÓÄ¿Â¼", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*011*/  {"ÈÈµã¸ú×Ù", "TrackSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*000*/  {"ç›®å½•", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*001*/	 {"è¾¹æ¡†", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "æ— è¾¹æ¡†\0""å‡¹å…¥å¼\0""å‡¸å‡ºå¼\0""æµ…å‡¹å…¥å¼\0""é•œæ¡†å¼\0""å•çº¿è¾¹æ¡†å¼\0""\0"},
+	/*002*/  {"èƒŒæ™¯é¢œè‰²", "BKClr", "", UD_COLOR, _PROP_OS(__OS_WIN),  NULL},
+	/*003*/  {"åŠ å‡å·", "HasButton", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*004*/  {"è¿çº¿", "HasLine", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*005*/  {"æ•´è¡Œé€‰æ‹©", "FullRowSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*006*/  {"åŠ å‡å·æ·¡å…¥æ·¡å‡º", "FadeInOutExpandos", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*007*/  {"å¤é€‰æ¡†", "CheckBox", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*008*/	 {"åŒ…å«æ–‡ä»¶", "ShowFile", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*009*/	 {"å­—ä½“", "Font", "", UD_FONT, _PROP_OS(__OS_WIN), NULL},
+	/*010*/  {"ç¦æ­¢ç¼“å­˜å†…å®¹", "DisableContentCache", "æœ¬å±æ€§ä¸ºçœŸæ—¶æ¯æ¬¡æ”¶ç¼©å±•å¼€ç›®å½•éƒ½ä¼šé‡æ–°è·å–å­ç›®å½•", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*011*/  {"çƒ­ç‚¹è·Ÿè¸ª", "TrackSel", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 
 
@@ -739,7 +739,7 @@ EXTERN_C void libstl_DirBox_GetCurrentItem(PMDATA_INF pRetData, INT nArgCount, P
 	*((PWSTR)(pRetData->m_pBin + 8) + cch) = L'\0';
 }
 FucInfo Fn_DirBoxGetCurrentItem = { {
-		/*ccname*/  "È¡µ±Ç°Ñ¡ÖĞÏî",
+		/*ccname*/  "å–å½“å‰é€‰ä¸­é¡¹",
 		/*egname*/  "GetCurrentItem",
 		/*explain*/ "",
 		/*category*/-1,
@@ -806,10 +806,10 @@ EXTERN_C void libstl_DirBox_Extend(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 static ARG_INFO s_ArgsExtend[] =
 {
-	{ "ÎÄ¼ş»òÄ¿Â¼","",0,0,SDT_BIN,0,ArgMark::AS_NONE },
+	{ "æ–‡ä»¶æˆ–ç›®å½•","",0,0,SDT_BIN,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_DirBoxExtend = { {
-		/*ccname*/  "Õ¹¿ªµ½",
+		/*ccname*/  "å±•å¼€åˆ°",
 		/*egname*/  "Extend",
 		/*explain*/ "",
 		/*category*/-1,
@@ -859,14 +859,14 @@ EXTERN_C void libstl_DirBox_GetCheckedItems(PMDATA_INF pRetData, INT nArgCount, 
 	size_t c = aText.size();
 	if (!c)
 	{
-		pRetData->m_pAryData = elibstl::malloc_array<BYTE*>(0);// ²»ÄÜ·µ»ØNULL
+		pRetData->m_pAryData = elibstl::malloc_array<BYTE*>(0);// ä¸èƒ½è¿”å›NULL
 		return;
 	}
 	pRetData->m_pAryData = elibstl::malloc_array<BYTE*>(c);
 	memcpy((BYTE*)pRetData->m_pAryData + 8, aText.data(), c * sizeof(BYTE*));
 }
 FucInfo Fn_DirBoxGetCheckedItems = { {
-		/*ccname*/  "È¡ËùÓĞ¼ì²éÏîÄ¿",
+		/*ccname*/  "å–æ‰€æœ‰æ£€æŸ¥é¡¹ç›®",
 		/*egname*/  "GetCheckedItems",
 		/*explain*/ "",
 		/*category*/-1,                
@@ -888,7 +888,7 @@ EXTERN_C void libstl_DirBox_Refresh(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	p->FillCtrl();
 }
 FucInfo Fn_DirBoxRefresh = { {
-		/*ccname*/  "Ë¢ĞÂ",
+		/*ccname*/  "åˆ·æ–°",
 		/*egname*/  "Refresh",
 		/*explain*/ "",
 		/*category*/-1,
@@ -905,19 +905,19 @@ FucInfo Fn_DirBoxRefresh = { {
 static INT s_Cmd_DirBox[] = { 270,271,272,273 };
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtDirBoxW = {
-	"Ä¿Â¼¿òW",//ÖĞÎÄÃû³Æ
-	"DirBoxW",//Ó¢ÎÄÃû³Æ
-	"",//ËµÃ÷
-	ARRAYSIZE(s_Cmd_DirBox),//ÃüÁîÊıÁ¿
-	s_Cmd_DirBox,//ÔÚÈ«¾Öº¯ÊıÖĞ¶ÔÓ¦µÄË÷Òı
-	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//±êÖ¾
-	IDB_DIRBOX_W ,//×ÊÔ´ID
+	"ç›®å½•æ¡†W",//ä¸­æ–‡åç§°
+	"DirBoxW",//è‹±æ–‡åç§°
+	"",//è¯´æ˜
+	ARRAYSIZE(s_Cmd_DirBox),//å‘½ä»¤æ•°é‡
+	s_Cmd_DirBox,//åœ¨å…¨å±€å‡½æ•°ä¸­å¯¹åº”çš„ç´¢å¼•
+	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//æ ‡å¿—
+	IDB_DIRBOX_W ,//èµ„æºID
 	ARRAYSIZE(s_Event_DirBox),
 	s_Event_DirBox,
-	ARRAYSIZE(s_Member_DirBox),//ÊôĞÔÊı
-	s_Member_DirBox,//ÊôĞÔÖ¸Õë
-	libstl_GetInterface_DirBoxW,//×é¼ş½»»¥×Ó³ÌĞò
-	NULL,//³ÉÔ±ÊıÁ¿
-	NULL//³ÉÔ±Êı¾İÊı×é
+	ARRAYSIZE(s_Member_DirBox),//å±æ€§æ•°
+	s_Member_DirBox,//å±æ€§æŒ‡é’ˆ
+	libstl_GetInterface_DirBoxW,//ç»„ä»¶äº¤äº’å­ç¨‹åº
+	NULL,//æˆå‘˜æ•°é‡
+	NULL//æˆå‘˜æ•°æ®æ•°ç»„
 };
 ESTL_NAMESPACE_END

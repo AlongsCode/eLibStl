@@ -150,7 +150,7 @@ private:
 
 		case WM_CHAR:
 		{
-			elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+			//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 			if (p->m_Info.iInputMode > 2)
 			{
 				if (GetKeyState(VK_CONTROL) & 0x8000 || GetKeyState(VK_MENU) & 0x8000)
@@ -401,7 +401,7 @@ private:
 		}
 		}
 
-		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:

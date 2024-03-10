@@ -1,6 +1,6 @@
-/*
+ï»¿/*
 * 2023.6.1
-* TODO£ºÁĞ±í¿òÈ¡Õû¸ß¶ÈĞèÒªĞŞ¸´
+* TODOï¼šåˆ—è¡¨æ¡†å–æ•´é«˜åº¦éœ€è¦ä¿®å¤
 */
 #include "EcontrolHelp.h"
 
@@ -16,68 +16,68 @@ ESTL_NAMESPACE_BEGIN
 
 struct LBITEMCOMMINFO
 {
-	int idxImage;			// Í¼ÏñË÷Òı
-	int iReserved;			// Î´ÓÃ
-	COLORREF crText;		// ÎÄ±¾ÑÕÉ«
-	COLORREF crBK;			// ±³¾°ÑÕÉ«
-	COLORREF crSelText;		// Ñ¡ÖĞÎÄ±¾ÑÕÉ«
-	COLORREF crSelBK;		// Ñ¡ÖĞ±³¾°ÑÕÉ«
-	LPARAM lParam;			// ±íÏîÊıÖµ
-	BITBOOL bChecked : 1;	// ÊÇ·ñ¼ì²é
-	BITBOOL bDisabled : 1;	// ÊÇ·ñ½ûÖ¹
+	int idxImage;			// å›¾åƒç´¢å¼•
+	int iReserved;			// æœªç”¨
+	COLORREF crText;		// æ–‡æœ¬é¢œè‰²
+	COLORREF crBK;			// èƒŒæ™¯é¢œè‰²
+	COLORREF crSelText;		// é€‰ä¸­æ–‡æœ¬é¢œè‰²
+	COLORREF crSelBK;		// é€‰ä¸­èƒŒæ™¯é¢œè‰²
+	LPARAM lParam;			// è¡¨é¡¹æ•°å€¼
+	BITBOOL bChecked : 1;	// æ˜¯å¦æ£€æŸ¥
+	BITBOOL bDisabled : 1;	// æ˜¯å¦ç¦æ­¢
 };
 
 #pragma warning (push)
-#pragma warning (disable:26495)// ¡°Î´³õÊ¼»¯±äÁ¿¡±
-// Ö»ÓÃÓÚÔËĞĞÊ±±£´æĞÅÏ¢
+#pragma warning (disable:26495)// â€œæœªåˆå§‹åŒ–å˜é‡â€
+// åªç”¨äºè¿è¡Œæ—¶ä¿å­˜ä¿¡æ¯
 struct LBITEMINFO
 {
-	CSimpleRefStrW rsCaption;	// ±êÌâ
-	CSimpleRefStrW rsTip;		// ÌáÊ¾ÎÄ±¾
-	HBRUSH hbrBK;				// ±³¾°»­Ë¢
-	HBRUSH hbrSelBK;			// Ñ¡ÖĞ±³¾°»­Ë¢
-	LBITEMCOMMINFO Info;		// Í¨ÓÃĞÅÏ¢
+	CSimpleRefStrW rsCaption;	// æ ‡é¢˜
+	CSimpleRefStrW rsTip;		// æç¤ºæ–‡æœ¬
+	HBRUSH hbrBK;				// èƒŒæ™¯ç”»åˆ·
+	HBRUSH hbrSelBK;			// é€‰ä¸­èƒŒæ™¯ç”»åˆ·
+	LBITEMCOMMINFO Info;		// é€šç”¨ä¿¡æ¯
 };
 #pragma warning (pop)
 
-// Ö»ÓÃÓÚÉè¼Æ¶Ô»°¿ò
+// åªç”¨äºè®¾è®¡å¯¹è¯æ¡†
 struct LBITEMINFO_DESIGN
 {
-	PWSTR pszTip;			// ÌáÊ¾ÎÄ±¾
-	LBITEMCOMMINFO Info;	// Í¨ÓÃĞÅÏ¢
+	PWSTR pszTip;			// æç¤ºæ–‡æœ¬
+	LBITEMCOMMINFO Info;	// é€šç”¨ä¿¡æ¯
 };
 /*
-* °æ±¾1Êı¾İ²¼¾Ö£º
-* LBITEMSDATAHEADER_MEM½á¹¹
+* ç‰ˆæœ¬1æ•°æ®å¸ƒå±€ï¼š
+* LBITEMSDATAHEADER_MEMç»“æ„
 * {
-*	LBITEMHEADER_MEM½á¹¹
-*	±êÌâ
-*	ÌáÊ¾ÎÄ±¾
+*	LBITEMHEADER_MEMç»“æ„
+*	æ ‡é¢˜
+*	æç¤ºæ–‡æœ¬
 * }
 */
 #define DATA_VER_LBITEMS_1 1
-// ÏîÄ¿Êı¾İÍ·£¬Ö»ÓÃÓÚ±£´æÊı¾İ
+// é¡¹ç›®æ•°æ®å¤´ï¼Œåªç”¨äºä¿å­˜æ•°æ®
 struct LBITEMSDATAHEADER_MEM
 {
-	int iVer;				// °æ±¾ºÅ
-	DWORD dwReserved;		// ±£Áô
+	int iVer;				// ç‰ˆæœ¬å·
+	DWORD dwReserved;		// ä¿ç•™
 
-	int cItems;				// ÏîÄ¿Êı
+	int cItems;				// é¡¹ç›®æ•°
 };
-// ÏîÄ¿ÊôĞÔÍ·£¬±êÌâÓëÌáÊ¾ÎÄ±¾½ôËæÆäºó£¨¶¼¸½´ø½áÎ²NULL£¬±ãÓÚ³õÊ¼»¯Ê±²åÈëÏîÄ¿£©£¬Ö»ÓÃÓÚ±£´æÊı¾İ
+// é¡¹ç›®å±æ€§å¤´ï¼Œæ ‡é¢˜ä¸æç¤ºæ–‡æœ¬ç´§éšå…¶åï¼ˆéƒ½é™„å¸¦ç»“å°¾NULLï¼Œä¾¿äºåˆå§‹åŒ–æ—¶æ’å…¥é¡¹ç›®ï¼‰ï¼Œåªç”¨äºä¿å­˜æ•°æ®
 struct LBITEMHEADER_MEM
 {
-	int cchCaption;			// ±êÌâ×Ö·ûÊı£¬°üº¬½áÎ²NULL
-	int cchTip;				// ÌáÊ¾×Ö·ûÊı£¬°üº¬½áÎ²NULL
-	LBITEMCOMMINFO Info;	// Í¨ÓÃĞÅÏ¢
+	int cchCaption;			// æ ‡é¢˜å­—ç¬¦æ•°ï¼ŒåŒ…å«ç»“å°¾NULL
+	int cchTip;				// æç¤ºå­—ç¬¦æ•°ï¼ŒåŒ…å«ç»“å°¾NULL
+	LBITEMCOMMINFO Info;	// é€šç”¨ä¿¡æ¯
 };
 
 struct EDLGCTX_LISTBOXITEMS :public EzDlg::EDLGCTX_BASE
 {
-	BYTE** ppItemsData;		// ·µ»ØÊı¾İ
-	SIZE_T* pcbItems;		// ·µ»ØÊı¾İ³¤¶È
-	BYTE* pInitData;		// ³õÊ¼Êı¾İ
-	HIMAGELIST hImageList;	// Í¼ÏñÁĞ±í
+	BYTE** ppItemsData;		// è¿”å›æ•°æ®
+	SIZE_T* pcbItems;		// è¿”å›æ•°æ®é•¿åº¦
+	BYTE* pInitData;		// åˆå§‹æ•°æ®
+	HIMAGELIST hImageList;	// å›¾åƒåˆ—è¡¨
 };
 
 #define WCN_LISTBOXDESIGN L"eLibStl.WndClass.ListBoxItemsDesign"
@@ -360,7 +360,7 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 			int iCurrSel = SendMessageW(hLB, LB_GETCURSEL, 0, 0);
 			if (iCurrSel == LB_ERR)
 				break;
-			// ±êÌâ
+			// æ ‡é¢˜
 			int cch = SendMessageW(hLB, LB_GETTEXTLEN, iCurrSel, 0);
 			PWSTR pszText;
 			if (cch)
@@ -371,24 +371,24 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 			else
 				pszText = NULL;
 #pragma warning (push)
-#pragma warning (disable:6387)// ¡°¿ÉÄÜÎªNULL£¬²»·ûºÏº¯Êı¹æ·¶¡±
+#pragma warning (disable:6387)// â€œå¯èƒ½ä¸ºNULLï¼Œä¸ç¬¦åˆå‡½æ•°è§„èŒƒâ€
 			SetDlgItemTextW(hWnd, IDC_ED_CAPTION, pszText);
 			_freea(pszText);
-			// ÌáÊ¾ÎÄ±¾
+			// æç¤ºæ–‡æœ¬
 			auto pItem = (LBITEMINFO_DESIGN*)SendMessageW(hLB, LB_GETITEMDATA, iCurrSel, 0);
 			SetDlgItemTextW(hWnd, IDC_ED_TIP, pItem->pszTip);
-			// Í¼ÏñË÷Òı
+			// å›¾åƒç´¢å¼•
 			WCHAR szText[48]{};
 			swprintf(szText, L"%d", pItem->Info.idxImage);
 			SetDlgItemTextW(hWnd, IDC_ED_IMAGEIDX, szText);
-			// ±íÏîÊıÖµ
+			// è¡¨é¡¹æ•°å€¼
 			swprintf(szText, L"%d", pItem->Info.lParam);
 			SetDlgItemTextW(hWnd, IDC_ED_ITEMDATA, szText);
-			// Ñ¡ÖĞ
+			// é€‰ä¸­
 			CheckDlgButton(hWnd, IDC_CB_CHECKED, pItem->Info.bChecked ? BST_CHECKED : BST_UNCHECKED);
-			// ½ûÖ¹
+			// ç¦æ­¢
 			CheckDlgButton(hWnd, IDC_CB_DISABLE, pItem->Info.bDisabled ? BST_CHECKED : BST_UNCHECKED);
-			// ÑÕÉ«
+			// é¢œè‰²
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_BK), pItem->Info.crBK);
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_TEXT), pItem->Info.crText);
 			ClrPicker::SetColor(GetDlgItem(hWnd, IDC_CLP_SELBK), pItem->Info.crSelBK);
@@ -402,7 +402,7 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 
 	case WM_CREATE:
 	{
-#pragma region ´´½¨¿Ø¼ş
+#pragma region åˆ›å»ºæ§ä»¶
 		constexpr int DlgPadding = 8;
 		constexpr int cxLB = 240;
 		constexpr int cyLB = 240;
@@ -430,34 +430,34 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		p = (EDLGCTX_LISTBOXITEMS*)((CREATESTRUCTW*)lParam)->lpCreateParams;
 		SetWindowLongPtrW(hWnd, 0, (LONG_PTR)p);
-		p->hFont = EzFont(L"Î¢ÈíÑÅºÚ", 10);
+		p->hFont = EzFont(L"å¾®è½¯é›…é»‘", 10);
 
 		HWND hCtrl;
 		HWND hLB = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_GROUP | WS_TABSTOP | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
 			DlgPadding, DlgPadding, cxLB, cyLB, hWnd, (HMENU)IDC_LB_ITEMS, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"±êÌâ£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"æ ‡é¢˜ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic, DlgPadding, cxStatic, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"ÌáÊ¾ÎÄ±¾£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"æç¤ºæ–‡æœ¬ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic, DlgPadding + StaticLineStep, cxStatic, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"Í¼ÏñË÷Òı£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"å›¾åƒç´¢å¼•ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic, DlgPadding + StaticLineStep * 2, cxStatic, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"ÏîÄ¿ÊıÖµ£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"é¡¹ç›®æ•°å€¼ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic, DlgPadding + StaticLineStep * 3, cxStatic, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"ÎÄ±¾ÑÕÉ«£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"æ–‡æœ¬é¢œè‰²ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic2, DlgPadding + StaticLineStep * 2, cxStatic2, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"±³¾°ÑÕÉ«£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"èƒŒæ™¯é¢œè‰²ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic2, DlgPadding + StaticLineStep * 3, cxStatic2, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"Ñ¡ÖĞÎÄ±¾ÑÕÉ«£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"é€‰ä¸­æ–‡æœ¬é¢œè‰²ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic2, DlgPadding + StaticLineStep * 4, cxStatic2, cyStatic, hWnd, NULL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_STATICW, L"Ñ¡ÖĞ±³¾°ÑÕÉ«£º", WS_CHILD | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_STATICW, L"é€‰ä¸­èƒŒæ™¯é¢œè‰²ï¼š", WS_CHILD | WS_VISIBLE,
 			xStatic2, DlgPadding + StaticLineStep * 5, cxStatic2, cyStatic, hWnd, NULL, NULL, NULL);
 
 		hCtrl = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, NULL, WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL | ES_MULTILINE,
@@ -491,29 +491,29 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"O", WS_CHILD | WS_TABSTOP | WS_GROUP | WS_VISIBLE,
 			xEdit + cxEdit2 - cxBTSelImage, DlgPadding + StaticLineStep * 2, cxBTSelImage, cyStatic, hWnd, (HMENU)IDC_BT_SELIMAGE, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"Ñ¡ÖĞ", WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_AUTOCHECKBOX,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"é€‰ä¸­", WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_AUTOCHECKBOX,
 			xStatic, DlgPadding + StaticLineStep * 4, cxEdit2, cyStatic, hWnd, (HMENU)IDC_CB_CHECKED, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"½ûÖ¹", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"ç¦æ­¢", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
 			xEdit, DlgPadding + StaticLineStep * 4, cxEdit2, cyStatic, hWnd, (HMENU)IDC_CB_DISABLE, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"ÏòÇ°²åÈë(&F)", WS_CHILD | WS_TABSTOP | WS_GROUP | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å‘å‰æ’å…¥(&F)", WS_CHILD | WS_TABSTOP | WS_GROUP | WS_VISIBLE,
 			DlgPadding, yBT, cxBT, cyBT, hWnd, (HMENU)IDC_BT_INSERTF, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"Ïòºó²åÈë(&B)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å‘åæ’å…¥(&B)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
 			DlgPadding * 2 + cxBT, yBT, cxBT, cyBT, hWnd, (HMENU)IDC_BT_INSERTB, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"É¾³ı(&D)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"åˆ é™¤(&D)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
 			DlgPadding * 3 + cxBT * 2, yBT, cxBT, cyBT, hWnd, (HMENU)IDC_BT_DEL, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È·¶¨(&O)", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_DEFPUSHBUTTON,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"ç¡®å®š(&O)", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_DEFPUSHBUTTON,
 			xBTOK, yBT, cxBT, cyBT, hWnd, (HMENU)IDC_BT_OK, NULL, NULL);
 
-		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"È¡Ïû(&C)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
+		hCtrl = CreateWindowExW(0, WC_BUTTONW, L"å–æ¶ˆ(&C)", WS_CHILD | WS_TABSTOP | WS_VISIBLE,
 			xBTOK + DlgPadding + cxBT, yBT, cxBT, cyBT, hWnd, (HMENU)IDC_BT_CANCEL, NULL, NULL);
 
 		EzDlg::SetFontForWndAndCtrl(hWnd, p->hFont);
-#pragma endregion ´´½¨¿Ø¼ş
+#pragma endregion åˆ›å»ºæ§ä»¶
 		BYTE* pData = p->pInitData;
 		if (!pData)
 			return 0;
@@ -535,14 +535,14 @@ static LRESULT CALLBACK WndProc_ListBoxDesign(HWND hWnd, UINT uMsg, WPARAM wPara
 		{
 			pItemHeader = (LBITEMHEADER_MEM*)pData;
 			pData += sizeof(LBITEMHEADER_MEM);
-			// ÏîÄ¿Í·
+			// é¡¹ç›®å¤´
 			pItem = new LBITEMINFO_DESIGN;
 			ZeroMemory(pItem, sizeof(LBITEMINFO_DESIGN));
 			pItem->Info = pItemHeader->Info;
-			// ÎÄ±¾
+			// æ–‡æœ¬
 			int idx = SendMessageW(hLB, LB_ADDSTRING, 0, (LPARAM)pData);
 			SendMessageW(hLB, LB_SETITEMDATA, idx, (LPARAM)pItem);
-			// ÌáÊ¾ÎÄ±¾
+			// æç¤ºæ–‡æœ¬
 			pData += (pItemHeader->cchCaption * sizeof(WCHAR));
 			DupStringForNewDeleteW(pItem->pszTip, (PCWSTR)pData);
 			pData += (pItemHeader->cchTip * sizeof(WCHAR));
@@ -593,7 +593,7 @@ BOOL ShowListBoxDesignDlg(BYTE** ppItemsData, SIZE_T* pcbItems, BYTE* pInitData,
 	pCtx->pcbItems = pcbItems;
 	pCtx->hImageList = hImageList;
 
-	EzDlg::EIDEDlgShow(WCN_LISTBOXDESIGN, L"ÁĞ±í¿òÏîÄ¿ÉèÖÃ", CW_USEDEFAULT, 0, 600, 325,
+	EzDlg::EIDEDlgShow(WCN_LISTBOXDESIGN, L"åˆ—è¡¨æ¡†é¡¹ç›®è®¾ç½®", CW_USEDEFAULT, 0, 600, 325,
 		WS_VISIBLE | WS_SYSMENU | WS_CAPTION | WS_POPUP, pCtx);
 
 	BOOL bOK = pCtx->bOK;
@@ -601,46 +601,46 @@ BOOL ShowListBoxDesignDlg(BYTE** ppItemsData, SIZE_T* pcbItems, BYTE* pInitData,
 	return bOK;
 }
 
-// ÁĞ±í¿ò
+// åˆ—è¡¨æ¡†
 /*
-* °æ±¾1Êı¾İ²¼¾Ö£º
-* ELISTBOXDATA½á¹¹
-* ÏîÄ¿Êı¾İ
-* Í¼Æ¬×é
-* Ä¿Â¼£¨²»´ø½áÎ²NULL£©
-* ÎÄ¼ş¹ıÂËÆ÷£¨²»´ø½áÎ²NULL£©
+* ç‰ˆæœ¬1æ•°æ®å¸ƒå±€ï¼š
+* ELISTBOXDATAç»“æ„
+* é¡¹ç›®æ•°æ®
+* å›¾ç‰‡ç»„
+* ç›®å½•ï¼ˆä¸å¸¦ç»“å°¾NULLï¼‰
+* æ–‡ä»¶è¿‡æ»¤å™¨ï¼ˆä¸å¸¦ç»“å°¾NULLï¼‰
 */
 #define DATA_VER_LISTBOX_1	1
 struct ELISTBOXDATA
 {
-	int iVer;				// °æ±¾ºÅ
-	DWORD dwReserved;		// ±£Áô
+	int iVer;				// ç‰ˆæœ¬å·
+	DWORD dwReserved;		// ä¿ç•™
 
-	int idxCurrSel;			// ÏÖĞĞÑ¡ÖĞ
-	int cyItem;				// ĞĞ¸ß
-	COLORREF crText;		// ÎÄ±¾ÑÕÉ«
-	COLORREF crBK;			// ±³¾°ÑÕÉ«
-	COLORREF crSelText;		// Ñ¡ÖĞÎÄ±¾ÑÕÉ«
-	COLORREF crSelBK;		// Ñ¡Ôñ±³¾°ÑÕÉ«
-	int iAlignH;			// ºáÏò¶ÔÆë
-	int iAlignV;			// ×İÏò¶ÔÆë
-	UINT uFileAttr;			// ÎÄ¼ş¹ıÂËÊôĞÔ
-	FILETIME ftMinTime;		// ÎÄ¼ş×îĞ¡Ê±¼ä£¬»ùÓÚĞ­µ÷ÊÀ½çÊ±
-	FILETIME ftMaxTime;		// ÎÄ¼ş×î´óÊ±¼ä£¬»ùÓÚĞ­µ÷ÊÀ½çÊ±
-	SIZE_T cbItems;			// ±íÏîÊı¾İ³¤¶È£¬È«³ÌÎ¬»¤´ËÖµ
-	SIZE_T cbImageList;		// Í¼Æ¬×é³¤¶È£¬½öÔÚ±£´æĞÅÏ¢Ê±ÓĞĞ§
-	int cchDir;				// Ä¿Â¼×Ö·ûÊı£¬È«³ÌÎ¬»¤´ËÖµ
-	int cchFilePattern;		// ÎÄ¼ş¹ıÂËÆ÷×Ö·ûÊı£¬È«³ÌÎ¬»¤´ËÖµ
-	int iCheckBoxMode;		// Ñ¡ÔñÁĞ±í¿òÄ£Ê½
-	BITBOOL bAutoSort : 1;			// ×Ô¶¯ÅÅĞò
-	BITBOOL bMultiSel : 1;			// Êó±ê¶àÑ¡
-	BITBOOL bExtSel : 1;			// °´¼ü¶àÑ¡
-	BITBOOL bToolTip : 1;			// ¹¤¾ßÌáÊ¾
-	BITBOOL bIntegralHeight : 1;	// È¡Õû¿Ø¼ş¸ß¶È
-	BITBOOL bDisableNoScroll : 1;	// ÏÔÊ¾½ûÖ¹µÄ¹ö¶¯Ìõ
-	BITBOOL bEllipsis : 1;			// Ê¡ÂÔºÅ
-	BITBOOL bBalloonToolTip : 1;	// ÆøÇò¹¤¾ßÌáÊ¾
-	BITBOOL bDragList : 1;			// ±íÏî¿ÉÍÏ¶¯
+	int idxCurrSel;			// ç°è¡Œé€‰ä¸­
+	int cyItem;				// è¡Œé«˜
+	COLORREF crText;		// æ–‡æœ¬é¢œè‰²
+	COLORREF crBK;			// èƒŒæ™¯é¢œè‰²
+	COLORREF crSelText;		// é€‰ä¸­æ–‡æœ¬é¢œè‰²
+	COLORREF crSelBK;		// é€‰æ‹©èƒŒæ™¯é¢œè‰²
+	int iAlignH;			// æ¨ªå‘å¯¹é½
+	int iAlignV;			// çºµå‘å¯¹é½
+	UINT uFileAttr;			// æ–‡ä»¶è¿‡æ»¤å±æ€§
+	FILETIME ftMinTime;		// æ–‡ä»¶æœ€å°æ—¶é—´ï¼ŒåŸºäºåè°ƒä¸–ç•Œæ—¶
+	FILETIME ftMaxTime;		// æ–‡ä»¶æœ€å¤§æ—¶é—´ï¼ŒåŸºäºåè°ƒä¸–ç•Œæ—¶
+	SIZE_T cbItems;			// è¡¨é¡¹æ•°æ®é•¿åº¦ï¼Œå…¨ç¨‹ç»´æŠ¤æ­¤å€¼
+	SIZE_T cbImageList;		// å›¾ç‰‡ç»„é•¿åº¦ï¼Œä»…åœ¨ä¿å­˜ä¿¡æ¯æ—¶æœ‰æ•ˆ
+	int cchDir;				// ç›®å½•å­—ç¬¦æ•°ï¼Œå…¨ç¨‹ç»´æŠ¤æ­¤å€¼
+	int cchFilePattern;		// æ–‡ä»¶è¿‡æ»¤å™¨å­—ç¬¦æ•°ï¼Œå…¨ç¨‹ç»´æŠ¤æ­¤å€¼
+	int iCheckBoxMode;		// é€‰æ‹©åˆ—è¡¨æ¡†æ¨¡å¼
+	BITBOOL bAutoSort : 1;			// è‡ªåŠ¨æ’åº
+	BITBOOL bMultiSel : 1;			// é¼ æ ‡å¤šé€‰
+	BITBOOL bExtSel : 1;			// æŒ‰é”®å¤šé€‰
+	BITBOOL bToolTip : 1;			// å·¥å…·æç¤º
+	BITBOOL bIntegralHeight : 1;	// å–æ•´æ§ä»¶é«˜åº¦
+	BITBOOL bDisableNoScroll : 1;	// æ˜¾ç¤ºç¦æ­¢çš„æ»šåŠ¨æ¡
+	BITBOOL bEllipsis : 1;			// çœç•¥å·
+	BITBOOL bBalloonToolTip : 1;	// æ°”çƒå·¥å…·æç¤º
+	BITBOOL bDragList : 1;			// è¡¨é¡¹å¯æ‹–åŠ¨
 };
 
 constexpr int c_LBPadding = 3;
@@ -651,27 +651,27 @@ class CListBox :public CCtrlBase
 	SUBCLASS_MGR_DECL(CListBox)
 public:
 	ELISTBOXDATA m_Info{};
-	//////////Í¼ÏñÁĞ±íÏà¹Ø
-	BOOL m_bImageListNeedDel = FALSE;		// Í¼ÏñÁĞ±í¾ä±úÊÇ·ñĞèÒª±»ÊÍ·Å
-	HIMAGELIST m_hImageList = NULL;			// Í¼ÏñÁĞ±í¾ä±ú
-	std::vector<BYTE> m_ILData{};			// Í¼Æ¬×éÊı¾İ
-	int m_cxImage = 0, m_cyImage = 0;		// Í¼ÏñÁĞ±í³ß´ç
-	//////////ÎÄ¼ş¿òÏà¹Ø
-	PWSTR m_pszDir = NULL;					// Ä¿Â¼
-	PWSTR m_pszFilePattern = NULL;			// ¹ıÂËÆ÷
-	//////////Í¨ÓÃĞÅÏ¢
-	HBRUSH m_hbrBK = NULL;					// Í¨ÓÃ±íÏî±³¾°»­Ë¢
-	HBRUSH m_hbrSelBK = NULL;				// Í¨ÓÃÑ¡Ôñ±íÏî±³¾°»­Ë¢
-	int m_idxChecked = -1;					// Ñ¡ÖĞµÄÏîÄ¿£¬½öµ¥Ñ¡Ä£Ê½ÓĞĞ§
-	BYTE* m_pItems = NULL;					// ÏîÄ¿Êı¾İ
-	HTHEME m_hTheme = NULL;					// Ö÷Ìâ¾ä±ú£¬»æÖÆÑ¡Ôñ¿òÊ±ÓÃ
-	int m_cxCheckBox = 0;					// Ñ¡Ôñ¿ò³ß´ç
-	std::vector<LBITEMINFO> m_ItemsInfo{};	// ËùÓĞÏîÄ¿
-	HWND m_hToolTip = NULL;					// ¹¤¾ßÌáÊ¾´°¿Ú¾ä±ú
-	TTTOOLINFOW m_ti{ sizeof(TTTOOLINFOW),TTF_ABSOLUTE | TTF_TRACK,NULL,TTID_LBITEM };// ¹¤¾ßÌáÊ¾ĞÅÏ¢
-	//////////ÍÏ¶¯ÁĞ±í¿ò
-	int m_idxDraggingBegin = -1;			// ÍÏ·ÅÆğÊ¼Ë÷Òı
-	static UINT m_uMsgDragList;				// ÍÏ¶¯ÁĞ±í¿òÏûÏ¢
+	//////////å›¾åƒåˆ—è¡¨ç›¸å…³
+	BOOL m_bImageListNeedDel = FALSE;		// å›¾åƒåˆ—è¡¨å¥æŸ„æ˜¯å¦éœ€è¦è¢«é‡Šæ”¾
+	HIMAGELIST m_hImageList = NULL;			// å›¾åƒåˆ—è¡¨å¥æŸ„
+	std::vector<BYTE> m_ILData{};			// å›¾ç‰‡ç»„æ•°æ®
+	int m_cxImage = 0, m_cyImage = 0;		// å›¾åƒåˆ—è¡¨å°ºå¯¸
+	//////////æ–‡ä»¶æ¡†ç›¸å…³
+	PWSTR m_pszDir = NULL;					// ç›®å½•
+	PWSTR m_pszFilePattern = NULL;			// è¿‡æ»¤å™¨
+	//////////é€šç”¨ä¿¡æ¯
+	HBRUSH m_hbrBK = NULL;					// é€šç”¨è¡¨é¡¹èƒŒæ™¯ç”»åˆ·
+	HBRUSH m_hbrSelBK = NULL;				// é€šç”¨é€‰æ‹©è¡¨é¡¹èƒŒæ™¯ç”»åˆ·
+	int m_idxChecked = -1;					// é€‰ä¸­çš„é¡¹ç›®ï¼Œä»…å•é€‰æ¨¡å¼æœ‰æ•ˆ
+	BYTE* m_pItems = NULL;					// é¡¹ç›®æ•°æ®
+	HTHEME m_hTheme = NULL;					// ä¸»é¢˜å¥æŸ„ï¼Œç»˜åˆ¶é€‰æ‹©æ¡†æ—¶ç”¨
+	int m_cxCheckBox = 0;					// é€‰æ‹©æ¡†å°ºå¯¸
+	std::vector<LBITEMINFO> m_ItemsInfo{};	// æ‰€æœ‰é¡¹ç›®
+	HWND m_hToolTip = NULL;					// å·¥å…·æç¤ºçª—å£å¥æŸ„
+	TTTOOLINFOW m_ti{ sizeof(TTTOOLINFOW),TTF_ABSOLUTE | TTF_TRACK,NULL,TTID_LBITEM };// å·¥å…·æç¤ºä¿¡æ¯
+	//////////æ‹–åŠ¨åˆ—è¡¨æ¡†
+	int m_idxDraggingBegin = -1;			// æ‹–æ”¾èµ·å§‹ç´¢å¼•
+	static UINT m_uMsgDragList;				// æ‹–åŠ¨åˆ—è¡¨æ¡†æ¶ˆæ¯
 private:
 	void UpdateThemeInfo()
 	{
@@ -693,10 +693,10 @@ private:
 		PWSTR pszPath = (PWSTR)_malloca((
 			m_Info.cchDir +
 			m_Info.cchFilePattern +
-			5/*Ò»¸ö·´Ğ±¸Ü£¬Èı¸ö*.*£¨Í¨Åä·ûÎª¿ÕÊ±ÓÃ£©£¬Ò»¸ö½áÎ²NULL*/) * sizeof(WCHAR));
-		assert(pszPath);// Ïû³ı¾¯¸æ
+			5/*ä¸€ä¸ªåæ–œæ ï¼Œä¸‰ä¸ª*.*ï¼ˆé€šé…ç¬¦ä¸ºç©ºæ—¶ç”¨ï¼‰ï¼Œä¸€ä¸ªç»“å°¾NULL*/) * sizeof(WCHAR));
+		assert(pszPath);// æ¶ˆé™¤è­¦å‘Š
 		wcscpy(pszPath, m_pszDir);
-		PWSTR pszTemp = pszPath + m_Info.cchDir;// Ö¸ÕëÖ¸µ½Ä¿Â¼µÄºóÃæ£¬·½±ãÌæ»»Í¨Åä·û
+		PWSTR pszTemp = pszPath + m_Info.cchDir;// æŒ‡é’ˆæŒ‡åˆ°ç›®å½•çš„åé¢ï¼Œæ–¹ä¾¿æ›¿æ¢é€šé…ç¬¦
 
 		PWSTR pszFilePattern;
 		if (m_Info.cchFilePattern && m_pszFilePattern)
@@ -704,10 +704,10 @@ private:
 		else
 		{
 #pragma warning(push)
-#pragma warning(disable:6255)// ½ûÓÃ¾¯¸æ£º¿¼ÂÇ¸ÄÓÃ_malloca
+#pragma warning(disable:6255)// ç¦ç”¨è­¦å‘Šï¼šè€ƒè™‘æ”¹ç”¨_malloca
 			pszFilePattern = (PWSTR)_alloca(4 * sizeof(WCHAR));
 #pragma warning(pop)
-			assert(pszFilePattern);// Ïû³ı¾¯¸æ
+			assert(pszFilePattern);// æ¶ˆé™¤è­¦å‘Š
 			wcscpy(pszFilePattern, L"*.*");
 		}
 
@@ -717,19 +717,19 @@ private:
 		while (TRUE)
 		{
 			pszDivPos = wcsstr(pszFilePattern, L"|");
-			if (pszDivPos != pszOld && pszDivPos)// ³£¹æÇé¿ö
+			if (pszDivPos != pszOld && pszDivPos)// å¸¸è§„æƒ…å†µ
 			{
 				int cch = pszDivPos - pszOld - 1;
 				wcscpy(pszTemp, L"\\");
 				wcsncat(pszTemp, pszOld, cch);
 				*(pszTemp + cch + 1) = L'\0';
 			}
-			else if (!pszDivPos)// ÕÒ²»µ½ÏÂÒ»¸ö·Ö¸ô·û
+			else if (!pszDivPos)// æ‰¾ä¸åˆ°ä¸‹ä¸€ä¸ªåˆ†éš”ç¬¦
 			{
 				wcscpy(pszTemp, L"\\");
 				wcscat(pszTemp, pszOld);
 			}
-			else// Î²²¿£¨pszDivPos==pszOld£©
+			else// å°¾éƒ¨ï¼ˆpszDivPos==pszOldï¼‰
 				break;
 
 			LBITEMCOMMINFO CommInfo{};
@@ -891,7 +891,7 @@ private:
 				auto p = m_CtrlSCInfo[pdli->hWnd];
 				p->OnCancelDrag(pdli->ptCursor);
 			}
-			return 0;// ²»Ê¹ÓÃ·µ»ØÖµ
+			return 0;// ä¸ä½¿ç”¨è¿”å›å€¼
 
 			case DL_DRAGGING:
 			{
@@ -910,7 +910,7 @@ private:
 				auto p = m_CtrlSCInfo[pdli->hWnd];
 				p->OnDropped(pdli->ptCursor);
 			}
-			return 0;// ²»Ê¹ÓÃ·µ»ØÖµ
+			return 0;// ä¸ä½¿ç”¨è¿”å›å€¼
 			}
 		}
 
@@ -939,7 +939,7 @@ private:
 			auto& Item = p->m_ItemsInfo[pdis->itemID];
 
 			HDC hDC = pdis->hDC;
-			// »­±³¾°
+			// ç”»èƒŒæ™¯
 			if (IsBitExist(pdis->itemState, ODS_SELECTED) && !Item.Info.bDisabled)
 			{
 				if (Item.hbrSelBK)
@@ -970,7 +970,7 @@ private:
 				else
 					SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
 			}
-			// »­Ñ¡Ôñ¿ò
+			// ç”»é€‰æ‹©æ¡†
 			RECT rc = pdis->rcItem;
 			if (p->m_Info.iCheckBoxMode)
 			{
@@ -1004,7 +1004,7 @@ private:
 				rc.left += c_LBPadding;
 				rc.right = rc.left;
 			}
-			// »­Í¼Æ¬
+			// ç”»å›¾ç‰‡
 			if (p->m_cxImage)
 			{
 				if (p->m_hImageList && Item.Info.idxImage >= 0)
@@ -1017,7 +1017,7 @@ private:
 				rc.left += (p->m_cxImage + c_LBPadding);
 			}
 			rc.right = pdis->rcItem.right;
-			// »­ÎÄ±¾
+			// ç”»æ–‡æœ¬
 			UINT uDTFlags = DT_NOCLIP | DT_SINGLELINE |
 				MultiSelect<UINT>(p->m_Info.iAlignH, DT_LEFT, DT_CENTER, DT_VCENTER) |
 				MultiSelect<UINT>(p->m_Info.iAlignV, DT_TOP, DT_VCENTER, DT_BOTTOM) |
@@ -1046,7 +1046,7 @@ private:
 			{
 			case LBN_SELCHANGE:
 				p->OnSelChange();
-				return 0;// ²»Ê¹ÓÃ·µ»ØÖµ
+				return 0;// ä¸ä½¿ç”¨è¿”å›å€¼
 			}
 		}
 		break;
@@ -1064,7 +1064,7 @@ private:
 		auto p = (CListBox*)dwRefData;
 		switch (uMsg)
 		{
-		case WM_LBUTTONDOWN:// ¸üĞÂ¼ì²é¿ò
+		case WM_LBUTTONDOWN:// æ›´æ–°æ£€æŸ¥æ¡†
 		{
 			if (!p->m_Info.iCheckBoxMode)
 				break;
@@ -1092,7 +1092,7 @@ private:
 		}
 		break;
 
-		case WM_LBUTTONDBLCLK:// Á¬»÷ĞŞ¸´
+		case WM_LBUTTONDBLCLK:// è¿å‡»ä¿®å¤
 		{
 			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
 			int idx = p->HitTestCheckBox(pt);
@@ -1166,7 +1166,7 @@ private:
 			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 		}
 
-		SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
@@ -1179,19 +1179,19 @@ public:
 		if (pAllData)
 		{
 			BYTE* p = (BYTE*)pAllData + cbBaseData;
-			// ½á¹¹
+			// ç»“æ„
 			memcpy(&m_Info, p, sizeof(ELISTBOXDATA));
 			p += sizeof(ELISTBOXDATA);
-			// ÏîÄ¿
+			// é¡¹ç›®
 			DupStreamForNewDelete(m_pItems, p, m_Info.cbItems);
 			p += m_Info.cbItems;
-			// Í¼ÏñÁĞ±í
+			// å›¾åƒåˆ—è¡¨
 			pILData = p;
 			p += m_Info.cbImageList;
-			// Ä¿Â¼
+			// ç›®å½•
 			DupStringForNewDeleteW(m_pszDir, (PCWSTR)p, m_Info.cchDir);
 			p += m_Info.cchDir * sizeof(WCHAR);
-			// ¹ıÂËÆ÷
+			// è¿‡æ»¤å™¨
 			DupStringForNewDeleteW(m_pszFilePattern, (PCWSTR)p, m_Info.cchFilePattern);
 			p += m_Info.cchFilePattern * sizeof(WCHAR);
 		}
@@ -1227,7 +1227,7 @@ public:
 		m_hWnd = CreateWindowExW(0, WC_LISTBOXW, NULL, WS_VSCROLL | WS_CHILD | WS_CLIPSIBLINGS | dwLBStyle | dwStyle,
 			x, y, cx, cy, hParent, (HMENU)nID, NULL, NULL);
 		if (m_Info.bDragList)
-			SetDragList(m_Info.bDragList);// ±ØĞëÔÚ×ÓÀà»¯Ö®Ç°
+			SetDragList(m_Info.bDragList);// å¿…é¡»åœ¨å­ç±»åŒ–ä¹‹å‰
 		m_SM.OnCtrlCreate(this);
 		UpdateThemeInfo();
 
@@ -1235,7 +1235,7 @@ public:
 		SendMessageW(m_hToolTip, TTM_ADDTOOL, 0, (LPARAM)&m_ti);
 
 		SetRedraw(FALSE);
-		// ÉèÖÃÍ¼ÏñÁĞ±í
+		// è®¾ç½®å›¾åƒåˆ—è¡¨
 		if (pILData)
 			SetImageList(pILData, m_Info.cbImageList);
 		// 
@@ -1244,9 +1244,9 @@ public:
 		SetCurrSel(m_Info.idxCurrSel);
 		
 		InitBase0(pAllData);
-		if (m_Info.cyItem)// ±ØĞëÔÚInitBase0Ö®ºó
+		if (m_Info.cyItem)// å¿…é¡»åœ¨InitBase0ä¹‹å
 			SetItemHeight(m_Info.cyItem);
-		// ²åÈë±íÏî
+		// æ’å…¥è¡¨é¡¹
 		if (m_pszDir)
 			AddFile();
 		else
@@ -1717,7 +1717,7 @@ public:
 
 	void SetImageList(BYTE* pData, SIZE_T cb)
 	{
-		// É¶ÂÒÎâÌÎÕæÓĞÄãµÄ¹ş£¬¼¸Ç§¼¸ÍòµÄ×Ö½Ú¼¯µ½´¦¿½£¬²»ÁôÍ·ÉÏÄÇ8×Ö½ÚÉíÉÏÄÑÊÜ£¿
+		// å•¥ä¹±å´æ¶›çœŸæœ‰ä½ çš„å“ˆï¼Œå‡ åƒå‡ ä¸‡çš„å­—èŠ‚é›†åˆ°å¤„æ‹·ï¼Œä¸ç•™å¤´ä¸Šé‚£8å­—èŠ‚èº«ä¸Šéš¾å—ï¼Ÿ
 		if (m_hImageList && m_bImageListNeedDel)
 			ImageList_Destroy(m_hImageList);
 
@@ -1864,7 +1864,7 @@ public:
 			if (cr != CLR_DEFAULT)
 				m_hbrSelBK = CreateSolidBrush(cr);
 			else
-				m_hbrSelBK = GetSysColorBrush(COLOR_HIGHLIGHT);// ¿ÉÒÔÉ¾³ıÏµÍ³ÑÕÉ«»­Ë¢
+				m_hbrSelBK = GetSysColorBrush(COLOR_HIGHLIGHT);// å¯ä»¥åˆ é™¤ç³»ç»Ÿé¢œè‰²ç”»åˆ·
 		}
 		else
 			m_Info.crSelText = cr;
@@ -1960,19 +1960,19 @@ public:
 		if (!p)
 			goto Fail;
 		p += cbBaseData;
-		// ½á¹¹
+		// ç»“æ„
 		memcpy(p, &m_Info, sizeof(ELISTBOXDATA));
 		p += sizeof(ELISTBOXDATA);
-		// ÏîÄ¿
+		// é¡¹ç›®
 		memcpy(p, m_pItems, m_Info.cbItems);
 		p += m_Info.cbItems;
-		// Í¼ÏñÁĞ±í
+		// å›¾åƒåˆ—è¡¨
 		memcpy(p, m_ILData.data(), m_Info.cbImageList);
 		p += m_Info.cbImageList;
-		// Ä¿Â¼
+		// ç›®å½•
 		memcpy(p, m_pszDir, cbDir);
 		p += cbDir;
-		// ÎÄ¼ş¹ıÂËÆ÷
+		// æ–‡ä»¶è¿‡æ»¤å™¨
 		memcpy(p, m_pszFilePattern, cbFilePattern);
 		// 
 		GlobalUnlock(hGlobal);
@@ -1992,81 +1992,81 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ±íÏî
+		case 0:// è¡¨é¡¹
 			p->SetItems(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize, FALSE);
 			break;
-		case 1:// ÏÖĞĞÑ¡ÖĞÏî
+		case 1:// ç°è¡Œé€‰ä¸­é¡¹
 			p->SetCurrSel(pPropertyVaule->m_int);
 			break;
-		case 2:// ĞĞ¸ß
+		case 2:// è¡Œé«˜
 			p->SetItemHeight(pPropertyVaule->m_int);
 			break;
-		case 3:// ÎÄ±¾ÑÕÉ«
-		case 4:// ±³¾°ÑÕÉ«
+		case 3:// æ–‡æœ¬é¢œè‰²
+		case 4:// èƒŒæ™¯é¢œè‰²
 			p->SetClr(nPropertyIndex - 3, pPropertyVaule->m_clr);
 			break;
-		case 5:// ±ß¿ò
+		case 5:// è¾¹æ¡†
 			p->SetFrame(pPropertyVaule->m_int);
 			break;
-		case 6:// ×Ô¶¯ÅÅĞò
+		case 6:// è‡ªåŠ¨æ’åº
 			p->SetAutoSort(pPropertyVaule->m_bool);
 			break;
-		case 7:// Êó±ê¶àÑ¡
+		case 7:// é¼ æ ‡å¤šé€‰
 			p->SetMultiSel(pPropertyVaule->m_bool);
 			return TRUE;
-		case 8:// °´¼ü¶àÑ¡
+		case 8:// æŒ‰é”®å¤šé€‰
 			p->SetExtSel(pPropertyVaule->m_bool);
 			return TRUE;
-		case 9:// ¹¤¾ßÌáÊ¾
+		case 9:// å·¥å…·æç¤º
 			p->SetToolTip(pPropertyVaule->m_bool);
 			break;
-		case 10:// È¡Õû¿Ø¼ş¸ß¶È
+		case 10:// å–æ•´æ§ä»¶é«˜åº¦
 			p->SetIntegralHeight(pPropertyVaule->m_bool);
 			return TRUE;
-		case 11:// ÏÔÊ¾½ûÖ¹¹ö¶¯Ìõ
+		case 11:// æ˜¾ç¤ºç¦æ­¢æ»šåŠ¨æ¡
 			p->SetDisableNoScroll(pPropertyVaule->m_bool);
 			return TRUE;
-		case 12:// Ä¿Â¼
+		case 12:// ç›®å½•
 			p->SetDir((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 13:// ÎÄ¼ş¹ıÂËÆ÷
+		case 13:// æ–‡ä»¶è¿‡æ»¤å™¨
 			p->SetFilePattern((PCWSTR)pPropertyVaule->m_data.m_pData);
 			break;
-		case 14:// ÎÄ¼ş¹ıÂËÊôĞÔ
+		case 14:// æ–‡ä»¶è¿‡æ»¤å±æ€§
 			p->SetFileAttr(pPropertyVaule->m_int);
 			break;
-		case 15:// ÎÄ¼ş×îĞ¡ÈÕÆÚ
+		case 15:// æ–‡ä»¶æœ€å°æ—¥æœŸ
 			p->SetFileTime(FALSE, pPropertyVaule->m_dtDateTime);
 			break;
-		case 16:// ÎÄ¼ş×î´óÈÕÆÚ
+		case 16:// æ–‡ä»¶æœ€å¤§æ—¥æœŸ
 			p->SetFileTime(TRUE, pPropertyVaule->m_dtDateTime);
 			break;
-		case 17:// Í¼Æ¬×é
+		case 17:// å›¾ç‰‡ç»„
 			p->SetImageList(pPropertyVaule->m_data.m_pData, pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 18:// Ñ¡ÖĞÎÄ±¾ÑÕÉ«
-		case 19:// Ñ¡ÖĞ±³¾°ÑÕÉ«
+		case 18:// é€‰ä¸­æ–‡æœ¬é¢œè‰²
+		case 19:// é€‰ä¸­èƒŒæ™¯é¢œè‰²
 			p->SetSelClr(nPropertyIndex - 18, pPropertyVaule->m_clr);
 			break;
-		case 20:// Ê¡ÂÔºÅ²Ã¼ô
+		case 20:// çœç•¥å·è£å‰ª
 			p->SetEllipsis(pPropertyVaule->m_bool);
 			break;
-		case 21:// ºáÏò¶ÔÆë
+		case 21:// æ¨ªå‘å¯¹é½
 			p->SetAlign(TRUE, pPropertyVaule->m_int);
 			break;
-		case 22:// ×İÏò¶ÔÆë
+		case 22:// çºµå‘å¯¹é½
 			p->SetAlign(FALSE, pPropertyVaule->m_int);
 			break;
-		case 23:// Ñ¡ÔñÁĞ±í¿ò
+		case 23:// é€‰æ‹©åˆ—è¡¨æ¡†
 			p->SetCheckBoxMode(pPropertyVaule->m_int);
 			break;
-		case 24:// ×ÖÌå
+		case 24:// å­—ä½“
 			p->SetFont((LOGFONTA*)pPropertyVaule->m_data.m_pData);
 			break;
-		case 25:// ÆøÇò¹¤¾ßÌáÊ¾
+		case 25:// æ°”çƒå·¥å…·æç¤º
 			p->SetBalloonToolTip(pPropertyVaule->m_bool);
 			break;
-		case 26:// ¿ÉÍÏ·Å
+		case 26:// å¯æ‹–æ”¾
 			p->SetDragList(pPropertyVaule->m_bool);
 			return TRUE;
 		}
@@ -2086,83 +2086,83 @@ public:
 
 		switch (nPropertyIndex)
 		{
-		case 0:// ±íÏî
+		case 0:// è¡¨é¡¹
 			pPropertyVaule->m_data.m_pData = p->GetItems();
 			pPropertyVaule->m_data.m_nDataSize = (INT)p->m_Info.cbItems;
 			break;
-		case 1:// ÏÖĞĞÑ¡ÖĞÏî
+		case 1:// ç°è¡Œé€‰ä¸­é¡¹
 			pPropertyVaule->m_int = p->GetCurrSel();
 			break;
-		case 2:// ĞĞ¸ß
+		case 2:// è¡Œé«˜
 			pPropertyVaule->m_int = p->GetItemHeight();
 			break;
-		case 3:// ÎÄ±¾ÑÕÉ«
-		case 4:// ±³¾°ÑÕÉ«
+		case 3:// æ–‡æœ¬é¢œè‰²
+		case 4:// èƒŒæ™¯é¢œè‰²
 			pPropertyVaule->m_clr = p->GetClr(nPropertyIndex - 3);
 			break;
-		case 5:// ±ß¿ò
+		case 5:// è¾¹æ¡†
 			pPropertyVaule->m_int = p->GetFrame();
 			break;
-		case 6:// ×Ô¶¯ÅÅĞò
+		case 6:// è‡ªåŠ¨æ’åº
 			pPropertyVaule->m_bool = p->GetAutoSort();
 			break;
-		case 7:// Êó±ê¶àÑ¡
+		case 7:// é¼ æ ‡å¤šé€‰
 			pPropertyVaule->m_bool = p->GetMultiSel();
 			break;
-		case 8:// °´¼ü¶àÑ¡
+		case 8:// æŒ‰é”®å¤šé€‰
 			pPropertyVaule->m_bool = p->GetExtSel();
 			break;
-		case 9:// ¹¤¾ßÌáÊ¾
+		case 9:// å·¥å…·æç¤º
 			pPropertyVaule->m_bool = p->GetToolTip();
 			break;
-		case 10:// È¡Õû¿Ø¼ş¸ß¶È
+		case 10:// å–æ•´æ§ä»¶é«˜åº¦
 			pPropertyVaule->m_bool = p->GetIntegralHeight();
 			break;
-		case 11:// ÏÔÊ¾½ûÖ¹¹ö¶¯Ìõ
+		case 11:// æ˜¾ç¤ºç¦æ­¢æ»šåŠ¨æ¡
 			pPropertyVaule->m_bool = p->GetDisableNoScroll();
 			break;
-		case 12:// Ä¿Â¼
+		case 12:// ç›®å½•
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetDir(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 13:// ÎÄ¼ş¹ıÂËÆ÷
+		case 13:// æ–‡ä»¶è¿‡æ»¤å™¨
 			pPropertyVaule->m_data.m_pData = (BYTE*)p->GetFilePattern(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 14:// ÎÄ¼ş¹ıÂËÊôĞÔ
+		case 14:// æ–‡ä»¶è¿‡æ»¤å±æ€§
 			pPropertyVaule->m_int = p->GetFileAttr();
 			break;
-		case 15:// ÎÄ¼ş×îĞ¡ÈÕÆÚ
+		case 15:// æ–‡ä»¶æœ€å°æ—¥æœŸ
 			pPropertyVaule->m_dtDateTime = p->GetFileTime(FALSE);
 			break;
-		case 16:// ÎÄ¼ş×î´óÈÕÆÚ
+		case 16:// æ–‡ä»¶æœ€å¤§æ—¥æœŸ
 			pPropertyVaule->m_dtDateTime = p->GetFileTime(TRUE);
 			break;
-		case 17:// Í¼Æ¬×é
+		case 17:// å›¾ç‰‡ç»„
 			pPropertyVaule->m_data.m_pData = p->GetImageList(&pPropertyVaule->m_data.m_nDataSize);
 			break;
-		case 18:// Ñ¡ÖĞÎÄ±¾ÑÕÉ«
-		case 19:// Ñ¡ÖĞ±³¾°ÑÕÉ«
+		case 18:// é€‰ä¸­æ–‡æœ¬é¢œè‰²
+		case 19:// é€‰ä¸­èƒŒæ™¯é¢œè‰²
 			pPropertyVaule->m_clr = p->GetSelClr(nPropertyIndex - 18);
 			break;
-		case 20:// Ê¡ÂÔºÅ²Ã¼ô
+		case 20:// çœç•¥å·è£å‰ª
 			pPropertyVaule->m_bool = p->GetEllipsis();
 			break;
-		case 21:// ºáÏò¶ÔÆë
+		case 21:// æ¨ªå‘å¯¹é½
 			pPropertyVaule->m_int = p->GetAlign(TRUE);
 			break;
-		case 22:// ×İÏò¶ÔÆë
+		case 22:// çºµå‘å¯¹é½
 			pPropertyVaule->m_int = p->GetAlign(FALSE);
 			break;
-		case 23:// Ñ¡ÔñÁĞ±í¿ò
+		case 23:// é€‰æ‹©åˆ—è¡¨æ¡†
 			pPropertyVaule->m_int = p->GetCheckBoxMode();
 			break;
-		case 24:// ×ÖÌå
+		case 24:// å­—ä½“
 			pPropertyVaule->m_data.m_pData = p->GetFont();
 			pPropertyVaule->m_data.m_nDataSize = sizeof(LOGFONTA);
 			break;
-		case 25:// ÆøÇò¹¤¾ßÌáÊ¾
+		case 25:// æ°”çƒå·¥å…·æç¤º
 			pPropertyVaule->m_bool = p->GetBalloonToolTip();
 			break;
-		case 26:// ±íÏî¿ÉÍÏ¶¯
+		case 26:// è¡¨é¡¹å¯æ‹–åŠ¨
 			pPropertyVaule->m_bool = p->GetDragList();
 			break;
 		}
@@ -2176,7 +2176,7 @@ public:
 		*pblModified = FALSE;
 		switch (nPropertyIndex)
 		{
-		case 0:// ±íÏî
+		case 0:// è¡¨é¡¹
 		{
 			BYTE* pItems;
 			SIZE_T cb;
@@ -2187,7 +2187,7 @@ public:
 		}
 		break;
 
-		case 14:// Ä¿Â¼
+		case 14:// ç›®å½•
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetDir(NULL)))
@@ -2204,7 +2204,7 @@ public:
 		}
 		break;
 
-		case 15:// ¹ıÂËÆ÷
+		case 15:// è¿‡æ»¤å™¨
 		{
 			PWSTR psz;
 			if (elibstl::IntputBox(&psz, p->GetFilePattern(NULL)))
@@ -2263,52 +2263,52 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_ListBoxW(INT nInterfaceNO)
 }
 static EVENT_ARG_INFO2 s_EventArgs_LB[] =
 {
-	{"ºáÏòÎ»ÖÃ","Ïà¶Ô¿Í»§Çø",0,SDT_INT},
-	{"×İÏòÎ»ÖÃ","Ïà¶Ô¿Í»§Çø",0,SDT_INT},
-	{"¹â±êËùÔÚÏîÄ¿Ë÷Òı","",0,SDT_INT},
-	{"ÍÏ·ÅÆğÊ¼ÏîÄ¿Ë÷Òı","",0,SDT_INT},
+	{"æ¨ªå‘ä½ç½®","ç›¸å¯¹å®¢æˆ·åŒº",0,SDT_INT},
+	{"çºµå‘ä½ç½®","ç›¸å¯¹å®¢æˆ·åŒº",0,SDT_INT},
+	{"å…‰æ ‡æ‰€åœ¨é¡¹ç›®ç´¢å¼•","",0,SDT_INT},
+	{"æ‹–æ”¾èµ·å§‹é¡¹ç›®ç´¢å¼•","",0,SDT_INT},
 };
 static EVENT_INFO2 s_Event_ListBox[] =
 {
-	/*000*/ {"Ñ¡ÖĞÏî±»¸Ä±ä", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, NULL, _SDT_NULL},
-	/*001*/ {"¿ªÊ¼ÍÏ·Å", "·µ»ØÕæÔÊĞíÍÏ¶¯£¬·µ»Ø¼Ù½ûÖ¹ÍÏ¶¯£¬Ä¬ÈÏ·µ»ØÕæ", _EVENT_OS(OS_ALL) | EV_IS_VER2, 3, s_EventArgs_LB, SDT_BOOL},
-	/*002*/ {"È¡ÏûÍÏ·Å", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgs_LB, _SDT_NULL},
-	/*003*/ {"ÍÏ·ÅĞüÍ£", "·µ»ØÖµÖ¸Ê¾¹â±êÑùÊ½£º0 - ³£¹æ  1 - ½ûÖ¹  2 - ¸´ÖÆ  3 - ÒÆ¶¯£¬Ä¬ÈÏ·µ»Ø0", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_EventArgs_LB, SDT_INT},
-	/*004*/ {"ÍÏ·ÅÂäÏÂ", "·µ»ØÕæÔòÖ§³Ö¿âÄÚ²¿×Ô¶¯½»»»¿ªÊ¼ÏîÄ¿ºÍ½áÊøÏîÄ¿£¬·µ»Ø¼ÙÎŞ¶¯×÷£¬Ä¬ÈÏ·µ»ØÕæ", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_EventArgs_LB, SDT_BOOL},
+	/*000*/ {"é€‰ä¸­é¡¹è¢«æ”¹å˜", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, NULL, _SDT_NULL},
+	/*001*/ {"å¼€å§‹æ‹–æ”¾", "è¿”å›çœŸå…è®¸æ‹–åŠ¨ï¼Œè¿”å›å‡ç¦æ­¢æ‹–åŠ¨ï¼Œé»˜è®¤è¿”å›çœŸ", _EVENT_OS(OS_ALL) | EV_IS_VER2, 3, s_EventArgs_LB, SDT_BOOL},
+	/*002*/ {"å–æ¶ˆæ‹–æ”¾", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 2, s_EventArgs_LB, _SDT_NULL},
+	/*003*/ {"æ‹–æ”¾æ‚¬åœ", "è¿”å›å€¼æŒ‡ç¤ºå…‰æ ‡æ ·å¼ï¼š0 - å¸¸è§„  1 - ç¦æ­¢  2 - å¤åˆ¶  3 - ç§»åŠ¨ï¼Œé»˜è®¤è¿”å›0", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_EventArgs_LB, SDT_INT},
+	/*004*/ {"æ‹–æ”¾è½ä¸‹", "è¿”å›çœŸåˆ™æ”¯æŒåº“å†…éƒ¨è‡ªåŠ¨äº¤æ¢å¼€å§‹é¡¹ç›®å’Œç»“æŸé¡¹ç›®ï¼Œè¿”å›å‡æ— åŠ¨ä½œï¼Œé»˜è®¤è¿”å›çœŸ", _EVENT_OS(OS_ALL) | EV_IS_VER2, 4, s_EventArgs_LB, SDT_BOOL},
 };
 
 static UNIT_PROPERTY s_Member_ListBox[] =
 {
 	FIXED_WIN_UNIT_PROPERTY,
-	//1=ÊôĞÔÃû, 2=Ó¢ÎÄÊôĞÔÃû, 3=ÊôĞÔ½âÊÍ, 4=ÊôĞÔµÄÊı¾İÀàĞÍUD_,5=ÊôĞÔµÄ±êÖ¾, 6=Ë³Ğò¼ÇÂ¼ËùÓĞµÄ±¸Ñ¡ÎÄ±¾UW_(³ı¿ªUD_FILE_NAME), ÒÔÒ»¸ö¿Õ´®½áÊø
+	//1=å±æ€§å, 2=è‹±æ–‡å±æ€§å, 3=å±æ€§è§£é‡Š, 4=å±æ€§çš„æ•°æ®ç±»å‹UD_,5=å±æ€§çš„æ ‡å¿—, 6=é¡ºåºè®°å½•æ‰€æœ‰çš„å¤‡é€‰æ–‡æœ¬UW_(é™¤å¼€UD_FILE_NAME), ä»¥ä¸€ä¸ªç©ºä¸²ç»“æŸ
 
-	/*000*/  {"±íÏî", "Items", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
-	/*001*/  {"ÏÖĞĞÑ¡ÖĞÏî", "CurrSel", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*002*/  {"ĞĞ¸ß", "ItemHeight", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
-	/*003*/  {"ÎÄ±¾ÑÕÉ«", "TextClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL},
-	/*004*/  {"±³¾°ÑÕÉ«", "BKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),NULL},
-	/*005*/  {"±ß¿ò", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "ÎŞ±ß¿ò\0""°¼ÈëÊ½\0""Í¹³öÊ½\0""Ç³°¼ÈëÊ½\0""¾µ¿òÊ½\0""µ¥Ïß±ß¿òÊ½\0""\0"},
-	/*006*/  {"×Ô¶¯ÅÅĞò", "AutoSort", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*007*/  {"Êó±ê¶àÑ¡", "MultiSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*008*/  {"°´¼ü¶àÑ¡", "ExtSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*009*/  {"¹¤¾ßÌáÊ¾", "ToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*010*/  {"È¡Õû¿Ø¼ş¸ß¶È", "IntegralHeight", "£¡£¡£¡±£Áô£¬ÔİÊ±Î´ÊµÏÖ  ÊÇ·ñ½«¿Ø¼ş¸ß¶È¶ÔÆëµ½ÏîÄ¿¸ß¶ÈµÄÕûÊı±¶", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*011*/  {"ÏÔÊ¾½ûÖ¹¹ö¶¯Ìõ", "DisableNoScroll", "¹ö¶¯Ìõ²»¿ÉÓÃÊ±ÏÔÊ¾½ûÖ¹µÄ¹ö¶¯Ìõ¶ø²»ÊÇÒş²Ø¹ö¶¯Ìõ", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
-	/*012*/  {"Ä¿Â¼", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
-	/*013*/  {"ÎÄ¼ş¹ıÂËÆ÷", "FilePattern", "Èç¡°*.mp3¡±£¬¶à¸ö¹ıÂËÆ÷Ö®¼äÓÃÊúÏß¡°|¡±·Ö¸ô", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
-	/*014*/  {"ÎÄ¼ş¹ıÂËÊôĞÔ", "FileAttr", "ÒÔÏÂÖµµÄÎ»»ò×éºÏ£º1 - Ö»¶Á  2 - Òş²Ø  4 - ÏµÍ³  16 - Ä¿Â¼  32 - ´æµµ  128 - Í¨³£", UD_INT, _PROP_OS(__OS_WIN),  NULL},
-	/*015*/  {"ÎÄ¼ş×îĞ¡ÈÕÆÚ", "FileDateMin", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
-	/*016*/  {"ÎÄ¼ş×î´óÈÕÆÚ", "FileDataMax", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
-	/*017*/  {"Í¼Æ¬×é", "ImageList", "", UD_IMAGE_LIST, _PROP_OS(__OS_WIN),  NULL},
-	/*018*/  {"Ñ¡ÖĞÎÄ±¾ÑÕÉ«", "SelTextClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),NULL},
-	/*019*/  {"Ñ¡ÖĞ±³¾°ÑÕÉ«", "SelBKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL},
-	/*020*/	 {"Ê¡ÂÔºÅ²Ã¼ô", "Ellipsis", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*021*/  {"ºáÏò¶ÔÆë·½Ê½", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "×ó±ß\0""¾ÓÖĞ\0""ÓÒ±ß\0""\0"},
-	/*022*/  {"×İÏò¶ÔÆë·½Ê½", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"ÉÏ±ß\0""¾ÓÖĞ\0""ÏÂ±ß\0""\0"},
-	/*023*/  {"Ñ¡ÔñÁĞ±í¿ò", "CheckBoxMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"ÎŞ\0""µ¥Ñ¡ÁĞ±í¿ò\0""¸´Ñ¡ÁĞ±í¿ò\0""\0"},
-	/*024*/  {"×ÖÌå", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
-	/*025*/	 {"ÆøÇòÊ½¹¤¾ßÌáÊ¾", "BalloonToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
-	/*026*/	 {"±íÏî¿ÉÍÏ¶¯", "DragDrop", "±¾ÊôĞÔÎªÕæÊ±¿ÉÆôÓÃËÄ¸ö¶îÍâµÄÍÏ·ÅÊÂ¼ş", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*000*/  {"è¡¨é¡¹", "Items", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN), NULL},
+	/*001*/  {"ç°è¡Œé€‰ä¸­é¡¹", "CurrSel", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*002*/  {"è¡Œé«˜", "ItemHeight", "", UD_INT, _PROP_OS(__OS_WIN), NULL},
+	/*003*/  {"æ–‡æœ¬é¢œè‰²", "TextClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL},
+	/*004*/  {"èƒŒæ™¯é¢œè‰²", "BKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),NULL},
+	/*005*/  {"è¾¹æ¡†", "Frame", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "æ— è¾¹æ¡†\0""å‡¹å…¥å¼\0""å‡¸å‡ºå¼\0""æµ…å‡¹å…¥å¼\0""é•œæ¡†å¼\0""å•çº¿è¾¹æ¡†å¼\0""\0"},
+	/*006*/  {"è‡ªåŠ¨æ’åº", "AutoSort", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*007*/  {"é¼ æ ‡å¤šé€‰", "MultiSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*008*/  {"æŒ‰é”®å¤šé€‰", "ExtSel", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*009*/  {"å·¥å…·æç¤º", "ToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*010*/  {"å–æ•´æ§ä»¶é«˜åº¦", "IntegralHeight", "ï¼ï¼ï¼ä¿ç•™ï¼Œæš‚æ—¶æœªå®ç°  æ˜¯å¦å°†æ§ä»¶é«˜åº¦å¯¹é½åˆ°é¡¹ç›®é«˜åº¦çš„æ•´æ•°å€", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*011*/  {"æ˜¾ç¤ºç¦æ­¢æ»šåŠ¨æ¡", "DisableNoScroll", "æ»šåŠ¨æ¡ä¸å¯ç”¨æ—¶æ˜¾ç¤ºç¦æ­¢çš„æ»šåŠ¨æ¡è€Œä¸æ˜¯éšè—æ»šåŠ¨æ¡", UD_BOOL, _PROP_OS(__OS_WIN), NULL},
+	/*012*/  {"ç›®å½•", "Dir", "", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*013*/  {"æ–‡ä»¶è¿‡æ»¤å™¨", "FilePattern", "å¦‚â€œ*.mp3â€ï¼Œå¤šä¸ªè¿‡æ»¤å™¨ä¹‹é—´ç”¨ç«–çº¿â€œ|â€åˆ†éš”", UD_CUSTOMIZE, _PROP_OS(__OS_WIN),  NULL},
+	/*014*/  {"æ–‡ä»¶è¿‡æ»¤å±æ€§", "FileAttr", "ä»¥ä¸‹å€¼çš„ä½æˆ–ç»„åˆï¼š1 - åªè¯»  2 - éšè—  4 - ç³»ç»Ÿ  16 - ç›®å½•  32 - å­˜æ¡£  128 - é€šå¸¸", UD_INT, _PROP_OS(__OS_WIN),  NULL},
+	/*015*/  {"æ–‡ä»¶æœ€å°æ—¥æœŸ", "FileDateMin", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
+	/*016*/  {"æ–‡ä»¶æœ€å¤§æ—¥æœŸ", "FileDataMax", "", UD_DATE_TIME, _PROP_OS(__OS_WIN),  NULL},
+	/*017*/  {"å›¾ç‰‡ç»„", "ImageList", "", UD_IMAGE_LIST, _PROP_OS(__OS_WIN),  NULL},
+	/*018*/  {"é€‰ä¸­æ–‡æœ¬é¢œè‰²", "SelTextClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN),NULL},
+	/*019*/  {"é€‰ä¸­èƒŒæ™¯é¢œè‰²", "SelBKClr", "", UD_COLOR_BACK, _PROP_OS(__OS_WIN), NULL},
+	/*020*/	 {"çœç•¥å·è£å‰ª", "Ellipsis", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*021*/  {"æ¨ªå‘å¯¹é½æ–¹å¼", "AlignH", "", UD_PICK_INT, _PROP_OS(__OS_WIN), "å·¦è¾¹\0""å±…ä¸­\0""å³è¾¹\0""\0"},
+	/*022*/  {"çºµå‘å¯¹é½æ–¹å¼", "AlignV", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"ä¸Šè¾¹\0""å±…ä¸­\0""ä¸‹è¾¹\0""\0"},
+	/*023*/  {"é€‰æ‹©åˆ—è¡¨æ¡†", "CheckBoxMode", "", UD_PICK_INT, _PROP_OS(__OS_WIN),"æ— \0""å•é€‰åˆ—è¡¨æ¡†\0""å¤é€‰åˆ—è¡¨æ¡†\0""\0"},
+	/*024*/  {"å­—ä½“", "Font", "", UD_FONT, _PROP_OS(__OS_WIN) , NULL},
+	/*025*/	 {"æ°”çƒå¼å·¥å…·æç¤º", "BalloonToolTip", "", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
+	/*026*/	 {"è¡¨é¡¹å¯æ‹–åŠ¨", "DragDrop", "æœ¬å±æ€§ä¸ºçœŸæ—¶å¯å¯ç”¨å››ä¸ªé¢å¤–çš„æ‹–æ”¾äº‹ä»¶", UD_BOOL, _PROP_OS(__OS_WIN),  NULL},
 };
 
 EXTERN_C void libstl_ListBoxW_AddString(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
@@ -2326,13 +2326,13 @@ EXTERN_C void libstl_ListBoxW_AddString(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsAddString[] =
 {
-	{ "ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
-	{ "ÌáÊ¾ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY }
+	{ "æ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "æç¤ºæ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY }
 };
 FucInfo Fn_ListBoxWAddString = { {
-		/*ccname*/  "¼ÓÈë±íÏî",
+		/*ccname*/  "åŠ å…¥è¡¨é¡¹",
 		/*egname*/  "AddString",
-		/*explain*/ "·µ»Ø±íÏîË÷Òı£¬Ê§°Ü·µ»Ø-1",
+		/*explain*/ "è¿”å›è¡¨é¡¹ç´¢å¼•ï¼Œå¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -2360,14 +2360,14 @@ EXTERN_C void libstl_ListBoxW_InsertString(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsInsertString[] =
 {
-	{ "ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
-	{ "ÌáÊ¾ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "²åÈëÎ»ÖÃ","",0,0,SDT_INT,-1,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "æ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "æç¤ºæ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ’å…¥ä½ç½®","",0,0,SDT_INT,-1,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWInsertString = { {
-		/*ccname*/  "²åÈë±íÏî",
+		/*ccname*/  "æ’å…¥è¡¨é¡¹",
 		/*egname*/  "InsertString",
-		/*explain*/ "·µ»Ø±íÏîË÷Òı£¬Ê§°Ü·µ»Ø-1",
+		/*explain*/ "è¿”å›è¡¨é¡¹ç´¢å¼•ï¼Œå¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -2388,12 +2388,12 @@ EXTERN_C void libstl_ListBoxW_DelString(PMDATA_INF pRetData, INT nArgCount, PMDA
 }
 static ARG_INFO s_ArgsDelString[] =
 {
-	{ "É¾³ıÎ»ÖÃ","ÈôÎª-1ÔòÉ¾³ıËùÓĞÏîÄ¿",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "åˆ é™¤ä½ç½®","è‹¥ä¸º-1åˆ™åˆ é™¤æ‰€æœ‰é¡¹ç›®",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWDelString = { {
-		/*ccname*/  "É¾³ı±íÏî",
+		/*ccname*/  "åˆ é™¤è¡¨é¡¹",
 		/*egname*/  "DelString",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2411,7 +2411,7 @@ EXTERN_C void libstl_ListBoxW_GetItemCount(PMDATA_INF pRetData, INT nArgCount, P
 	pRetData->m_int = SendMessageW(hWnd, LB_GETCOUNT, 0, 0);
 }
 FucInfo Fn_ListBoxWGetItemCount = { {
-		/*ccname*/  "È¡±íÏîÊı",
+		/*ccname*/  "å–è¡¨é¡¹æ•°",
 		/*egname*/  "GetItemCount",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2431,7 +2431,7 @@ EXTERN_C void libstl_ListBoxW_GetTopIndex(PMDATA_INF pRetData, INT nArgCount, PM
 	pRetData->m_int = SendMessageW(hWnd, LB_GETTOPINDEX, 0, 0);
 }
 FucInfo Fn_ListBoxWGetTopIndex = { {
-		/*ccname*/  "È¡µÚÒ»¿É¼ûÏî",
+		/*ccname*/  "å–ç¬¬ä¸€å¯è§é¡¹",
 		/*egname*/  "GetTopIndex",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2452,12 +2452,12 @@ EXTERN_C void libstl_ListBoxW_SetTopIndex(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsSetTopIndex[] =
 {
-	{ "Î»ÖÃ","",0,0,SDT_INT,0,ArgMark::AS_NONE}
+	{ "ä½ç½®","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWSetTopIndex = { {
-		/*ccname*/  "ÖÃµÚÒ»¿É¼ûÏî",
+		/*ccname*/  "ç½®ç¬¬ä¸€å¯è§é¡¹",
 		/*egname*/  "SetTopIndex",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2485,10 +2485,10 @@ EXTERN_C void libstl_ListBoxW_GetItemlParam(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetItemlParam[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE}
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWGetItemlParam = { {
-		/*ccname*/  "È¡±íÏîÊıÖµ",
+		/*ccname*/  "å–è¡¨é¡¹æ•°å€¼",
 		/*egname*/  "GetItemlParam",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2518,13 +2518,13 @@ EXTERN_C void libstl_ListBoxW_SetItemlParam(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetItemlParam[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "±íÏîÊıÖµ","",0,0,SDT_INT,0,ArgMark::AS_NONE}
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "è¡¨é¡¹æ•°å€¼","",0,0,SDT_INT,0,ArgMark::AS_NONE}
 };
 FucInfo Fn_ListBoxWSetItemlParam = { {
-		/*ccname*/  "ÖÃ±íÏîÊıÖµ",
+		/*ccname*/  "ç½®è¡¨é¡¹æ•°å€¼",
 		/*egname*/  "SetItemlParam",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2560,10 +2560,10 @@ EXTERN_C void libstl_ListBoxW_GetItemString(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsGetItemString[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemString = { {
-		/*ccname*/  "È¡±íÏîÎÄ±¾",
+		/*ccname*/  "å–è¡¨é¡¹æ–‡æœ¬",
 		/*egname*/  "GetItemString",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2595,13 +2595,13 @@ EXTERN_C void libstl_ListBoxW_SetItemString(PMDATA_INF pRetData, INT nArgCount, 
 }
 static ARG_INFO s_ArgsSetItemString[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ListBoxWSetItemString = { {
-		/*ccname*/  "ÖÃ±íÏîÎÄ±¾",
+		/*ccname*/  "ç½®è¡¨é¡¹æ–‡æœ¬",
 		/*egname*/  "SetItemString",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2621,7 +2621,7 @@ EXTERN_C void libstl_ListBoxW_GetSelectedItemCount(PMDATA_INF pRetData, INT nArg
 	pRetData->m_int = (int)SendMessageW(hWnd, LB_GETSELCOUNT, 0, 0);
 }
 FucInfo Fn_ListBoxWGetSelectedItemCount = { {
-		/*ccname*/  "È¡Ñ¡ÖĞ±íÏîÊı",
+		/*ccname*/  "å–é€‰ä¸­è¡¨é¡¹æ•°",
 		/*egname*/  "GetSelectedItemCount",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2651,7 +2651,7 @@ EXTERN_C void libstl_ListBoxW_GetSelectedItem(PMDATA_INF pRetData, INT nArgCount
 	SendMessageW(hWnd, LB_GETSELITEMS, cSeledItems, (LPARAM)((BYTE*)pRetData->m_pAryData + 8));
 }
 FucInfo Fn_ListBoxWGetSelectedItem = { {
-		/*ccname*/  "È¡Ñ¡ÖĞ±íÏî",
+		/*ccname*/  "å–é€‰ä¸­è¡¨é¡¹",
 		/*egname*/  "GetSelectedItem",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2681,10 +2681,10 @@ EXTERN_C void libstl_ListBoxW_IsItemSelected(PMDATA_INF pRetData, INT nArgCount,
 }
 static ARG_INFO s_ArgsIsItemSelected[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWIsItemSelected = { {
-		/*ccname*/  "±íÏîÊÇ·ñÑ¡ÖĞ ",
+		/*ccname*/  "è¡¨é¡¹æ˜¯å¦é€‰ä¸­ ",
 		/*egname*/  "IsItemSelected",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2717,10 +2717,10 @@ EXTERN_C void libstl_ListBoxW_GetItemCheckState(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsGetItemCheckState[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemCheckState = { {
-		/*ccname*/  "È¡±íÏî¼ì²é×´Ì¬",
+		/*ccname*/  "å–è¡¨é¡¹æ£€æŸ¥çŠ¶æ€",
 		/*egname*/  "GetItemCheckState",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2760,13 +2760,13 @@ EXTERN_C void libstl_ListBoxW_SetItemCheckState(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsSetItemCheckState[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
-	{ "ÊÇ·ñ¼ì²é","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "æ˜¯å¦æ£€æŸ¥","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSetItemCheckState = { {
-		/*ccname*/  "ÖÃ±íÏî¼ì²é×´Ì¬",
+		/*ccname*/  "ç½®è¡¨é¡¹æ£€æŸ¥çŠ¶æ€",
 		/*egname*/  "SetItemCheckState",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2789,13 +2789,13 @@ EXTERN_C void libstl_ListBoxW_SelectItem(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsSelectItem[] =
 {
-	{ "Ë÷Òı","ÈôÎª¶àÑ¡Ä£Ê½£¬Ôò´«µİ-1»á²Ù×÷ËùÓĞÏî",0,0,SDT_INT,0,ArgMark::AS_NONE},
-	{ "ÊÇ·ñÑ¡Ôñ","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","è‹¥ä¸ºå¤šé€‰æ¨¡å¼ï¼Œåˆ™ä¼ é€’-1ä¼šæ“ä½œæ‰€æœ‰é¡¹",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "æ˜¯å¦é€‰æ‹©","",0,0,SDT_BOOL,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSelectItem = { {
-		/*ccname*/  "Ñ¡ÖĞ±íÏî",
+		/*ccname*/  "é€‰ä¸­è¡¨é¡¹",
 		/*egname*/  "SelectItem",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -2882,14 +2882,14 @@ EXTERN_C void libstl_ListBoxW_FindString(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsFindString[] =
 {
-	{ "ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
-	{ "ÆğÊ¼ËÑÑ°Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
-	{ "Æ¥ÅäÄ£Ê½","0 - °üº¬  1 - Í·²¿  2 - Î²²¿  3 - ÏàÍ¬",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "æ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_NONE},
+	{ "èµ·å§‹æœå¯»ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "åŒ¹é…æ¨¡å¼","0 - åŒ…å«  1 - å¤´éƒ¨  2 - å°¾éƒ¨  3 - ç›¸åŒ",0,0,SDT_INT,0,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWFindString = { {
-		/*ccname*/  "Ñ°ÕÒ±íÏî",
+		/*ccname*/  "å¯»æ‰¾è¡¨é¡¹",
 		/*egname*/  "FindString",
-		/*explain*/ "³É¹¦·µ»ØÕÒµ½µÄ±íÏîË÷Òı£¬Ê§°Ü·µ»Ø-1",
+		/*explain*/ "æˆåŠŸè¿”å›æ‰¾åˆ°çš„è¡¨é¡¹ç´¢å¼•ï¼Œå¤±è´¥è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -2924,11 +2924,11 @@ EXTERN_C void libstl_ListBoxW_GetItemColor(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsGetItemColor[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
-	{ "ÀàĞÍ","0 - ±³¾°  1 - Ñ¡ÖĞ±³¾°  2 - ÎÄ±¾  3 - Ñ¡ÖĞÎÄ±¾",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç±»å‹","0 - èƒŒæ™¯  1 - é€‰ä¸­èƒŒæ™¯  2 - æ–‡æœ¬  3 - é€‰ä¸­æ–‡æœ¬",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemColor = { {
-		/*ccname*/  "È¡±íÏîÑÕÉ«",
+		/*ccname*/  "å–è¡¨é¡¹é¢œè‰²",
 		/*egname*/  "GetItemColor",
 		/*explain*/ "",
 		/*category*/-1,
@@ -2989,14 +2989,14 @@ EXTERN_C void libstl_ListBoxW_SetItemColor(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsSetItemColor[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
-	{ "ÀàĞÍ","0 - ±³¾°  1 - Ñ¡ÖĞ±³¾°  2 - ÎÄ±¾  3 - Ñ¡ÖĞÎÄ±¾",0,0,SDT_INT,0,ArgMark::AS_NONE},
-	{ "ÑÕÉ«","ÈôÒª±£³ÖÈ±Ê¡£¬´«µİ #Ä¬ÈÏÉ« ³£Á¿",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç±»å‹","0 - èƒŒæ™¯  1 - é€‰ä¸­èƒŒæ™¯  2 - æ–‡æœ¬  3 - é€‰ä¸­æ–‡æœ¬",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "é¢œè‰²","è‹¥è¦ä¿æŒç¼ºçœï¼Œä¼ é€’ #é»˜è®¤è‰² å¸¸é‡",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWSetItemColor = { {
-		/*ccname*/  "ÖÃ±íÏîÑÕÉ«",
+		/*ccname*/  "ç½®è¡¨é¡¹é¢œè‰²",
 		/*egname*/  "SetItemColor",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3032,10 +3032,10 @@ EXTERN_C void libstl_ListBoxW_GetItemTip(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsGetItemTip[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE},
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE},
 };
 FucInfo Fn_ListBoxWGetItemTip = { {
-		/*ccname*/  "È¡±íÏîÌáÊ¾ÎÄ±¾",
+		/*ccname*/  "å–è¡¨é¡¹æç¤ºæ–‡æœ¬",
 		/*egname*/  "GetItemTip",
 		/*explain*/ "",
 		/*category*/-1,
@@ -3066,13 +3066,13 @@ EXTERN_C void libstl_ListBoxW_SetItemTip(PMDATA_INF pRetData, INT nArgCount, PMD
 }
 static ARG_INFO s_ArgsSetItemTip[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "ÎÄ±¾","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ–‡æœ¬","",0,0,SDT_BIN,0,ArgMark::AS_NONE }
 };
 FucInfo Fn_ListBoxWSetItemTip = { {
-		/*ccname*/  "ÖÃ±íÏîÌáÊ¾ÎÄ±¾",
+		/*ccname*/  "ç½®è¡¨é¡¹æç¤ºæ–‡æœ¬",
 		/*egname*/  "SetItemTip",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3100,12 +3100,12 @@ EXTERN_C void libstl_ListBoxW_GetItemImageIndex(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsGetItemImageIndex[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemImageIndex = { {
-		/*ccname*/  "È¡±íÏîÍ¼Æ¬Ë÷Òı",
+		/*ccname*/  "å–è¡¨é¡¹å›¾ç‰‡ç´¢å¼•",
 		/*egname*/  "GetItemImageIndex",
-		/*explain*/ "Ê§°Ü»òÎŞÍ¼Æ¬·µ»Ø-1",
+		/*explain*/ "å¤±è´¥æˆ–æ— å›¾ç‰‡è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -3135,13 +3135,13 @@ EXTERN_C void libstl_ListBoxW_SetItemImageIndex(PMDATA_INF pRetData, INT nArgCou
 }
 static ARG_INFO s_ArgsSetItemImageIndex[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "Í¼Æ¬Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "å›¾ç‰‡ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetItemImageIndex = { {
-		/*ccname*/  "ÖÃ±íÏîÍ¼Æ¬Ë÷Òı",
+		/*ccname*/  "ç½®è¡¨é¡¹å›¾ç‰‡ç´¢å¼•",
 		/*egname*/  "SetItemImageIndex",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3168,12 +3168,12 @@ EXTERN_C void libstl_ListBoxW_InitStorage(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsInitStorage[] =
 {
-	{ "ÏîÄ¿Êı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "é¡¹ç›®æ•°","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWInitStorage = { {
-		/*ccname*/  "±£ÁôÄÚ´æ",
+		/*ccname*/  "ä¿ç•™å†…å­˜",
 		/*egname*/  "InitStorage",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3194,10 +3194,10 @@ EXTERN_C void libstl_ListBoxW_GetImageList(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsGetImageList[] =
 {
-	{ "ÊÇ·ñ·µ»Ø·ÇÍâ²¿Í¼ÏñÁĞ±í","Èô±¾²ÎÊıÎªÕæÔò·µ»ØÖµ¿ÉÄÜÊÇ¿Ø¼şÄÚ²¿Î¬»¤µÄÍ¼ÏñÁĞ±í£¬¾ø¶Ô²»ÄÜÔÚÍâ²¿É¾³ı»òĞŞ¸Ä¸ÃÍ¼ÏñÁĞ±í",0,0,SDT_BOOL,FALSE,ArgMark::AS_HAS_DEFAULT_VALUE },
+	{ "æ˜¯å¦è¿”å›éå¤–éƒ¨å›¾åƒåˆ—è¡¨","è‹¥æœ¬å‚æ•°ä¸ºçœŸåˆ™è¿”å›å€¼å¯èƒ½æ˜¯æ§ä»¶å†…éƒ¨ç»´æŠ¤çš„å›¾åƒåˆ—è¡¨ï¼Œç»å¯¹ä¸èƒ½åœ¨å¤–éƒ¨åˆ é™¤æˆ–ä¿®æ”¹è¯¥å›¾åƒåˆ—è¡¨",0,0,SDT_BOOL,FALSE,ArgMark::AS_HAS_DEFAULT_VALUE },
 };
 FucInfo Fn_ListBoxWGetImageList = { {
-		/*ccname*/  "È¡Í¼ÏñÁĞ±í¾ä±ú",
+		/*ccname*/  "å–å›¾åƒåˆ—è¡¨å¥æŸ„",
 		/*egname*/  "GetImageList",
 		/*explain*/ "",
 		/*category*/-1,
@@ -3220,12 +3220,12 @@ EXTERN_C void libstl_ListBoxW_SetImageList(PMDATA_INF pRetData, INT nArgCount, P
 }
 static ARG_INFO s_ArgsSetImageList[] =
 {
-	{ "Í¼ÏñÁĞ±í¾ä±ú","¸ÃÍ¼ÏñÁĞ±íÓÉµ÷ÓÃÕßÎ¬»¤£¬¿Ø¼ş²»»áĞŞ¸Ä»òÉ¾³ı",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "å›¾åƒåˆ—è¡¨å¥æŸ„","è¯¥å›¾åƒåˆ—è¡¨ç”±è°ƒç”¨è€…ç»´æŠ¤ï¼Œæ§ä»¶ä¸ä¼šä¿®æ”¹æˆ–åˆ é™¤",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetImageList = { {
-		/*ccname*/  "ÖÃÍ¼ÏñÁĞ±í¾ä±ú",
+		/*ccname*/  "ç½®å›¾åƒåˆ—è¡¨å¥æŸ„",
 		/*egname*/  "SetImageList",
-		/*explain*/ "Ò×ÓïÑÔµÄ×Ö½Ú¼¯Í¼Æ¬×éÌ«¹ıÄÖµ¯£¬ÓÚÊÇ±¾·½·¨Ó¦ÔË¶øÉú£¬¶Å¾øÉ¶ÂÒ¹óÎï×Ö½Ú¼¯´ÓÎÒ×öÆğ",
+		/*explain*/ "æ˜“è¯­è¨€çš„å­—èŠ‚é›†å›¾ç‰‡ç»„å¤ªè¿‡é—¹å¼¹ï¼Œäºæ˜¯æœ¬æ–¹æ³•åº”è¿è€Œç”Ÿï¼Œæœç»å•¥ä¹±è´µç‰©å­—èŠ‚é›†ä»æˆ‘åšèµ·",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     _SDT_NULL,
@@ -3260,16 +3260,16 @@ EXTERN_C void libstl_ListBoxW_GetItemRect(PMDATA_INF pRetData, INT nArgCount, PM
 }
 static ARG_INFO s_ArgsGetItemRect[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "½ÓÊÕ×ó±ß±äÁ¿","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "½ÓÊÕ¶¥±ß±äÁ¿","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "½ÓÊÕÓÒ±ß±äÁ¿","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "½ÓÊÕµ×±ß±äÁ¿","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ¥æ”¶å·¦è¾¹å˜é‡","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ¥æ”¶é¡¶è¾¹å˜é‡","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ¥æ”¶å³è¾¹å˜é‡","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ¥æ”¶åº•è¾¹å˜é‡","",0,0,SDT_INT,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
 };
 FucInfo Fn_ListBoxWGetItemRect = { {
-		/*ccname*/  "È¡±íÏî¾ØĞÎ",
+		/*ccname*/  "å–è¡¨é¡¹çŸ©å½¢",
 		/*egname*/  "GetItemRect",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3331,15 +3331,15 @@ EXTERN_C void libstl_ListBoxW_HitTest(PMDATA_INF pRetData, INT nArgCount, PMDATA
 }
 static ARG_INFO s_ArgsHitTest[] =
 {
-	{ "ºáÏòÎ»ÖÃ","Ïà¶Ô¿Í»§Çø",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "×İÏòÎ»ÖÃ","Ïà¶Ô¿Í»§Çø",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "ÊÇ·ñÃüÖĞ¼ì²é¿ò","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
-	{ "ÊÇ·ñÃüÖĞÍ¼Æ¬","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ¨ªå‘ä½ç½®","ç›¸å¯¹å®¢æˆ·åŒº",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "çºµå‘ä½ç½®","ç›¸å¯¹å®¢æˆ·åŒº",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ˜¯å¦å‘½ä¸­æ£€æŸ¥æ¡†","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
+	{ "æ˜¯å¦å‘½ä¸­å›¾ç‰‡","",0,0,SDT_BOOL,0,ArgMark::AS_RECEIVE_VAR | ArgMark::AS_DEFAULT_VALUE_IS_EMPTY },
 };
 FucInfo Fn_ListBoxWHitTest = { {
-		/*ccname*/  "ÃüÖĞ²âÊÔ",
+		/*ccname*/  "å‘½ä¸­æµ‹è¯•",
 		/*egname*/  "HitTest",
-		/*explain*/ "·µ»ØÃüÖĞµÄ±íÏîË÷Òı£¬Î´ÃüÖĞÔò·µ»Ø-1",
+		/*explain*/ "è¿”å›å‘½ä¸­çš„è¡¨é¡¹ç´¢å¼•ï¼Œæœªå‘½ä¸­åˆ™è¿”å›-1",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -3367,12 +3367,12 @@ EXTERN_C void libstl_ListBoxW_GetItemStringLength(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsGetItemStringLength[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemStringLength = { {
-		/*ccname*/  "È¡±íÏîÎÄ±¾³¤¶È",
+		/*ccname*/  "å–è¡¨é¡¹æ–‡æœ¬é•¿åº¦",
 		/*egname*/  "GetItemStringLength",
-		/*explain*/ "Ê§°Ü»òÎŞÎÄ±¾·µ»Ø0",
+		/*explain*/ "å¤±è´¥æˆ–æ— æ–‡æœ¬è¿”å›0",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -3405,10 +3405,10 @@ EXTERN_C void libstl_ListBoxW_Sort(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 }
 static ARG_INFO s_ArgsSort[] =
 {
-	{ "ÅÅĞò·½Ê½","0 - ÉıĞò  1 - ½µĞò",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ’åºæ–¹å¼","0 - å‡åº  1 - é™åº",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSort = { {
-		/*ccname*/  "ÅÅĞò",
+		/*ccname*/  "æ’åº",
 		/*egname*/  "Sort",
 		/*explain*/ "",
 		/*category*/-1,
@@ -3449,12 +3449,12 @@ EXTERN_C void libstl_ListBoxW_Sort2(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 }
 static ARG_INFO s_ArgsSort2[] =
 {
-	{ "ÅÅĞò×Ó³ÌĞò","·µ»ØÖµÀàĞÍÎªÂß¼­ĞÍ£¬ÓĞÁ½¸öÕûÊıĞÍ²ÎÊı£¬´«ÈëÁ½±íÏîµÄ×Ô¶¨ÒåÊıÖµ£¬ÈôµÚÒ»¸ö²ÎÊı´ú±íµÄ±íÏîÊı¾İ´óÓÚµÚ¶ş¸ö£¬Ôò·µ»ØÕæ£¬·ñÔò·µ»Ø¼Ù",0,0,_SDT_ALL,0,ArgMark::AS_NONE },
+	{ "æ’åºå­ç¨‹åº","è¿”å›å€¼ç±»å‹ä¸ºé€»è¾‘å‹ï¼Œæœ‰ä¸¤ä¸ªæ•´æ•°å‹å‚æ•°ï¼Œä¼ å…¥ä¸¤è¡¨é¡¹çš„è‡ªå®šä¹‰æ•°å€¼ï¼Œè‹¥ç¬¬ä¸€ä¸ªå‚æ•°ä»£è¡¨çš„è¡¨é¡¹æ•°æ®å¤§äºç¬¬äºŒä¸ªï¼Œåˆ™è¿”å›çœŸï¼Œå¦åˆ™è¿”å›å‡",0,0,_SDT_ALL,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSort2 = { {
-		/*ccname*/  "×Ô¶¨ÒåÅÅĞò",
+		/*ccname*/  "è‡ªå®šä¹‰æ’åº",
 		/*egname*/  "Sort2",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3485,13 +3485,13 @@ EXTERN_C void libstl_ListBoxW_SwapItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_ArgsSwapItem[] =
 {
-	{ "Ë÷Òı1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "Ë÷Òı2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSwapItem = { {
-		/*ccname*/  "½»»»±íÏî",
+		/*ccname*/  "äº¤æ¢è¡¨é¡¹",
 		/*egname*/  "SwapItem",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3522,13 +3522,13 @@ EXTERN_C void libstl_ListBoxW_MoveItem(PMDATA_INF pRetData, INT nArgCount, PMDAT
 }
 static ARG_INFO s_ArgsMoveItem[] =
 {
-	{ "Ë÷Òı1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "Ë÷Òı2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•1","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•2","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWMoveItem = { {
-		/*ccname*/  "ÒÆ¶¯±íÏî",
+		/*ccname*/  "ç§»åŠ¨è¡¨é¡¹",
 		/*egname*/  "MoveItem",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3556,12 +3556,12 @@ EXTERN_C void libstl_ListBoxW_GetItemDisableState(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsGetItemDisableState[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWGetItemDisableState = { {
-		/*ccname*/  "È¡±íÏî½ûÖ¹×´Ì¬",
+		/*ccname*/  "å–è¡¨é¡¹ç¦æ­¢çŠ¶æ€",
 		/*egname*/  "GetItemDisableState",
-		/*explain*/ "·µ»Ø0ÎªÑ¡ÖĞ£¬·µ»Ø1Ñ¡ÖĞ",
+		/*explain*/ "è¿”å›0ä¸ºé€‰ä¸­ï¼Œè¿”å›1é€‰ä¸­",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_INT,
@@ -3591,13 +3591,13 @@ EXTERN_C void libstl_ListBoxW_SetItemDisableState(PMDATA_INF pRetData, INT nArgC
 }
 static ARG_INFO s_ArgsSetItemDisableState[] =
 {
-	{ "Ë÷Òı","",0,0,SDT_INT,0,ArgMark::AS_NONE },
-	{ "ÊÇ·ñ½ûÖ¹","",0,0,SDT_BOOL,0,ArgMark::AS_NONE },
+	{ "ç´¢å¼•","",0,0,SDT_INT,0,ArgMark::AS_NONE },
+	{ "æ˜¯å¦ç¦æ­¢","",0,0,SDT_BOOL,0,ArgMark::AS_NONE },
 };
 FucInfo Fn_ListBoxWSetItemDisableState = { {
-		/*ccname*/  "ÖÃ±íÏî½ûÖ¹×´Ì¬",
+		/*ccname*/  "ç½®è¡¨é¡¹ç¦æ­¢çŠ¶æ€",
 		/*egname*/  "SetItemDisableState",
-		/*explain*/ "³É¹¦·µ»ØÕæ£¬Ê§°Ü·µ»Ø¼Ù",
+		/*explain*/ "æˆåŠŸè¿”å›çœŸï¼Œå¤±è´¥è¿”å›å‡",
 		/*category*/-1,
 		/*state*/   0,
 		/*ret*/     SDT_BOOL,
@@ -3613,19 +3613,19 @@ static INT s_Cmd_ListBox[] = { 237,238,239,240,241,242,243,244,245,246,247,248,2
 								259,260,261,262,263,264,265,266,267,268,269 };
 ESTL_NAMESPACE_BEGIN
 LIB_DATA_TYPE_INFO CtListBoxW = {
-	"ÁĞ±í¿òW",//ÖĞÎÄÃû³Æ
-	"ListBoxW",//Ó¢ÎÄÃû³Æ
-	"UnicodeÁĞ±í¿ò¡¢ÎÄ¼ş¿ò¡¢Ñ¡ÔñÁĞ±í¿òÈıºÏÒ»¡£×¢Òâ£ºÖ§³Ö¿â´´½¨Ò»¸öÎŞÊı¾İÁĞ±í¿ò£¬È»ºó´¦ÀíËüµÄÏîÄ¿¹ÜÀíÓë»æÖÆ¹¤×÷£¬Íâ²¿¾ø¶Ô²»ÄÜÊ¹ÓÃLB_ADDSTRINGµÈÏûÏ¢¡£",//ËµÃ÷
-	ARRAYSIZE(s_Cmd_ListBox),//ÃüÁîÊıÁ¿
-	s_Cmd_ListBox,//ÔÚÈ«¾Öº¯ÊıÖĞ¶ÔÓ¦µÄË÷Òı
-	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//±êÖ¾
-	IDB_LISTBOX_W,//×ÊÔ´ID
+	"åˆ—è¡¨æ¡†W",//ä¸­æ–‡åç§°
+	"ListBoxW",//è‹±æ–‡åç§°
+	"Unicodeåˆ—è¡¨æ¡†ã€æ–‡ä»¶æ¡†ã€é€‰æ‹©åˆ—è¡¨æ¡†ä¸‰åˆä¸€ã€‚æ³¨æ„ï¼šæ”¯æŒåº“åˆ›å»ºä¸€ä¸ªæ— æ•°æ®åˆ—è¡¨æ¡†ï¼Œç„¶åå¤„ç†å®ƒçš„é¡¹ç›®ç®¡ç†ä¸ç»˜åˆ¶å·¥ä½œï¼Œå¤–éƒ¨ç»å¯¹ä¸èƒ½ä½¿ç”¨LB_ADDSTRINGç­‰æ¶ˆæ¯ã€‚",//è¯´æ˜
+	ARRAYSIZE(s_Cmd_ListBox),//å‘½ä»¤æ•°é‡
+	s_Cmd_ListBox,//åœ¨å…¨å±€å‡½æ•°ä¸­å¯¹åº”çš„ç´¢å¼•
+	_DT_OS(__OS_WIN) | LDT_WIN_UNIT,//æ ‡å¿—
+	IDB_LISTBOX_W,//èµ„æºID
 	ARRAYSIZE(s_Event_ListBox),
 	s_Event_ListBox,
-	ARRAYSIZE(s_Member_ListBox),//ÊôĞÔÊı
-	s_Member_ListBox,//ÊôĞÔÖ¸Õë
-	libstl_GetInterface_ListBoxW,//×é¼ş½»»¥×Ó³ÌĞò
-	NULL,//³ÉÔ±ÊıÁ¿
-	NULL//³ÉÔ±Êı¾İÊı×é
+	ARRAYSIZE(s_Member_ListBox),//å±æ€§æ•°
+	s_Member_ListBox,//å±æ€§æŒ‡é’ˆ
+	libstl_GetInterface_ListBoxW,//ç»„ä»¶äº¤äº’å­ç¨‹åº
+	NULL,//æˆå‘˜æ•°é‡
+	NULL//æˆå‘˜æ•°æ®æ•°ç»„
 };
 ESTL_NAMESPACE_END

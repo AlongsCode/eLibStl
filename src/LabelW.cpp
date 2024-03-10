@@ -650,7 +650,7 @@ private:
 			return TRUE;
 		}
 
-		elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
+		//elibstl::SendToParentsHwnd(p->m_dwWinFormID, p->m_dwUnitID, uMsg, wParam, lParam);
 		return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 	}
 public:
