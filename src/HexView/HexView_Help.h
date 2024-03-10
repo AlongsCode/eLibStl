@@ -14,11 +14,40 @@ PVOID GetDataFromHunit(HUNIT hUnit);
 PVOID UpdateDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWnd, PVOID pData);
 PVOID SetDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWnd, PVOID pData);
 
+template<typename T, typename R> inline bool __query(const T& l, const R& r)
+{
+    return ((l & r) == r);
+}
+enum E_EVENT_DEAL
+{
+    E_EVENT_DEAL_NONE = 0x0000,   // 事件没有被处理
+    E_EVENT_DEAL_DEAL = 0x0001,   // 事件已经被处理
+    E_EVENT_DEAL_RET = 0x0002,   // 事件有返回值, 没有这个标志表示用户没有对事件进行返回, 根据事件需要做一个默认值
+    E_EVENT_DEAL_CALL2 = 0x0004,   // 调用了两次事件了
+};
+// 调用易语言的事件, 返回易语言返回的结果
+// data = 要对哪个组件投递事件
+// nDeal = 处理结果, 参考返回易语言是否处理了这个事件, E_EVENT_DEAL 枚举常量
+// iEvent = 事件索引, EVENT_INFO2 这个数组的索引, 数组是所有事件, 索引对应事件
+int CallEEvent(PCONTROL_STRUCT_BASE data, int& nDeal, int iEvent, int nArgCount, ...);
 
 
+// 读取数据, 返回读取后的地址
+inline LPBYTE read_data(LPBYTE& buf, LPVOID pData, int size)
+{
+    BYTE ret = ((BYTE*)buf)[0];
+    memcpy(pData, buf, size);
+    buf += size;
+    return buf;
+}
+// 读取结构, 返回读取后的地址
+template<typename T> inline LPBYTE read_struct(LPBYTE& buf, T& data)
+{
+    return read_data(buf, &data, sizeof(data));
+}
 inline BYTE read_int08(LPBYTE& buf)
 {
-    BYTE ret = ( (BYTE*)buf )[0];
+    BYTE ret = ((BYTE*)buf)[0];
     buf += sizeof(BYTE);
     return ret;
 }
