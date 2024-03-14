@@ -1064,6 +1064,7 @@ private:
 		auto p = (CListBox*)dwRefData;
 		switch (uMsg)
 		{
+		case WM_LBUTTONDBLCLK:// 连击修复
 		case WM_LBUTTONDOWN:// 更新检查框
 		{
 			if (!p->m_Info.iCheckBoxMode)
@@ -1072,7 +1073,7 @@ private:
 			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
 			int idxItem;
 			int idx = p->HitTestCheckBox(pt, &idxItem);
-			if (idxItem < 0)
+			if (idxItem < 0 || idxItem >= p->m_ItemsInfo.size())
 				break;
 			if (!p->m_ItemsInfo[idxItem].Info.bDisabled && idx >= 0)
 				if (p->m_Info.iCheckBoxMode == 1)
@@ -1089,15 +1090,6 @@ private:
 					BOOLNOT(p->m_ItemsInfo[idx].Info.bChecked);
 					p->RedrawItem(idx);
 				}
-		}
-		break;
-
-		case WM_LBUTTONDBLCLK:// 连击修复
-		{
-			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-			int idx = p->HitTestCheckBox(pt);
-			if (idx >= 0)
-				PostMessageW(hWnd, WM_LBUTTONDOWN, wParam, lParam);
 		}
 		break;
 
