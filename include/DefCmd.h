@@ -358,7 +358,8 @@
 /*355*/ ,Fn_MemoryModule_GetProcAddress/*取函数地址*/\
 /*356*/ ,Fn_MemoryModule_CallEntryPoint/*运行*/\
 /*357*/ ,Fn_eStl_GetMd5W/*取数据摘要*/\
-/*358*/ ,Fn_eStl_GetMd5A/*取数据摘要A*/
+/*358*/ ,Fn_eStl_GetMd5A/*取数据摘要A*/\
+/*359*/ ,Fn_eStl_FileManyDialogW/*多文件对话框*/
 
 #pragma endregion
 

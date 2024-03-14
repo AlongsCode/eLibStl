@@ -1,62 +1,217 @@
 ﻿#include"intrin.h"
 #include"ElibHelp.h"
-//static std::vector<std::string> OpenManyFileDialog(const char* title, const char* filter, int initFilter, const char* initDir, bool noChangeDir, HWND parentWnd, int openMode)
-//{
-//	std::vector<std::string> fileNames;
-//	std::vector<char> szFile(MAX_PATH * 200, 0);
-//	OPENFILENAMEA ofn = { sizeof(ofn) };
-//	ofn.hwndOwner = parentWnd;
-//	ofn.lpstrTitle = title;
-//	ofn.lpstrFilter = filter;
-//	ofn.nFilterIndex = initFilter;
-//	ofn.lpstrFile = szFile.data();
-//	ofn.nMaxFile = static_cast<DWORD>(szFile.size());
-//	ofn.lpstrInitialDir = initDir;
-//	ofn.Flags = OFN_ALLOWMULTISELECT | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-//	if (noChangeDir) ofn.Flags |= OFN_NOCHANGEDIR;
-//	if (openMode == 1) ofn.Flags |= OFN_OVERWRITEPROMPT;
-//	if (GetOpenFileNameA(&ofn))
-//	{
-//		char* p = szFile.data() + strlen(szFile.data()) + 1;
-//		while (*p)
-//		{
-//			std::string szFileName(szFile.data());
-//			szFileName += '\\';
-//			szFileName += p;
-//			fileNames.push_back(szFileName);
-//			p += strlen(p) + 1;
-//		}
-//	}
-//	return fileNames;
-//}
 
 
 
 
+#ifndef CFILEDLG_H
+#define CFILEDLG_H
+#include <windows.h>
+#include <array>
+#include <vector>
+#include <tchar.h>
+class CFileDlg {
+public:
+	//属性部分,因为都是直接读取,所以可以直接赋值
+	bool  m_bCreateprompt{};//创建时提示
+	bool  m_bFileMustExist{};//文件必须存在
+	bool  m_bOverrideprompt{};//文件覆盖提示
+	bool  m_bPathMustExist{};//目录必须存在
+	bool  noChangeDir{};// 不改变目录
+	bool m_SelectedFiles{};//多选
+	UINT m_dwDefFilter{};//初始过滤器索引
+	std::wstring m_strDefext;//默认文件后缀
+	std::wstring m_strFilter;//过滤器
+	std::wstring m_fileNamae;//默认返回文件名
+	std::wstring m_title;//标题
+	std::wstring m_strDefdir;//初始目录
+private:
+	OPENFILENAMEW m_ofn{};//对话框结构体
+	std::array<wchar_t, 64> m_szFileTitle{};
+	std::array<wchar_t, MAX_PATH>m_szFileName{};
+public:
+	BOOL Open(HWND pParentWnd = nullptr) {
+		m_ofn.Flags = OFN_HIDEREADONLY | OFN_ENABLESIZING | OFN_EXPLORER;
+		if (m_bCreateprompt)  m_ofn.Flags |= OFN_CREATEPROMPT;
+		if (m_bFileMustExist)  m_ofn.Flags |= OFN_FILEMUSTEXIST;
+		if (m_bOverrideprompt)  m_ofn.Flags |= OFN_OVERWRITEPROMPT;
+		if (m_bPathMustExist)  m_ofn.Flags |= OFN_PATHMUSTEXIST;
+		if (noChangeDir)  m_ofn.Flags |= OFN_NOCHANGEDIR;
+		if (m_SelectedFiles) m_ofn.Flags |= OFN_ALLOWMULTISELECT;
 
+		if (!m_fileNamae.empty())
+			wcscpy_s(m_szFileName.data(), static_cast<INT>(m_fileNamae.size()), m_fileNamae.data());
 
+		for (auto& c : m_strFilter) {//处理过滤器
+			if (c == L'|')
+				c = L'\0';
+		}
 
-static  std::vector<std::wstring> split_text(const std::wstring& text, const  wchar_t* str) {
-	std::vector<std::wstring> ret;
-	if (str == nullptr || *str == L'\0' || text == L"")
+		while (pParentWnd != nullptr) {//处理顶层窗口
+			auto tempParent = ::GetParent(pParentWnd);
+			if (tempParent == nullptr)
+				break;
+			pParentWnd = tempParent;
+		}
+		m_ofn.lStructSize = sizeof(m_ofn);
+		m_ofn.lpstrDefExt = m_strDefext.c_str(); //默认文件后缀
+		m_ofn.lpstrFilter = m_strFilter.data();//过滤器
+		m_ofn.lpstrFile = m_szFileName.data();
+		m_ofn.nMaxFile = static_cast<DWORD>(m_szFileName.size());
+		m_ofn.lpstrFileTitle = m_szFileTitle.data();
+		m_ofn.nMaxFileTitle = static_cast<DWORD>(m_szFileTitle.size());
+		m_ofn.nFilterIndex = m_strFilter.empty() ? 0 : (m_dwDefFilter < 0 ? 0 : m_dwDefFilter + 1);//默认过滤器索引
+		m_ofn.lpstrTitle = m_title.data();//标题
+		m_ofn.lpstrInitialDir = m_strDefdir.data();//默认目录
+		m_ofn.hwndOwner = pParentWnd;
+
+		BOOL bEnableParent = FALSE;
+		HWND hWndFocus = ::GetFocus();
+		if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner))
+		{
+			bEnableParent = TRUE;
+			::EnableWindow(m_ofn.hwndOwner, FALSE);
+		}
+		BOOL nResult = ::GetOpenFileNameW(&m_ofn);
+		if (bEnableParent)
+			::EnableWindow(m_ofn.hwndOwner, TRUE);
+		if (::IsWindow(hWndFocus))
+			::SetFocus(hWndFocus);
+
+		if (nResult)
+		{
+			//记忆过滤器
+			m_dwDefFilter = (0 > m_ofn.nFilterIndex - 1) ? 0 : (m_ofn.nFilterIndex - 1);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL Save(HWND pParentWnd = nullptr)
 	{
-		ret.push_back((text));
+		m_ofn.Flags = OFN_HIDEREADONLY | OFN_ENABLESIZING | OFN_EXPLORER;
+		if (m_bCreateprompt)  m_ofn.Flags |= OFN_CREATEPROMPT;
+		if (m_bFileMustExist)  m_ofn.Flags |= OFN_FILEMUSTEXIST;
+		if (m_bOverrideprompt)  m_ofn.Flags |= OFN_OVERWRITEPROMPT;
+		if (m_bPathMustExist)  m_ofn.Flags |= OFN_PATHMUSTEXIST;
+		if (noChangeDir)  m_ofn.Flags |= OFN_NOCHANGEDIR;
+		if (m_SelectedFiles) m_ofn.Flags |= OFN_ALLOWMULTISELECT;
+
+		if (!m_fileNamae.empty())
+			wcscpy_s(m_szFileName.data(), static_cast<INT>(m_fileNamae.size()), m_fileNamae.data());
+
+		for (auto& c : m_strFilter) {//处理过滤器
+			if (c == L'|')
+				c = L'\0';
+		}
+
+		while (pParentWnd != nullptr) {//处理顶层窗口
+			auto tempParent = ::GetParent(pParentWnd);
+			if (tempParent == nullptr)
+				break;
+			pParentWnd = tempParent;
+		}
+		m_ofn.lStructSize = sizeof(m_ofn);
+		m_ofn.lpstrDefExt = m_strDefext.c_str(); //默认文件后缀
+		m_ofn.lpstrFilter = m_strFilter.data();//过滤器
+		m_ofn.lpstrFile = m_szFileName.data();
+		m_ofn.nMaxFile = static_cast<DWORD>(m_szFileName.size());
+		m_ofn.lpstrFileTitle = m_szFileTitle.data();
+		m_ofn.nMaxFileTitle = static_cast<DWORD>(m_szFileTitle.size());
+		m_ofn.nFilterIndex = m_strFilter.empty() ? 0 : (m_dwDefFilter < 0 ? 0 : m_dwDefFilter + 1);//默认过滤器索引
+		m_ofn.lpstrTitle = m_title.data();//标题
+		m_ofn.lpstrInitialDir = m_strDefdir.data();//默认目录
+		m_ofn.hwndOwner = pParentWnd;
+
+		BOOL bEnableParent = FALSE;
+		HWND hWndFocus = ::GetFocus();
+		if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner))
+		{
+			bEnableParent = TRUE;
+			::EnableWindow(m_ofn.hwndOwner, FALSE);
+		}
+		BOOL nResult = ::GetSaveFileNameW(&m_ofn);
+		if (bEnableParent)
+			::EnableWindow(m_ofn.hwndOwner, TRUE);
+		if (::IsWindow(hWndFocus))
+			::SetFocus(hWndFocus);
+
+		if (nResult)
+		{
+			//记忆过滤器
+			m_dwDefFilter = (0 > m_ofn.nFilterIndex - 1) ? 0 : (m_ofn.nFilterIndex - 1);
+			return TRUE;
+		}
+		return FALSE;
+
+	}
+
+
+	std::wstring GetFullName() const {
+		return m_szFileName.data();
+	}
+
+	std::wstring GetName() const {
+		return  m_szFileTitle.data();
+	}
+	std::vector<LPBYTE> GetAllPathName() {
+		int pos = 0;
+		std::vector<LPBYTE> ret;
+		do {
+			auto temp = std::wstring(GetNextPathName(pos).data());
+			if (!temp.empty())
+				ret.push_back(elibstl::clone_textw(temp));
+			
+		} while (pos != -1);
 		return ret;
 	}
-	size_t start = 0, index = text.find_first_of(str, 0);
-	while (index != text.npos)
+
+private:
+	std::wstring GetNextPathName(int& pos) const
 	{
-		if (start != index)
-			ret.push_back((text.substr(start, index - start)));
-		start = index + 1;
-		index = text.find_first_of(str, start);
+		int maxFileSize = static_cast<int>(m_ofn.nMaxFile);
+		int bufferSize = (260 < maxFileSize - pos) ? 260 : (maxFileSize - pos);
+		std::wstring fileNames(m_ofn.lpstrFile + pos, m_ofn.lpstrFile + pos + bufferSize);
+		size_t index = 0;
+		if (pos == 0)
+		{
+			index = fileNames.find(L'\0');
+
+			if (index == std::wstring::npos || (fileNames.at(++index) == L'\0'))
+			{
+				pos = -1;
+				return m_ofn.lpstrFile;
+			}
+		}
+		std::wstring pathName = m_ofn.lpstrFile;
+		std::wstring fileName = m_ofn.lpstrFile + pos + index;
+
+		int fileLength = lstrlenW(fileName.data());
+		if (fileNames.at(index + fileLength + 1) == L'\0')
+			pos = -1;
+		else
+			pos = pos + static_cast<UINT>(index) + fileLength + 1;
+
+		if (!pathName.empty())
+		{
+			int pathLength = static_cast<int>(pathName.size());
+			TCHAR termination = pathName.at(pathLength - 1);
+
+			if (termination == L'\\')
+				return pathName + fileName;
+
+		}
+		return pathName + L'\\' + fileName;
 	}
-	if (text.substr(start) != L"")
-	{
-		ret.push_back((text.substr(start)));
-	}
-	return ret;
-}
+};
+
+#endif
+
+
+
+
+
+
+
 
 
 static  std::vector<std::string> split_text(const std::string& text, const  char* str) {
@@ -391,8 +546,8 @@ static ARG_INFO WArgs[] =
 		/*default*/ 0,
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	},{
-		/*name*/    "是否启用旧式风格",
-		/*explain*/ ("是否启用旧式对话框风格,默认为假"),
+		/*name*/    "保存时目录必须存在",
+		/*explain*/ ("保存时目录不存在则不会创建"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
@@ -407,86 +562,50 @@ static ARG_INFO WArgs[] =
 		/*type*/    SDT_BIN,
 		/*default*/ 0,
 		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
-	},
-	{
-		/*name*/    "多选",
-		/*explain*/ (""),
+	}, {
+		/*name*/    "保存时文件必须存在",
+		/*explain*/ ("保存时文件不存在则不会创建"),
 		/*bmp inx*/ 0,
 		/*bmp num*/ 0,
 		/*type*/    SDT_BOOL,
 		/*default*/ 0,
-		/*state*/    ArgMark::AS_HAS_DEFAULT_VALUE,
+		/*state*/    ArgMark::AS_DEFAULT_VALUE_IS_EMPTY,
 	}
 };
 
-static std::wstring OpenFileDialogW(const wchar_t* title, const wchar_t* filter, int initFilter, const wchar_t* initDir, bool noChangeDir, HWND parentWnd, int openMode,
+static std::wstring OpenFileDialogW(
+	const wchar_t* title, 
+	const wchar_t* filter, 
+	int initFilter, 
+	const wchar_t* initDir, 
+	bool noChangeDir, 
+	HWND parentWnd, 
+	int openMode,
 	bool bCreateprompt,
 	bool bOverrideprompt,
 	const wchar_t* deflutext,
-	bool bOldStyle,
-	const wchar_t* defaultFileName) {
-	std::wstring fileName;
-	WCHAR szFile[MAX_PATH] = { 0 };
-	if (defaultFileName && *defaultFileName != L'\0')
-	{
-		wcscpy_s(szFile, MAX_PATH, (L"\\" + std::wstring(defaultFileName)).c_str());
-	}
-
-	auto filterarry = split_text(filter, L"|");
-	std::vector<wchar_t> all_filter;
-	for (size_t i = 0; i < filterarry.size(); i++)
-	{
-		if (i + 1 == filterarry.size()) {
-			auto temp = std::vector<wchar_t>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
-
-			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
-			all_filter.push_back(L'\0');
-			all_filter.push_back(L'\0');
-		}
-		else {
-			auto temp = std::vector<wchar_t>(filterarry[i].c_str(), filterarry[i].c_str() + filterarry[i].size());
-			all_filter.insert(all_filter.end(), temp.begin(), temp.end());
-			all_filter.push_back(L'\0');
-		}
-	}
-	OPENFILENAMEW ofn = { sizeof(ofn) };
-	if (!all_filter.empty())
-	{
-		ofn.lpstrFilter = all_filter.data();
-	}
-	ofn.hwndOwner = parentWnd;
-	ofn.lpstrTitle = title;
-
-	ofn.nFilterIndex = initFilter;
-	ofn.lpstrFile = szFile;
-	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrInitialDir = initDir;
-	DWORD dwFlags = OFN_HIDEREADONLY;
-	if (bCreateprompt)  dwFlags |= OFN_CREATEPROMPT;
-	if (noChangeDir) dwFlags |= OFN_NOCHANGEDIR;
-	if (bOverrideprompt)  dwFlags |= OFN_OVERWRITEPROMPT;
-	if (bOldStyle) dwFlags |= OFN_EXPLORER;
-	//非保存模式文件必须存在，且为文件增加默认后缀
-
-	if (openMode != 1) {
-		dwFlags |= OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;;
-		ofn.Flags = dwFlags;
-		if (GetOpenFileNameW(&ofn))
-		{
-			fileName = szFile;
-		}
-	}
-	else {
-		ofn.lpstrDefExt = deflutext;
-		ofn.Flags = dwFlags;
-		if (GetSaveFileNameW(&ofn))
-		{
-			fileName = szFile;
-		}
-	}
-
-
-	return fileName;
+	bool bPathMustExist,
+	const wchar_t* defaultFileName,
+	bool bFileMustExist
+) {
+	CFileDlg dlg;
+	dlg.m_bFileMustExist = bFileMustExist;
+	dlg.m_SelectedFiles = true;
+	dlg.m_bCreateprompt = bCreateprompt;
+	dlg.m_bOverrideprompt = bOverrideprompt;
+	dlg.m_strDefext = deflutext;
+	dlg.m_strDefdir = initDir;
+	dlg.m_fileNamae = defaultFileName;
+	dlg.m_strFilter = filter;
+	dlg.m_dwDefFilter = initFilter;
+	dlg.noChangeDir = noChangeDir;
+	dlg.m_bPathMustExist = bPathMustExist;
+	dlg.m_title = title;
+	if (openMode == 0)
+		dlg.Open(parentWnd);
+	else
+		dlg.Save(parentWnd);
+	return dlg.GetFullName();
 }
 
 
@@ -495,12 +614,12 @@ EXTERN_C void Fn_Open_File_Dialog_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_I
 	auto title = elibstl::args_to_wsdata(pArgInf, 0), filter = elibstl::args_to_wsdata(pArgInf, 1), initDir = elibstl::args_to_wsdata(pArgInf, 3), deflutext = elibstl::args_to_wsdata(pArgInf, 9), deflufilename = elibstl::args_to_wsdata(pArgInf, 11);;
 	int initFilter = elibstl::args_to_data<int>(pArgInf, 2).value_or(0), openMode = elibstl::args_to_data<int>(pArgInf, 6).value_or(0);
 	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false), bCreateprompt = elibstl::args_to_data<BOOL>(pArgInf, 7).value_or(true), bOverrideprompt = elibstl::args_to_data<BOOL>(pArgInf, 8).value_or(true),
-		bOldStyle = elibstl::args_to_data<BOOL>(pArgInf, 10).value_or(false);
+		bOldStyle = elibstl::args_to_data<BOOL>(pArgInf, 10).value_or(false),fileMustExist= elibstl::args_to_data<BOOL>(pArgInf, 12).value_or(false);
 	HWND parentWnd = reinterpret_cast<HWND> (elibstl::args_to_data<INT>(pArgInf, 5).value_or(0));
 	pRetData->m_pBin = elibstl::clone_textw(OpenFileDialogW(std::wstring(title).c_str(), std::wstring(filter).data(), initFilter, std::wstring(initDir).data(), noChangeDir, parentWnd, openMode, bCreateprompt,
 		bOverrideprompt,
 		std::wstring(deflutext).data(),
-		bOldStyle, std::wstring(deflufilename).data()));
+		bOldStyle, std::wstring(deflufilename).data(), fileMustExist));
 }
 
 FucInfo e_Open_File_Dialog_W = { {
@@ -517,3 +636,112 @@ FucInfo e_Open_File_Dialog_W = { {
 		/*ArgCount*/sizeof(WArgs) / sizeof(WArgs[0]),
 		/*arg lp*/  WArgs,
 	} ,Fn_Open_File_Dialog_W ,"Fn_Open_File_Dialog_W" };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static std::vector<LPBYTE> OpenFileManyDialogW(
+	const wchar_t* title,
+	const wchar_t* filter,
+	int initFilter,
+	const wchar_t* initDir,
+	bool noChangeDir,
+	HWND parentWnd,
+	int openMode,
+	bool bCreateprompt,
+	bool bOverrideprompt,
+	const wchar_t* deflutext,
+	bool bPathMustExist,
+	const wchar_t* defaultFileName,
+	bool bFileMustExist
+) {
+	CFileDlg dlg;
+	dlg.m_bFileMustExist = bFileMustExist;
+	dlg.m_SelectedFiles = true;
+	dlg.m_bCreateprompt = bCreateprompt;
+	dlg.m_bOverrideprompt = bOverrideprompt;
+	dlg.m_strDefext = deflutext;
+	dlg.m_strDefdir = initDir;
+	dlg.m_fileNamae = defaultFileName;
+	dlg.m_strFilter = filter;
+	dlg.m_dwDefFilter = initFilter;
+	dlg.noChangeDir = noChangeDir;
+	dlg.m_bPathMustExist = bPathMustExist;
+	dlg.m_title = title;
+	if (openMode == 0)
+		dlg.Open(parentWnd);
+	else
+		dlg.Save(parentWnd);
+	return dlg.GetAllPathName();
+}
+
+
+EXTERN_C void fn_OpenFileManyDialog_W(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
+{
+	auto title = elibstl::args_to_wsdata(pArgInf, 0), filter = elibstl::args_to_wsdata(pArgInf, 1), initDir = elibstl::args_to_wsdata(pArgInf, 3), deflutext = elibstl::args_to_wsdata(pArgInf, 9), deflufilename = elibstl::args_to_wsdata(pArgInf, 11);;
+	int initFilter = elibstl::args_to_data<int>(pArgInf, 2).value_or(0), openMode = elibstl::args_to_data<int>(pArgInf, 6).value_or(0);
+	bool noChangeDir = elibstl::args_to_data<BOOL>(pArgInf, 4).value_or(false), bCreateprompt = elibstl::args_to_data<BOOL>(pArgInf, 7).value_or(true), bOverrideprompt = elibstl::args_to_data<BOOL>(pArgInf, 8).value_or(true),
+		bOldStyle = elibstl::args_to_data<BOOL>(pArgInf, 10).value_or(false), fileMustExist = elibstl::args_to_data<BOOL>(pArgInf, 12).value_or(false);;
+	HWND parentWnd = reinterpret_cast<HWND> (elibstl::args_to_data<INT>(pArgInf, 5).value_or(0));
+
+
+	auto ret = OpenFileManyDialogW(std::wstring(title).c_str(), std::wstring(filter).data(), initFilter, std::wstring(initDir).data(), noChangeDir, parentWnd, openMode, bCreateprompt,
+		bOverrideprompt,
+		std::wstring(deflutext).data(),
+		bOldStyle, std::wstring(deflufilename).data(),fileMustExist);
+	elibstl::create_array<LPBYTE>(ret.data(), ret.size());
+	pRetData->m_pAryData = elibstl::create_array<LPBYTE>(ret.data(), ret.size());
+}
+
+FucInfo Fn_eStl_FileManyDialogW = { {
+		/*ccname*/  ("多文件对话框W"),
+		/*egname*/  (""),
+		/*explain*/ ("显示一个文件对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本数组。如果用户未输入或按“取消”按钮退出，则返回一个空数组"),
+		/*category*/13,
+		/*state*/   CT_RETRUN_ARY_TYPE_DATA,
+		/*ret*/     SDT_BIN,
+		/*reserved*/NULL,
+		/*level*/   LVL_HIGH,
+		/*bmp inx*/ 0,
+		/*bmp num*/ 0,
+		/*ArgCount*/sizeof(WArgs) / sizeof(WArgs[0]),
+		/*arg lp*/  WArgs,
+	} ,fn_OpenFileManyDialog_W ,"fn_OpenFileManyDialog_W" };

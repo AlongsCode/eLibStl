@@ -581,7 +581,7 @@ BOOL ImageListSelectDlg(HIMAGELIST hImageList, int idxInit, int* pidxSel, HWND h
 
 bool SendToParentsHwnd(DWORD m_dwWinFormID, DWORD m_dwUnitID, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
+	// FIXME: 标准事件产生？
 	if (uMsg == WM_SETFOCUS || uMsg == WM_KILLFOCUS || uMsg == WM_MOUSELAST || uMsg >= WM_MOUSEMOVE
 		&& uMsg <= WM_RBUTTONUP || uMsg >= WM_KEYDOWN && uMsg <= WM_CHAR)
 	{
