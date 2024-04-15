@@ -650,6 +650,15 @@
     <ClCompile Include="src\ELibConstInfo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\System processing\SetKeyText.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mem processing\ptr.cpp">
+      <Filter>源文件\实现\全局命令\内存操作</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Disk Processing\IsFileExist.cpp">
+      <Filter>源文件\实现\全局命令\磁盘操作</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

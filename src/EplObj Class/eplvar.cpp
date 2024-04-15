@@ -90,7 +90,6 @@ namespace elibstl {
 			return m_DataType;
 		}
 		static int get_sys_type_value(DATA_TYPE dataType) {
-			debug_put(L"标准模板库调试:", dataType);
 			switch (dataType) {
 			case SDT_BYTE:
 				return 1;
@@ -368,6 +367,16 @@ FucInfo EplVar_copy = { {
 		/*ArgCount*/1,
 		/*arg lp*/ s_CopyArgs,
 	} ,Fn_EplVar_copy ,"Fn_EplVar_copy" };
+
+
+
+
+
+
+
+
+
+
 
 //析构
 EXTERN_C void Fn_EplVar_des(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)

@@ -359,7 +359,11 @@
 /*356*/ ,Fn_MemoryModule_CallEntryPoint/*运行*/\
 /*357*/ ,Fn_eStl_GetMd5W/*取数据摘要*/\
 /*358*/ ,Fn_eStl_GetMd5A/*取数据摘要A*/\
-/*359*/ ,Fn_eStl_FileManyDialogW/*多文件对话框*/
+/*359*/ ,Fn_eStl_FileManyDialogW/*多文件对话框*/\
+/*360*/ ,Fn_SetKeyTextW/*写配置项*/\
+/*361*/ ,Fn_GetKeyTextW/*读配置项*/\
+/*362*/ ,Fn_ptrToData/*指针到数据*/\
+/*363*/ ,Fn_IsFileExistW/*文件是否存在W*/\
 
 #pragma endregion
 

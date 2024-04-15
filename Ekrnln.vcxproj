@@ -77,6 +77,7 @@
     <ClCompile Include="src\debugput.cpp" />
     <ClCompile Include="src\delay.cpp" />
     <ClCompile Include="src\DirBoxW.cpp" />
+    <ClCompile Include="src\Disk Processing\IsFileExist.cpp" />
     <ClCompile Include="src\edb.cpp" />
     <ClCompile Include="src\ELibConstInfo.cpp" />
     <ClCompile Include="src\Epl Dp\eplMD5.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="src\LoadWin.cpp" />
     <ClCompile Include="src\malloc.cpp" />
     <ClCompile Include="src\MediaPlay.cpp" />
+    <ClCompile Include="src\Mem processing\ptr.cpp" />
     <ClCompile Include="src\memcpy.cpp" />
     <ClCompile Include="src\memwrite.cpp" />
     <ClCompile Include="src\MenuEx.cpp" />
@@ -162,6 +164,7 @@
     <ClCompile Include="src\System processing\get_pixel.cpp" />
     <ClCompile Include="src\System processing\get_win_pic.cpp" />
     <ClCompile Include="src\System processing\ProcessorsSystem.cpp" />
+    <ClCompile Include="src\System processing\SetKeyText.cpp" />
     <ClCompile Include="src\Text Manipulation\byte_array_to_string.cpp" />
     <ClCompile Include="src\Text Manipulation\concatenate_wstrings.cpp" />
     <ClCompile Include="src\Text Manipulation\count_occurrences.cpp" />
