@@ -330,7 +330,7 @@
 /*327*/ ,Fn_CFile_SeekToBegin/*文件读写.移到文件首*/\
 /*328*/ ,Fn_CFile_SeekToEnd/*文件读写.移到文件尾*/\
 /*329*/ ,Fn_CFile_ReadBin/*文件读写.读入字节集*/\
-/*330*/ ,Fn_CFile_ReadBin/*文件读写.写出字节集*/\
+/*330*/ ,Fn_CFile_WriteBin/*文件读写.写出字节集*/\
 /*331*/ ,Fn_CFile_ReadText/*文件读写.读入文本W*/\
 /*332*/ ,Fn_CFile_WriteText/*文件读写.写出文本W*/\
 /*333*/ ,Fn_CFile_ReadLine/*文件读写.读入一行*/\

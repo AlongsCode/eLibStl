@@ -659,6 +659,9 @@
     <ClCompile Include="src\Disk Processing\IsFileExist.cpp">
       <Filter>源文件\实现\全局命令\磁盘操作</Filter>
     </ClCompile>
+    <ClCompile Include="src\Intnet\GetHttpFile.cpp">
+      <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

@@ -315,6 +315,14 @@ namespace elibstl
 		*reinterpret_cast<std::uint32_t*>(pd + sizeof(std::uint32_t)) = nDataSize;
 		return pd;
 	}
+	// 设置参考型宽文本数据
+	inline void set_textw(PMDATA_INF pArgInf,const wchar_t* t ) {
+		if (pArgInf->m_dtDataType == _SDT_NULL)
+			return;
+		if (*pArgInf->m_ppBin)
+			elibstl::efree(*pArgInf->m_ppBin);
+		*pArgInf->m_ppBin = elibstl::clone_textw(t);
+	}
 	inline LPBYTE clone_textw(const std::wstring& s, bool bTerminator = true)
 	{
 		if (s.empty())
@@ -525,7 +533,17 @@ namespace elibstl
 		return p;
 	}
 
-
+	std::wstring utf82utf16(const char* utf8str) {
+		int len = MultiByteToWideChar(CP_UTF8, 0, utf8str, -1, nullptr, 0);
+		if (len == 0) {
+			// 失败处理
+			return L"";
+		}
+		std::wstring utf16str;
+		utf16str.resize(len);
+		MultiByteToWideChar(CP_UTF8, 0, utf8str, -1, &utf16str[0], len);
+		return utf16str;
+	}
 
 
 
