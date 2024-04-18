@@ -303,6 +303,8 @@ namespace elibstl
 		pd[nTextLen] = '\0';
 		return pd;
 	}
+
+
 	// 拷贝字节集, 生成易语言格式的字节集,1维数组
 	inline LPBYTE clone_bin(LPBYTE pData, INT nDataSize)
 	{
@@ -316,13 +318,7 @@ namespace elibstl
 		return pd;
 	}
 	// 设置参考型宽文本数据
-	inline void set_textw(PMDATA_INF pArgInf,const wchar_t* t ) {
-		if (pArgInf->m_dtDataType == _SDT_NULL)
-			return;
-		if (*pArgInf->m_ppBin)
-			elibstl::efree(*pArgInf->m_ppBin);
-		*pArgInf->m_ppBin = elibstl::clone_textw(t);
-	}
+
 	inline LPBYTE clone_textw(const std::wstring& s, bool bTerminator = true)
 	{
 		if (s.empty())
@@ -533,7 +529,7 @@ namespace elibstl
 		return p;
 	}
 
-	std::wstring utf82utf16(const char* utf8str) {
+	inline std::wstring utf82utf16(const char* utf8str) {
 		int len = MultiByteToWideChar(CP_UTF8, 0, utf8str, -1, nullptr, 0);
 		if (len == 0) {
 			// 失败处理
@@ -923,7 +919,13 @@ namespace elibstl
 		}
 
 	}
-
+	inline void set_textw(PMDATA_INF pArgInf, const wchar_t* t) {
+		if (pArgInf->m_dtDataType == _SDT_NULL)
+			return;
+		if (*pArgInf->m_ppBin)
+			elibstl::efree(*pArgInf->m_ppBin);
+		*pArgInf->m_ppBin = elibstl::clone_textw(t);
+	}
 #pragma endregion
 }
 
