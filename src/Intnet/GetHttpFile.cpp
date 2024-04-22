@@ -6,7 +6,7 @@
 #include <chrono>
 
 
-enum class UserAction:int {
+enum class UserAction :int {
 	Normal,
 	End,
 	Pause,
@@ -269,7 +269,7 @@ namespace {
 		void Close();
 		ULONGLONG GetLength() const
 		{
-			
+
 			return m_lContentLength;
 		}
 
@@ -343,50 +343,50 @@ namespace {
 		INTERNET_PORT nPort = 0;
 		CString strUsername = _T("");
 		CString strPassword = _T("");
-	
-			AfxParseURLEx(strURL, dwServiceType, strServer, strObject, nPort, strUsername, strPassword, 0);
-			m_strDomain = strServer;
-			m_strFile = strObject;
-			//AfxMessageBox(m_strDomain);
-			//AfxMessageBox(m_strFile);
-			//------------	
-			DWORD dwFlags = dwFlag;
-			if (dwServiceType == AFX_INET_SERVICE_HTTP) {
-				dwServiceType = INTERNET_SERVICE_HTTP;
-			}
-			else if (dwServiceType == AFX_INET_SERVICE_HTTPS) {
-				dwServiceType = INTERNET_SERVICE_HTTP;
-				dwFlags |= INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_IGNORE_CERT_DATE_INVALID | INTERNET_FLAG_SECURE;
-			}
-			else {
-				dwServiceType = INTERNET_SERVICE_HTTP;
-			}
-			//------------
-			LPCTSTR lpszUserName = NULL;
-			LPCTSTR lpszPassword = NULL;
-			if (strUsername != _T("")) {
-				lpszUserName = strUsername;
-			}
-			if (strPassword != _T("")) {
-				lpszPassword = strPassword;
-			}
-			//------------
-			m_hInternetConnect = InternetConnectW(m_hInternetOpen, m_strDomain, nPort, lpszUserName, lpszPassword, dwServiceType, NULL, NULL);
-			if (!m_hInternetConnect) {
-				//AfxMessageBox("InternetConnect=FALSE");
-				return FALSE;
-			}
-			//------------	
-			dwFlags |= INTERNET_FLAG_HYPERLINK | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS;
-			//------------
-			if (strVerb == _T(""))strVerb = _T("GET");
-			m_strVerb = strVerb;
-			m_strVerb.MakeUpper();
-			m_hInternetRequest = HttpOpenRequestW(m_hInternetConnect, m_strVerb, m_strFile, _T("HTTP/1.1"), NULL, NULL, dwFlags, 0);
-			if (!m_hInternetRequest) {
-				//AfxMessageBox("HttpOpenRequest=FALSE");
-				return FALSE;
-			}
+
+		AfxParseURLEx(strURL, dwServiceType, strServer, strObject, nPort, strUsername, strPassword, 0);
+		m_strDomain = strServer;
+		m_strFile = strObject;
+		//AfxMessageBox(m_strDomain);
+		//AfxMessageBox(m_strFile);
+		//------------	
+		DWORD dwFlags = dwFlag;
+		if (dwServiceType == AFX_INET_SERVICE_HTTP) {
+			dwServiceType = INTERNET_SERVICE_HTTP;
+		}
+		else if (dwServiceType == AFX_INET_SERVICE_HTTPS) {
+			dwServiceType = INTERNET_SERVICE_HTTP;
+			dwFlags |= INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_IGNORE_CERT_DATE_INVALID | INTERNET_FLAG_SECURE;
+		}
+		else {
+			dwServiceType = INTERNET_SERVICE_HTTP;
+		}
+		//------------
+		LPCTSTR lpszUserName = NULL;
+		LPCTSTR lpszPassword = NULL;
+		if (strUsername != _T("")) {
+			lpszUserName = strUsername;
+		}
+		if (strPassword != _T("")) {
+			lpszPassword = strPassword;
+		}
+		//------------
+		m_hInternetConnect = InternetConnectW(m_hInternetOpen, m_strDomain, nPort, lpszUserName, lpszPassword, dwServiceType, NULL, NULL);
+		if (!m_hInternetConnect) {
+			//AfxMessageBox("InternetConnect=FALSE");
+			return FALSE;
+		}
+		//------------	
+		dwFlags |= INTERNET_FLAG_HYPERLINK | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS;
+		//------------
+		if (strVerb == _T(""))strVerb = _T("GET");
+		m_strVerb = strVerb;
+		m_strVerb.MakeUpper();
+		m_hInternetRequest = HttpOpenRequestW(m_hInternetConnect, m_strVerb, m_strFile, _T("HTTP/1.1"), NULL, NULL, dwFlags, 0);
+		if (!m_hInternetRequest) {
+			//AfxMessageBox("HttpOpenRequest=FALSE");
+			return FALSE;
+		}
 
 		return m_hInternetRequest != NULL;
 	}
@@ -432,7 +432,7 @@ namespace {
 		QueryInfo();
 		return bRet;
 	}
-	bool CCometHttp::DownloadFile(const std::wstring& path, DownloadCallback callback ,INT userData) {
+	bool CCometHttp::DownloadFile(const std::wstring& path, DownloadCallback callback, INT userData) {
 		std::atomic<UserAction> m_user = UserAction::Normal;
 		std::atomic<DownloadStatus> m_status = DownloadStatus::Normal;
 		std::atomic<UINT64> m_downloadedLength = 0;
@@ -441,11 +441,11 @@ namespace {
 		const UINT64 totalLength = GetLength();
 		bool success = false;
 		std::atomic<bool> bOver = false;
-		if (totalLength<=0)
+		if (totalLength <= 0)
 			return false;
-		
+
 		if (callback) {
-			m_user = callback(DownloadStatus::Begin, totalLength,0, 0, 0, 0, userData);
+			m_user = callback(DownloadStatus::Begin, totalLength, 0, 0, 0, 0, userData);
 			if (m_user == UserAction::End) {
 				return false;
 			}
@@ -457,7 +457,7 @@ namespace {
 				unsigned long long startTime = std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now().time_since_epoch()).count();
 				unsigned long long speed = 0;
-				unsigned long long remainingSize=0;
+				unsigned long long remainingSize = 0;
 				double progress = 0;
 				unsigned long long elapsedTime = 0;
 				unsigned long long currentTime = 0;
@@ -472,7 +472,7 @@ namespace {
 						remainingSize = totalLength - now;
 						progress = now * 100 / totalLength;
 
-						m_user = callback(m_status, totalLength,speed, remainingSize, progress, elapsedTime, userData);
+						m_user = callback(m_status, totalLength, speed, remainingSize, progress, elapsedTime, userData);
 						switch (m_user)
 						{
 						case UserAction::End:
@@ -488,13 +488,13 @@ namespace {
 						default:
 							break;
 						};
-	
-				//		// 等待1秒
+
+						//		// 等待1秒
 						std::this_thread::sleep_for(std::chrono::seconds(1));
 					}
 
 				}
-				m_user = callback(DownloadStatus::Finished, totalLength, speed, remainingSize, progress, elapsedTime,userData);
+				m_user = callback(DownloadStatus::Finished, totalLength, speed, remainingSize, progress, elapsedTime, userData);
 				};
 			std::thread thread(lambda);
 			HANDLE fileHandle = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -641,14 +641,14 @@ namespace {
 	}
 	void CCometHttp::QueryInfo(DWORD dwInfoLevel, INT64& nValue)
 	{
-			CString strValue;
-			QueryInfo(dwInfoLevel, strValue);
-			if (strValue == _T("")) {
-				nValue = 0;
-			}
-			else {
-				nValue = _wtoi(strValue);
-			}
+		CString strValue;
+		QueryInfo(dwInfoLevel, strValue);
+		if (strValue == _T("")) {
+			nValue = 0;
+		}
+		else {
+			nValue = _wtoi(strValue);
+		}
 	}
 
 
@@ -856,7 +856,7 @@ namespace {
 		std::wstring Path;
 		BOOL bRet = FALSE;
 		INT User;
-		DownloadCallback p{nullptr};
+		DownloadCallback p{ nullptr };
 	};
 
 	DWORD _stdcall DowndLoadFile_Thread(LPVOID arg)
@@ -870,14 +870,14 @@ namespace {
 
 		if (!http.OpenURL(S->Url.data()))
 			return 0;
-		if (!http.SendRequest()) 
+		if (!http.SendRequest())
 			return 0;
-		
-		S->bRet = http.DownloadFile(S->Path, S->p,S->User);
+
+		S->bRet = http.DownloadFile(S->Path, S->p, S->User);
 		return 0;
 	}
 
-	BOOL DowndLoadFile(const std::wstring& Url,const std::wstring& Path,DownloadCallback p,int userData)
+	BOOL DowndLoadFile(const std::wstring& Url, const std::wstring& Path, DownloadCallback p, int userData)
 	{
 		Downld s;
 		s.p = p;
@@ -913,7 +913,7 @@ namespace {
 		}
 		return s.bRet;
 	}
-	
+
 
 }
 
@@ -948,7 +948,7 @@ extern "C" void elibstl_fn_DowndLoadFile(PMDATA_INF pRetData, INT nArgCount, PMD
 static ARG_INFO Args[] = {
 {	//-- nIndex=0
 		/*name*/	("完整网址"),
-		/*explain*/	("完整的网页地址,比如http://www.it608.com；如果是路由器等需要帐号密码的服务器:http://admin:admin@192.168.1.1"),
+		/*explain*/	("完整的网页地址,比如https://github.com/AlongsCode/eLibStl；如果是路由器等需要帐号密码的服务器:http://admin:admin@192.168.1.1"),
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
 		/*type*/	_SDT_ALL,
@@ -1040,7 +1040,7 @@ FucInfo Fn_GetHttpFile = { {
 static ARG_INFO Args2[] = {
 {	//-- nIndex=0
 		/*name*/	("完整网址"),
-		/*explain*/	("完整的网页地址,比如http://www.it608.com；如果是路由器等需要帐号密码的服务器:http://admin:admin@192.168.1.1"),
+		/*explain*/	("完整的网页地址,比如https://github.com/AlongsCode/eLibStl；如果是路由器等需要帐号密码的服务器:http://admin:admin@192.168.1.1"),
 		/*bmp inx*/	0,
 		/*bmp num*/	0,
 		/*type*/	_SDT_ALL,
@@ -1055,8 +1055,8 @@ static ARG_INFO Args2[] = {
 	/*default*/	0,
 	/*state*/	ArgMark::AS_NONE
 }, {	//-- nIndex=0
-		/*name*/	("回调函数"),
-		/*explain*/	(R"(
+	/*name*/	("回调函数"),
+	/*explain*/	(R"(
 原型:UserAction(CALLBACK*)(DownloadStatus, unsigned long long, unsigned long long, double, unsigned long long);
 
 返回值 整数  
@@ -1070,20 +1070,20 @@ static ARG_INFO Args2[] = {
 参数6: 下载用时 长整数型
 参数6: 用户定义 整数型
 )"),
-		/*bmp inx*/	0,
-		/*bmp num*/	0,
-		/*type*/	SDT_SUB_PTR,
-		/*default*/	0,
-		/*state*/	ArgMark::AS_DEFAULT_VALUE_IS_EMPTY
-	},{	//-- nIndex=0
-		/*name*/	("用户附加参数"),
-		/*explain*/	(R"(传递到会点函数中用户附加的参数)"),
 /*bmp inx*/	0,
 /*bmp num*/	0,
-/*type*/	SDT_INT,
+/*type*/	SDT_SUB_PTR,
 /*default*/	0,
 /*state*/	ArgMark::AS_DEFAULT_VALUE_IS_EMPTY
-},
+},{	//-- nIndex=0
+	/*name*/	("用户附加参数"),
+	/*explain*/	(R"(传递到会点函数中用户附加的参数)"),
+	/*bmp inx*/	0,
+	/*bmp num*/	0,
+	/*type*/	SDT_INT,
+	/*default*/	0,
+	/*state*/	ArgMark::AS_DEFAULT_VALUE_IS_EMPTY
+	},
 };
 FucInfo Fn_DowndLoadFile = { {
 		/*ccname*/  ("HTTP进度下载W"),
