@@ -317,7 +317,7 @@ FucInfo Fn_get_win_pic = { {
 		/*ccname*/  ("截图"),
 		/*egname*/  ("get_win_pic"),
 		/*explain*/ ("同易语言快照,修复一些情况下截图问题"),
-		/*category*/11,
+		/*category*/6,
 		/*state*/    NULL,
 		/*ret*/     SDT_BIN,
 		/*reserved*/NULL,

@@ -42,7 +42,7 @@ EXTERN_C void efn_trim_leading_zeros(PMDATA_INF pRetData, INT nArgCount, PMDATA_
 }
 
 FucInfo g_trim_leading_zeros = { {
-		/*ccname*/  ("删数值文本左侧无效零"),
+		/*ccname*/  ("删数值文本左侧无效零W"),
 		/*egname*/  ("trim_leading_zeros"),
 		/*explain*/ ("删数值文本左侧无效零"),
 		/*category*/2,

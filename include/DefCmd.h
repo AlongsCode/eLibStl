@@ -362,7 +362,7 @@
 /*359*/ ,Fn_eStl_FileManyDialogW/*多文件对话框*/\
 /*360*/ ,Fn_SetKeyTextW/*写配置项*/\
 /*361*/ ,Fn_GetKeyTextW/*读配置项*/\
-/*362*/ ,Fn_ptrToData/*指针到数据*/\
+/*362*/ ,Fn_memmove/*指针到数据*/\
 /*363*/ ,Fn_IsFileExistW/*文件是否存在W*/\
 /*364*/ ,Fn_GetHttpFile/*HTTP读文件W*/\
 /*365*/	,Fn_DowndLoadFile/*HTTP下载W*/\

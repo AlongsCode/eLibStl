@@ -52,7 +52,7 @@ FucInfo Fn_get_pixel = { {
 		/*ccname*/  ("取坐标颜色"),
 		/*egname*/  ("get_pixel"),
 		/*explain*/ ("返回指定区域上所指定位置处的颜色值"),
-		/*category*/11,
+		/*category*/6,
 		/*state*/    NULL,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,

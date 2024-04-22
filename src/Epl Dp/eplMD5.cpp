@@ -345,7 +345,7 @@ FucInfo Fn_eStl_GetMd5A = { {
 		/*egname*/  ("get_md5_str"),
 		/*explain*/ ("返回一段字节集数据的MD5数据摘要编码文本。不同数据的MD5码都不一样，因此本命令可以用作保证重要数据不会被篡改。"),
 		/*category*/17,
-		/*state*/   NULL,
+		/*state*/	CT_IS_HIDED,
 		/*ret*/     DATA_TYPE::SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

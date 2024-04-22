@@ -40,7 +40,7 @@ public:
 		if (m_SelectedFiles) m_ofn.Flags |= OFN_ALLOWMULTISELECT;
 
 		if (!m_fileNamae.empty())
-			wcscpy_s(m_szFileName.data(), static_cast<INT>(m_fileNamae.size()), m_fileNamae.data());
+			std::copy(m_fileNamae.begin(), m_fileNamae.end(), m_szFileName.begin());
 
 		for (auto& c : m_strFilter) {//处理过滤器
 			if (c == L'|')
@@ -443,7 +443,7 @@ FucInfo e_Open_File_Dialog_A = { {
 		/*egname*/  (""),
 		/*explain*/ ("显示一个文件打开对话框，允许用户选择或输入所需要打开的已存在文件，或保存文件，返回用户所选择或输入后的结果文本。如果用户未输入或按“取消”按钮退出，则返回一个空文本"),
 		/*category*/13,
-		/*state*/   NULL,
+		/*state*/  CT_IS_HIDED,
 		/*ret*/     SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

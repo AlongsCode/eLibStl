@@ -51,7 +51,7 @@ FucInfo write_file_a = { {
 		/*egname*/  (""),
 		/*explain*/ ("将二进制内存数据写到文件"),
 		/*category*/4,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_BOOL,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

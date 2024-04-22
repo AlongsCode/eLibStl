@@ -24,7 +24,7 @@ FucInfo strlen_a = { {
 		/*egname*/  ("lenA"),
 		/*explain*/ ("取文本型数据的长度，不包含结束0。"),
 		/*category*/2,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

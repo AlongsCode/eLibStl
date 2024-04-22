@@ -440,9 +440,6 @@
     <ClCompile Include="src\e_call.cpp">
       <Filter>源文件\实现\全局命令\其他</Filter>
     </ClCompile>
-    <ClCompile Include="src\delay.cpp">
-      <Filter>源文件\实现\全局命令\代码调试</Filter>
-    </ClCompile>
     <ClCompile Include="src\GetConutEx.cpp">
       <Filter>源文件\实现\全局命令\系统处理</Filter>
     </ClCompile>
@@ -661,6 +658,9 @@
     </ClCompile>
     <ClCompile Include="src\Intnet\GetHttpFile.cpp">
       <Filter>源文件\实现\全局命令\网络通信</Filter>
+    </ClCompile>
+    <ClCompile Include="src\delay.cpp">
+      <Filter>源文件\实现\全局命令\系统处理</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

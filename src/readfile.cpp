@@ -46,7 +46,7 @@ FucInfo read_file_a = { {
 		/*egname*/  (""),
 		/*explain*/ ("将文件以二进制方式读入内存"),
 		/*category*/4,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_BIN,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,
