@@ -652,11 +652,16 @@ namespace epldatatype {
             memcpy(m_pData + nOldSize, &src, sizeof(T));
             return *this;
         }
-        template <typename T>
-        void append_str(const std::basic_string_view<T>& pws)
+ 
+        void append_str(const std::string_view& pws)
         {
             if (!pws.empty())
-                append(pws.data(), pws.size() * sizeof(T));
+                append(pws.data(), pws.size() * sizeof(char));
+        }
+        void append_str(const std::wstring_view& pws)
+        {
+            if (!pws.empty())
+                append(pws.data(), pws.size() * sizeof(wchar_t));
         }
         MemBin& append(const void* p,const size_t size)
         {

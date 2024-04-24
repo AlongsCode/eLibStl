@@ -4,7 +4,7 @@
 #include <Wininet.h>
 #include <thread>
 #include <chrono>
-
+#include <atomic>
 
 enum class UserAction :int {
 	Normal,

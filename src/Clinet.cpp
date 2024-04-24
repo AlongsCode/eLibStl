@@ -34,7 +34,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
-static ATOM g_atom_clinet_ex = NULL;
+static ATOM g_atom_epl_skinsharpex = NULL;
 static void Clinet_RegWndClass()
 {
 #ifndef __E_STATIC_LIB
@@ -46,7 +46,7 @@ static void Clinet_RegWndClass()
 	wc.lpfnWndProc = WndProc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.cbWndExtra = sizeof(void*);
-	g_atom_clinet_ex = RegisterClassW(&wc);
+	g_atom_epl_skinsharpex = RegisterClassW(&wc);
 }
 
 //struct _ESERVERDATA
@@ -89,7 +89,7 @@ HUNIT WINAPI Create_clinetWindow(
 	BOOL blInDesignMode                 //   说明是否被易语言IDE调用以进行可视化设计, 运行时为假
 )
 {
-	if (!g_atom_clinet_ex)
+	if (!g_atom_epl_skinsharpex)
 	{
 		Clinet_RegWndClass();
 	}

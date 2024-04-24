@@ -1,5 +1,8 @@
 #include"ElibHelp.h"
 #include"elib/lang.h"
+
+
+
 ESTL_NAMESPACE_BEGIN
 bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
@@ -58,6 +61,7 @@ bool CallElibFunc(const char* elib_name, const char* def_name, PMDATA_INF pRetDa
 	return true;
 
 }
+
 
 PSTR W2A(PCWSTR pszW)
 {

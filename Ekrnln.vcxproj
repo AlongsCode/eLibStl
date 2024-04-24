@@ -57,6 +57,156 @@
     <ClCompile Include="openlib\qrencode\qrspec.c" />
     <ClCompile Include="openlib\qrencode\rsecc.c" />
     <ClCompile Include="openlib\qrencode\split.c" />
+    <ClCompile Include="openlib\scintilla\Accessor.cxx" />
+    <ClCompile Include="openlib\scintilla\AutoComplete.cxx" />
+    <ClCompile Include="openlib\scintilla\CallTip.cxx" />
+    <ClCompile Include="openlib\scintilla\CaseConvert.cxx" />
+    <ClCompile Include="openlib\scintilla\CaseFolder.cxx" />
+    <ClCompile Include="openlib\scintilla\Catalogue.cxx" />
+    <ClCompile Include="openlib\scintilla\CellBuffer.cxx" />
+    <ClCompile Include="openlib\scintilla\CharacterCategory.cxx" />
+    <ClCompile Include="openlib\scintilla\CharacterSet.cxx" />
+    <ClCompile Include="openlib\scintilla\CharClassify.cxx" />
+    <ClCompile Include="openlib\scintilla\ContractionState.cxx" />
+    <ClCompile Include="openlib\scintilla\DBCS.cxx" />
+    <ClCompile Include="openlib\scintilla\Decoration.cxx" />
+    <ClCompile Include="openlib\scintilla\DefaultLexer.cxx" />
+    <ClCompile Include="openlib\scintilla\Document.cxx" />
+    <ClCompile Include="openlib\scintilla\EditModel.cxx" />
+    <ClCompile Include="openlib\scintilla\Editor.cxx" />
+    <ClCompile Include="openlib\scintilla\EditView.cxx" />
+    <ClCompile Include="openlib\scintilla\ExternalLexer.cxx" />
+    <ClCompile Include="openlib\scintilla\HanjaDic.cxx" />
+    <ClCompile Include="openlib\scintilla\Indicator.cxx" />
+    <ClCompile Include="openlib\scintilla\KeyMap.cxx" />
+    <ClCompile Include="openlib\scintilla\LexA68k.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAbaqus.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAda.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAPDL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAsm.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAsn1.cxx" />
+    <ClCompile Include="openlib\scintilla\LexASY.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAU3.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAVE.cxx" />
+    <ClCompile Include="openlib\scintilla\LexAVS.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBaan.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBash.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBasic.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBatch.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBibTeX.cxx" />
+    <ClCompile Include="openlib\scintilla\LexBullant.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCaml.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCLW.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCmake.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCOBOL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCoffeeScript.cxx" />
+    <ClCompile Include="openlib\scintilla\LexConf.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCPP.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCrontab.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCsound.cxx" />
+    <ClCompile Include="openlib\scintilla\LexCSS.cxx" />
+    <ClCompile Include="openlib\scintilla\LexD.cxx" />
+    <ClCompile Include="openlib\scintilla\LexDiff.cxx" />
+    <ClCompile Include="openlib\scintilla\LexDMAP.cxx" />
+    <ClCompile Include="openlib\scintilla\LexDMIS.cxx" />
+    <ClCompile Include="openlib\scintilla\LexECL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexEDIFACT.cxx" />
+    <ClCompile Include="openlib\scintilla\LexEiffel.cxx" />
+    <ClCompile Include="openlib\scintilla\LexerBase.cxx" />
+    <ClCompile Include="openlib\scintilla\LexErlang.cxx" />
+    <ClCompile Include="openlib\scintilla\LexerModule.cxx" />
+    <ClCompile Include="openlib\scintilla\LexerNoExceptions.cxx" />
+    <ClCompile Include="openlib\scintilla\LexErrorList.cxx" />
+    <ClCompile Include="openlib\scintilla\LexerSimple.cxx" />
+    <ClCompile Include="openlib\scintilla\LexEScript.cxx" />
+    <ClCompile Include="openlib\scintilla\LexFlagship.cxx" />
+    <ClCompile Include="openlib\scintilla\LexForth.cxx" />
+    <ClCompile Include="openlib\scintilla\LexFortran.cxx" />
+    <ClCompile Include="openlib\scintilla\LexGAP.cxx" />
+    <ClCompile Include="openlib\scintilla\LexGui4Cli.cxx" />
+    <ClCompile Include="openlib\scintilla\LexHaskell.cxx" />
+    <ClCompile Include="openlib\scintilla\LexHex.cxx" />
+    <ClCompile Include="openlib\scintilla\LexHTML.cxx" />
+    <ClCompile Include="openlib\scintilla\LexIndent.cxx" />
+    <ClCompile Include="openlib\scintilla\LexInno.cxx" />
+    <ClCompile Include="openlib\scintilla\LexJSON.cxx" />
+    <ClCompile Include="openlib\scintilla\LexKix.cxx" />
+    <ClCompile Include="openlib\scintilla\LexKVIrc.cxx" />
+    <ClCompile Include="openlib\scintilla\LexLaTeX.cxx" />
+    <ClCompile Include="openlib\scintilla\LexLisp.cxx" />
+    <ClCompile Include="openlib\scintilla\LexLout.cxx" />
+    <ClCompile Include="openlib\scintilla\LexLua.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMagik.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMake.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMarkdown.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMatlab.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMaxima.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMetapost.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMMIXAL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexModula.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMPT.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMSSQL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexMySQL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexNimrod.cxx" />
+    <ClCompile Include="openlib\scintilla\LexNsis.cxx" />
+    <ClCompile Include="openlib\scintilla\LexNull.cxx" />
+    <ClCompile Include="openlib\scintilla\LexOpal.cxx" />
+    <ClCompile Include="openlib\scintilla\LexOScript.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPascal.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPB.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPerl.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPLM.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPO.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPOV.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPowerPro.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPowerShell.cxx" />
+    <ClCompile Include="openlib\scintilla\LexProgress.cxx" />
+    <ClCompile Include="openlib\scintilla\LexProps.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPS.cxx" />
+    <ClCompile Include="openlib\scintilla\LexPython.cxx" />
+    <ClCompile Include="openlib\scintilla\LexR.cxx" />
+    <ClCompile Include="openlib\scintilla\LexRebol.cxx" />
+    <ClCompile Include="openlib\scintilla\LexRegistry.cxx" />
+    <ClCompile Include="openlib\scintilla\LexRuby.cxx" />
+    <ClCompile Include="openlib\scintilla\LexRust.cxx" />
+    <ClCompile Include="openlib\scintilla\LexScriptol.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSmalltalk.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSML.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSorcus.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSpecman.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSpice.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSQL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexSTTXT.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTACL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTADS3.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTAL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTCL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTCMD.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTeX.cxx" />
+    <ClCompile Include="openlib\scintilla\LexTxt2tags.cxx" />
+    <ClCompile Include="openlib\scintilla\LexVB.cxx" />
+    <ClCompile Include="openlib\scintilla\LexVerilog.cxx" />
+    <ClCompile Include="openlib\scintilla\LexVHDL.cxx" />
+    <ClCompile Include="openlib\scintilla\LexVisualProlog.cxx" />
+    <ClCompile Include="openlib\scintilla\LexYAML.cxx" />
+    <ClCompile Include="openlib\scintilla\LineMarker.cxx" />
+    <ClCompile Include="openlib\scintilla\MarginView.cxx" />
+    <ClCompile Include="openlib\scintilla\PerLine.cxx" />
+    <ClCompile Include="openlib\scintilla\PlatWin.cxx" />
+    <ClCompile Include="openlib\scintilla\PositionCache.cxx" />
+    <ClCompile Include="openlib\scintilla\PropSetSimple.cxx" />
+    <ClCompile Include="openlib\scintilla\RESearch.cpp" />
+    <ClCompile Include="openlib\scintilla\RunStyles.cxx" />
+    <ClCompile Include="openlib\scintilla\ScintillaBase.cxx" />
+    <ClCompile Include="openlib\scintilla\ScintillaDLL.cxx" />
+    <ClCompile Include="openlib\scintilla\ScintillaWin.cxx" />
+    <ClCompile Include="openlib\scintilla\Selection.cxx" />
+    <ClCompile Include="openlib\scintilla\Style.cxx" />
+    <ClCompile Include="openlib\scintilla\StyleContext.cxx" />
+    <ClCompile Include="openlib\scintilla\UniConversion.cxx" />
+    <ClCompile Include="openlib\scintilla\ViewStyle.cxx" />
+    <ClCompile Include="openlib\scintilla\WordList.cxx" />
+    <ClCompile Include="openlib\scintilla\XPM.cxx" />
     <ClCompile Include="src\analog_press.cpp" />
     <ClCompile Include="src\ansiwindow_to_unicodewindow.cpp" />
     <ClCompile Include="src\atomic_addition.cpp" />
@@ -87,6 +237,7 @@
     <ClCompile Include="src\EplObj Class\FolderMonitor.cpp" />
     <ClCompile Include="src\EplObj Class\memfile.cpp" />
     <ClCompile Include="src\EplObj Class\mempe.cpp" />
+    <ClCompile Include="src\EplObj Control\EplSkin.cpp" />
     <ClCompile Include="src\EplObj Control\RichEdit.cpp" />
     <ClCompile Include="src\EplObj Control\Scintilla.cpp" />
     <ClCompile Include="src\e_call.cpp" />
@@ -198,6 +349,7 @@
     <ClInclude Include="include\elib\untshare.h" />
     <ClInclude Include="include\EplugHelp.h" />
     <ClInclude Include="include\GdiplusFlatDef.h" />
+    <ClInclude Include="include\mfcfiledlg.h" />
     <ClInclude Include="include\Tace.hpp" />
     <ClInclude Include="openlib\ETCP\etcpapi.h" />
     <ClInclude Include="openlib\MiniCo\coroutine.h" />
@@ -211,6 +363,67 @@
     <ClInclude Include="openlib\qrencode\qrspec.h" />
     <ClInclude Include="openlib\qrencode\rsecc.h" />
     <ClInclude Include="openlib\qrencode\split.h" />
+    <ClInclude Include="openlib\scintilla\Accessor.h" />
+    <ClInclude Include="openlib\scintilla\AutoComplete.h" />
+    <ClInclude Include="openlib\scintilla\CallTip.h" />
+    <ClInclude Include="openlib\scintilla\CaseConvert.h" />
+    <ClInclude Include="openlib\scintilla\CaseFolder.h" />
+    <ClInclude Include="openlib\scintilla\Catalogue.h" />
+    <ClInclude Include="openlib\scintilla\CellBuffer.h" />
+    <ClInclude Include="openlib\scintilla\CharacterCategory.h" />
+    <ClInclude Include="openlib\scintilla\CharacterSet.h" />
+    <ClInclude Include="openlib\scintilla\CharClassify.h" />
+    <ClInclude Include="openlib\scintilla\ContractionState.h" />
+    <ClInclude Include="openlib\scintilla\DBCS.h" />
+    <ClInclude Include="openlib\scintilla\Decoration.h" />
+    <ClInclude Include="openlib\scintilla\DefaultLexer.h" />
+    <ClInclude Include="openlib\scintilla\Document.h" />
+    <ClInclude Include="openlib\scintilla\EditModel.h" />
+    <ClInclude Include="openlib\scintilla\Editor.h" />
+    <ClInclude Include="openlib\scintilla\EditView.h" />
+    <ClInclude Include="openlib\scintilla\ExternalLexer.h" />
+    <ClInclude Include="openlib\scintilla\FontQuality.h" />
+    <ClInclude Include="openlib\scintilla\HanjaDic.h" />
+    <ClInclude Include="openlib\scintilla\ILexer.h" />
+    <ClInclude Include="openlib\scintilla\ILoader.h" />
+    <ClInclude Include="openlib\scintilla\Indicator.h" />
+    <ClInclude Include="openlib\scintilla\KeyMap.h" />
+    <ClInclude Include="openlib\scintilla\LexAccessor.h" />
+    <ClInclude Include="openlib\scintilla\LexerBase.h" />
+    <ClInclude Include="openlib\scintilla\LexerModule.h" />
+    <ClInclude Include="openlib\scintilla\LexerNoExceptions.h" />
+    <ClInclude Include="openlib\scintilla\LexerSimple.h" />
+    <ClInclude Include="openlib\scintilla\LineMarker.h" />
+    <ClInclude Include="openlib\scintilla\MarginView.h" />
+    <ClInclude Include="openlib\scintilla\OptionSet.h" />
+    <ClInclude Include="openlib\scintilla\Partitioning.h" />
+    <ClInclude Include="openlib\scintilla\PerLine.h" />
+    <ClInclude Include="openlib\scintilla\Platform.h" />
+    <ClInclude Include="openlib\scintilla\PlatWin.h" />
+    <ClInclude Include="openlib\scintilla\Position.h" />
+    <ClInclude Include="openlib\scintilla\PositionCache.h" />
+    <ClInclude Include="openlib\scintilla\PropSetSimple.h" />
+    <ClInclude Include="openlib\scintilla\RESearch.h" />
+    <ClInclude Include="openlib\scintilla\RunStyles.h" />
+    <ClInclude Include="openlib\scintilla\SciLexer.h" />
+    <ClInclude Include="openlib\scintilla\Scintilla.h" />
+    <ClInclude Include="openlib\scintilla\ScintillaBase.h" />
+    <ClInclude Include="openlib\scintilla\ScintillaWidget.h" />
+    <ClInclude Include="openlib\scintilla\ScintillaWin.h" />
+    <ClInclude Include="openlib\scintilla\Sci_Position.h" />
+    <ClInclude Include="openlib\scintilla\Selection.h" />
+    <ClInclude Include="openlib\scintilla\SparseState.h" />
+    <ClInclude Include="openlib\scintilla\SparseVector.h" />
+    <ClInclude Include="openlib\scintilla\SplitVector.h" />
+    <ClInclude Include="openlib\scintilla\StringCopy.h" />
+    <ClInclude Include="openlib\scintilla\Style.h" />
+    <ClInclude Include="openlib\scintilla\StyleContext.h" />
+    <ClInclude Include="openlib\scintilla\SubStyles.h" />
+    <ClInclude Include="openlib\scintilla\UniConversion.h" />
+    <ClInclude Include="openlib\scintilla\UniqueString.h" />
+    <ClInclude Include="openlib\scintilla\ViewStyle.h" />
+    <ClInclude Include="openlib\scintilla\WordList.h" />
+    <ClInclude Include="openlib\scintilla\XPM.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\HexView\HexView.h" />
     <ClInclude Include="src\HexView\HexView_Control.h" />
@@ -226,19 +439,32 @@
     <Image Include="res\ObjButton_W.bmp" />
     <Image Include="res\ObjCheckButton_W.bmp" />
     <Image Include="res\ObjClinet_Ex.bmp" />
+    <Image Include="res\ObjComboBox_W.bmp" />
     <Image Include="res\ObjComLinkButton_W.bmp" />
+    <Image Include="res\ObjDirBox_W.bmp" />
     <Image Include="res\ObjLabel_W.bmp" />
     <Image Include="res\ObjListBox_W.bmp" />
+    <Image Include="res\ObjScintilla.bmp" />
     <Image Include="res\ObjServer_Ex.bmp" />
+    <Image Include="res\ObjSkin.bmp" />
     <Image Include="res\ObjTextBox_W.bmp" />
     <Image Include="res\ObjUpDown_Ex.bmp" />
+    <Image Include="res\RichEdit.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="openlib\scintilla\Scintilla.iface" />
+    <None Include="openlib\scintilla\SciTE.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="openlib\SkinSharp\Detours.lib" />
+    <Library Include="openlib\SkinSharp\SkinH_ST.lib" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{8797a36d-5147-4ae1-9f2a-afa4e87a1aae}</ProjectGuid>
     <RootNamespace>LibKrnln</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Lib|Win32'" Label="Configuration">
@@ -284,7 +510,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Static|Win32'">
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -335,6 +561,7 @@
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
+    <LibraryPath>$(SolutionDir)openlib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgLib|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -343,6 +570,7 @@
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
+    <LibraryPath>$(SolutionDir)openlib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -351,6 +579,7 @@
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
     <TargetExt>.fne</TargetExt>
+    <LibraryPath>$(SolutionDir)openlib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Lib|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -378,7 +607,7 @@
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetExt>.lib</TargetExt>
     <IncludePath>$(SolutionDir)include;$(SolutionDir)openlib;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)openlib;$(LibraryPath)</LibraryPath>
     <TargetName>libstl_static</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static|x64'">
@@ -394,6 +623,7 @@
     <TargetExt>.fne</TargetExt>
     <TargetName>libstl</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)openlib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Lib|Win32'">
     <ClCompile>
@@ -420,6 +650,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImageHasSafeExceptionHandlers />
+      <AdditionalOptions>/force %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreSpecificDefaultLibraries>libc.lib;msvcrt.lib;libcd.lib;libcmtd.lib;msvcrtd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbgLib|Win32'">
@@ -462,7 +694,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USRDLL;SCI_EMPTYCATALOGUE;SCI_LEXER;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;WIN32;_DEBUG;LIBKRNLN_EXPORTS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -471,7 +703,7 @@
       <Optimization>Disabled</Optimization>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <SupportJustMyCode>true</SupportJustMyCode>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -486,6 +718,7 @@
       <EnableUAC>false</EnableUAC>
       <ImageHasSafeExceptionHandlers>
       </ImageHasSafeExceptionHandlers>
+      <AdditionalOptions>/force %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Lib|x64'">

@@ -399,8 +399,9 @@ CtCommandLink/*命令链接*/\
 ,Obj_DiskFile/*文件读写类*/\
 ,Enum_CoRuningType/*协程运行状态*/\
 ,HexView_control/*进制框*/\
-,Obj_MemoryModule/*内存模块类*/
-
+,Obj_MemoryModule/*内存模块类*/\
+,CtScintilla/*火花编辑框*/\
+,Obj_SkinSharp/*皮肤模块*/
 #pragma endregion
 
 

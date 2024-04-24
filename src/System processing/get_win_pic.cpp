@@ -2,7 +2,6 @@
 #include <stdexcept>
 #include <iostream>
 #include"ElibHelp.h"
-#include <bit> 
 
 namespace {
 	HBITMAP sCatchBitmap(HWND hWnd, HDC hDCSrc, const SIZE sizeSrc, INT cx, INT cy)
@@ -161,9 +160,9 @@ namespace {
 			hdr.bfReserved1 = 0;
 			hdr.bfReserved2 = 0;
 			hdr.bfOffBits = (DWORD)(sizeof(hdr) + lpbi->biSize + nColors * sizeof(RGBQUAD));
-			auto m = std::_Bit_cast<std::byte*>(&hdr);
+			auto m = reinterpret_cast<std::byte*>(&hdr);
 			mem.insert(mem.end(), m, m + sizeof(hdr));
-			m = std::_Bit_cast<std::byte*>(lpbi);
+			m = reinterpret_cast<std::byte*>(lpbi);
 			mem.insert(mem.end(), m, m + GlobalSize(hDIB));
 			GlobalUnlock(hDIB);
 			return mem;
@@ -309,7 +308,7 @@ static ARG_INFO Args[]
 EXTERN_C void fn_get_win_pic(PMDATA_INF pRetData, INT nArgCount, PMDATA_INF pArgInf)
 {
 	auto p=CatchWindowBitmap(reinterpret_cast<HWND>( pArgInf[0].m_int), pArgInf[1].m_int, pArgInf[2].m_int);
-	pRetData->m_pBin = elibstl::clone_bin(std::_Bit_cast<unsigned char*>(p.data()), p.size());
+	pRetData->m_pBin = elibstl::clone_bin(reinterpret_cast<unsigned char*>(p.data()), p.size());
 }
 
 
