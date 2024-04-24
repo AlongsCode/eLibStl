@@ -140,7 +140,7 @@ static ATOM g_atom_epl_skinsharpex = NULL;
 static void Skinsharp_RegWndClass()
 {
 #ifndef __E_STATIC_LIB
-	g_hbmp_epl_skinsharp = (HBITMAP)LoadImageW(g_elibstl_hModule, MAKEINTRESOURCEW(IDB_SERVER_EX), IMAGE_BITMAP, 0, 0, 0);
+	g_hbmp_epl_skinsharp = (HBITMAP)LoadImageW(g_elibstl_hModule, MAKEINTRESOURCEW(IDB_SKIN), IMAGE_BITMAP, 0, 0, 0);
 #endif
 
 	WNDCLASSW wc = { sizeof(WNDCLASSW) };
