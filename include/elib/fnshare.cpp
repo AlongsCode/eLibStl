@@ -35,14 +35,14 @@ namespace elibstl
 #endif
 			s_pfnNotifySys = (PFN_NOTIFY_SYS)dwParam1;
 #ifdef __E_STATIC_LIB
-			SkinH_Init(GetModuleHandleA(nullptr));
+			//SkinH_Init(GetModuleHandleA(nullptr));
 #endif
 
 			break;
 		}
 		case NL_FREE_LIB_DATA:
 #ifdef __E_STATIC_LIB
-			SkinH_Free();
+			//SkinH_Free();
 #endif
 			break;
 		case NL_GET_CMD_FUNC_NAMES:
