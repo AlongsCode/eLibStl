@@ -2,7 +2,7 @@
 #include <mbstring.h>
 namespace __eplinlinestl___ {
 	int  __eplinlinestl___() {
-		constexpr unsigned char pp[] = {0};
+		constexpr unsigned char pp[] = { 0 };
 		auto c = _mbsstr(pp, pp);
 		auto c1 = _mbscmp(pp, pp);
 		return 0;
@@ -42,12 +42,28 @@ static bool  g_blInDesignMode = false;
 static bool g_mustcreate = false;
 static std::vector<unsigned char> pSkindata;
 
+
+
+
 namespace {
+
+	struct InitSkinSharp {
+		InitSkinSharp() {
+			SkinH_Init(GetModuleHandleA(nullptr));
+		}
+		~InitSkinSharp() {
+			SkinH_Free();
+		}
+	};
+	auto initSkin() {
+		static InitSkinSharp initSkinSharp_;//跟随程序声明周期
+	}
+
 
 	BOOL CALLBACK EnumChildProc(HWND hwnd, LPARAM lParam) {
 		std::vector<HWND>* windowHandles = reinterpret_cast<std::vector<HWND>*>(lParam);
 		windowHandles->push_back(hwnd);
-		return TRUE; 
+		return TRUE;
 
 	}
 
@@ -80,23 +96,23 @@ namespace {
 	void EnumDetach(HWND parentWnd) {
 		const auto a = EnumerateChildWindows(parentWnd);
 		const auto c = EnumerateChildWindowsWt(parentWnd);
-		for (const auto& ac:a)
+		for (const auto& ac : a)
 		{
 			if (GetClassStr(ac) == L"WTWindow")
 				continue;
 			for (const auto& cc : c)
 			{
-				if (IsChild(cc, ac)==FALSE)//如果该控件不属于易语言窗口
+				if (IsChild(cc, ac) == FALSE)//如果该控件不属于易语言窗口
 					SkinH_DetachEx(ac);
 			}
 		}
 		SkinH_DetachEx(parentWnd);
-	
+
 	}
 }
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	
+
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -123,7 +139,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			g_mustcreate = false;
 		}
-		
+
 		break;
 	}
 #ifndef __E_STATIC_LIB
@@ -194,6 +210,7 @@ namespace {
 		BOOL blInDesignMode                 //   说明是否被易语言IDE调用以进行可视化设计, 运行时为假
 	)
 	{
+		initSkin();
 		if (pAllPropertyData)
 		{
 			pSkindata = std::vector<unsigned char>(pAllPropertyData, pAllPropertyData + nAllPropertyDataSize);
@@ -288,7 +305,7 @@ namespace {
 		{
 		case 0:
 		{
-			
+
 			CFileDlg dlg;
 			dlg.m_bFileMustExist = true;
 			dlg.m_SelectedFiles = true;
@@ -367,7 +384,7 @@ extern "C" PFN_INTERFACE WINAPI libstl_GetInterface_SkinSharp(INT nInterfaceNO)
 {
 
 
-	
+
 	return nInterfaceNO == ITF_CREATE_UNIT ? (PFN_INTERFACE)Create_SeverWindow :
 		nInterfaceNO == ITF_NOTIFY_PROPERTY_CHANGED ? (PFN_INTERFACE)NotifyPropertyChanged_ServerApp :
 		nInterfaceNO == ITF_GET_ALL_PROPERTY_DATA ? (PFN_INTERFACE)GetAllPropertyData_ServerApp :
