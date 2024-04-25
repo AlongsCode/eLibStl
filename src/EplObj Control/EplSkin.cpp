@@ -1,27 +1,37 @@
 #include "mfcfiledlg.h"
 #include <mbstring.h>
-int  __eplinlinestl___() {
-	unsigned char* pp;
-	auto c = _mbsstr(pp, pp);
-	auto c1 = _mbscmp(pp, pp);
-	return 0;
+namespace __eplinlinestl___ {
+	int  __eplinlinestl___() {
+		constexpr unsigned char pp[] = {0};
+		auto c = _mbsstr(pp, pp);
+		auto c1 = _mbscmp(pp, pp);
+		return 0;
+	}
+
 }
+#ifdef _DEBUG
+#pragma comment(linker, "/nodefaultlib:libc.lib")
+#pragma comment(linker, "/nodefaultlib:msvcrt.lib")
+#pragma comment(linker, "/nodefaultlib:libcd.lib")
+#pragma comment(linker, "/nodefaultlib:libcmt.lib")
+#pragma comment(linker, "/nodefaultlib:msvcrtd.lib")
+#else
 
 #pragma comment(linker, "/nodefaultlib:libc.lib")
 #pragma comment(linker, "/nodefaultlib:msvcrt.lib")
 #pragma comment(linker, "/nodefaultlib:libcd.lib")
 #pragma comment(linker, "/nodefaultlib:libcmtd.lib")
 #pragma comment(linker, "/nodefaultlib:msvcrtd.lib")
+#endif // DEBUG
+
+
 
 //#include"fstream"
 #include"EplugHelp.h"
 #include"EcontrolHelp.h"
 #include<string>
-#include"etcp\etcpapi.h"
 #include"SkinSharp\SkinH.h"
 #include "skinres.inl"
-//#pragma comment(lib, "SkinSharp\\Detours.lib")
-//#pragma comment(lib, "SkinSharp\\SkinH_ST.lib")
 
 //所有数据即为全局
 #define SKINSHARP L"epl_skinsharp"
@@ -38,6 +48,7 @@ namespace {
 		std::vector<HWND>* windowHandles = reinterpret_cast<std::vector<HWND>*>(lParam);
 		windowHandles->push_back(hwnd);
 		return TRUE; 
+
 	}
 
 	std::vector<HWND> EnumerateChildWindows(HWND parentWnd) {

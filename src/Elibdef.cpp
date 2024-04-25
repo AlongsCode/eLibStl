@@ -165,19 +165,19 @@ extern "C" {
 	int APIENTRY Scintilla_DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpvReserved);
 	int APIENTRY SkinH_Init(HINSTANCE hInstance);
 	int APIENTRY SkinH_Free();
+	BOOL APIENTRY EplSKin(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved);
 }
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
 	Scintilla_DllMain(hModule, ul_reason_for_call, lpReserved);
+	EplSKin(hModule, ul_reason_for_call, lpReserved);
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH: {
 		g_elibstl_hModule = hModule;
-		SkinH_Init(hModule);
 		break;
 	}
 	case DLL_PROCESS_DETACH:
-		SkinH_Free();
 		break;
 	case DLL_THREAD_ATTACH:
 		break;

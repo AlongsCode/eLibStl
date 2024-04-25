@@ -145,11 +145,14 @@
     <Filter Include="源文件\openlib\Detours">
       <UniqueIdentifier>{160809de-edb7-4c38-901a-93af16a5340d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\openlib\SKin#">
-      <UniqueIdentifier>{4436b50d-40fd-4a0c-8a52-2d01e58640b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\组件\通用型\皮肤加载器">
       <UniqueIdentifier>{19663ff3-84e7-4d9e-86b8-cc0b508ea9f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\SKinSharp">
+      <UniqueIdentifier>{d7d69d6f-d1a4-4e97-abd5-d5dd8d677ee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\openlib\SKinSharp\src">
+      <UniqueIdentifier>{5de927ca-ac0e-4da5-adfd-b7287eeaaf9d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -437,6 +440,18 @@
     </ClInclude>
     <ClInclude Include="include\mfcfiledlg.h">
       <Filter>头文件\elibhelp</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\SkinSharp\SkinH.h">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\SkinSharp\src\LzmaDec.h">
+      <Filter>源文件\openlib\SKinSharp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\Detours\detours.h">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClInclude>
+    <ClInclude Include="openlib\Detours\disasm.h">
+      <Filter>源文件\openlib\Detours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1313,6 +1328,27 @@
     <ClCompile Include="src\EplObj Control\EplSkin.cpp">
       <Filter>源文件\组件\通用型\皮肤加载器</Filter>
     </ClCompile>
+    <ClCompile Include="openlib\SkinSharp\src\lzma.cpp">
+      <Filter>源文件\openlib\SKinSharp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\SkinSharp\src\LzmaDec.c">
+      <Filter>源文件\openlib\SKinSharp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\Detours\creatwth.cpp">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\Detours\detours.cpp">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\Detours\disasm.cpp">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\Detours\firstexc.cpp">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="openlib\Detours\image.cpp">
+      <Filter>源文件\openlib\Detours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">
@@ -1372,11 +1408,170 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="openlib\SkinSharp\Detours.lib">
-      <Filter>源文件\openlib\SKin#</Filter>
-    </Library>
-    <Library Include="openlib\SkinSharp\SkinH_ST.lib">
-      <Filter>源文件\openlib\SKin#</Filter>
-    </Library>
+    <Object Include="openlib\SkinSharp\HAeroBWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HAeroFrame.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HAeroLWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HAeroRWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HAeroTWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HAnimateCtrl.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HBitmap.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HButton.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HCheckBox.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HComboBox.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HComboLBox.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HComWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HContextMenu.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HDateTime.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HDraw.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HGetDCHook.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HGroupBox.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HHeaderCtrl.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HJokeDC.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HLateHook.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HLateHookAfx.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HLayout.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMd5.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMDIClient.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMemDC.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMenu.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMetric.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HMonthCal.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HObject.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HPaintHook.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HPaintWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HProgress.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HPushButton.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HRadioButton.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HReBar.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HScrollBar.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HScrollCtrl.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HScroller.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HShe.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HSkin.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HSkin_API.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HSkin_FPI.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HSkin_ST.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HSpinCtrl.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HStatusBar.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HTabCtrl.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HToolBar.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HToolBarWnd.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HTrackBar.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HValid.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HVistaBand.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HWindow.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\SkinH.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\StdAfx.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
+    <Object Include="openlib\SkinSharp\HDetours.obj">
+      <Filter>源文件\openlib\SKinSharp</Filter>
+    </Object>
   </ItemGroup>
 </Project>
