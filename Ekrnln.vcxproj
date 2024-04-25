@@ -369,7 +369,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgEMain|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>LibKrnln</TargetName>
-    <OutDir>D:\ide\e\lib\</OutDir>
+    <OutDir>$(ESTL_DBG_ELIB_PATH___)</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>

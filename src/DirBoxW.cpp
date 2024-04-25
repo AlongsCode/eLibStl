@@ -43,6 +43,12 @@ private:
 public:
 	std::wstring m_sCurrPath{};
 
+	eStlInline void OnChangeSel()
+	{
+		EVENT_NOTIFY2 evt(m_dwWinFormID, m_dwUnitID, 0);
+		elibstl::NotifySys(NRS_EVENT_NOTIFY2, (DWORD)&evt, 0);
+	}
+
 	static LRESULT CALLBACK ParentSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
 		switch (uMsg)
@@ -157,6 +163,8 @@ public:
 				}
 
 				p->m_sCurrPath = std::move(sPath);
+
+				p->OnChangeSel();
 			}
 			break;
 			}
@@ -706,7 +714,7 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_DirBoxW(INT nInterfaceNO)
 
 static EVENT_INFO2 s_Event_DirBox[] =
 {
-	/*000*/ {"当前选中项被改变", NULL, _EVENT_OS(OS_ALL) | EV_IS_VER2, 0, 0, _SDT_NULL},
+	/*000*/ {"当前选中项被改变", NULL, _EVENT_OS(__OS_WIN) | EV_IS_VER2, 0, 0, _SDT_NULL},
 };
 static UNIT_PROPERTY s_Member_DirBox[] =
 {
