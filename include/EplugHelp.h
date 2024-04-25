@@ -64,6 +64,17 @@ namespace elibstl::ideplug {
 			NotifySys(NES_RUN_FUNC, FN_GET_CARET_COL_INDEX, reinterpret_cast<const DWORD>(arg));
 			return ret;
 		}
+		static auto get_main_wnd() {
+			static HWND hWnd{ nullptr };
+			if (hWnd == nullptr)
+				hWnd = reinterpret_cast<HWND>(elibstl::NotifySys(NES_GET_MAIN_HWND, 0, 0));
+			return hWnd;
+		}
+		static auto get_currcet_dir() {
+			char buffer[MAX_PATH]{};
+			reinterpret_cast<HWND>(elibstl::NotifySys(NAS_GET_VER, 1, (DWORD)buffer));
+			return std::string(buffer);
+		}
 	};
 	class IdeMessageBox {
 	public:

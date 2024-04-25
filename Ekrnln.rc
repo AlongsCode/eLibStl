@@ -74,6 +74,10 @@ IDB_DIRBOX_W            BITMAP                  "res\\ObjDirBox_W.bmp"
 
 IDB_RICHEDIT            BITMAP                  "res\\RichEdit.bmp"
 
+IDB_SCINTILLA           BITMAP                  "res\\ObjScintilla.bmp"
+
+IDB_SKIN                BITMAP                  "res\\ObjSkin.bmp"
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

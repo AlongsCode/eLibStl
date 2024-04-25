@@ -61,7 +61,7 @@ FucInfo _e_delay = { {
 		/*ccname*/  ("界面延迟"),
 		/*egname*/  ("delay"),
 		/*explain*/ ("同延迟的高精度版"),
-		/*category*/11,
+		/*category*/6,
 		/*state*/    NULL,
 		/*ret*/     _SDT_NULL,
 		/*reserved*/NULL,

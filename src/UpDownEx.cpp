@@ -11,7 +11,7 @@ ESTL_NAMESPACE_BEGIN
 * 版本1数据布局
 */
 #define DATA_VER_UPDOWN_1 1
-struct EUPDOWNDATA
+struct ESKINSHARP
 {
 	int iVer;				// 版本号
 	DWORD dwReserved;		// 保留
@@ -28,11 +28,11 @@ struct EUPDOWNDATA
 	BOOL bHotTrack;			// 是否热点跟踪
 };
 
-class CUpDown :public elibstl::CCtrlBaseSimple
+class CSkinSharp :public elibstl::CCtrlBaseSimple
 {
-	SUBCLASS_MGR_DECL(CUpDown)
+	SUBCLASS_MGR_DECL(CSkinSharp)
 private:
-	EUPDOWNDATA m_Info{};
+	ESKINSHARP m_Info{};
 
 	eStlInline BOOL OnDeltaPos(int iPos, int iDelta)
 	{
@@ -72,7 +72,7 @@ private:
 
 	static LRESULT CALLBACK CtrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 	{
-		auto p = (CUpDown*)dwRefData;
+		auto p = (CSkinSharp*)dwRefData;
 		switch (uMsg)
 		{
 		case WM_DESTROY:
@@ -88,14 +88,14 @@ private:
 		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
 public:
-	CUpDown() = delete;
-	CUpDown(STD_ECTRL_CREATE_ARGS)
+	CSkinSharp() = delete;
+	CSkinSharp(STD_ECTRL_CREATE_ARGS)
 	{
 		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 
 		if (pAllData)
 		{
-			memcpy(&m_Info, (BYTE*)pAllData + cbBaseData, sizeof(EUPDOWNDATA));
+			memcpy(&m_Info, (BYTE*)pAllData + cbBaseData, sizeof(ESKINSHARP));
 		}
 		else
 		{
@@ -291,7 +291,7 @@ public:
 	{
 		BYTE* p;
 		SIZE_T cbBaseData;
-		auto hGlobal = FlattenInfoBase0(sizeof(EUPDOWNDATA), &cbBaseData);
+		auto hGlobal = FlattenInfoBase0(sizeof(ESKINSHARP), &cbBaseData);
 		if (!hGlobal)
 			goto Fail;
 		p = (BYTE*)GlobalLock(hGlobal);
@@ -299,14 +299,14 @@ public:
 			goto Fail;
 		// 结构
 		p += cbBaseData;
-		memcpy(p, &m_Info, sizeof(EUPDOWNDATA));
+		memcpy(p, &m_Info, sizeof(ESKINSHARP));
 	Fail:
 		return hGlobal;
 	}
 
 	static HUNIT WINAPI ECreate(STD_EINTF_CREATE_ARGS)
 	{
-		auto p = new CUpDown(STD_ECTRL_CREATE_REAL_ARGS);
+		auto p = new CSkinSharp(STD_ECTRL_CREATE_REAL_ARGS);
 		return elibstl::make_cwnd(p->GetHWND());
 	}
 
@@ -418,7 +418,7 @@ public:
 		return FALSE;
 	}
 };
-SUBCLASS_MGR_INIT(CUpDown, SCID_UPDOWNPARENT, SCID_UPDOWN)
+SUBCLASS_MGR_INIT(CSkinSharp, SCID_UPDOWNPARENT, SCID_UPDOWN)
 ESTL_NAMESPACE_END
 
 EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
@@ -426,15 +426,15 @@ EXTERN_C PFN_INTERFACE WINAPI libstl_GetInterface_UpDown(INT nInterfaceNO)
 	switch (nInterfaceNO)
 	{
 	case ITF_CREATE_UNIT:
-		return (PFN_INTERFACE)elibstl::CUpDown::ECreate;
+		return (PFN_INTERFACE)elibstl::CSkinSharp::ECreate;
 	case ITF_NOTIFY_PROPERTY_CHANGED:
-		return (PFN_INTERFACE)elibstl::CUpDown::EChange;
+		return (PFN_INTERFACE)elibstl::CSkinSharp::EChange;
 	case ITF_GET_ALL_PROPERTY_DATA:
-		return (PFN_INTERFACE)elibstl::CUpDown::EGetAlldata;
+		return (PFN_INTERFACE)elibstl::CSkinSharp::EGetAlldata;
 	case ITF_GET_PROPERTY_DATA:
-		return (PFN_INTERFACE)elibstl::CUpDown::EGetData;
+		return (PFN_INTERFACE)elibstl::CSkinSharp::EGetData;
 	case ITF_GET_NOTIFY_RECEIVER:
-		return (PFN_INTERFACE)elibstl::CUpDown::ENotify;
+		return (PFN_INTERFACE)elibstl::CSkinSharp::ENotify;
 	}
 	return NULL;
 }

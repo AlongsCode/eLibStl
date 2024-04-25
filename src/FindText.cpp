@@ -100,7 +100,7 @@ FucInfo fint_text_a = { {
 		/*egname*/  ("InStrA"),
 		/*explain*/ ("返回一个整数值，指定一文本在另一文本中最先出现的位置，位置值从 1 开始。如果未找到，返回-1。"),
 		/*category*/2,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

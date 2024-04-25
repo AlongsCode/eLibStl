@@ -9,7 +9,7 @@
 #include <CommCtrl.h>
 #include"Tace.hpp"
 #include <cctype>
-
+#include"Membin.hpp"
 
 
 #define ESTL_NAMESPACE_BEGIN namespace elibstl {

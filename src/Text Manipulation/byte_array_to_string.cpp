@@ -82,7 +82,7 @@ FucInfo g_byte_array_to_string = { {
 		/*egname*/  ("byte_array_to_string"),
 		/*explain*/ ("将字节集转换为文本形式,类似\"调试\"命令"),
 		/*category*/2,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

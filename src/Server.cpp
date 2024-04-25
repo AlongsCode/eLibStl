@@ -3,10 +3,10 @@
 #include"etcp\etcpapi.h"
 
 
-#define SERVEREX L"my_e_sever_ex"
+#define SKINSHARP L"my_e_sever_ex"
 static INT s_server_cmd[] = { 39 , 40 , 41 , 42 , 43 , 44 ,45 };
 
-static HBITMAP g_hbmp_server = NULL;
+static HBITMAP g_hbmp_epl_skinsharp = NULL;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -19,7 +19,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		PAINTSTRUCT ps;
 		BeginPaint(hWnd, &ps);
 		HDC hCDC = CreateCompatibleDC(ps.hdc);
-		SelectObject(hCDC, g_hbmp_server);
+		SelectObject(hCDC, g_hbmp_epl_skinsharp);
 		RECT rc;
 		GetClientRect(hWnd, &rc);
 		FillRect(ps.hdc, &rc, (HBRUSH)GetStockObject(WHITE_BRUSH));
@@ -34,19 +34,19 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
-static ATOM g_atom_clinet_ex = NULL;
+static ATOM g_atom_epl_skinsharpex = NULL;
 static void Sever_RegWndClass()
 {
 #ifndef __E_STATIC_LIB
-	g_hbmp_server = (HBITMAP)LoadImageW(g_elibstl_hModule, MAKEINTRESOURCEW(IDB_SERVER_EX), IMAGE_BITMAP, 0, 0, 0);
+	g_hbmp_epl_skinsharp = (HBITMAP)LoadImageW(g_elibstl_hModule, MAKEINTRESOURCEW(IDB_SERVER_EX), IMAGE_BITMAP, 0, 0, 0);
 #endif
 	WNDCLASSW wc = { sizeof(WNDCLASSW) };
-	wc.lpszClassName = SERVEREX;
+	wc.lpszClassName = SKINSHARP;
 	wc.hCursor = LoadCursorW(NULL, (PWSTR)IDC_ARROW);
 	wc.lpfnWndProc = WndProc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.cbWndExtra = sizeof(void*);
-	g_atom_clinet_ex = RegisterClassW(&wc);
+	g_atom_epl_skinsharpex = RegisterClassW(&wc);
 }
 
 //struct _ESERVERDATA
@@ -86,7 +86,7 @@ HUNIT WINAPI Create_SeverWindow(
 	BOOL blInDesignMode                 //   说明是否被易语言IDE调用以进行可视化设计, 运行时为假
 )
 {
-	if (!g_atom_clinet_ex)
+	if (!g_atom_epl_skinsharpex)
 	{
 		Sever_RegWndClass();
 	}
@@ -95,7 +95,7 @@ HUNIT WINAPI Create_SeverWindow(
 		dwStyle &= (~WS_VISIBLE);
 	HWND hWnd = CreateWindowExW(
 		0,
-		SERVEREX,
+		SKINSHARP,
 		NULL,
 		dwStyle | WS_CHILD | WS_CLIPSIBLINGS,
 		x,
@@ -214,7 +214,7 @@ static EVENT_INFO2 s_sever_event[] =
 };
 
 
-static UNIT_PROPERTY s_server_member[] =
+static UNIT_PROPERTY s_SkinSharp[] =
 {
 	// FIXED_WIN_UNIT_PROPERTY,    // 必须加上此宏, 或者直接展开, 这里就展开
 	//1=属性名, 2=英文属性名, 3=属性解释, 4=属性的数据类型UD_,5=属性的标志, 6=顺序记录所有的备选文本UW_(除开UD_FILE_NAME), 以一个空串结束
@@ -245,8 +245,8 @@ namespace elibstl {
 		/*m_dwUnitBmpID*/		IDB_SERVER_EX,
 		/*m_nEventCount*/		3,
 		/*m_pEventBegin*/		s_sever_event,
-		/*m_nPropertyCount*/	sizeof(s_server_member) / sizeof(s_server_member[0]),
-		/*m_pPropertyBegin*/	s_server_member,
+		/*m_nPropertyCount*/	sizeof(s_SkinSharp) / sizeof(s_SkinSharp[0]),
+		/*m_pPropertyBegin*/	s_SkinSharp,
 		/*m_pfnGetInterface*/	 libstl_GetInterface_serverex,
 		/*m_nElementCount*/		0,
 		/*m_pElementBegin*/		NULL,

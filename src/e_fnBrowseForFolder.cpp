@@ -92,7 +92,7 @@ FucInfo e_BrowseForFolder_A = { {
 		/*egname*/  (""),
 		/*explain*/ ("打开一个对话框，浏览系统中存在的所有文件夹，返回被选定文件夹的路径名，如果未选中任何文件夹，则返回空文本"),
 		/*category*/13,
-		/*state*/   NULL,
+		/*state*/   CT_IS_HIDED,
 		/*ret*/     SDT_TEXT,
 		/*reserved*/NULL,
 		/*level*/   LVL_HIGH,

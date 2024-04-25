@@ -21,10 +21,10 @@ EXTERN_C void fn_process_messages_improved(PMDATA_INF pRetData, INT nArgCount, P
 
 
 FucInfo Fn_process_messages_improved = { {
-		/*ccname*/  ("取cpu核心数"),
+		/*ccname*/  ("取CPU核心数"),
 		/*egname*/  ("process_messages_improved"),
 		/*explain*/ ("获取CPU核心数"),
-		/*category*/11,
+		/*category*/6,
 		/*state*/    NULL,
 		/*ret*/     SDT_INT,
 		/*reserved*/NULL,
