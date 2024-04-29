@@ -1220,7 +1220,7 @@ public:
 		{
 			pItemHeader = (CBITEMHEADER_MEM*)pData;
 
-			pItemHeader->cchCaption = m_ItemsInfo[i].rsCaption.m_cchText;
+			pItemHeader->cchCaption = m_ItemsInfo[i].rsCaption.m_cchText + 1;
 			pItemHeader->Info = m_ItemsInfo[i].Info;
 
 			pData += sizeof(CBITEMHEADER_MEM);
