@@ -1,13 +1,15 @@
 #include"EcontrolHelp.h"
 #include "Scintilla\Scintilla.h"
 #include "Scintilla\SciLexer.h"
+#include "Scintilla\Scintilla.h"
+#include "Scintilla\ScintillaWin.h"
 #pragma comment(lib,"gdi32.lib")
 #pragma comment(lib,"imm32.lib")
 #pragma comment(lib,"ole32.lib")
 #pragma comment(lib,"oleaut32.lib")
 #pragma comment(lib,"msimg32.lib")
 
-
+//Scintilla_DllMain(hModule, ul_reason_for_call, lpReserved);
 inline std::string WStrToUtf8(const std::wstring& pwsText)
 {
 	size_t npLength = pwsText.size();
@@ -37,6 +39,22 @@ inline std::string WStrToUtf8(const std::wstring& pwsText)
 #define ED_CUEBANNER_MAXLEN 260
 
 ESTL_NAMESPACE_BEGIN
+
+
+struct Init {
+	Init() {
+
+			Scintilla_RegisterClasses(GetModuleHandleA(nullptr));
+	}
+	~Init() {
+		Scintilla::ResourcesRelease(true);
+	}
+};
+auto initSS() {
+	static Init initSkinSharp_;//跟随程序声明周期
+}
+
+
 /*火花编辑框*/
 #define DATA_VER_SCINTILLA_1	1
 struct ESCINTILLADATA
@@ -331,7 +349,7 @@ public:
 	}
 	CScintillaEditor(STD_ECTRL_CREATE_ARGS)
 	{
-
+		initSS();
 		auto cbBaseData = InitBase0(pAllData, cbData, bInDesignMode, dwWinFormID, dwUnitID, nID, hParent);
 		m_Info.iVer = DATA_VER_SCINTILLA_1;
 		Scintilla_RegisterClasses(g_elibstl_hModule);

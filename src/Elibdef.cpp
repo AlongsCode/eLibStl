@@ -161,15 +161,10 @@ extern "C" _declspec(dllexport) PLIB_INFO GetNewInf()
 };
 #pragma endregion ±©Â¶½Ó¿Ú
 
-extern "C" {
-	int APIENTRY Scintilla_DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpvReserved);
-	//int APIENTRY SkinH_Init(HINSTANCE hInstance);
-	//int APIENTRY SkinH_Free();
-	//BOOL APIENTRY EplSKin(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved);
-}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
-	Scintilla_DllMain(hModule, ul_reason_for_call, lpReserved);
+	
 	//EplSKin(hModule, ul_reason_for_call, lpReserved);
 	switch (ul_reason_for_call)
 	{

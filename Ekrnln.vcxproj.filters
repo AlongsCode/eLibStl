@@ -1349,6 +1349,9 @@
     <ClCompile Include="openlib\Detours\image.cpp">
       <Filter>源文件\openlib\Detours</Filter>
     </ClCompile>
+    <ClCompile Include="src\Epl Dp\sm3.cpp">
+      <Filter>源文件\实现\全局命令\数据处理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ekrnln.rc">

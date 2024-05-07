@@ -366,6 +366,7 @@
 /*363*/ ,Fn_IsFileExistW/*文件是否存在W*/\
 /*364*/ ,Fn_GetHttpFile/*HTTP读文件W*/\
 /*365*/	,Fn_DowndLoadFile/*HTTP下载W*/\
+/*366*/	,Fn_eStl_GetSM3/*获取SM3数据摘要*/
 
 #pragma endregion
 
