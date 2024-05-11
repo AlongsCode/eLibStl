@@ -1495,8 +1495,8 @@ public:
 		{
 			pItemHeader = (LBITEMHEADER_MEM*)pData;
 
-			pItemHeader->cchCaption = m_ItemsInfo[i].rsCaption.m_cchText;
-			pItemHeader->cchTip = m_ItemsInfo[i].rsTip.m_cchText;
+			pItemHeader->cchCaption = m_ItemsInfo[i].rsCaption.m_cchText + 1;
+			pItemHeader->cchTip = m_ItemsInfo[i].rsTip.m_cchText + 1;
 			pItemHeader->Info = m_ItemsInfo[i].Info;
 
 			pData += sizeof(LBITEMHEADER_MEM);

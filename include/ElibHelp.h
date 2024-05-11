@@ -277,7 +277,10 @@ public:
 		if (cch < 0)
 			cch = m_cchText;
 		if (!cch || !m_pszText || !pszDst)
+		{
+			*pszDst = L'\0';
 			return;
+		}
 		wcsncpy(pszDst, m_pszText, cch);
 		*(pszDst + cch) = L'\0';
 	}
