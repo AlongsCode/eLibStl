@@ -283,6 +283,35 @@ public:
 	}
 };
 
+eStlInline bool operator<(const CSimpleRefStrW& x1, PCWSTR x2)
+{
+	if (!x1.m_pszText)
+		return !!(x2);
+	else if (!x2)
+		return false;
+	else
+		return wcscmp(x1.m_pszText, x2) < 0;
+}
+
+eStlInline bool operator<(const CSimpleRefStrW& x1, const CSimpleRefStrW& x2)
+{
+	return operator<(x1, x2.m_pszText);
+}
+
+eStlInline bool operator>(const CSimpleRefStrW& x1, PCWSTR x2)
+{
+	if (!x2)
+		return !!(x1.m_pszText);
+	else if (!x1.m_pszText)
+		return false;
+	else
+		return wcscmp(x1.m_pszText, x2) > 0;
+}
+
+eStlInline bool operator>(const CSimpleRefStrW& x1, const CSimpleRefStrW& x2)
+{
+	return operator>(x1, x2.m_pszText);
+}
 
 
 #define CFBitMapmax(a,b)            (((a) > (b)) ? (a) : (b))

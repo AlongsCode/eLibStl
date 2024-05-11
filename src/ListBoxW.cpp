@@ -1288,7 +1288,7 @@ public:
 		{
 			for (int i = 0; i < (int)m_ItemsInfo.size(); ++i)
 			{
-				if (wcscmp(m_ItemsInfo[i].rsCaption, pszString) > 0)
+				if (m_ItemsInfo[i].rsCaption > pszString)
 				{
 					m_ItemsInfo.insert(m_ItemsInfo.begin() + i, std::move(Item));
 					goto Ret;
@@ -1316,7 +1316,7 @@ public:
 		{
 			for (int i = 0; i < (int)m_ItemsInfo.size(); ++i)
 			{
-				if (wcscmp(m_ItemsInfo[i].rsCaption, pszString) > 0)
+				if (m_ItemsInfo[i].rsCaption > pszString)
 				{
 					m_ItemsInfo.insert(m_ItemsInfo.begin() + i, std::move(Item));
 					goto Ret;
@@ -1570,7 +1570,7 @@ public:
 			std::sort(m_ItemsInfo.begin(), m_ItemsInfo.end(),
 				[](LBITEMINFO& i1, LBITEMINFO& i2) -> bool
 				{
-					return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
+					return i1.rsCaption < i2.rsCaption;
 				});
 			Redraw();
 		}
@@ -3385,13 +3385,13 @@ EXTERN_C void libstl_ListBoxW_Sort(PMDATA_INF pRetData, INT nArgCount, PMDATA_IN
 		std::sort(p->m_ItemsInfo.begin(), p->m_ItemsInfo.end(),
 			[](elibstl::LBITEMINFO& i1, elibstl::LBITEMINFO& i2) -> bool
 			{
-				return wcscmp(i1.rsCaption, i2.rsCaption) < 0;
+				return i1.rsCaption < i2.rsCaption;
 			});
 	else
 		std::sort(p->m_ItemsInfo.begin(), p->m_ItemsInfo.end(),
 			[](elibstl::LBITEMINFO& i1, elibstl::LBITEMINFO& i2) -> bool
 			{
-				return wcscmp(i1.rsCaption, i2.rsCaption) > 0;
+				return i1.rsCaption > i2.rsCaption;
 			});
 	p->Redraw();
 }
