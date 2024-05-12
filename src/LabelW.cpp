@@ -771,12 +771,9 @@ public:
 
 		if (cbSize && pPic)
 		{
-			if (m_bInDesignMode)
-			{
-				delete[] m_pBKPicData;
-				m_pBKPicData = new BYTE[cbSize];
-				memcpy(m_pBKPicData, pPic, cbSize);
-			}
+			delete[] m_pBKPicData;
+			m_pBKPicData = new BYTE[cbSize];
+			memcpy(m_pBKPicData, pPic, cbSize);
 			m_hbmBK = elibstl::make_hbm_gp((BYTE*)pPic, cbSize);
 			BITMAP bitmap;
 			GetObjectW(m_hbmBK, sizeof(bitmap), &bitmap);
@@ -785,11 +782,8 @@ public:
 		}
 		else
 		{
-			if (m_bInDesignMode)
-			{
-				delete[] m_pBKPicData;
-				m_pBKPicData = NULL;
-			}
+			delete[] m_pBKPicData;
+			m_pBKPicData = NULL;
 			m_hbmBK = NULL;
 		}
 		RedrawLabel();
