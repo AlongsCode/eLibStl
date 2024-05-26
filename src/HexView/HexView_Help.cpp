@@ -97,6 +97,9 @@ PVOID SetDataFromIdUnit(DWORD dwWinFormID, DWORD dwUnitID, HUNIT hUnit, HWND hWn
 // iEvent = 事件索引, EVENT_INFO2 这个数组的索引, 数组是所有事件, 索引对应事件
 int CallEEvent(PCONTROL_STRUCT_BASE data, int& nDeal, int iEvent, int nArgCount, ...)
 {
+    HWND hWnd = (HWND)elibstl::NotifySys(NAS_GET_HWND_OF_CWND_OBJECT, data->hUnit, 0);
+    if (!hWnd || !IsWindow(hWnd))
+        return 0;   // 检测窗口是否正常, 如果窗口已经失效, 则不能继续投递事件
     if (nArgCount > 12)
     {
 #ifdef _DEBUG

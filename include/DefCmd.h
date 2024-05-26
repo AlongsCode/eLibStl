@@ -402,7 +402,7 @@ CtCommandLink/*命令链接*/\
 ,HexView_control/*进制框*/\
 ,Obj_MemoryModule/*内存模块类*/\
 ,CtScintilla/*火花编辑框*/\
-,Obj_SkinSharp/*皮肤模块*/
+//,Obj_SkinSharp/*皮肤模块*/
 #pragma endregion
 
 
